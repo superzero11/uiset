@@ -1,0 +1,16 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@import "@ui-sdk/core/web.css";
+@import "./tokens.css" layer(uiset.tokens);
+@import "./base.css" layer(uiset.base);
+@import "./skins/base.css" layer(uiset.skin);
+@import "./skins/blueprint.css" layer(uiset.skin);
+@import "./skins/studio.css" layer(uiset.skin);
+@import "./skins/phosphor.css" layer(uiset.skin);
+@import "./skins/ink.css" layer(uiset.skin);
+
+@layer ui-sdk {
+  :where([data-slot][hidden]:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}

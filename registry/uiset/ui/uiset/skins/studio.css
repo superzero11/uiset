@@ -1,0 +1,430 @@
+/*
+  Studio: a rack of synthesizer modules. Gunmetal faceplates, rubber caps,
+  silk-screened legends, amber lamps. Color is saved for cables and lamps.
+  Design plan: docs/studio.md.
+*/
+
+[data-uiset][data-skin="studio"] {
+  color-scheme: dark;
+
+  --studio-rack: oklch(0.25 0.01 255);
+  --studio-panel: oklch(0.34 0.012 255);
+  --studio-panel-high: oklch(0.42 0.012 255);
+  --studio-panel-low: oklch(0.27 0.01 255);
+  --studio-legend: oklch(0.94 0.012 85);
+  --studio-legend-dim: oklch(0.8 0.012 85);
+  --studio-rubber: oklch(0.19 0.006 255);
+  --studio-rubber-high: oklch(0.3 0.008 255);
+  --studio-metal: oklch(0.86 0.005 255);
+  --studio-metal-low: oklch(0.62 0.006 255);
+  --studio-lamp: oklch(0.82 0.15 72);
+  --studio-lamp-glow: oklch(0.82 0.15 72 / 0.55);
+  --studio-slot: oklch(0.16 0.008 255);
+  --studio-bevel: inset 0 1px 0 oklch(1 0 0 / 0.08), inset 0 -1px 0 oklch(0 0 0 / 0.35);
+
+  --ui-background: var(--studio-panel);
+  --ui-foreground: var(--studio-legend);
+  --ui-muted: var(--studio-panel-low);
+  --ui-muted-foreground: var(--studio-legend-dim);
+  --ui-border: oklch(0.94 0.012 85 / 0.18);
+  --ui-input: oklch(0.62 0.01 255);
+  --ui-primary: var(--studio-lamp);
+  --ui-primary-foreground: oklch(0.2 0.02 70);
+  --ui-ring: oklch(0.82 0.15 72 / 0.3);
+  --ui-ring-border: var(--studio-lamp);
+  --ui-radius: 4px;
+  --ui-shadow: 0 10px 24px -8px oklch(0 0 0 / 0.6);
+  --ui-font-sans:
+    "Saira Semi Condensed", "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+  --ui-font-size: 0.875rem;
+
+  --uiset-sound: mechanical;
+  --uiset-solid-bg: var(--studio-lamp);
+  --uiset-solid-fg: oklch(0.2 0.02 70);
+  --uiset-solid-border: oklch(0.7 0.13 70);
+  --uiset-solid-hover: oklch(0.86 0.14 75);
+  --uiset-solid-weight: 600;
+  --uiset-popup-radius: 4px;
+  --uiset-switch-width: 2.25rem;
+  --uiset-switch-thumb: 0.875rem;
+  --uiset-switch-thumb-radius: 3px;
+
+  --uiset-cable-1: oklch(0.62 0.21 27);
+  --uiset-cable-2: oklch(0.66 0.16 245);
+  --uiset-cable-3: oklch(0.74 0.17 150);
+  --uiset-cable-4: oklch(0.84 0.16 92);
+  --uiset-cable-5: oklch(0.62 0.2 305);
+
+  font-family: var(--ui-font-sans);
+  background-color: var(--studio-panel);
+  background-image: repeating-linear-gradient(
+    90deg,
+    oklch(1 0 0 / 0.012) 0 1px,
+    transparent 1px 3px
+  );
+
+  &
+    :is(
+      [data-slot="field-label"],
+      [data-slot="select-label"],
+      [data-slot="combobox-label"],
+      [data-slot="autocomplete-label"],
+      [data-slot="label"]:not(:has(> :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="switch"]))),
+      .knob-label,
+      .fader-label
+    ) {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--studio-legend);
+  }
+
+  /* Pads. Every button takes the legend lettering, ghost ones too; the pad itself (edge,
+     bevel, travel) is for buttons that are pads. A menubar's menus belong to the bar, and
+     buttons kits use as rows (a step, a chat, a problem, a suggestion) keep their content's
+     case and get no pad. */
+  &
+    :is(
+      [data-slot="button"],
+      [data-slot="toolbar-button"],
+      [data-slot="dialog-trigger"],
+      [data-slot="alert-dialog-trigger"],
+      [data-slot="drawer-trigger"],
+      [data-slot="popover-trigger"],
+      button[data-slot="tooltip-trigger"],
+      [data-slot="menu-trigger"],
+      [data-slot="file-input-trigger"],
+      [data-slot="dialog-close"],
+      [data-slot="alert-dialog-close"],
+      [data-slot="drawer-close"],
+      [data-slot="popover-close"]
+    ):not([data-slot="menubar"] [data-slot="menu-trigger"], .stepper-step, .chat-thread-link, .ide-problem, .ide-status-item, .ide-palette-trigger, .chat-suggestions *, .sidebar-link, .mobile-action, .mobile-tab) {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  &
+    :is(
+      [data-slot="button"],
+      [data-slot="dialog-trigger"],
+      [data-slot="alert-dialog-trigger"],
+      [data-slot="drawer-trigger"],
+      [data-slot="popover-trigger"],
+      button[data-slot="tooltip-trigger"],
+      [data-slot="menu-trigger"],
+      [data-slot="file-input-trigger"],
+      [data-slot="dialog-close"],
+      [data-slot="alert-dialog-close"],
+      [data-slot="drawer-close"],
+      [data-slot="popover-close"]
+    ):not([data-variant="ghost"], [data-slot="menubar"] [data-slot="menu-trigger"], .stepper-step, .chat-thread-link, .ide-problem, .ide-status-item, .ide-palette-trigger, .chat-suggestions *, .sidebar-link, .mobile-action, .mobile-tab) {
+    border: 1px solid oklch(0 0 0 / 0.5);
+    border-radius: 6px;
+    box-shadow:
+      var(--studio-bevel),
+      0 2px 0 oklch(0 0 0 / 0.45);
+    transition:
+      translate var(--uiset-fast) var(--uiset-ease),
+      box-shadow var(--uiset-fast) var(--uiset-ease),
+      background-color var(--uiset-fast) var(--uiset-ease);
+
+    &:active:not([data-disabled]) {
+      scale: none;
+      translate: 0 2px;
+      box-shadow:
+        var(--studio-bevel),
+        0 0 0 oklch(0 0 0 / 0.45);
+    }
+  }
+
+  &
+    :is(
+      [data-variant="outline"],
+      :is(
+        [data-slot="dialog-trigger"],
+        [data-slot="alert-dialog-trigger"],
+        [data-slot="drawer-trigger"],
+        [data-slot="popover-trigger"],
+        [data-slot="menu-trigger"],
+        [data-slot="file-input-trigger"],
+        [data-slot="dialog-close"],
+        [data-slot="alert-dialog-close"],
+        [data-slot="drawer-close"],
+        [data-slot="popover-close"]
+      ):not([data-variant], [data-slot="menubar"] [data-slot="menu-trigger"])
+    ):not(.stepper-step, .chat-thread-link, .ide-problem, .ide-status-item, .ide-palette-trigger, .chat-suggestions *, .sidebar-link, .mobile-action, .mobile-tab) {
+    background: var(--studio-rubber);
+    color: var(--studio-legend);
+
+    &:hover:not([data-disabled]) {
+      background: var(--studio-rubber-high);
+    }
+  }
+
+  /* Switch: a latching toggle with a lamp */
+  & [data-slot="switch"] {
+    border: 1px solid oklch(0 0 0 / 0.6);
+    background: var(--studio-slot);
+    box-shadow: inset 0 2px 3px oklch(0 0 0 / 0.6);
+
+    &[data-checked] {
+      border-color: oklch(0 0 0 / 0.6);
+      background: oklch(0.42 0.09 70);
+      box-shadow:
+        inset 0 2px 3px oklch(0 0 0 / 0.4),
+        0 0 10px var(--studio-lamp-glow);
+    }
+  }
+
+  & [data-slot="switch-thumb"] {
+    background: linear-gradient(var(--studio-metal), var(--studio-metal-low));
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.6);
+
+    &[data-checked] {
+      background: linear-gradient(var(--studio-metal), var(--studio-metal-low));
+    }
+  }
+
+  /* Segmented: illuminated push buttons, the chosen one lit */
+  & [data-slot="segmented-control"] {
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid oklch(0 0 0 / 0.5);
+    /* The buttons' 3px corners, plus the 4px gap and 1px edge around them. */
+    border-radius: 8px;
+    background: var(--studio-slot);
+  }
+
+  & [data-slot="segmented-control-indicator"] {
+    border-radius: 3px;
+    background: var(--studio-rubber-high);
+    box-shadow: var(--studio-bevel);
+  }
+
+  & [data-slot="segmented-control-item"] {
+    position: relative;
+    padding-inline: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--studio-legend-dim);
+
+    &[data-checked] {
+      color: var(--studio-lamp);
+      text-shadow: 0 0 8px var(--studio-lamp-glow);
+    }
+  }
+
+  /* Sliders: fader caps in a slot */
+  & [data-slot="slider-track"] {
+    background: var(--studio-slot);
+    box-shadow: inset 0 1px 2px oklch(0 0 0 / 0.7);
+  }
+
+  & [data-slot="slider-indicator"] {
+    background: oklch(0.82 0.15 72 / 0.55);
+  }
+
+  & [data-slot="slider-thumb"] {
+    width: 1.75rem;
+    height: 0.875rem;
+    border: 1px solid oklch(0 0 0 / 0.6);
+    border-radius: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--studio-rubber-high),
+      var(--studio-rubber) 45%,
+      var(--studio-legend) 45% 55%,
+      var(--studio-rubber) 55%
+    );
+    box-shadow: 0 2px 3px oklch(0 0 0 / 0.6);
+  }
+
+  & [data-slot="slider-thumb"][data-orientation="horizontal"] {
+    width: 0.875rem;
+    height: 1.5rem;
+    background: linear-gradient(
+      var(--studio-rubber-high),
+      var(--studio-rubber) 45%,
+      var(--studio-legend) 45% 55%,
+      var(--studio-rubber) 55%
+    );
+  }
+
+  & [data-slot="slider-value"] {
+    font-variant-numeric: tabular-nums;
+    color: var(--studio-legend-dim);
+  }
+
+  /* Fields: recessed */
+  &
+    :is(
+      [data-slot="input"],
+      [data-slot="select-trigger"],
+      [data-slot="textarea"],
+      [data-slot="password-input"],
+      [data-slot="date-input"],
+      [data-slot="time-input"],
+      [data-slot="date-picker-input"],
+      [data-slot="combobox-input"],
+      [data-slot="autocomplete-input"],
+      [data-slot="token-input-editor"],
+      [data-slot="color-picker-input"],
+      [data-slot="number-input-control"],
+      [data-slot="otp-input-slot"]
+    ) {
+    border: 1px solid oklch(0 0 0 / 0.55);
+    background: var(--studio-slot);
+    box-shadow: inset 0 1px 3px oklch(0 0 0 / 0.6);
+    color: var(--studio-legend);
+  }
+
+  &
+    :is(
+      [data-slot="select-content"],
+      [data-slot="popover-content"],
+      [data-slot="menu-content"],
+      [data-slot="combobox-content"],
+      [data-slot="autocomplete-content"],
+      [data-slot="hover-card-content"],
+      [data-slot="date-picker-content"],
+      [data-slot="navigation-menu-viewport"],
+      [data-slot="trigger-menu-content"],
+      [data-slot="dialog-content"],
+      [data-slot="alert-dialog-content"],
+      [data-slot="drawer-content"]
+    ) {
+    border: 1px solid oklch(0 0 0 / 0.6);
+    background: var(--studio-panel);
+    box-shadow: var(--studio-bevel), var(--ui-shadow);
+  }
+
+  & :is([data-slot="select-item"], [data-slot="menu-item"])[data-highlighted] {
+    background: var(--studio-rubber-high);
+    color: var(--studio-lamp);
+  }
+
+  /* Knob: rubber cap, lamp arc, legend pointer */
+  & [data-slot="knob"] {
+    --knob-track: var(--studio-slot);
+    --knob-fill: var(--studio-lamp);
+    --knob-cap: radial-gradient(
+      circle at 50% 35%,
+      var(--studio-rubber-high),
+      var(--studio-rubber) 70%
+    );
+    --knob-cap-edge: oklch(0 0 0 / 0.7);
+    --knob-pointer: var(--studio-legend);
+  }
+
+  & [data-slot="knob"]::before {
+    box-shadow:
+      0 3px 6px oklch(0 0 0 / 0.55),
+      inset 0 1px 0 oklch(1 0 0 / 0.1);
+  }
+
+  & [data-slot="knob-indicator"] {
+    filter: drop-shadow(0 0 3px var(--studio-lamp-glow));
+  }
+
+  & [data-slot="knob-value"] {
+    font-size: 0.75rem;
+    color: var(--studio-legend-dim);
+  }
+
+  /* Jacks: a nut around a dark socket */
+  & [data-slot="patch-bay-jack"] {
+    border: 3px solid var(--studio-metal-low);
+    background: radial-gradient(circle, var(--studio-slot) 40%, oklch(0.3 0.005 255) 42%);
+    box-shadow:
+      0 0 0 2px oklch(0 0 0 / 0.4),
+      inset 0 1px 0 oklch(1 0 0 / 0.25);
+
+    &::before {
+      background: oklch(0.08 0 0);
+      opacity: 1;
+    }
+  }
+
+  /* Meter: an LED ladder */
+  & [data-slot="meter-track"] {
+    border: 1px solid oklch(0 0 0 / 0.5);
+    background: repeating-linear-gradient(
+      90deg,
+      var(--studio-slot) 0 6px,
+      oklch(0.12 0 0) 6px 8px
+    );
+  }
+
+  & [data-slot="meter-indicator"] {
+    background:
+      repeating-linear-gradient(90deg, transparent 0 6px, oklch(0.12 0 0) 6px 8px),
+      linear-gradient(
+        90deg,
+        oklch(0.74 0.17 150) 0 60%,
+        var(--studio-lamp) 60% 85%,
+        oklch(0.62 0.21 27) 85%
+      );
+    background-size:
+      auto,
+      var(--meter-full, 100%) 100%;
+  }
+
+  /* Steps */
+  & [data-slot="toggle"] {
+    border: 1px solid oklch(0 0 0 / 0.5);
+    border-radius: 4px;
+    background: var(--studio-rubber);
+    box-shadow:
+      var(--studio-bevel),
+      0 2px 0 oklch(0 0 0 / 0.45);
+    color: var(--studio-legend-dim);
+
+    &[data-pressed] {
+      background: oklch(0.42 0.09 70);
+      color: var(--studio-lamp);
+      box-shadow:
+        var(--studio-bevel),
+        0 0 10px var(--studio-lamp-glow);
+    }
+  }
+
+  /* A toggle group is a row of separate pads with a gap, not pads jammed edge to edge (A13). */
+  & [data-slot="toggle-group"] {
+    gap: 4px;
+  }
+
+  & [data-slot="toggle-group"] [data-slot="toggle"] {
+    margin-inline-start: 0;
+  }
+
+  /* An invalid field still says so in this skin's field style (C16). */
+  & :is([data-slot="input"], [data-slot="select-trigger"], [data-slot="textarea"], [data-slot="password-input"], [data-slot="date-input"], [data-slot="time-input"], [data-slot="date-picker-input"], [data-slot="combobox-input"], [data-slot="autocomplete-input"], [data-slot="token-input-editor"], [data-slot="number-input-control"], [data-slot="otp-input-slot"]):is([data-invalid], [aria-invalid="true"], :has([aria-invalid="true"])) {
+    border-color: var(--ui-destructive);
+  }
+
+  /* Plain number fields drop the browser's spinner; NumberInput has real buttons (C37). */
+  & input[type="number"] {
+    appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+  }
+
+  /* In a toolbar, pads are 3px like the segmented control's, and the toolbar's corners are
+     theirs plus the 2px gap and 1px edge, so the curves share a center. The repeated
+     [data-slot] outranks the pad rule above (whose list includes button[…]). */
+  & [data-slot="toolbar"] {
+    border-radius: 6px;
+  }
+
+  & [data-slot="toolbar"] :is([data-slot="toolbar-button"], [data-slot="toggle"], [data-slot="button"], [data-slot="menu-trigger"], [data-slot="popover-trigger"], [data-slot="select-trigger"])[data-slot][data-slot] {
+    border-radius: 3px;
+  }
+}

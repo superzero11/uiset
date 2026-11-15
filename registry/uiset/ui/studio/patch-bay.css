@@ -1,0 +1,88 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  .patch-bay {
+    position: relative;
+  }
+
+  .patch-bay-cables {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .patch-bay-cable {
+    path {
+      fill: none;
+      stroke: var(--cable-color);
+      stroke-width: 5;
+      stroke-linecap: round;
+      filter: drop-shadow(0 3px 2px oklch(0 0 0 / 0.35));
+    }
+
+    circle {
+      fill: var(--cable-color);
+      stroke: oklch(0 0 0 / 0.35);
+      stroke-width: 1.5;
+    }
+
+    &[data-draft] path {
+      stroke-dasharray: 2 7;
+    }
+  }
+
+  [data-slot="patch-bay-jack"] {
+    --jack-size: 1.625rem;
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: var(--jack-size);
+    height: var(--jack-size);
+    padding: 0;
+    border: 2px solid var(--ui-input);
+    border-radius: 50%;
+    background: var(--ui-muted);
+    cursor: grab;
+    touch-action: none;
+
+    /* ::before, since on touch screens UI SDK turns a button's ::after into its hit area. */
+    &::before {
+      content: "";
+      width: 42%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--ui-foreground);
+      opacity: 0.85;
+    }
+
+    &[data-kind="in"] {
+      cursor: default;
+    }
+
+    &[data-connect="source"],
+    &[data-connect="target"] {
+      outline: 3px solid var(--ui-ring-border);
+      outline-offset: 2px;
+    }
+
+    &[data-connect="candidate"] {
+      border-color: var(--ui-primary);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .patch-bay-cable path,
+    .patch-bay-cable circle {
+      stroke: CanvasText;
+      fill: none;
+    }
+
+    [data-slot="patch-bay-jack"][data-connect] {
+      outline-color: Highlight;
+    }
+  }
+}

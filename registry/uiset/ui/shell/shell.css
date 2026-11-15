@@ -1,0 +1,846 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  :where([data-uiset]) {
+    /* Status colors: text and edges hold 4.5:1 / 3:1 on --ui-background in each scheme. */
+    /* Dark values also clear 4.5:1 on the mid-dark Blueprint and Studio panels. */
+    --tone-info: light-dark(oklch(0.48 0.15 255), oklch(0.86 0.08 240));
+    --tone-success: light-dark(oklch(0.47 0.12 150), oklch(0.87 0.11 150));
+    --tone-warning: light-dark(oklch(0.5 0.12 70), oklch(0.89 0.11 85));
+    --tone-danger: light-dark(oklch(0.46 0.19 27), oklch(0.86 0.08 25));
+    --tone-neutral: var(--ui-muted-foreground);
+  }
+
+  .uiset-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .uiset-icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* App shell */
+
+  .app-shell {
+    --sidebar-width: 15rem;
+    display: grid;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    min-height: var(--app-shell-height, 100dvh);
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+
+    &[data-narrow] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  [data-sidebar="collapsed"] .app-shell:not([data-narrow]) {
+    --sidebar-width: 3.75rem;
+  }
+
+  .app-sidebar,
+  .app-drawer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 0.75rem;
+    border-inline-end: 1px solid var(--ui-border);
+    background: color-mix(in oklab, var(--ui-muted) 55%, var(--ui-background));
+    overflow: hidden;
+  }
+
+  .app-sidebar-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    min-height: 2.25rem;
+  }
+
+  .app-brand {
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  [data-sidebar="collapsed"] .app-sidebar .app-brand {
+    display: none;
+  }
+
+  .app-sidebar-toggle,
+  .app-menu-button {
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+  }
+
+  .app-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  /* Its padding counts in its height, with or without a page's box-sizing reset. */
+  .app-header {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3.25rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--ui-border);
+  }
+
+  /* The padding is a variable, so a full-bleed page (an inbox) can cancel it exactly. */
+  .app-content {
+    --app-shell-pad: clamp(1rem, 3vw, 2rem);
+    flex: 1;
+    min-width: 0;
+    padding: var(--app-shell-pad);
+  }
+
+  .sidebar-nav {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .sidebar-group {
+    display: grid;
+    gap: 0.25rem;
+
+    ul {
+      display: grid;
+      gap: 2px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
+
+  .sidebar-group-title {
+    margin: 0;
+    padding-inline: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ui-muted-foreground);
+  }
+
+  /* Collapsed to icons: group titles leave the layout (a hidden title used to keep its
+     width and push the icons off center), and a rule separates the groups instead. */
+  [data-sidebar="collapsed"] .app-sidebar {
+    .sidebar-group-title {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .sidebar-nav {
+      gap: 0.5rem;
+    }
+
+    .sidebar-group + .sidebar-group {
+      padding-block-start: 0.5rem;
+      border-block-start: 1px solid var(--ui-border);
+    }
+  }
+
+  /* A tooltip trigger, so UI SDK's stylesheet would draw it as a button: reset that. */
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.625rem;
+    width: 100%;
+    height: auto;
+    min-height: 2.25rem;
+    padding: 0.375rem 0.5rem;
+    border: 0;
+    border-radius: var(--ui-radius);
+    background: transparent;
+    color: var(--ui-foreground);
+    font-weight: 400;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--ui-muted);
+    }
+
+    &[aria-current="page"] {
+      position: relative;
+      background: var(--ui-muted);
+      font-weight: 600;
+
+      /* A short bar, inset from the corners (an inset shadow bent around them). */
+      &::before {
+        content: "";
+        position: absolute;
+        inset-block: 0.5rem;
+        inset-inline-start: 0;
+        inline-size: 3px;
+        border-radius: 999px;
+        background: var(--ui-primary);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: -2px;
+    }
+  }
+
+  .sidebar-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .sidebar-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .sidebar-badge {
+    font-size: 0.75rem;
+  }
+
+  /* Each link is a square icon button, centered in the rail under the toggle; the current
+     page shows by its fill and an accent icon (a side bar on a square reads as a glitch). */
+  [data-sidebar="collapsed"] .app-sidebar {
+    .sidebar-link {
+      justify-content: center;
+      inline-size: 2.25rem;
+      min-block-size: 2.25rem;
+      margin-inline: auto;
+      padding: 0;
+
+      &[aria-current="page"] {
+        color: color-mix(in oklch, var(--ui-primary) 55%, var(--ui-foreground));
+
+        &::before {
+          display: none;
+        }
+      }
+    }
+
+    .sidebar-label,
+    .sidebar-badge {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+  }
+
+  /* The tooltip repeats the visible label, so it only shows when labels are hidden. */
+  [data-sidebar="expanded"] .sidebar-tooltip,
+  .app-drawer .sidebar-tooltip {
+    display: none;
+  }
+
+  /* Page structure */
+
+  .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+  }
+
+  .breadcrumbs li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--ui-muted-foreground);
+
+    a {
+      color: inherit;
+      text-underline-offset: 0.2em;
+    }
+
+    [aria-current="page"] {
+      color: var(--ui-foreground);
+      font-weight: 500;
+    }
+  }
+
+  .breadcrumbs-separator {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .page-header {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-header-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .page-header-title {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 1.875rem);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  .page-header-description {
+    max-width: 42rem;
+    margin: 0.375rem 0 0;
+    color: var(--ui-muted-foreground);
+  }
+
+  .page-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .card {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+    padding: 1.25rem;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 6px);
+    background: var(--ui-background);
+  }
+
+  .card-header {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .card-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .card-description {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  .card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--ui-border);
+  }
+
+  /* Data display */
+
+  .badge {
+    --badge-color: var(--tone-neutral);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.0625rem 0.5rem;
+    border: 1px solid color-mix(in oklab, var(--badge-color) 55%, transparent);
+    border-radius: min(999px, calc(var(--ui-radius) * 999));
+    background: color-mix(in oklab, var(--badge-color) 10%, var(--ui-background));
+    color: var(--badge-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+
+    &[data-tone="info"] {
+      --badge-color: var(--tone-info);
+    }
+
+    &[data-tone="success"] {
+      --badge-color: var(--tone-success);
+    }
+
+    &[data-tone="warning"] {
+      --badge-color: var(--tone-warning);
+    }
+
+    &[data-tone="danger"] {
+      --badge-color: var(--tone-danger);
+    }
+  }
+
+  /* Content sits at the top, so figures in a row line up whether or not one has a trend. */
+  .stat {
+    display: grid;
+    align-content: start;
+    gap: 0.25rem;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--ui-muted-foreground);
+  }
+
+  .stat-trend {
+    max-inline-size: 100%;
+  }
+
+  /* A standalone figure keeps proportional digits; tabular ones look loose this big. */
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 650;
+    line-height: 1.15;
+  }
+
+  .stat-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+
+    &[data-good] {
+      color: var(--tone-success);
+    }
+
+    &[data-bad] {
+      color: var(--tone-danger);
+    }
+  }
+
+  .stat-period,
+  .stat-description {
+    color: var(--ui-muted-foreground);
+    font-weight: 400;
+  }
+
+  .stat-description {
+    font-size: 0.8125rem;
+  }
+
+  .empty-state {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    padding: 2.5rem 1rem;
+    text-align: center;
+  }
+
+  .empty-state-icon {
+    width: 2rem;
+    height: 2rem;
+    color: var(--ui-muted-foreground);
+  }
+
+  .empty-state-title {
+    margin: 0.25rem 0 0;
+    font-size: 1.0625rem;
+  }
+
+  .empty-state-description {
+    max-width: 28rem;
+    margin: 0;
+    color: var(--ui-muted-foreground);
+  }
+
+  .empty-state-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .skeleton {
+    display: block;
+    width: 100%;
+    border-radius: var(--ui-radius);
+    background: linear-gradient(
+        90deg,
+        var(--ui-muted) 0 35%,
+        color-mix(in oklab, var(--ui-muted), var(--ui-foreground) 8%) 50%,
+        var(--ui-muted) 65% 100%
+      )
+      0 0 / 300% 100%;
+    animation: skeleton-wave 1.6s ease-in-out infinite;
+  }
+
+  .skeleton-text {
+    display: grid;
+    gap: 0.5rem;
+
+    .skeleton {
+      height: 0.75rem;
+    }
+  }
+
+  @keyframes skeleton-wave {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: 0 0;
+    }
+  }
+
+  .description-list {
+    display: grid;
+    margin: 0;
+
+    &[data-layout="columns"] .description-item {
+      display: grid;
+      grid-template-columns: minmax(8rem, 1fr) 2fr;
+      gap: 1rem;
+    }
+
+    dt {
+      color: var(--ui-muted-foreground);
+    }
+
+    dd {
+      margin: 0;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .description-item {
+    padding-block: 0.625rem;
+    border-bottom: 1px solid var(--ui-border);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  .item-list {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3rem;
+    padding-block: 0.625rem;
+    border-bottom: 1px solid var(--ui-border);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  .item-text {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-title {
+    overflow: hidden;
+    color: var(--ui-foreground);
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  a.item-title {
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .item-description,
+  .item-meta {
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+  }
+
+  .item-actions {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .alert {
+    --alert-color: var(--tone-info);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    align-items: start;
+    padding: 0.875rem 1rem;
+    position: relative;
+    overflow: hidden;
+    padding-inline-start: calc(1rem + 3px);
+    border: 1px solid color-mix(in oklab, var(--alert-color) 45%, var(--ui-border));
+    border-radius: calc(var(--ui-radius) + 4px);
+    background: color-mix(in oklab, var(--alert-color) 7%, var(--ui-background));
+
+    /* The accent is a straight bar the corners clip; a thick border would taper into them. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: 0;
+      inline-size: 4px;
+      background: var(--alert-color);
+    }
+
+    &[data-tone="success"] {
+      --alert-color: var(--tone-success);
+    }
+
+    &[data-tone="warning"] {
+      --alert-color: var(--tone-warning);
+    }
+
+    &[data-tone="danger"] {
+      --alert-color: var(--tone-danger);
+    }
+  }
+
+  .alert-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--alert-color);
+  }
+
+  .alert-body {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .alert-title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .alert-text {
+    color: var(--ui-foreground);
+  }
+
+  .alert-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.375rem;
+  }
+
+  .alert-dismiss {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+  }
+
+  /* Sized in its own em so a key sits inside a line of text, not below it. */
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    min-width: 1.75em;
+    height: 1.75em;
+    justify-content: center;
+    padding-inline: 0.4em;
+    vertical-align: 0.125em;
+    line-height: 1;
+    border: 1px solid var(--ui-input);
+    border-bottom-width: 2px;
+    border-radius: calc(var(--ui-radius) / 2 + 2px);
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+    font-family: var(--ui-font-mono);
+    font-size: 0.75rem;
+  }
+
+  .spinner {
+    display: inline-block;
+    flex-shrink: 0;
+    border: 2px solid color-mix(in oklab, var(--ui-foreground) 18%, transparent);
+    border-top-color: var(--ui-primary);
+    border-radius: 50%;
+    animation: spinner-turn 0.8s linear infinite;
+  }
+
+  @keyframes spinner-turn {
+    to {
+      rotate: 1turn;
+    }
+  }
+
+  .stepper {
+    container-type: inline-size;
+  }
+
+  .stepper ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Marks line up across steps, whether a step has a description or not. */
+  .stepper-step {
+    align-items: flex-start;
+    gap: 0.625rem;
+    height: auto;
+    min-height: 2.75rem;
+    padding: 0.375rem 0.625rem 0.375rem 0.375rem;
+    text-align: start;
+  }
+
+  @container (max-width: 30rem) {
+    .stepper ol {
+      flex-direction: column;
+      flex-wrap: nowrap;
+    }
+  }
+
+  .stepper-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    border: 2px solid var(--ui-input);
+    border-radius: 50%;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stepper li[data-state="current"] .stepper-mark {
+    border-color: var(--ui-primary);
+    color: var(--ui-primary);
+  }
+
+  .stepper li[data-state="complete"] .stepper-mark {
+    border-color: var(--ui-primary);
+    background: var(--ui-primary);
+    color: var(--ui-primary-foreground);
+  }
+
+  .stepper-text {
+    display: grid;
+  }
+
+  .stepper-label {
+    font-weight: 600;
+  }
+
+  .stepper-description {
+    font-size: 0.75rem;
+    color: var(--ui-muted-foreground);
+  }
+
+  .search-field {
+    position: relative;
+    display: flex;
+    /* A row even as a UI SDK field (which stacks its parts), so the icon centers. */
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+
+    [data-slot="input"] {
+      width: 100%;
+      padding-inline: 2.125rem 3rem;
+    }
+  }
+
+  .search-field-icon {
+    position: absolute;
+    inset-inline-start: 0.625rem;
+    color: var(--ui-muted-foreground);
+    pointer-events: none;
+  }
+
+  .search-field-clear {
+    position: absolute;
+    inset-inline-end: 0.25rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+  }
+
+  /* The browser's own clear button would duplicate ours. */
+  .search-field input[type="search"]::-webkit-search-cancel-button {
+    display: none;
+  }
+
+  .search-field-hint {
+    position: absolute;
+    inset-inline-end: 0.5rem;
+    pointer-events: none;
+  }
+
+  .copy-button {
+    gap: 0.375rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton,
+    .spinner {
+      animation-duration: 0s;
+    }
+
+    .spinner {
+      border-top-color: var(--ui-muted-foreground);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .badge,
+    .alert,
+    .kbd {
+      border-color: CanvasText;
+    }
+
+    .sidebar-link[aria-current="page"] {
+      outline: 2px solid Highlight;
+    }
+
+    .stepper li[data-state="complete"] .stepper-mark {
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+}

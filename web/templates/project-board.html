@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&family=Saira+Semi+Condensed:wght@400;500;600&family=Instrument+Sans:wdth,wght@75..100,400..700&family=Spline+Sans+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,400..700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+    <title>UISet Project board page, no React</title>
+    <script type="module">
+      import "../src/uiset.ts"
+      import "../src/templates/project-board.ts"
+    </script>
+  </head>
+  <body>
+    <uiset-root skin="base" id="root">
+      <div class="web-template-page">
+        <div class="template-frame">
+          <div class="template-shell">
+          <uiset-app-shell label="Project navigation">
+            <span data-part="brand" class="template-brand">Acme Projects</span>
+            <nav data-part="sidebar" class="sidebar-nav" aria-label="Projects and issues">
+              <div class="sidebar-group">
+                <ul>
+                  <li><a href="#my-issues" class="sidebar-link"><span class="sidebar-icon" data-icon="inbox"></span><span class="sidebar-label">My issues</span></a></li>
+                </ul>
+              </div>
+              <div class="sidebar-group">
+                <p id="nav-projects" class="sidebar-group-title">Projects</p>
+                <ul aria-labelledby="nav-projects" id="projects"></ul>
+              </div>
+            </nav>
+            <div class="project">
+              <uiset-page-header title="Website relaunch" description="Sprint 24 runs until Friday, November 27." id="header">
+                <div class="project-actions">
+                  <ul class="project-members" aria-label="Members" id="members"></ul>
+                  <ui-button><button type="button" id="new-issue" data-icon="plus">New issue</button></ui-button>
+                </div>
+              </uiset-page-header>
+              <ui-meter class="project-progress" aria-label="Sprint progress" id="progress">
+                <span class="project-progress-label">Sprint progress</span>
+                <ui-meter-value></ui-meter-value>
+                <ui-meter-track><ui-meter-indicator></ui-meter-indicator></ui-meter-track>
+              </ui-meter>
+              <div class="board-toolbar" role="group" aria-label="Issues tools">
+                <uiset-search-field id="search" label="Search issues" placeholder="Search cards…" shortcut=""></uiset-search-field>
+                <ui-field name="person">
+                  <ui-select id="person" default-value="anyone">
+                    <ui-select-label class="uiset-visually-hidden">Cards for</ui-select-label>
+                    <ui-select-trigger><button type="button" data-variant="outline"><ui-select-value></ui-select-value></button></ui-select-trigger>
+                    <ui-select-content id="person-list"></ui-select-content>
+                  </ui-select>
+                </ui-field>
+                <ui-segmented-control aria-label="View" default-value="board" class="project-view-switch" id="view">
+                  <ui-segmented-control-indicator></ui-segmented-control-indicator>
+                  <ui-segmented-control-item value="board">Board</ui-segmented-control-item>
+                  <ui-segmented-control-item value="list">List</ui-segmented-control-item>
+                </ui-segmented-control>
+              </div>
+              <!-- The board stays while the list shows: its rules hold for edits made from the list. -->
+              <div class="project-view" id="board-view">
+                <uiset-board id="board" aria-label="Issue board" today="2026-11-16" addable openable></uiset-board>
+              </div>
+              <div class="project-view" id="list-view" hidden>
+                <uiset-data-grid label="Issue list" id="issues" height="26rem" locale="en-US"></uiset-data-grid>
+              </div>
+            </div>
+          </uiset-app-shell>
+          </div>
+        </div>
+      </div>
+
+      <!-- An issue's details, as the React BoardCardDialog draws them. -->
+      <ui-dialog id="card-dialog">
+        <ui-dialog-backdrop hidden></ui-dialog-backdrop>
+        <ui-dialog-content class="board-dialog" hidden>
+          <ui-dialog-title id="card-title"></ui-dialog-title>
+          <ui-dialog-description id="card-where"></ui-dialog-description>
+          <div id="card-form-slot"></div>
+        </ui-dialog-content>
+      </ui-dialog>
+
+      <template id="card-form">
+        <form class="board-dialog-form">
+          <ui-field name="card-title">
+            <ui-field-label>Title</ui-field-label>
+            <ui-input><input name="card-title" required autocomplete="off" /></ui-input>
+            <ui-field-error match="valueMissing">A card needs a title.</ui-field-error>
+          </ui-field>
+          <ui-field name="card-description">
+            <ui-field-label>Description</ui-field-label>
+            <ui-textarea auto-resize><textarea name="card-description"></textarea></ui-textarea>
+          </ui-field>
+          <div class="board-dialog-row">
+            <ui-field name="card-column"><ui-select name="card-column" data-options="column"><ui-select-label>Column</ui-select-label><ui-select-trigger><button type="button"><ui-select-value></ui-select-value></button></ui-select-trigger><ui-select-content></ui-select-content></ui-select></ui-field>
+            <ui-field name="card-assignee"><ui-select name="card-assignee" data-options="assignee"><ui-select-label>Assignee</ui-select-label><ui-select-trigger><button type="button"><ui-select-value></ui-select-value></button></ui-select-trigger><ui-select-content></ui-select-content></ui-select></ui-field>
+          </div>
+          <div class="board-dialog-row">
+            <ui-field name="card-due">
+              <ui-field-label>Due date</ui-field-label>
+              <ui-input><input type="date" name="card-due" /></ui-input>
+            </ui-field>
+            <ui-field name="card-priority"><ui-select name="card-priority" data-options="priority"><ui-select-label>Priority</ui-select-label><ui-select-trigger><button type="button"><ui-select-value></ui-select-value></button></ui-select-trigger><ui-select-content></ui-select-content></ui-select></ui-field>
+          </div>
+          <ui-checkbox-group name="card-labels" aria-label="Labels" class="board-dialog-labels"></ui-checkbox-group>
+          <p class="board-dialog-error" role="alert" hidden></p>
+          <div class="board-dialog-actions">
+            <ui-button><button type="button" data-variant="ghost" class="board-delete" data-icon="trash" data-delete>Delete card</button></ui-button>
+            <span class="board-dialog-spacer"></span>
+            <ui-dialog-close><button type="button">Cancel</button></ui-dialog-close>
+            <ui-button><button type="submit">Save card</button></ui-button>
+          </div>
+        </form>
+      </template>
+
+      <ui-alert-dialog id="confirm-delete">
+        <ui-alert-dialog-backdrop hidden></ui-alert-dialog-backdrop>
+        <ui-alert-dialog-content hidden>
+          <ui-alert-dialog-title id="confirm-title"></ui-alert-dialog-title>
+          <ui-alert-dialog-description>It’s gone for good, with its description.</ui-alert-dialog-description>
+          <div class="board-dialog-actions">
+            <ui-alert-dialog-close><button type="button">Keep the card</button></ui-alert-dialog-close>
+            <ui-alert-dialog-close><button type="button" data-variant="destructive" id="confirm-delete-card">Delete for good</button></ui-alert-dialog-close>
+          </div>
+        </ui-alert-dialog-content>
+      </ui-alert-dialog>
+
+      <ui-dialog id="new-issue-dialog">
+        <ui-dialog-backdrop hidden></ui-dialog-backdrop>
+        <ui-dialog-content class="board-dialog" hidden>
+          <ui-dialog-title>New issue</ui-dialog-title>
+          <ui-dialog-description>It goes at the end of its column.</ui-dialog-description>
+          <div id="new-issue-slot"></div>
+        </ui-dialog-content>
+      </ui-dialog>
+
+      <template id="new-issue-form">
+        <form class="board-dialog-form" aria-label="New issue">
+          <ui-field name="issue-title">
+            <ui-field-label>Title</ui-field-label>
+            <ui-input><input name="issue-title" required autocomplete="off" /></ui-input>
+            <ui-field-error match="valueMissing">An issue needs a title.</ui-field-error>
+          </ui-field>
+          <div class="board-dialog-row">
+            <ui-field name="issue-column"><ui-select name="issue-column" data-options="column"><ui-select-label>Column</ui-select-label><ui-select-trigger><button type="button"><ui-select-value></ui-select-value></button></ui-select-trigger><ui-select-content></ui-select-content></ui-select></ui-field>
+            <ui-field name="issue-assignee"><ui-select name="issue-assignee" data-options="assignee"><ui-select-label>Assignee</ui-select-label><ui-select-trigger><button type="button"><ui-select-value></ui-select-value></button></ui-select-trigger><ui-select-content></ui-select-content></ui-select></ui-field>
+          </div>
+          <div class="board-dialog-row">
+            <ui-field name="issue-due">
+              <ui-field-label>Due date</ui-field-label>
+              <ui-input><input type="date" name="issue-due" /></ui-input>
+            </ui-field>
+            <ui-field name="issue-priority"><ui-select name="issue-priority" data-options="priority"><ui-select-label>Priority</ui-select-label><ui-select-trigger><button type="button"><ui-select-value></ui-select-value></button></ui-select-trigger><ui-select-content></ui-select-content></ui-select></ui-field>
+          </div>
+          <div class="board-dialog-actions">
+            <span class="board-dialog-spacer"></span>
+            <ui-dialog-close><button type="button">Cancel</button></ui-dialog-close>
+            <ui-button><button type="submit">Add issue</button></ui-button>
+          </div>
+        </form>
+      </template>
+
+      <ui-toast-region aria-label="Notifications">
+        <template><ui-toast><div data-slot="stack"><ui-toast-title></ui-toast-title><ui-toast-description></ui-toast-description></div><ui-toast-action><button type="button" data-variant="solid"></button></ui-toast-action><ui-toast-close><button type="button" aria-label="Dismiss"><svg class="uiset-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button></ui-toast-close></ui-toast></template>
+      </ui-toast-region>
+    </uiset-root>
+  </body>
+</html>

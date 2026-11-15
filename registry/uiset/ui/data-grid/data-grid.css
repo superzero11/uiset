@@ -1,0 +1,531 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  .data-grid {
+    --data-grid-line: var(--ui-border);
+    --data-grid-head-bg: color-mix(in oklch, var(--ui-muted) 55%, var(--ui-background));
+    --data-grid-hover-bg: color-mix(in oklch, var(--ui-foreground) 4%, var(--ui-background));
+    --data-grid-selected-bg: color-mix(in oklch, var(--ui-primary) 10%, var(--ui-background));
+    --data-grid-range-bg: color-mix(in oklch, var(--ui-primary) 18%, var(--ui-background));
+    --data-grid-edge: var(--ui-primary);
+    display: grid;
+    gap: 0.625rem;
+    min-width: 0;
+    color: var(--ui-foreground);
+    font-size: 0.875rem;
+
+    &[data-density="compact"] {
+      font-size: 0.8125rem;
+    }
+  }
+
+  /* Toolbar */
+
+  .data-grid-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+
+    .search-field {
+      flex: 1 1 14rem;
+      max-width: 22rem;
+    }
+  }
+
+  .data-grid-tools,
+  .data-grid-selection {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .data-grid-selection {
+    flex: 1 1 14rem;
+    min-block-size: 2.25rem;
+  }
+
+  .data-grid-selection-count {
+    font-weight: 600;
+    padding-inline-end: 0.25rem;
+  }
+
+  .data-grid-badge {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: 1.25rem;
+    block-size: 1.25rem;
+    padding-inline: 0.3rem;
+    border-radius: 999px;
+    background: var(--ui-primary);
+    color: var(--ui-primary-foreground);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .data-grid-filters {
+    display: grid;
+    gap: 0.75rem;
+    min-inline-size: 16rem;
+  }
+
+  /* The web grid keeps its filter fields in one box: they lay out as the popover's own rows. */
+  .data-grid-filter-list {
+    display: contents;
+  }
+
+  /* The scrolling box and the grid inside it */
+
+  .data-grid-scroller {
+    position: relative;
+    max-block-size: var(--data-grid-height, 28rem);
+    overflow: auto;
+    border: 1px solid var(--data-grid-line);
+    border-radius: calc(var(--ui-radius) + 4px);
+    background: var(--ui-background);
+    overscroll-behavior-inline: contain;
+    container-type: inline-size;
+  }
+
+  .data-grid-table {
+    position: relative;
+    min-inline-size: 100%;
+    outline: none;
+  }
+
+  .data-grid-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  /* Its own stacking context: a focused or editing cell never rides over the header. */
+  .data-grid-body {
+    position: relative;
+    isolation: isolate;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: opacity var(--uiset-fast, 120ms) var(--uiset-ease, ease);
+    }
+
+    /* While a filter catches up with typing, the previous rows hold, dimmed. */
+    .data-grid-scroller[data-stale] & {
+      opacity: 0.6;
+    }
+  }
+
+  .data-grid-row {
+    --row-bg: var(--ui-background);
+    display: grid;
+    grid-template-columns: var(--data-grid-columns);
+    block-size: var(--data-grid-row-height);
+
+    .data-grid-body > & {
+      position: absolute;
+      inset-inline: 0;
+    }
+
+    &:hover {
+      --row-bg: var(--data-grid-hover-bg);
+    }
+
+    &[data-selected] {
+      --row-bg: var(--data-grid-selected-bg);
+    }
+  }
+
+  .data-grid-header-row {
+    --row-bg: var(--data-grid-head-bg);
+    block-size: var(--data-grid-header-height);
+
+    &:hover {
+      --row-bg: var(--data-grid-head-bg);
+    }
+  }
+
+  .data-grid-cell {
+    position: relative;
+    min-inline-size: 0;
+    padding-inline: 0.75rem;
+    overflow: hidden;
+    border-block-end: 1px solid var(--data-grid-line);
+    background: var(--row-bg);
+    line-height: calc(var(--data-grid-row-height) - 1px);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    outline: none;
+    cursor: default;
+
+    &[data-align="end"] {
+      text-align: end;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &[data-align="center"] {
+      text-align: center;
+    }
+
+    /* The cell holding focus, from keys or a click. An outline holds in forced colors. */
+    &[data-active]:focus {
+      z-index: 3;
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: -2px;
+    }
+
+    /* A range of cells: tinted, with its outline on the outer sides. */
+    &[aria-selected="true"] {
+      --row-bg: var(--data-grid-range-bg);
+    }
+
+    &[data-range-edge]::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border: 0 solid var(--data-grid-edge);
+      /* The range names sides by column order, so they follow the reading direction. */
+      border-block-start-width: var(--edge-top, 0);
+      border-inline-end-width: var(--edge-right, 0);
+      border-block-end-width: var(--edge-bottom, 0);
+      border-inline-start-width: var(--edge-left, 0);
+    }
+
+    &[data-range-edge~="top"] {
+      --edge-top: 2px;
+    }
+    &[data-range-edge~="right"] {
+      --edge-right: 2px;
+    }
+    &[data-range-edge~="bottom"] {
+      --edge-bottom: 2px;
+    }
+    &[data-range-edge~="left"] {
+      --edge-left: 2px;
+    }
+
+    /* While editing, the input is the only target; the cell under it takes no pointer. */
+    &[data-editing] {
+      z-index: 4;
+      overflow: visible;
+      padding: 0;
+      pointer-events: none;
+    }
+
+    &[data-editable] {
+      cursor: cell;
+    }
+  }
+
+  /* Columns pinned to the start stay put while the rest scroll sideways, above them,
+     focused and editing cells included. */
+  .data-grid-cell[data-pinned] {
+    position: sticky;
+    z-index: 5;
+
+    &[data-active]:focus {
+      z-index: 6;
+    }
+  }
+
+  .data-grid-header[data-pinned],
+  .data-grid-header-row .data-grid-select {
+    z-index: 3;
+  }
+
+  .data-grid-cell[data-pinned-edge] {
+    box-shadow: inset -1px 0 0 var(--data-grid-line);
+
+    &:dir(rtl) {
+      box-shadow: inset 1px 0 0 var(--data-grid-line);
+    }
+  }
+
+  .data-grid-header {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.2;
+    user-select: none;
+    cursor: pointer;
+
+    &[data-align="end"] {
+      flex-direction: row-reverse;
+    }
+
+    &[aria-sort],
+    &:has(.data-grid-sort) {
+      color: var(--ui-foreground);
+    }
+  }
+
+  .data-grid-header-label {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .data-grid-sort {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: var(--ui-foreground);
+
+    .uiset-icon {
+      width: 0.875rem;
+      height: 0.875rem;
+      stroke-width: 2.25;
+    }
+  }
+
+  .data-grid-sort-order {
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .data-grid-menu-button {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    margin-inline-start: auto;
+    padding: 0;
+    border: 0;
+    border-radius: var(--ui-radius);
+    background: transparent;
+    font: inherit;
+    color: var(--ui-muted-foreground);
+    opacity: 0;
+    cursor: pointer;
+
+    &:hover {
+      background: color-mix(in oklch, var(--ui-foreground) 8%, transparent);
+      color: var(--ui-foreground);
+    }
+
+    .data-grid-header:hover &,
+    .data-grid-header[data-active] &,
+    .data-grid-header:focus-within &,
+    &[data-open] {
+      opacity: 1;
+    }
+
+    /* Without hover (a touch screen), it's always there. */
+    @media (hover: none) {
+      opacity: 1;
+    }
+
+    .data-grid-header[data-align="end"] & {
+      margin-inline: 0 auto;
+    }
+
+    @media (hover: none) {
+      opacity: 1;
+    }
+  }
+
+  .data-grid-resizer {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: 0.5rem;
+    cursor: col-resize;
+    touch-action: none;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: 0.5rem;
+      inset-inline-end: 0;
+      inline-size: 2px;
+      border-radius: 1px;
+      background: var(--ui-ring);
+      opacity: 0;
+    }
+
+    &:hover::after,
+    &:active::after {
+      opacity: 1;
+    }
+  }
+
+  .data-grid-select {
+    display: grid;
+    place-items: center;
+    padding: 0;
+  }
+
+  .data-grid-checkbox {
+    inline-size: 1rem;
+    block-size: 1rem;
+    margin: 0;
+    accent-color: var(--ui-primary);
+    cursor: pointer;
+  }
+
+  .data-grid-group-row {
+    --row-bg: color-mix(in oklch, var(--ui-muted) 35%, var(--ui-background));
+  }
+
+  .data-grid-group {
+    grid-column: 1 / -1;
+    overflow: visible;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .data-grid-group-inner {
+    position: sticky;
+    inset-inline-start: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    max-inline-size: 100%;
+  }
+
+  .data-grid-chevron {
+    color: var(--ui-muted-foreground);
+
+    [aria-expanded="true"] & {
+      rotate: 90deg;
+    }
+
+    &:dir(rtl) {
+      scale: -1 1;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: rotate var(--uiset-fast, 120ms) var(--uiset-ease, ease);
+    }
+  }
+
+  .data-grid-count {
+    padding-inline: 0.4rem;
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--ui-foreground) 8%, transparent);
+    color: var(--ui-muted-foreground);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .data-grid-boolean {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    &::before {
+      content: "";
+      inline-size: 0.5rem;
+      block-size: 0.5rem;
+      border-radius: 50%;
+      border: 1.5px solid currentColor;
+    }
+
+    &[data-value="true"]::before {
+      background: currentColor;
+    }
+
+    &[data-value="false"] {
+      color: var(--ui-muted-foreground);
+    }
+  }
+
+  /* The editor covers the whole cell, border included, so the cell isn't a sliver of target. */
+  .data-grid-editor {
+    position: absolute;
+    inset: 0 0 -1px;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: calc(100% + 1px);
+    padding-inline: 0.75rem;
+    padding-block: 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--ui-background);
+    line-height: inherit;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+    outline: 2px solid var(--ui-ring-border);
+    outline-offset: -2px;
+    pointer-events: auto;
+
+    &[aria-invalid] {
+      outline-color: var(--tone-danger, var(--ui-destructive));
+    }
+  }
+
+  .data-grid-error {
+    position: absolute;
+    inset-inline-start: 0;
+    top: calc(100% + 4px);
+    z-index: 5;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--ui-radius);
+    background: var(--ui-foreground);
+    color: var(--ui-background);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    white-space: nowrap;
+    box-shadow: var(--ui-shadow);
+  }
+
+  .data-grid-empty {
+    position: sticky;
+    inset-inline-start: 0;
+    display: grid;
+    place-items: center;
+    inline-size: 100cqi;
+    box-sizing: border-box;
+    padding: 2.5rem 1rem;
+    color: var(--ui-muted-foreground);
+    text-align: center;
+  }
+
+  .data-grid-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-inline: 0.25rem;
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .data-grid-menu .uiset-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  /* Forced colors keep the system's colors; only a selection paints Highlight. Rings are
+     outlines, which forced colors keep. */
+  @media (forced-colors: active) {
+    .data-grid-row[data-selected] .data-grid-cell,
+    .data-grid-cell[aria-selected="true"] {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+
+    .data-grid-cell[data-range-edge]::after {
+      border-color: CanvasText;
+    }
+  }
+
+  /* A menu opened from a header sits inside it in the page (top layer); it doesn't take
+     the header's weight, color or alignment (D12). */
+  .data-grid-header :is([data-slot="menu-content"], [data-slot="popover-content"]) {
+    color: var(--ui-foreground);
+    font-weight: 400;
+    text-align: start;
+    cursor: default;
+  }
+}

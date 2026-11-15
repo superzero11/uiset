@@ -1,0 +1,16 @@
+node_modules
+dist
+public/r
+test-results
+# A pnpm cache, if one is ever created inside the project (as in Docker).
+.pnpm-store
+playwright-report
+.DS_Store
+*.log
+.vercel
+registry.build.json
+
+# Third-party agent skills used while developing UISet: pinned (source and hash) in
+# skills-lock.json and installed locally with `npx skills add <source>`, not redistributed.
+.claude/skills/
+.claude/settings.local.json

@@ -1,0 +1,31 @@
+{
+  "run": "scheduler-bridge-2",
+  "task": "scheduler",
+  "approach": "bridge",
+  "ok": true,
+  "detail": {
+    "matches": [
+      "Roadmap sync, Wednesday, November 18, 10:00 AM to 10:30 AM"
+    ]
+  },
+  "toolCalls": 3,
+  "textRead": 3661,
+  "seconds": 7.17,
+  "calls": [
+    {
+      "command": "snapshot",
+      "chars": 2193,
+      "at": 1794748207642
+    },
+    {
+      "command": "act",
+      "chars": 297,
+      "at": 1794748211834
+    },
+    {
+      "command": "act",
+      "chars": 1171,
+      "at": 1794748214812
+    }
+  ]
+}

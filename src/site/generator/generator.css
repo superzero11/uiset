@@ -1,0 +1,638 @@
+/*
+  The theme generator page. Plain classes prefixed generator-, drawn with the site root's
+  own variables. The preview screens inside carry the generated skin, so everything under
+  .generator-screen uses only --ui-* and sizes, never the site's colors.
+*/
+
+/* The site's own column, so the page lines up with the header. */
+.generator {
+  inline-size: min(100% - var(--site-gutter, 1.5rem) * 2, var(--site-max, 78rem));
+  margin-inline: auto;
+  padding-block: clamp(2rem, 5vw, 3.5rem) 5rem;
+}
+
+/* ------------------------------------------------------------------ intro */
+
+.generator-intro h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2.25rem, 4.5vw, 3.25rem);
+  font-stretch: 75%;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.015em;
+}
+
+.generator-intro p {
+  max-inline-size: 42rem;
+  margin: 0;
+  color: var(--ui-muted-foreground);
+  font-size: 1.0625rem;
+  text-wrap: pretty;
+}
+
+.generator-layout {
+  display: grid;
+  grid-template-columns: 18.5rem minmax(0, 1fr);
+  gap: clamp(2rem, 3.5vw, 3.5rem);
+  align-items: start;
+  margin-block-start: clamp(2rem, 4vw, 3rem);
+}
+
+/* ------------------------------------------------------------------ the rail of inputs */
+
+.generator-rail {
+  position: sticky;
+  inset-block-start: calc(var(--site-header, 0rem) + 1rem);
+  display: grid;
+  gap: 1.5rem;
+  max-block-size: calc(100dvh - var(--site-header, 0rem) - 2rem);
+  overflow: auto;
+  overscroll-behavior: contain;
+  /* Room for focus rings and the scrollbar inside the scroll box. */
+  padding: 0.25rem 0.75rem 1rem 0.25rem;
+  margin: -0.25rem -0.75rem 0 -0.25rem;
+  scrollbar-width: thin;
+}
+
+.generator-group {
+  display: grid;
+  gap: 1rem;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.generator-group + .generator-group {
+  padding-block-start: 1.5rem;
+  border-block-start: 1px solid var(--ui-border);
+}
+
+/* A floated legend is an ordinary grid item: it sits inside the set, above its fields. */
+.generator-group > legend {
+  float: left;
+  inline-size: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 0.9375rem;
+  font-weight: 650;
+}
+
+.generator-key-swatch {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  min-block-size: 6.5rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: calc(var(--ui-radius) + 4px);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ui-foreground) 10%, transparent);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.generator-key-sample {
+  font-size: 2.25rem;
+  font-stretch: 75%;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.generator-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.generator-preset[data-slot] {
+  gap: 0.4rem;
+  min-block-size: 0;
+  padding: 0.3rem 0.6rem 0.3rem 0.45rem;
+  font-size: 0.8125rem;
+}
+
+.generator-preset[aria-pressed="true"] {
+  border-color: var(--ui-foreground);
+  box-shadow: inset 0 0 0 1px var(--ui-foreground);
+}
+
+.generator-preset-swatch {
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ui-foreground) 15%, transparent);
+}
+
+/* Sliders: the value sits on the label's line; color sliders draw their own axis. */
+.generator-slider {
+  position: relative;
+}
+
+.generator-slider [data-slot="slider"] {
+  min-inline-size: 0;
+}
+
+.generator-slider [data-slot="slider-value"] {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+}
+
+.generator-slider[style*="--generator-track"] [data-slot="slider-track"] {
+  block-size: 0.625rem;
+  border-radius: 999px;
+  background: var(--generator-track);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ui-foreground) 12%, transparent);
+}
+
+.generator-slider[style*="--generator-track"] [data-slot="slider-indicator"] {
+  background: transparent;
+}
+
+.generator-slider[style*="--generator-track"] [data-slot="slider-thumb"] {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  border: 3px solid oklch(1 0 0);
+  background: transparent;
+  box-shadow:
+    0 0 0 1px oklch(0.2 0 0 / 0.55),
+    0 1px 3px oklch(0 0 0 / 0.3);
+}
+
+.generator-switch {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.generator-group [data-slot="segmented-control"] {
+  inline-size: 100%;
+}
+
+.generator-group [data-slot="segmented-control-item"] {
+  flex: 1;
+}
+
+.generator-status {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.5rem 0.625rem;
+  align-items: start;
+  padding: 0.875rem 1rem;
+  border: 1px solid color-mix(in oklab, var(--tone-warning) 45%, var(--ui-border));
+  border-radius: calc(var(--ui-radius) + 4px);
+  background: color-mix(in oklab, var(--tone-warning) 7%, var(--ui-background));
+  font-size: 0.875rem;
+
+  &[data-pass] {
+    border-color: color-mix(in oklab, var(--tone-success) 40%, var(--ui-border));
+    background: color-mix(in oklab, var(--tone-success) 6%, var(--ui-background));
+  }
+
+  & p {
+    margin: 0;
+  }
+
+  & [data-slot="button"] {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+.generator-status-icon {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  margin-block-start: 0.125rem;
+  color: var(--tone-warning);
+
+  [data-pass] > & {
+    color: var(--tone-success);
+  }
+}
+
+/* ------------------------------------------------------------------ main column */
+
+.generator-main {
+  container: generator-main / inline-size;
+  min-inline-size: 0;
+}
+
+.generator-section {
+  scroll-margin-block-start: calc(var(--site-header, 0rem) + 1rem);
+}
+
+.generator-section + .generator-section {
+  margin-block-start: clamp(3rem, 6vw, 4.5rem);
+}
+
+/* Direct children only: the preview's popups and charts bring headings of their own. */
+.generator-section > h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  font-stretch: 85%;
+  font-weight: 650;
+  line-height: 1.15;
+}
+
+.generator-notes h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.generator-lede {
+  max-inline-size: 65ch;
+  margin: 0 0 1.25rem;
+  color: var(--ui-muted-foreground);
+  font-size: 0.9375rem;
+  text-wrap: pretty;
+}
+
+.generator-plain-list {
+  margin: 0;
+  padding-inline-start: 1.125rem;
+}
+
+.generator-main code,
+.generator-rail code {
+  font-family: var(--site-mono, ui-monospace, monospace);
+  font-size: 0.9em;
+}
+
+/* Code in tables and blocks is the content itself, not a word in a sentence: no chip. */
+.generator-table code,
+.generator-code code {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: inherit;
+}
+
+/* ------------------------------------------------------------------ previews */
+
+.generator-previews {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-block-start: 1rem;
+}
+
+@container generator-main (width < 50rem) {
+  .generator-previews {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.generator-screen-frame {
+  min-inline-size: 0;
+}
+
+.generator-screen-label {
+  margin: 0 0 0.5rem;
+  color: var(--ui-muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* The screen: everything inside is the generated skin. */
+.generator-screen {
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) + 6px);
+  box-shadow: var(--ui-shadow);
+  font-size: var(--ui-font-size);
+  line-height: 1.5;
+}
+
+.generator-screen-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: calc(var(--ui-spacing) * 3) calc(var(--ui-spacing) * 5);
+  border-block-end: 1px solid var(--ui-border);
+}
+
+.generator-screen-app {
+  font-weight: 650;
+}
+
+.generator-screen-bar [data-slot="popover-trigger"] {
+  margin-inline-start: auto;
+}
+
+.generator-screen-popover {
+  max-inline-size: 18rem;
+}
+
+.generator-screen-body {
+  display: grid;
+  gap: calc(var(--ui-spacing) * 5);
+  padding: calc(var(--ui-spacing) * 5);
+}
+
+.generator-screen-heading h3 {
+  margin: 0;
+  font-size: 1.25em;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.generator-screen-heading p {
+  margin: 0.125rem 0 0;
+  color: var(--ui-muted-foreground);
+}
+
+.generator-screen-form {
+  display: grid;
+  gap: calc(var(--ui-spacing) * 4);
+  padding: calc(var(--ui-spacing) * 4);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) + 4px);
+}
+
+.generator-screen-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: calc(var(--ui-spacing) * 4);
+  align-items: start;
+}
+
+/* React's Select renders no element of its own, so its label and trigger share a wrapper. */
+.generator-screen-select {
+  display: grid;
+  gap: calc(var(--ui-spacing) * 1.5);
+  min-inline-size: 0;
+}
+
+.generator-screen-row [data-slot="segmented-control"] {
+  inline-size: 100%;
+}
+
+.generator-screen-row [data-slot="segmented-control-item"] {
+  flex: 1;
+}
+
+.generator-screen-switch {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.generator-screen-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--ui-spacing) * 2);
+}
+
+.generator-screen-delete {
+  margin-inline-start: auto;
+}
+
+.generator-screen-alerts {
+  display: grid;
+  gap: calc(var(--ui-spacing) * 2);
+}
+
+/* ------------------------------------------------------------------ tables */
+
+.generator-table-scroll {
+  overflow-x: auto;
+  border-radius: var(--ui-radius);
+}
+
+.generator-table-scroll:focus-visible,
+.generator-code:focus-visible {
+  outline: 2px solid var(--ui-ring-border);
+  outline-offset: 2px;
+}
+
+.generator-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+
+  & th,
+  & td {
+    padding: 0.625rem 0.75rem 0.625rem 0;
+    border-block-end: 1px solid var(--ui-border);
+    text-align: start;
+    vertical-align: top;
+  }
+
+  & thead th {
+    padding-block-start: 0;
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  & tbody th {
+    font-weight: 500;
+  }
+}
+
+.generator-table-group th {
+  padding-block-start: 1.5rem;
+  font-weight: 650;
+}
+
+.generator-checks td:not([data-pass]) {
+  background: color-mix(in oklab, var(--tone-danger) 6%, var(--ui-background));
+}
+
+.generator-checks {
+  & th[scope="row"] {
+    inline-size: 36%;
+  }
+
+  & td {
+    inline-size: 32%;
+  }
+}
+
+.generator-need {
+  display: block;
+  margin-block-start: 0.125rem;
+  color: var(--ui-muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+.generator-result {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  white-space: nowrap;
+}
+
+.generator-result-icon {
+  inline-size: 1rem;
+  block-size: 1rem;
+  color: var(--tone-danger);
+
+  [data-pass] > .generator-result > & {
+    color: var(--tone-success);
+  }
+}
+
+.generator-result-value {
+  font-weight: 600;
+}
+
+.generator-result-word {
+  color: var(--ui-muted-foreground);
+}
+
+td:not([data-pass]) .generator-result-word {
+  color: var(--tone-danger);
+  font-weight: 600;
+}
+
+.generator-result-detail {
+  display: block;
+  margin-block-start: 0.125rem;
+  color: var(--ui-muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.generator-fix[data-slot] {
+  margin-block-start: 0.5rem;
+  min-block-size: 0;
+  padding: 0.3rem 0.625rem;
+  font-size: 0.8125rem;
+  white-space: normal;
+  text-align: start;
+}
+
+.generator-notes {
+  margin-block-start: 1.5rem;
+  color: var(--ui-muted-foreground);
+  font-size: 0.875rem;
+
+  & h3 {
+    color: var(--ui-foreground);
+    font-size: 0.9375rem;
+  }
+}
+
+.generator-tokens {
+  & th[scope="row"] {
+    inline-size: 30%;
+    white-space: nowrap;
+  }
+
+  & td {
+    white-space: nowrap;
+  }
+}
+
+.generator-token {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.generator-token-swatch {
+  flex: none;
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ui-foreground) 15%, transparent);
+}
+
+.generator-token-hex {
+  color: var(--ui-muted-foreground);
+  font-size: 0.8125rem;
+}
+
+/* ------------------------------------------------------------------ export */
+
+.generator-tabs [data-slot="tabs-list"] {
+  margin-block-end: 1.25rem;
+}
+
+.generator-panel {
+  display: grid;
+  gap: 1rem;
+
+  & > .generator-lede {
+    margin: 0;
+  }
+}
+
+.generator-skin-name {
+  max-inline-size: 20rem;
+}
+
+.generator-code {
+  max-block-size: 26rem;
+  margin: 0;
+  overflow: auto;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+  background: var(--ui-muted);
+  font-family: var(--site-mono, ui-monospace, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  tab-size: 2;
+}
+
+.generator-file-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ------------------------------------------------------------------ narrow screens */
+
+@media (width < 64rem) {
+  .generator-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .generator-rail {
+    position: static;
+    max-block-size: none;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* On a phone the checks keep three columns: the pass or fail word goes quiet (the icon
+   and the cell's color say it; screen readers still hear it). */
+@container generator-main (width < 36rem) {
+  .generator-checks {
+    font-size: 0.8125rem;
+
+    & th[scope="row"] {
+      inline-size: 34%;
+    }
+  }
+
+  .generator-result {
+    gap: 0.25rem;
+  }
+
+  .generator-result-word {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .generator-result-detail {
+    font-size: 0.75rem;
+    overflow-wrap: anywhere;
+  }
+
+  .generator-screen-body {
+    padding: calc(var(--ui-spacing) * 4);
+  }
+}

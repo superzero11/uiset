@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&family=Saira+Semi+Condensed:wght@400;500;600&family=Instrument+Sans:wdth,wght@75..100,400..700&family=Spline+Sans+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,400..700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+    <title>UISet IDE, no React</title>
+    <script type="module">
+      import "./src/uiset.ts"
+      import "./src/ide-demo.ts"
+    </script>
+  </head>
+  <body>
+    <uiset-root skin="base" id="root">
+      <main class="web-ide-page">
+        <h1 class="uiset-visually-hidden">Greeter project</h1>
+        <div class="template-ide web-ide" id="ide">
+          <header class="template-ide-header">
+            <span class="template-ide-project" id="project">greeter</span>
+            <uiset-command-palette id="palette" lines></uiset-command-palette>
+          </header>
+          <div class="web-ide-layout">
+            <div class="template-ide-side">
+              <uiset-file-tree id="files" label="Files" heading-level="2" default-expanded="src,src/lib" creatable renamable movable deletable></uiset-file-tree>
+            </div>
+            <div class="web-ide-main">
+              <uiset-editor-tabs id="tabs" empty="No file open. Choose one from Files, or press ⌘P."></uiset-editor-tabs>
+              <section class="template-ide-panel web-ide-panel" aria-labelledby="problems-title">
+                <h2 id="problems-title" class="web-ide-panel-title">Problems <span class="template-ide-count" id="problem-count"></span></h2>
+                <uiset-problems id="problems" class="template-ide-panel-body"></uiset-problems>
+              </section>
+            </div>
+          </div>
+          <uiset-status-bar id="status"></uiset-status-bar>
+        </div>
+
+        <ui-alert-dialog id="close-dialog">
+          <ui-alert-dialog-backdrop hidden></ui-alert-dialog-backdrop>
+          <ui-alert-dialog-content hidden>
+            <ui-alert-dialog-title id="close-title"></ui-alert-dialog-title>
+            <ui-alert-dialog-description>Your changes are lost if you don't save them.</ui-alert-dialog-description>
+            <div class="ide-dialog-actions">
+              <ui-alert-dialog-close><button type="button">Cancel</button></ui-alert-dialog-close>
+              <ui-alert-dialog-close><button type="button" data-variant="ghost" id="close-discard">Don't save</button></ui-alert-dialog-close>
+              <ui-alert-dialog-close><button type="button" id="close-save">Save</button></ui-alert-dialog-close>
+            </div>
+          </ui-alert-dialog-content>
+        </ui-alert-dialog>
+      </main>
+    </uiset-root>
+  </body>
+</html>

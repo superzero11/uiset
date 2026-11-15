@@ -1,0 +1,441 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  .schedule {
+    --hour: 3rem;
+    --gutter: 4.25rem;
+    --schedule-line: var(--chart-grid, var(--ui-border));
+    display: grid;
+    grid-template-rows: auto 1fr;
+    max-block-size: var(--schedule-height, 36rem);
+    overflow: auto;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 6px);
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+    font-size: 0.8125rem;
+    overscroll-behavior: contain;
+    /* Focus scrolls an event clear of the sticky head and gutter. */
+    scroll-padding-block-start: 2.5rem;
+    scroll-padding-inline-start: var(--gutter);
+
+    &:focus-visible {
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: 2px;
+    }
+  }
+
+  .schedule-head {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: var(--gutter) repeat(var(--schedule-tracks), minmax(7rem, 1fr));
+    border-block-end: 1px solid var(--ui-border);
+    background: var(--ui-background);
+  }
+
+  .schedule-track-name {
+    padding: 0.5rem;
+    color: var(--ui-muted-foreground);
+    font-weight: 600;
+    text-align: center;
+
+    /* Today reads in full-contrast text, marked by an accent bar rather than a color. */
+    &[data-today] {
+      color: var(--ui-foreground);
+      box-shadow: inset 0 -3px 0 var(--ui-primary);
+    }
+  }
+
+  /* The corner and the hours stay put while a narrow week scrolls sideways. */
+  .schedule-corner,
+  .schedule-gutter {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 2;
+    background: var(--ui-background);
+  }
+
+  .schedule-hour-name {
+    color: var(--ui-muted-foreground);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .schedule-body {
+    display: grid;
+    grid-template-columns: var(--gutter) 1fr;
+  }
+
+  .schedule-gutter {
+    display: grid;
+    grid-auto-rows: var(--hour);
+
+    .schedule-hour-name {
+      padding-inline-end: 0.5rem;
+      text-align: end;
+      translate: 0 -0.5em;
+
+      /* The first label sits at the top edge instead of under the sticky header. */
+      &:first-child {
+        translate: none;
+      }
+    }
+  }
+
+  .schedule-tracks {
+    display: grid;
+    grid-template-columns: repeat(var(--schedule-tracks), minmax(7rem, 1fr));
+    block-size: calc(var(--schedule-hours) * var(--hour));
+    background-image: linear-gradient(to bottom, var(--schedule-line) 1px, transparent 1px);
+    background-size: 100% var(--hour);
+  }
+
+  .schedule-track {
+    position: relative;
+    border-inline-start: 1px solid var(--schedule-line);
+    touch-action: none;
+    cursor: cell;
+
+    /* A finger scrolls the schedule; a tap still makes an event, and events still drag. */
+    @media (pointer: coarse) {
+      touch-action: pan-x pan-y;
+    }
+
+    &[data-today] {
+      background: color-mix(in oklch, var(--ui-primary) 4%, transparent);
+    }
+  }
+
+  .schedule-event {
+    --series: var(--chart-1);
+    /* The edge mixes the series halfway to the text color, so it clears 3:1 on any surface.
+       Mixes are in OKLab: OKLCH would turn an orange event purple on the way to a cool gray. */
+    --edge: color-mix(in oklab, var(--series) 50%, var(--ui-foreground));
+    display: block;
+    box-sizing: border-box;
+    min-block-size: 1.25rem;
+    margin: 0;
+    padding: 0.125rem 0.375rem;
+    overflow: hidden;
+    appearance: none;
+    border: 1px solid var(--edge);
+    border-inline-start: 3px solid var(--series);
+    font: inherit;
+    text-align: start;
+    border-radius: calc(var(--ui-radius) + 1px);
+    background: color-mix(in oklab, var(--series) 16%, var(--ui-background));
+    color: var(--ui-foreground);
+    line-height: 1.25;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    outline: none;
+
+    &:focus-visible {
+      z-index: 2;
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: 1px;
+    }
+
+    &[data-dragging],
+    &[data-resizing],
+    &[data-drawing] {
+      z-index: 2;
+      box-shadow: var(--ui-shadow);
+      cursor: grabbing;
+    }
+
+    &[data-locked] {
+      cursor: default;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        color-mix(in oklch, var(--series) 12%, transparent) 0 4px,
+        transparent 4px 8px
+      );
+    }
+  }
+
+  .schedule-event-title,
+  .schedule-event-time,
+  .schedule-event-place {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .schedule-event-title {
+    font-weight: 600;
+  }
+
+  .schedule-event-time,
+  .schedule-event-place {
+    margin-block-start: 0.125rem;
+    color: var(--ui-muted-foreground);
+    font-size: 0.75rem;
+  }
+
+  /* Day and week: an event is as tall as its time. One too short for two lines puts its
+     time beside the title on one line, and the place shows only when a third line fits,
+     so no line is ever cut in half. */
+  .schedule:not([data-axis="x"]) .schedule-event {
+    container-type: size;
+    /* A hairline between events side by side or back to back (B20). */
+    margin-inline-end: 2px;
+    margin-block-end: 1px;
+  }
+
+  @container (height < 3.4em) {
+    .schedule-event-place {
+      display: none;
+    }
+  }
+
+  @container (height < 2.35em) {
+    .schedule-event-title,
+    .schedule-event-time {
+      display: inline;
+    }
+
+    .schedule-event-time {
+      margin-inline-start: 0.375rem;
+    }
+  }
+
+  /* The end edge resizes; it's a pointer target only, Shift+arrows do it by keyboard. */
+  .schedule-event-edge {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    block-size: 0.5rem;
+    cursor: ns-resize;
+  }
+
+  .schedule-now {
+    position: absolute;
+    inset-inline: 0;
+    z-index: 1;
+    block-size: 2px;
+    background: var(--tone-danger);
+    pointer-events: none;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: 0;
+      inset-block-start: -3px;
+      inline-size: 8px;
+      block-size: 8px;
+      border-radius: 50%;
+      background: var(--tone-danger);
+    }
+  }
+
+  /* Timeline: rooms down the side, time across. */
+  .schedule[data-axis="x"] {
+    --gutter: 8rem;
+    --hour-width: 5rem;
+    --row: 3.75rem;
+
+    .schedule-head {
+      grid-template-columns: var(--gutter) repeat(var(--schedule-hours), minmax(var(--hour-width), 1fr));
+    }
+
+    .schedule-head .schedule-hour-name {
+      padding: 0.5rem 0.375rem;
+      border-inline-start: 1px solid var(--schedule-line);
+    }
+
+    .schedule-gutter {
+      grid-auto-rows: var(--row);
+
+      .schedule-track-name {
+        display: flex;
+        align-items: center;
+        text-align: start;
+        translate: none;
+      }
+    }
+
+    .schedule-tracks {
+      grid-template-columns: 1fr;
+      grid-auto-rows: var(--row);
+      min-inline-size: calc(var(--schedule-hours) * var(--hour-width));
+      block-size: auto;
+      background-image: linear-gradient(to right, var(--schedule-line) 1px, transparent 1px);
+      background-size: calc(100% / var(--schedule-hours)) 100%;
+    }
+
+    .schedule-track {
+      border-inline-start: 0;
+      border-block-end: 1px solid var(--schedule-line);
+    }
+
+    .schedule-event-edge {
+      inset-block: 0;
+      inset-inline: auto 0;
+      inline-size: 0.5rem;
+      block-size: auto;
+      cursor: ew-resize;
+    }
+
+    .schedule-now {
+      inset-block: 0;
+      inset-inline-end: auto;
+      inline-size: 2px;
+      block-size: auto;
+
+      &::before {
+        inset-inline-start: -3px;
+        inset-block-start: -4px;
+      }
+    }
+  }
+
+  /* Month */
+  /* The month view fills its column: one track it can shrink in, not UI SDK's calendar
+     columns (a full-width table inside those measured itself a million pixels wide). */
+  .schedule-month {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    inline-size: 100%;
+
+    [data-slot="calendar-grid"] {
+      inline-size: 100%;
+      table-layout: fixed;
+    }
+
+    [data-slot="calendar-day"] {
+      inline-size: 100%;
+      block-size: auto;
+      min-block-size: 6rem;
+      align-items: stretch;
+      justify-content: start;
+      padding: 0.375rem;
+      text-align: start;
+    }
+
+    /* A table cell ignores min-height, and its height works as one: React's month is a
+       table, so its weeks keep the same height as the web month's rows. */
+    td[data-slot="calendar-day"] {
+      block-size: 6rem;
+    }
+  }
+
+  .schedule-month-day {
+    display: grid;
+    align-content: start;
+    gap: 0.25rem;
+    inline-size: 100%;
+    min-width: 0;
+  }
+
+  /* Days read from the top of their cells, and today is a filled date, not an underline
+     that would run under its events too. */
+  .schedule-month [data-slot="calendar-day"] {
+    vertical-align: top;
+
+    &[data-today] {
+      text-decoration: none;
+    }
+  }
+
+  .schedule-month [data-today] .schedule-month-number {
+    justify-self: start;
+    min-inline-size: 1.75em;
+    padding-inline: 0.375em;
+    border-radius: 999px;
+    background: var(--ui-primary);
+    color: var(--ui-primary-foreground);
+    text-align: center;
+  }
+
+  .schedule-month-number {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .schedule-month-chip {
+    overflow: hidden;
+    padding: 0.0625rem 0.25rem;
+    border-inline-start: 3px solid var(--series);
+    border-radius: 3px;
+    background: color-mix(in oklch, var(--series) 14%, transparent);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .schedule-month-more {
+    color: var(--ui-muted-foreground);
+    font-size: 0.6875rem;
+  }
+
+  /* Toolbar and dialog */
+  .scheduler-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+  }
+
+  .scheduler-nav,
+  .scheduler-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .scheduler-prev {
+    scale: -1 1;
+  }
+
+  .scheduler-title {
+    margin: 0 0 0 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 650;
+  }
+
+  .scheduler-dialog {
+    inline-size: min(calc(100vw - 2rem), 30rem);
+  }
+
+  .scheduler-form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .scheduler-form-row {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  }
+
+  .scheduler-form-error {
+    margin: 0;
+    color: var(--tone-danger);
+    font-size: 0.875rem;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .scheduler-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .scheduler-spacer {
+    flex: 1;
+  }
+}

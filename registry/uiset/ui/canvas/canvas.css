@@ -1,0 +1,449 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/*
+ * A node editor. Sizes inside nodes are in px on purpose: they are canvas units, scaled by
+ * the zoom, and geometry.ts places wires on them (header 36, rows 28, foot 8).
+ */
+@layer uiset.base {
+  .canvas {
+    --canvas-surface: color-mix(in oklch, var(--ui-muted) 45%, var(--ui-background));
+    --canvas-dot: color-mix(in oklch, var(--ui-foreground) 22%, transparent);
+    /* Node and wire edges mix halfway to the text color, so they clear 3:1 on the surface. */
+    --canvas-edge: color-mix(in oklch, var(--ui-foreground) 50%, var(--ui-background));
+    --canvas-wire: color-mix(in oklch, var(--ui-foreground) 55%, var(--canvas-surface));
+    /* The accent, pulled toward the text color so it clears 3:1 on the surface in every skin. */
+    --canvas-accent: color-mix(in oklch, var(--ui-primary) 70%, var(--ui-foreground));
+    block-size: var(--canvas-height, 32rem);
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 6px);
+    background: var(--canvas-surface);
+    color: var(--ui-foreground);
+    outline: none;
+
+    &:focus-visible {
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: 2px;
+    }
+  }
+
+  .canvas-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, var(--canvas-dot) 1px, transparent 1.4px);
+    pointer-events: none;
+  }
+
+  /* Physical: wires run left to right in every language, like the ports. */
+  .canvas-wires {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .canvas-wire {
+    fill: none;
+    stroke: var(--canvas-wire);
+    stroke-width: 2;
+    stroke-linecap: round;
+
+    &[data-draft] {
+      stroke: var(--canvas-accent);
+      stroke-dasharray: 6 5;
+    }
+  }
+
+  .canvas-unwire {
+    cursor: pointer;
+    pointer-events: auto;
+    transition: opacity var(--uiset-fast, 0.12s) ease;
+
+    /* Out of the way until the canvas is in use; focus shows them for the keyboard (B26). */
+    .canvas:not(:hover, :focus-within) & {
+      opacity: 0;
+    }
+
+    circle {
+      fill: var(--ui-background);
+      stroke: var(--canvas-edge);
+      stroke-width: 1;
+    }
+
+    path {
+      fill: none;
+      stroke: var(--ui-muted-foreground);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+    }
+
+    &:hover circle {
+      fill: color-mix(in oklch, var(--tone-danger) 14%, var(--ui-background));
+      stroke: var(--tone-danger);
+    }
+
+    &:hover path {
+      stroke: var(--tone-danger);
+    }
+  }
+
+  .canvas-nodes {
+    display: contents;
+  }
+
+  .canvas-node {
+    display: block;
+    border-radius: 10px;
+    outline: none;
+    cursor: grab;
+
+    &[data-dragging] {
+      z-index: 2;
+      cursor: grabbing;
+    }
+
+    &[data-locked] {
+      cursor: default;
+    }
+  }
+
+  .canvas-node-card {
+    display: grid;
+    box-sizing: border-box;
+    overflow: visible;
+    border: 1px solid var(--canvas-edge);
+    border-radius: 10px;
+    background: var(--ui-background);
+    box-shadow: 0 1px 2px color-mix(in oklch, var(--ui-foreground) 10%, transparent);
+    font-size: 12px;
+    line-height: 16px;
+
+    /* Selection: an accent edge that keeps its width on screen at any zoom. */
+    .canvas-node[aria-selected="true"] & {
+      border-color: var(--canvas-accent);
+      box-shadow:
+        0 0 0 calc(1.5px / var(--canvas-zoom, 1)) var(--canvas-accent),
+        0 4px 12px color-mix(in oklch, var(--ui-foreground) 12%, transparent);
+    }
+
+    .canvas-node[data-lassoed] & {
+      border-style: dashed;
+      border-color: var(--canvas-accent);
+    }
+
+    .canvas-node[data-dragging] & {
+      box-shadow: var(--ui-shadow);
+    }
+  }
+
+  .canvas-node-header {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    box-sizing: border-box;
+    block-size: 35px;
+    padding: 9px 10px 0;
+    overflow: hidden;
+    border-block-end: 1px solid var(--ui-border);
+    border-start-start-radius: 9px;
+    border-start-end-radius: 9px;
+    background: linear-gradient(to right, var(--series) 0 3px, transparent 3px);
+    white-space: nowrap;
+  }
+
+  .canvas-node-kind {
+    flex: none;
+    margin-inline-start: auto;
+    color: var(--ui-muted-foreground);
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .canvas-node-title {
+    min-inline-size: 0;
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+  }
+
+  /* The focus ring keeps its width on screen at any zoom. */
+  [data-uiset] .canvas .canvas-node:focus-visible {
+    outline-width: calc(2px / var(--canvas-zoom, 1));
+    outline-offset: calc(3px / var(--canvas-zoom, 1));
+  }
+
+  .canvas-node-row {
+    direction: ltr;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    block-size: 28px;
+    padding-inline: 12px;
+    color: var(--ui-muted-foreground);
+  }
+
+  .canvas-node-in,
+  .canvas-node-out {
+    position: relative;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* The cells let their port dots hang outside; their labels truncate inside. */
+  .canvas-node-in {
+    overflow: visible;
+  }
+
+  .canvas-node-out {
+    overflow: visible;
+    text-align: end;
+  }
+
+  .canvas-port-label {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* A port sits on the card's edge, centered on its row. */
+  .canvas-port {
+    position: absolute;
+    inset-block-start: 50%;
+    inline-size: 12px;
+    block-size: 12px;
+    box-sizing: border-box;
+    border: 2px solid var(--canvas-edge);
+    border-radius: 50%;
+    background: var(--ui-background);
+    translate: 0 -50%;
+    cursor: crosshair;
+
+    /* A bigger target than the dot. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+    }
+
+    /* Physical sides: wires run left to right in every language, like geometry.ts. */
+    &[data-canvas-port="in"] {
+      left: -19px;
+    }
+
+    &[data-canvas-port="out"] {
+      right: -19px;
+    }
+
+    &[data-connect="source"],
+    &[data-connect="target"] {
+      border-color: var(--canvas-accent);
+      background: var(--canvas-accent);
+    }
+
+    &[data-connect="candidate"] {
+      border-color: var(--canvas-accent);
+      border-style: dashed;
+    }
+
+    &[data-connect="target"] {
+      box-shadow: 0 0 0 4px color-mix(in oklch, var(--canvas-accent) 30%, transparent);
+    }
+  }
+
+  .canvas-node-foot {
+    block-size: 7px;
+  }
+
+  .canvas-node-body {
+    display: block;
+    padding: 8px 10px 10px;
+    border-block-start: 1px solid var(--ui-border);
+    color: var(--ui-muted-foreground);
+    overflow-wrap: anywhere;
+  }
+
+  .canvas-lasso {
+    position: absolute;
+    border: 1px dashed var(--canvas-accent);
+    background: color-mix(in oklch, var(--ui-primary) 8%, transparent);
+    pointer-events: none;
+  }
+
+  .canvas-controls {
+    position: absolute;
+    inset-block-end: 12px;
+    inset-inline-start: 12px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 4px);
+    background: var(--ui-background);
+    box-shadow: 0 1px 2px color-mix(in oklch, var(--ui-foreground) 10%, transparent);
+
+    [data-slot="button"] {
+      min-inline-size: 2rem;
+      block-size: 2rem;
+      padding-inline: 0.375rem;
+    }
+  }
+
+  /* The readout is drawn from live state; its name says the same in words. */
+  .canvas-zoom {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: 3.25rem;
+    block-size: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--ui-radius);
+    background: transparent;
+    color: var(--ui-foreground);
+    font: inherit;
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+
+    /* ::before, since on touch screens UI SDK turns a button's ::after into its hit area. */
+    &::before {
+      content: attr(data-zoom);
+    }
+
+    &:hover {
+      background: var(--ui-muted);
+    }
+  }
+
+  .canvas-minimap {
+    position: absolute;
+    inset-block-end: 12px;
+    inset-inline-end: 12px;
+    inline-size: 168px;
+    block-size: 112px;
+    overflow: hidden;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 4px);
+    background: var(--ui-background);
+    cursor: pointer;
+
+    svg {
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+    }
+
+    @media (max-width: 40rem) {
+      display: none;
+    }
+  }
+
+  .canvas-minimap-node {
+    fill: color-mix(in oklch, var(--series) 75%, var(--ui-foreground));
+  }
+
+  .canvas-minimap-view {
+    fill: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+    stroke: var(--ui-primary);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .canvas-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  /* The web inspector groups its fields and wires; the groups join this grid's spacing. */
+  :is(.canvas-inspector-fields, .canvas-inspector-wire-list) {
+    display: contents;
+  }
+
+  .canvas-inspector {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+    font-size: var(--ui-font-size);
+    padding: 1rem;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 6px);
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+  }
+
+  .canvas-inspector-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+  }
+
+  .canvas-inspector-heading {
+    margin: 0.25rem 0 0;
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .canvas-inspector-form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 0.5rem;
+  }
+
+  .canvas-inspector-wires {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+  }
+
+  .canvas-inspector-empty {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  @media (forced-colors: active) {
+    .canvas-wire {
+      stroke: CanvasText;
+    }
+
+    .canvas-wire[data-draft],
+    .canvas-node[aria-selected="true"] .canvas-node-card {
+      border-color: Highlight;
+      stroke: Highlight;
+    }
+
+    .canvas-port {
+      border-color: CanvasText;
+    }
+
+    .canvas-port[data-connect="source"],
+    .canvas-port[data-connect="target"] {
+      background: Highlight;
+    }
+
+    .canvas-port[data-connect="candidate"] {
+      border-color: Highlight;
+    }
+  }
+}

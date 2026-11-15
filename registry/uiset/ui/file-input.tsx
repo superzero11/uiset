@@ -1,0 +1,36 @@
+"use client"
+
+export {
+  FileInput,
+  FileInputDropzone,
+  FileInputItem,
+  FileInputItemRemove,
+  FileInputList,
+  FileInputTrigger,
+  createFileInputController,
+  formatFileSize,
+  relativePath,
+} from "@ui-sdk/react/file-input"
+export type {
+  FileInputApi,
+  FileInputChange,
+  FileInputChangeOptions,
+  FileInputController,
+  FileInputDropzoneProps,
+  FileInputDropzoneState,
+  FileInputDropzoneTarget,
+  FileInputItemProps,
+  FileInputItemRemoveState,
+  FileInputItemState,
+  FileInputOptions,
+  FileInputPasteTarget,
+  FileInputPrimitive,
+  FileInputState,
+  FileInputTriggerProps,
+  FileInputValueChangeDetails,
+  FileInputValueChangeReason,
+  FileLike,
+  FileRejection,
+  FileRejectionReason,
+  FileRules,
+} from "@ui-sdk/react/file-input"

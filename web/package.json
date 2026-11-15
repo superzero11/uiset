@@ -1,0 +1,48 @@
+{
+  "name": "@uiset/web",
+  "version": "0.1.0",
+  "description": "UISet's skins, kits and elements for Web Components, Vue, Svelte, Solid and plain HTML, on UI SDK's custom elements.",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://uiset.dev/docs/web-components",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/superzero11/uiset.git",
+    "directory": "web"
+  },
+  "bugs": "https://github.com/superzero11/uiset/issues",
+  "keywords": [
+    "ui-sdk",
+    "web-components",
+    "custom-elements",
+    "design-system",
+    "themes",
+    "data-grid",
+    "chat",
+    "rich-text",
+    "accessibility",
+    "ai-agents"
+  ],
+  "files": ["dist"],
+  "exports": {
+    ".": "./dist/uiset.js",
+    "./uiset.css": "./dist/uiset.css"
+  },
+  "sideEffects": ["./dist/uiset.js", "./dist/uiset.css"],
+  "scripts": {
+    "prepublishOnly": "cd .. && pnpm web:build"
+  },
+  "peerDependencies": {
+    "@ui-sdk/core": "0.1.0-beta.2",
+    "@ui-sdk/web": "0.1.0-beta.2",
+    "shiki": "^4.6.0"
+  },
+  "peerDependenciesMeta": {
+    "shiki": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

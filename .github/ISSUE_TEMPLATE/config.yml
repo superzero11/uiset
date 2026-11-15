@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Docs
+    url: https://uiset.dev/docs
+    about: Installation, theming, every component and kit, and building with AI agents.
+  - name: A bug in UI SDK itself
+    url: https://github.com/vercel-labs/ui/issues
+    about: Keyboard, focus, ARIA and the agent bridge come from UI SDK. Report those upstream.
+  - name: Security issue
+    url: https://github.com/superzero11/uiset/security/advisories/new
+    about: Report privately, not in a public issue.

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&family=Saira+Semi+Condensed:wght@400;500;600&family=Instrument+Sans:wdth,wght@75..100,400..700&family=Spline+Sans+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,400..700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+    <title>UISet Agent Console, no React</title>
+    <script type="module">
+      import "@ui-sdk/web/alert-dialog"
+      import "@ui-sdk/web/button"
+      import "@ui-sdk/web/field"
+      import "@ui-sdk/web/input"
+      import "@ui-sdk/web/select"
+      import "@ui-sdk/web/switch"
+      import "@ui-sdk/web/tabs"
+      import "./src/uiset.ts"
+      import "./src/agent-demo.ts"
+    </script>
+  </head>
+  <body>
+    <uiset-root skin="base" id="root">
+      <main class="web-agent-page">
+        <h1>Project settings, with an agent</h1>
+        <div class="web-agent-layout">
+          <div id="project-settings" class="project-settings">
+            <form id="project-form" class="project-fields" aria-label="Project settings">
+              <ui-field name="project-name">
+                <ui-field-label>Project name</ui-field-label>
+                <ui-input><input value="Apollo" autocomplete="off" spellcheck="false" /></ui-input>
+              </ui-field>
+              <div class="project-row">
+                <ui-select name="visibility" default-value="private">
+                  <ui-select-label>Visibility</ui-select-label>
+                  <ui-select-trigger><button type="button"><ui-select-value></ui-select-value></button></ui-select-trigger>
+                  <ui-select-content>
+                    <ui-select-item value="private">Private</ui-select-item>
+                    <ui-select-item value="internal">Internal</ui-select-item>
+                    <ui-select-item value="public">Public</ui-select-item>
+                  </ui-select-content>
+                </ui-select>
+                <ui-select name="region" default-value="north-america">
+                  <ui-select-label>Region</ui-select-label>
+                  <ui-select-trigger><button type="button"><ui-select-value></ui-select-value></button></ui-select-trigger>
+                  <ui-select-content>
+                    <ui-select-item value="north-america">North America</ui-select-item>
+                    <ui-select-item value="europe">Europe</ui-select-item>
+                    <ui-select-item value="asia-pacific">Asia Pacific</ui-select-item>
+                  </ui-select-content>
+                </ui-select>
+              </div>
+              <ui-field class="project-switch">
+                <ui-field-label>Weekly digest</ui-field-label>
+                <ui-switch name="weekly-digest"><ui-switch-thumb></ui-switch-thumb></ui-switch>
+              </ui-field>
+              <ui-field class="project-switch">
+                <ui-field-label>Deploy on push</ui-field-label>
+                <ui-switch name="deploy-on-push" default-checked><ui-switch-thumb></ui-switch-thumb></ui-switch>
+              </ui-field>
+            </form>
+            <div class="project-actions">
+              <ui-button><button type="submit" form="project-form">Save project</button></ui-button>
+              <ui-alert-dialog>
+                <ui-alert-dialog-trigger><button type="button" data-variant="outline">Delete project</button></ui-alert-dialog-trigger>
+                <ui-alert-dialog-backdrop hidden></ui-alert-dialog-backdrop>
+                <ui-alert-dialog-content hidden>
+                  <ui-alert-dialog-title>Delete Apollo?</ui-alert-dialog-title>
+                  <ui-alert-dialog-description>Its deployments, domains and settings go too. This can’t be undone.</ui-alert-dialog-description>
+                  <div class="project-actions">
+                    <ui-alert-dialog-close><button type="button">Keep it</button></ui-alert-dialog-close>
+                    <ui-alert-dialog-close value="confirm"><button type="button" data-variant="destructive" id="delete-forever" data-agent-confirm="Deletes the Apollo project with its deployments, domains and settings">Delete forever</button></ui-alert-dialog-close>
+                  </div>
+                </ui-alert-dialog-content>
+              </ui-alert-dialog>
+              <output class="project-notice" aria-live="polite" id="notice"></output>
+            </div>
+          </div>
+
+          <uiset-agent-console title="Agent" id="console" class="console-demo">
+            <ui-tabs default-value="chat">
+              <ui-tabs-list aria-label="Agent views">
+                <ui-tabs-tab value="chat"><button type="button">Chat</button></ui-tabs-tab>
+                <ui-tabs-tab value="activity"><button type="button">Activity</button></ui-tabs-tab>
+                <ui-tabs-tab value="page"><button type="button">What it sees</button></ui-tabs-tab>
+              </ui-tabs-list>
+              <ui-tabs-panel value="chat" keep-mounted>
+                <ol class="web-agent-log" id="log" aria-label="Conversation"></ol>
+                <div class="web-agent-suggestions" id="suggestions" role="group" aria-label="Suggestions"></div>
+                <form class="web-agent-prompt" id="prompt" aria-label="Ask the agent">
+                  <ui-field name="ask">
+                    <ui-field-label class="uiset-visually-hidden">Message the agent</ui-field-label>
+                    <ui-input><input name="ask" autocomplete="off" placeholder="Make it public and move it to Europe" /></ui-input>
+                  </ui-field>
+                  <ui-button><button type="submit">Send</button></ui-button>
+                </form>
+              </ui-tabs-panel>
+              <ui-tabs-panel value="activity" keep-mounted><uiset-agent-activity id="activity"></uiset-agent-activity></ui-tabs-panel>
+              <ui-tabs-panel value="page" keep-mounted><uiset-agent-snapshot id="snapshot" within="#project-settings"></uiset-agent-snapshot></ui-tabs-panel>
+            </ui-tabs>
+            <uiset-agent-approvals id="approvals"></uiset-agent-approvals>
+          </uiset-agent-console>
+        </div>
+      </main>
+    </uiset-root>
+  </body>
+</html>

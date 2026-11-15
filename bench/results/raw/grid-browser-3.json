@@ -1,0 +1,83 @@
+{
+  "run": "grid-browser-3",
+  "task": "grid",
+  "approach": "browser",
+  "ok": true,
+  "detail": {
+    "sample": [
+      {
+        "region": "Europe",
+        "amount": 9039.5
+      },
+      {
+        "region": "Europe",
+        "amount": 9037.62
+      },
+      {
+        "region": "Europe",
+        "amount": 9032.13
+      },
+      {
+        "region": "Europe",
+        "amount": 9023.66
+      }
+    ],
+    "allEurope": true,
+    "sortedDesc": true
+  },
+  "toolCalls": 10,
+  "textRead": 91183,
+  "seconds": 18.961,
+  "calls": [
+    {
+      "command": "snapshot",
+      "chars": 8844,
+      "at": 1794748274481
+    },
+    {
+      "command": "click",
+      "chars": 9210,
+      "at": 1794748277273
+    },
+    {
+      "command": "snapshot",
+      "chars": 9210,
+      "at": 1794748280143
+    },
+    {
+      "command": "snapshot",
+      "chars": 9210,
+      "at": 1794748282543
+    },
+    {
+      "command": "press",
+      "chars": 9210,
+      "at": 1794748286699
+    },
+    {
+      "command": "click",
+      "chars": 9247,
+      "at": 1794748287014
+    },
+    {
+      "command": "fill",
+      "chars": 9042,
+      "at": 1794748289569
+    },
+    {
+      "command": "press",
+      "chars": 9052,
+      "at": 1794748292887
+    },
+    {
+      "command": "click",
+      "chars": 8996,
+      "at": 1794748293144
+    },
+    {
+      "command": "click",
+      "chars": 9162,
+      "at": 1794748293442
+    }
+  ]
+}

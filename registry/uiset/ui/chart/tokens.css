@@ -1,0 +1,144 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/*
+  Chart colors, validated per surface with the dataviz six-checks script (docs/charts.md):
+  categorical slots in a fixed order (never cycled, never by rank), one-hue sequential
+  steps, a diverging pair with a gray midpoint, and quiet chrome. Text never uses these;
+  it stays in --ui-foreground and --ui-muted-foreground.
+*/
+
+@layer uiset.tokens {
+  :where([data-uiset]) {
+    --chart-1: light-dark(oklch(0.575 0.163 255.5), oklch(0.622 0.161 255.1));
+    --chart-2: light-dark(oklch(0.671 0.175 40.6), oklch(0.622 0.173 40.1));
+    --chart-3: light-dark(oklch(0.669 0.141 162.1), oklch(0.621 0.128 163.1));
+    --chart-4: light-dark(oklch(0.764 0.161 75.1), oklch(0.67 0.143 73.2));
+    --chart-5: light-dark(oklch(0.716 0.141 357.4), oklch(0.622 0.171 0.8));
+    --chart-6: light-dark(oklch(0.529 0.18 142.5), oklch(0.529 0.18 142.5));
+    --chart-7: light-dark(oklch(0.527 0.197 283.4), oklch(0.67 0.145 286.8));
+    --chart-8: light-dark(oklch(0.623 0.191 24.9), oklch(0.669 0.159 22.3));
+    /* "Other" and de-emphasized series: a gray that never reads as a slot. */
+    --chart-other: color-mix(in oklch, var(--ui-muted-foreground) 70%, var(--ui-background));
+
+    /* Sequential, one hue: step 1 is "little", step 7 is "most". Dark mode runs the same
+       ramp from the surface up, so "most" is always the loudest. */
+    --chart-seq-1: light-dark(oklch(0.905 0.041 252.8), oklch(0.338 0.103 256.9));
+    --chart-seq-2: light-dark(oklch(0.812 0.079 253.4), oklch(0.433 0.128 256.5));
+    --chart-seq-3: light-dark(oklch(0.717 0.118 253.6), oklch(0.527 0.15 255.9));
+    --chart-seq-4: light-dark(oklch(0.622 0.161 255.1), oklch(0.622 0.161 255.1));
+    --chart-seq-5: light-dark(oklch(0.527 0.15 255.9), oklch(0.717 0.118 253.6));
+    --chart-seq-6: light-dark(oklch(0.433 0.128 256.5), oklch(0.812 0.079 253.4));
+    --chart-seq-7: light-dark(oklch(0.338 0.103 256.9), oklch(0.905 0.041 252.8));
+
+    /* Diverging: two poles that read as opposite, a gray middle that reads as nothing. */
+    --chart-neg: var(--chart-8);
+    --chart-mid: light-dark(oklch(0.951 0.004 95), oklch(0.34 0.005 106.7));
+    --chart-pos: var(--chart-1);
+
+    /* Chrome: hairlines one step off the surface, solid, never dashed. */
+    --chart-grid: color-mix(in oklch, var(--ui-foreground) 9%, var(--ui-background));
+    --chart-axis: color-mix(in oklch, var(--ui-foreground) 24%, var(--ui-background));
+    --chart-surface: var(--ui-background);
+    --chart-crosshair: color-mix(in oklch, var(--ui-foreground) 45%, var(--ui-background));
+    --chart-area-opacity: 0.1;
+  }
+}
+
+@layer uiset.skin {
+  /* Blueprint paper is mid blue (L 0.36): its set sits above the usual dark band so every
+     slot keeps 3:1 on the paper. Adjacent pairs: CVD ΔE 14.6, normal 18.7. The first six
+     (a segmented bar's most parts) also clear every pair: CVD 9.3, normal 17.3. */
+  [data-uiset][data-skin="blueprint"] {
+    --chart-1: oklch(0.74 0.11 279.9);
+    --chart-2: oklch(0.86 0.14 159.9);
+    --chart-3: oklch(0.739 0.17 49.8);
+    --chart-4: oklch(0.7 0.2 351);
+    --chart-5: oklch(0.89 0.18 96);
+    --chart-6: oklch(0.89 0.1 327);
+    --chart-7: oklch(0.859 0.14 130.1);
+    --chart-8: oklch(0.789 0.117 242.6);
+    --chart-seq-1: color-mix(in oklab, var(--blueprint-line) 14%, var(--blueprint-paper));
+    --chart-seq-2: color-mix(in oklab, var(--blueprint-line) 28%, var(--blueprint-paper));
+    --chart-seq-3: color-mix(in oklab, var(--blueprint-line) 42%, var(--blueprint-paper));
+    --chart-seq-4: color-mix(in oklab, var(--blueprint-line) 56%, var(--blueprint-paper));
+    --chart-seq-5: color-mix(in oklab, var(--blueprint-line) 70%, var(--blueprint-paper));
+    --chart-seq-6: color-mix(in oklab, var(--blueprint-line) 85%, var(--blueprint-paper));
+    --chart-seq-7: var(--blueprint-line);
+    --chart-neg: var(--chart-3);
+    --chart-pos: var(--chart-2);
+    --chart-mid: color-mix(in oklab, var(--blueprint-line) 20%, var(--blueprint-paper));
+    --chart-grid: var(--blueprint-faint);
+    --chart-axis: color-mix(in oklab, var(--blueprint-line) 55%, var(--blueprint-paper));
+    --chart-crosshair: var(--blueprint-line);
+    --chart-area-opacity: 0.16;
+  }
+
+  /* Studio keeps the validated dark set and lights its sequential ramp like a lamp.
+     Ramps mix in OKLab: OKLCH would swing the hue from amber through pink to the panel. */
+  [data-uiset][data-skin="studio"] {
+    --chart-seq-1: color-mix(in oklab, var(--studio-lamp) 14%, var(--studio-panel));
+    --chart-seq-2: color-mix(in oklab, var(--studio-lamp) 28%, var(--studio-panel));
+    --chart-seq-3: color-mix(in oklab, var(--studio-lamp) 42%, var(--studio-panel));
+    --chart-seq-4: color-mix(in oklab, var(--studio-lamp) 56%, var(--studio-panel));
+    --chart-seq-5: color-mix(in oklab, var(--studio-lamp) 70%, var(--studio-panel));
+    --chart-seq-6: color-mix(in oklab, var(--studio-lamp) 85%, var(--studio-panel));
+    --chart-seq-7: var(--studio-lamp);
+    --chart-crosshair: var(--studio-lamp);
+  }
+  /* Phosphor: the tube's own green first, then the other phosphors (blue, P3 amber, P22
+     red, P4 white, lavender, cyan, pink), each 3:1 or more on the tube. Adjacent pairs:
+     CVD ΔE ≥ 9.5, normal ≥ 17; the first six clear every pair (CVD 9.4, normal 19.6). */
+  [data-uiset][data-skin="phosphor"] {
+    --chart-1: oklch(0.88 0.17 148);
+    --chart-2: oklch(0.72 0.2 250);
+    --chart-3: oklch(0.84 0.17 75);
+    --chart-4: oklch(0.68 0.17 28);
+    --chart-5: oklch(0.96 0.02 150);
+    --chart-6: oklch(0.84 0.11 300);
+    --chart-7: oklch(0.92 0.11 195);
+    --chart-8: oklch(0.76 0.14 355);
+    --chart-seq-1: color-mix(in oklab, var(--phosphor-glow) 14%, var(--phosphor-tube));
+    --chart-seq-2: color-mix(in oklab, var(--phosphor-glow) 28%, var(--phosphor-tube));
+    --chart-seq-3: color-mix(in oklab, var(--phosphor-glow) 42%, var(--phosphor-tube));
+    --chart-seq-4: color-mix(in oklab, var(--phosphor-glow) 56%, var(--phosphor-tube));
+    --chart-seq-5: color-mix(in oklab, var(--phosphor-glow) 70%, var(--phosphor-tube));
+    --chart-seq-6: color-mix(in oklab, var(--phosphor-glow) 85%, var(--phosphor-tube));
+    --chart-seq-7: var(--phosphor-glow);
+    --chart-neg: var(--chart-4);
+    --chart-pos: var(--chart-2);
+    --chart-mid: color-mix(in oklab, var(--phosphor-dim) 30%, var(--phosphor-tube));
+    --chart-grid: oklch(0.75 0.11 150 / 0.2);
+    --chart-axis: color-mix(in oklab, var(--phosphor-dim) 70%, var(--phosphor-tube));
+    --chart-crosshair: var(--phosphor-glow);
+    --chart-area-opacity: 0.14;
+  }
+
+  /* Ink: data is the one place with color, a muted print-like set, like color e-paper:
+     ink first, then blue, orange, sage, dark red, purple, teal, mustard, each 3:1 or more
+     on the screen. Adjacent pairs: CVD ΔE ≥ 9.8, normal ≥ 16; the first six clear every
+     pair (CVD 9.8, normal 16.5). Sequential steps are ink on the screen. */
+  [data-uiset][data-skin="ink"] {
+    --chart-1: oklch(0.2 0 0);
+    --chart-2: oklch(0.5 0.12 250);
+    --chart-3: oklch(0.58 0.15 55);
+    --chart-4: oklch(0.58 0.06 150);
+    --chart-5: oklch(0.42 0.15 25);
+    --chart-6: oklch(0.38 0.15 300);
+    --chart-7: oklch(0.58 0.09 195);
+    --chart-8: oklch(0.58 0.12 95);
+    --chart-seq-1: color-mix(in oklab, var(--ink-ink) 14%, var(--ink-screen));
+    --chart-seq-2: color-mix(in oklab, var(--ink-ink) 28%, var(--ink-screen));
+    --chart-seq-3: color-mix(in oklab, var(--ink-ink) 42%, var(--ink-screen));
+    --chart-seq-4: color-mix(in oklab, var(--ink-ink) 56%, var(--ink-screen));
+    --chart-seq-5: color-mix(in oklab, var(--ink-ink) 70%, var(--ink-screen));
+    --chart-seq-6: color-mix(in oklab, var(--ink-ink) 85%, var(--ink-screen));
+    --chart-seq-7: var(--ink-ink);
+    --chart-neg: var(--chart-5);
+    --chart-pos: var(--chart-2);
+    --chart-mid: var(--ink-tint);
+    --chart-grid: oklch(0.82 0 0);
+    --chart-axis: oklch(0.55 0 0);
+    --chart-crosshair: var(--ink-ink);
+    --chart-area-opacity: 0.12;
+  }
+}

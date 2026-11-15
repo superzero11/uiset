@@ -1,0 +1,68 @@
+{
+  "run": "scheduler-browser-1",
+  "task": "scheduler",
+  "approach": "browser",
+  "ok": true,
+  "detail": {
+    "matches": [
+      "Roadmap sync, Wednesday, November 18, 10:00 AM to 10:30 AM"
+    ]
+  },
+  "toolCalls": 10,
+  "textRead": 15107,
+  "seconds": 27.447,
+  "calls": [
+    {
+      "command": "snapshot",
+      "chars": 1485,
+      "at": 1794748021990
+    },
+    {
+      "command": "click",
+      "chars": 1915,
+      "at": 1794748027267
+    },
+    {
+      "command": "fill",
+      "chars": 1929,
+      "at": 1794748031346
+    },
+    {
+      "command": "select",
+      "chars": 69,
+      "at": 1794748032086,
+      "error": true
+    },
+    {
+      "command": "fill",
+      "chars": 1929,
+      "at": 1794748033476
+    },
+    {
+      "command": "fill",
+      "chars": 1929,
+      "at": 1794748034715
+    },
+    {
+      "command": "select",
+      "chars": 69,
+      "at": 1794748037477,
+      "error": true
+    },
+    {
+      "command": "click",
+      "chars": 2256,
+      "at": 1794748041374
+    },
+    {
+      "command": "click",
+      "chars": 1932,
+      "at": 1794748044431
+    },
+    {
+      "command": "click",
+      "chars": 1594,
+      "at": 1794748049437
+    }
+  ]
+}

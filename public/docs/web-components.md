@@ -1,0 +1,715 @@
+# UISet for Web Components (and Vue, Svelte, Solid)
+
+UISet's skins, tokens and base styles dress **UI SDK's own custom elements**, the same 55
+components the React registry wraps, because both carry the same `data-slot` attributes.
+So a page in plain HTML, Vue, Svelte or Solid gets UISet's look and themes from one
+stylesheet, and UISet's own primitives register as `<uiset-*>` elements.
+
+```bash
+pnpm web:build   # makes web/dist/uiset.js and web/dist/uiset.css
+```
+
+The build keeps UI SDK as a peer: install `@ui-sdk/web` and `@ui-sdk/core` (0.1.0-beta.2)
+and import the UI SDK components you use. `uiset.css` already includes UI SDK's `web.css`.
+`uiset.js` is about 117 KB gzipped with every kit and `uiset.css` 39 KB; the chat's
+markdown parser (53 KB) loads only when a chat first draws an answer. The page templates
+aren't in the build: they're pages to copy, each with its own small script. Install `shiki` too for colored code in chats;
+without it, code blocks are plain.
+
+## Plain HTML
+
+```html
+<link rel="stylesheet" href="/uiset/uiset.css" />
+<script type="module">
+  import "@ui-sdk/web/button"
+  import "@ui-sdk/web/switch"
+  import "@ui-sdk/web/tabs"
+  import "/uiset/uiset.js"
+</script>
+
+<uiset-root skin="studio" theme="dark">
+  <ui-button><button>Save</button></ui-button>
+  <ui-button><button data-variant="outline">Cancel</button></ui-button>
+  <label><ui-switch><ui-switch-thumb></ui-switch-thumb></ui-switch> Email me</label>
+
+  <span id="cutoff">Cutoff</span>
+  <uiset-knob aria-labelledby="cutoff" default-value="40">
+    <uiset-knob-indicator></uiset-knob-indicator>
+    <uiset-knob-value></uiset-knob-value>
+  </uiset-knob>
+</uiset-root>
+```
+
+- `<uiset-root>` is the React `<UISet>`: `skin` (`base`, `blueprint`, `studio`), `theme`
+  (`light`, `dark`, or leave it out to follow the system), `sound` (present to turn the
+  feedback sounds on) and `haptics="off"`. Change the attributes to switch live.
+- Variants go on the element that gets `data-slot`, which for a wrapping element like
+  `<ui-button>` is the native button inside it: `<button data-variant="outline">`.
+- UISet's primitives fire their callbacks as events on the root element, like UI SDK's:
+  `knob.addEventListener("valuechange", (e) => e.detail.value)`.
+
+## UISet's elements
+
+| Element                                                                 | What it is |
+| ----------------------------------------------------------------------- | ---------- |
+| `<uiset-root>`                                                         | The skin, theme and feedback root |
+| `<uiset-knob>`, `<uiset-knob-indicator>`, `<uiset-knob-value>`       | The Studio knob: drag, arrows, Home/End; the readout follows the value with no script |
+| `<uiset-patch-bay>`, `<uiset-patch-bay-jack>`                         | The Studio patch bay: drag a cable, or Enter, arrows, Enter; draws its own cables |
+| `<uiset-swipe-list>`                                                   | Mobile swipe rows, from `items` (or your own `<uiset-swipe-row>` markup) |
+| `<uiset-wheel>`                                                        | A scroll wheel around a `<ui-listbox class="wheel-list">` |
+| `<uiset-pull-refresh>`                                                 | Pull down at the top to refresh what's inside it |
+| `<uiset-board>`                                                        | A kanban board, from `columns`, `cards` and `lanes` |
+| `<uiset-schedule>`, `<uiset-schedule-month>`                          | A week, a day or a timeline from `tracks` and `events`, and the month at a glance |
+| `<uiset-canvas>`, `<uiset-canvas-toolbar>`, `<uiset-canvas-inspector>` | A node editor from `nodes` and `edges`, its toolbar, and the selected node's details |
+| `<uiset-file-tree>`, `<uiset-editor-tabs>`, `<uiset-code-editor>`, `<uiset-command-palette>`, `<uiset-problems>`, `<uiset-status-bar>` | The IDE's parts: files, open tabs, a code editor, the palette, problems and the status bar |
+| `<uiset-agent-console>`, `<uiset-agent-step>`, `<uiset-agent-approvals>`, `<uiset-agent-activity>`, `<uiset-agent-snapshot>` | The human side of the agent bridge: status, steps, approvals, activity with undo, and what the agent sees |
+| `<uiset-terminal>`                                                     | A terminal: ANSI output, a prompt with history and Tab completion, Ctrl+C and Ctrl+L |
+| `<uiset-line-chart>`, `<uiset-bar-chart>`, `<uiset-scatter-chart>`, `<uiset-heatmap>`, `<uiset-segmented-bar>` | The charts, drawn from the same geometry as the React ones |
+| `<uiset-sparkline>`, `<uiset-stat>`                                   | A trend in a line of text, and a figure with its change in words and an optional trend |
+| `<uiset-data-grid>`                                                    | The data grid, from `rows`, `columns` and `getRowId` |
+| `<uiset-chat>`, `<uiset-chat-composer>`, `<uiset-chat-threads>`, `<uiset-chat-model-picker>`, `<uiset-chat-usage>` | A conversation from `messages` with parts, its message box, the list of chats, a model picker and a context meter |
+| `<uiset-rich-text>`, `<uiset-rich-text-content>`                     | The rich text editor (toolbar, "/" and "@", Markdown in and out), and saved text shown read-only |
+| `<uiset-app-shell>`, `<uiset-page-header>`, `<uiset-empty-state>`   | An app's frame (a sidebar that collapses to icons, a drawer on phones), a page's heading with actions, and what to do when there's nothing yet |
+| `<uiset-search-field>`, `<uiset-copy-button>`, `<uiset-stepper>`      | A search box with Clear and a "/" key, a copy button that says Copied, and the steps of a flow |
+
+## Studio
+
+The patch bay is a UISet element; faders, level meters and step sequencers are UI SDK's
+slider, meter and toggle group in UISet's classes, as the React ones are.
+
+```html
+<uiset-patch-bay aria-label="Patch bay">
+  <uiset-patch-bay-jack value="lfo:out"><button aria-label="LFO out"></button></uiset-patch-bay-jack>
+  <uiset-patch-bay-jack value="cutoff:in"><button aria-label="Cutoff in"></button></uiset-patch-bay-jack>
+</uiset-patch-bay>
+
+<div class="fader-field">
+  <ui-slider orientation="vertical" default-value="70">
+    <ui-slider-value></ui-slider-value>
+    <ui-slider-control><ui-slider-track>
+      <ui-slider-indicator></ui-slider-indicator><ui-slider-thumb aria-label="Level"></ui-slider-thumb>
+    </ui-slider-track></ui-slider-control>
+  </ui-slider>
+  <span class="fader-label" aria-hidden="true">Level</span>
+</div>
+
+<ui-meter class="level-meter" value="62" aria-label="Signal">
+  <ui-meter-track><ui-meter-indicator></ui-meter-indicator></ui-meter-track>
+</ui-meter>
+
+<ui-toggle-group multiple class="step-sequencer" aria-label="Steps" default-value="1,5" style="--steps: 8">
+  <ui-toggle value="1"><button aria-label="Step 1" data-downbeat></button></ui-toggle>
+  …
+</ui-toggle-group>
+```
+
+- A port whose value ends in `:out` patches into one ending in `:in`; an input takes one
+  cable, and patching a connected pair again pulls the cable out.
+- `bay.value` reads and sets the cables (`[{ from, to }]`), and `valuechange` fires when a
+  person or agent changes them. `bay.api.plug(from, to)`, `unplug` and `clear` work by port
+  or by name.
+- Ports are named by their buttons' `aria-label`s, for agents and for each jack's "Patched
+  to …" description, unless you set `bay.labels` yourself.
+- Mark the current step with `data-current` and the downbeats with `data-downbeat` on the
+  buttons.
+
+## Mobile
+
+```html
+<uiset-pull-refresh>
+  <uiset-swipe-list aria-label="Messages" openable></uiset-swipe-list>
+</uiset-pull-refresh>
+```
+
+```ts
+list.items = messages.map((m) => ({
+  id: m.id,
+  label: `${m.from}: ${m.subject}`,
+  content: `${m.from} · ${m.subject}`, // or a Node
+  start: [{ id: "read", label: "Read", icon: "mail" }],
+  end: [
+    { id: "archive", label: "Archive", icon: "archive", tone: "neutral" },
+    { id: "delete", label: "Delete", icon: "trash", tone: "danger" },
+  ],
+}))
+list.addEventListener("action", (e) => run(e.detail.value, e.detail.action))
+list.addEventListener("open", (e) => open(e.detail.value)) // with `openable`
+refresh.addEventListener("refresh", (e) => e.detail.waitUntil(fetchMail()))
+```
+
+- Set `items` again whenever your data changes; rows are kept by `id`, so the focused row,
+  an open row and their elements stay. After an action, focus goes back to its row, or to
+  the row now in its place.
+- Everything the React SwipeList does is here: a long swipe runs a side's first action, each
+  row has an Actions menu for screen readers, `messages` translates the words, and agents
+  `run(row, action)` and `openRow(row)` by name (a `danger` action needs the person).
+- `<uiset-pull-refresh>` scrolls its children and slides them down as it's pulled. A
+  rejected `waitUntil` Promise is announced and fires `refresherror`; `refresh()` runs one
+  from code, and a Refresh button shows on keyboard focus. `threshold` and `messages` tune it.
+- `<uiset-wheel>` binds UI SDK's `bindScrollPicker` to the listbox inside it, and keeps
+  focus on the value when it changes from elsewhere (an agent's `setValue`, say):
+
+```html
+<div class="wheel-group" role="group" aria-label="Alarm time">
+  <uiset-wheel>
+    <ui-listbox class="wheel-list" keep-in-view="false" aria-label="Alarm time, hour" default-value="7">
+      <ui-listbox-item class="wheel-option" value="1">1</ui-listbox-item>
+      …
+    </ui-listbox>
+  </uiset-wheel>
+</div>
+```
+
+- Sheets, action sheets, the app bar and the tab bar are UI SDK's drawer and buttons in
+  UISet's classes: `mobile-sheet` (add `data-snaps` with several snap points),
+  `mobile-sheet-handle`, `mobile-action` with `data-destructive`, `mobile-app-bar`,
+  `mobile-tab-bar` and `mobile-tab` with `aria-current="page"`. An action sheet's choice
+  comes back from `await drawer.api.open()` as `returnValue`, from `<ui-drawer-close
+  value="…">`. `web/mobile.html` has all of it working.
+- `iconElement(name)` (exported from `uiset.js`) draws UISet's icons without React.
+
+## Board
+
+```html
+<uiset-board aria-label="Sprint board" today="2026-11-15" addable openable></uiset-board>
+```
+
+```ts
+board.columns = [{ id: "todo", title: "To do" }, { id: "doing", title: "Doing", limit: 3 }, { id: "done", title: "Done" }]
+board.cards = { c1: { id: "c1", title: "Write the spec", assignee: "Grace Hopper", labels: ["Docs"] } }
+board.lanes = { todo: ["c1"], doing: [], done: [] }
+board.addEventListener("laneschange", (e) => save(e.detail.value))  // also e.detail.key, from, to, index
+board.addEventListener("open", (e) => showCard(e.detail.value))      // Enter or a click
+board.addEventListener("add", (e) => create(e.detail.value, e.detail.title))
+```
+
+- `lanes` is live: read it any time (you get a copy), set it to change the board (an undo,
+  a server update). Set `cards` again when a card changes: a card is kept by id and filled
+  again in place, so it keeps focus, and an open "Add a card" form stays. Renamed columns,
+  a new `renderCard` and a changed `today` attribute redraw too.
+- `addable` shows "Add a card" and `openable` makes Enter and clicks open cards. Without
+  them the board does neither, and agents are told so.
+- Arrows move between cards and columns; Space picks a card up, arrows carry it (the board
+  redraws as it goes), Space drops it and Escape puts it back. Column `limit`s hold for
+  people, agents and `board.api.moveCard`.
+- `add` fires when someone submits "Add a card": add the card to `cards` and `lanes`
+  yourself. A column that fills hands focus to its last card. Counts include every id in a
+  column, as the limit check does.
+- `hiddenCards` (ids) hides cards in place for a search or filter: focus skips them (a
+  focused card that gets hidden hands focus to its neighbor) and moves wait until it
+  clears. Ids that aren't on the board don't hold moves back. (It isn't `hidden`, which
+  hides the element itself.)
+- The board's help is added to your own `aria-describedby`, not put in its place.
+- `describeCard(card)` sets what screen readers hear after a title, `renderCard(card)`
+  returns your own card face (a Node), and `messages` holds the words (`help`, `empty`,
+  `full`, `filtered`).
+- `board.api` has `moveCard(card, column, position?)`, `addCard`, `openCard`, `focusCard`,
+  `cardElement`, `neighbor` (where focus goes when a card leaves) and `hasRoom`, by id or
+  by the names people see. Agents use the same names.
+- Card details are your page's: open a `ui-dialog` on `open`. On web components its
+  `final-focus` is a selector, read as it opens: point it at
+  `uiset-board-card[value="…"]`. `web/board.html` has a dialog that moves cards (a full
+  column says so) and deletes them, returning focus to the card or its neighbor; each move
+  and delete has its own Undo.
+
+## Scheduler
+
+```html
+<uiset-schedule aria-label="Team week" start-hour="8" end-hour="18" today="2026-11-16" time-zone="UTC" openable></uiset-schedule>
+<uiset-schedule-month month="2026-11" today="2026-11-16" label="November 2026"></uiset-schedule-month>
+```
+
+```ts
+schedule.tracks = [{ id: "2026-11-16", label: "Monday, Nov 16", short: "16 Mon" }, …] // days, or rooms
+schedule.events = [{ id: "e1", track: "2026-11-16", start: 9 * 60, end: 10 * 60, title: "Standup", color: 1 }]
+schedule.addEventListener("eventschange", (e) => save(e.detail.value)) // a draw, move, resize or delete
+schedule.addEventListener("open", (e) => showEvent(e.detail.value))    // Enter or a click
+schedule.create = (span) => ({ ...span, title: "New event" })          // what a drag or click draws
+month.events = schedule.events
+month.addEventListener("daychoose", (e) => showDay(e.detail.value))
+```
+
+- Times are minutes past midnight; a track is a day (an ISO date) or anything else, like a
+  room. `axis="x"` lays tracks out as rows (a timeline). `start-hour`, `end-hour`, `step`
+  (minutes, 15 by default), `size` (the default length) and `overlap="false"` (rooms) are
+  attributes, and changing one redraws.
+- Each event is a button: drag it to move, drag its end edge to resize, drag an empty
+  stretch to draw. Arrows move it by a step or a track, Shift with arrows changes its end,
+  Delete removes it and hands focus to its neighbor, Enter opens it (with `openable`;
+  without it the schedule doesn't open events, and agents are told). Events keep their
+  elements as they move, so a drag holds its pointer and focus stays.
+- `events` is live: read it, or set it (an undo, a server update). `locked(event)` keeps
+  events from changing, `timeLabel(minutes)` sets how times read (12-hour English by
+  default), `renderEvent(event)` returns your own face, and `now` with `today` draws the
+  current-time line. Your `aria-describedby` stays, with the schedule's help after it.
+- `schedule.api` has `addEvent`, `moveEvent`, `resizeEvent`, `removeEvent`, `openEvent`,
+  `problem(event)` (why an event wouldn't fit: hours, steps, overlaps), `eventElement`
+  and `neighbor`. Agents add, move, resize and open events by the names people see.
+- `<uiset-schedule-month>` is UI SDK's calendar with each day's first events as chips
+  (`limit`, 3 by default) and the events in each day's name. Choosing a day fires
+  `daychoose`; the month buttons fire `monthchange`.
+- The toolbar and the event dialog are your page's: `web/schedule.html` has Day, Week,
+  Month and Rooms, a dialog that checks times with `api.problem`, and focus that returns to
+  the event or a deleted one's neighbor.
+
+## Canvas
+
+```html
+<uiset-canvas-toolbar for="workflow"></uiset-canvas-toolbar>
+<uiset-canvas id="workflow" label="Workflow" fit-view openable history></uiset-canvas>
+<uiset-canvas-inspector for="workflow" renamable></uiset-canvas-inspector>
+```
+
+```ts
+canvas.kinds = [{ id: "prompt", label: "Prompt" }, { id: "model", label: "Model" }]
+canvas.nodes = [{ id: "a", kind: "prompt", title: "Answer template", x: 40, y: 40, outputs: [{ id: "out", label: "Prompt" }] }, …]
+canvas.edges = [{ id: "a->b", from: "a:out:out", to: "b:in:prompt" }]
+canvas.createNode = (kind, at, title) => ({ id: crypto.randomUUID(), kind, title: title ?? "New node", ...at })
+canvas.addEventListener("nodeschange", (e) => save(e.detail.value)) // e.detail.type: move, add, remove, edit
+canvas.addEventListener("edgeschange", (e) => saveWires(e.detail.value))
+inspector.renderFields = (node) => myFields(node) // your fields, under Rename
+```
+
+- The canvas owns its `nodes` and `edges` once you set them, like a form field: a drag, a
+  removal, an add or a wire changes them and fires `nodeschange` or `edgeschange` first, and
+  `preventDefault()` refuses the change. Setting them yourself replaces them.
+- Drag empty space to pan, scroll or pinch to zoom, Shift-drag to select a box. Tab
+  reaches the nodes once; arrows go to the nearest node that way, Alt with arrows moves
+  it, Space selects, C starts a wire (arrows choose an input, Enter connects), Delete
+  removes (with its wires), Enter opens (with `openable`). Plus and minus zoom; 0 resets.
+- `history` keeps an undo stack: Control+Z and Control+Shift+Z on the canvas,
+  `canvas.undo()`, `redo()`, `canUndo` and `canRedo`, and `historychange`. A removal takes
+  its wires in the same step, and `canvas.updateNode(id, patch)` (the inspector's Rename)
+  is a step too.
+- `fit-view` frames every node once the canvas has a size. `controls="false"` and
+  `minimap="false"` leave out the zoom buttons and the map. `grid` sets the snap and the
+  Alt+arrow step. `kinds`, `canConnect(from, to)`, `locked(node)` and `renderNode(node)`
+  are properties, as in React.
+- `canvas.api` has `addNode`, `moveNode`, `connect`, `disconnect`, `select`, `openNode`,
+  `fitView`, the zoom steps, `focusNode`, `nodeElement`, `selectedNodes` and
+  `removeSelected`. Agents add, wire, move and select nodes by the names people see.
+- `<uiset-canvas-toolbar for="…">` is Add node (the canvas's kinds), Remove, Undo and Redo
+  (with `history`) and Fit view on UI SDK's toolbar. `<uiset-canvas-inspector for="…">`
+  shows the selected node's title, a Rename form (`renamable`), your fields, and its wires,
+  each with Disconnect, which hands focus to the next wire or the node.
+
+## IDE
+
+```html
+<uiset-command-palette id="palette" lines></uiset-command-palette>
+<uiset-file-tree id="files" label="Files" default-expanded="src" creatable renamable movable deletable></uiset-file-tree>
+<uiset-editor-tabs id="tabs" empty="No file open."></uiset-editor-tabs>
+<uiset-problems id="problems"></uiset-problems>
+<uiset-status-bar><span class="ide-status-item">main</span></uiset-status-bar>
+```
+
+```ts
+files.paths = Object.keys(project)                 // a path ending in "/" is an empty folder
+files.status = { "src/index.ts": "modified" }      // version control marks
+files.addEventListener("open", (e) => openFile(e.detail.value))
+files.addEventListener("rename", (e) => rename(e.detail.from, e.detail.value)) // or e.detail.refuse("why")
+tabs.files = [{ path: "src/index.ts", dirty: true }]
+tabs.renderPanel = (path) => Object.assign(document.createElement("uiset-code-editor"), { value: project[path] })
+tabs.addEventListener("close", (e) => closeFile(e.detail.value))
+palette.files = Object.keys(project)
+palette.addEventListener("openfile", (e) => openFile(e.detail.value))
+```
+
+- Each part is its own element and keeps no project of its own: you hold the files, and
+  each part shows what you give it and fires what people do. `web/ide.html` joins them into
+  the React IDE template's editor, from the same sample project and linter
+  (`templates/ide-sample.ts`).
+- `<uiset-file-tree>` is UI SDK's tree: folders first, marks from `status` (in words after
+  each name), New file and New folder (`creatable`), Rename with F2 (`renamable`), Move
+  (`movable`), Delete with the Delete key after a confirm (`deletable`). `create`, `rename`
+  and `move` carry `refuse(message)`, which keeps the dialog open with your reason. A new or
+  renamed item takes focus; a deleted one hands it to its neighbor. An agent's choice of a
+  file opens it.
+- `<uiset-editor-tabs>` is UI SDK's tabs. `renderPanel(path)` fills a file's panel once and
+  it stays while the tab is open, so an editor keeps its caret, scroll and undo. Delete on
+  a tab, a middle click or its × fires `close`; once the file leaves `files`, focus goes to
+  the tab that took over, or the empty pane.
+- `<uiset-code-editor label path tab-size readonly>` is UI SDK's textarea (agents read and
+  write it) with line numbers and colors behind the text. Tab and Shift+Tab indent, Escape
+  then Tab leaves, Enter keeps the indent, F8 and Shift+F8 walk `problems`, and its own undo
+  keeps a run of typing as one step and a change from outside (setting `value`) as another.
+  `valuechange` and `cursorchange` report typing and the caret; `goTo(line, col)` moves it.
+  Text inside the element is its first value.
+- `<uiset-command-palette lines>` opens files with ⌘P (Ctrl+P), commands after `>` with ⌘⇧P,
+  and lines after `:`, on UI SDK's command in a dialog. Escape goes back where you were.
+- `<uiset-problems>` lists `problems` worst first and fires `choose`; `<uiset-status-bar>`
+  is the labeled strip for your items.
+
+## Agent Console
+
+```html
+<uiset-agent-console title="Agent" status="idle">
+  <uiset-agent-step status="done">Rename the project</uiset-agent-step>
+  <uiset-agent-activity></uiset-agent-activity>
+  <uiset-agent-snapshot within="#settings"></uiset-agent-snapshot>
+  <uiset-agent-approvals></uiset-agent-approvals>
+</uiset-agent-console>
+```
+
+```ts
+import { createAgent } from "@ui-sdk/web/agent"
+import { createHistory } from "@ui-sdk/web/history"
+import { createApprovals } from "@/components/ui/agent/approvals"
+
+const approvals = createApprovals()
+const agent = createAgent({ allow: approvals.allow })
+approvalsEl.approvals = approvals
+activityEl.history = createHistory(agent, { within: () => settings })
+snapshotEl.agent = agent
+```
+
+- The console is a labeled region with the agent's status (`idle`, `working`, `waiting`)
+  in words, and it's hidden from agents, so they never act on their own console.
+- `<uiset-agent-step status>` is one step of a plan: running, done, failed, or "You said no".
+- `<uiset-agent-approvals>` shows each pending approval as a card with Allow and Don't
+  allow. Steps on controls marked `data-agent-confirm` always ask. The cards go to the top
+  layer, above a modal the person has open, and stay usable while it is.
+- `<uiset-agent-activity source="agent">` lists what the agent changed, newest first: Show
+  outlines the control, and Undo agent changes puts back what it changed and leaves what
+  people changed.
+- `<uiset-agent-snapshot within>` is a table of what the agent can see: each control, its
+  kind, its state and its actions. `web/agent.html` runs a stand-in model (the gallery's
+  planner) against project settings, so the whole loop runs without an API key.
+
+## Terminal
+
+```html
+<uiset-terminal label="Shell" prompt="~/app $" welcome="Type help for the commands."></uiset-terminal>
+```
+
+```ts
+shell.commands = {
+  echo: { description: "Prints its words", usage: "<words…>", run: (args) => args.join(" ") },
+  build: {
+    description: "Builds, with a progress bar",
+    async *run(_args, io) {
+      for (let p = 0; p <= 100; p += 20) yield `\r${"█".repeat(p / 10).padEnd(10, "░")} ${p}%`
+      yield "\n\x1b[32m✓\x1b[0m Built\n"
+    },
+  },
+}
+shell.history = ["ls"]                       // Up brings these back first
+shell.handle = (line, io) => socket.send(line) // lines no command matched
+shell.api.print("from the server\n")         // output from outside, like a socket
+```
+
+- It runs on the React Terminal's own session (`terminal/session.ts`) and screen
+  (`terminal/ansi.ts`): a command prints, returns text, streams an async iterable (a
+  progress bar redraws its line with `\r`), or throws (shown in the danger tone). `help`,
+  `clear` and `history` come built in.
+- Up and Down bring back earlier commands, Tab completes a command or (with a command's
+  `complete`) its argument, and a second Tab lists several matches. Ctrl+C stops a running
+  command (the prompt comes back at once), and with text selected it copies. Ctrl+L clears.
+- Output keeps ANSI colors, readable in every skin and theme, and links (OSC 8 and plain
+  http addresses). The log reads out new lines only, and old lines go only while you're
+  following the end, past `scrollback` lines. "New output below" appears when you've
+  scrolled up.
+- `shell.api` has `run`, `clear`, `print` and `error`. Agents run commands and read the
+  last lines; while a command runs, they're told to wait.
+
+## Charts
+
+```html
+<uiset-line-chart id="revenue" label="Revenue" description="By month"></uiset-line-chart>
+```
+
+```ts
+Object.assign(document.getElementById("revenue"), {
+  data: months,
+  x: (d) => d.month,
+  series: [
+    { key: "revenue", label: "Revenue", value: (d) => d.revenue },
+    { key: "costs", label: "Costs", value: (d) => d.costs },
+  ],
+  format: (n) => `$${n / 1000}k`,
+})
+```
+
+- Each chart's geometry lives in `registry/uiset/ui/chart/plots/` as plain functions that
+  return nodes; the React charts and these elements draw the same nodes, so they can't drift.
+- The title is `label` (a `title` attribute would give the whole chart the browser's
+  tooltip). `description` and `height` are attributes too. The options React takes as props
+  are properties here (`data`, `x`, `series`, `format`, …), or attributes where they're words:
+  `layout` on line charts; `orientation`, `layout` and `sort` on bar charts; `x-label` and
+  `y-label` on scatter charts; `measure` on heatmaps; `variant` on segmented bars; `locale`
+  on all. Every attribute has a property that reflects it, so `chart.orientation = "horizontal"`
+  works too.
+- A scatter chart's point names come from `pointLabel` (React's `label`), since `label` is
+  the title on every chart.
+- Setting properties redraws once, on the next microtask, however many you set together.
+  Properties set before the element is defined are picked up when it is.
+- Until its required options arrive, a chart shows its title and nothing else, with
+  `aria-busy` on its figure.
+- Every chart is a listbox of its data positions: arrows move (by row in a heatmap), the
+  tooltip and crosshair follow focus or the pointer (the nearest point, on a scatter chart),
+  and Enter pins one. `selected` is live. `select` fires with `{ value, source, reason }`:
+  `source` is `keyboard`, `pointer` or `agent`, and `preventDefault()` refuses the pin. When
+  new data drops the pinned position, `select` fires once with `value: null`, `source:
+  "data"`, `reason: "removed"`.
+- `<uiset-sparkline label values="4,6,,8" variant="line|area|bar" series="1">` needs no
+  script: `values` is comma-separated (an empty place is a gap), and its name says where
+  the values went ("from 4 to 8, low 4, high 8"). `<uiset-stat label value change
+  direction good period trend description>` says its change in words ("Up 12%") as well
+  as color; `good="false"` marks a rise as bad. Both take `values`/`trend` and `format` as
+  properties too.
+- The legend isolates a series; Chart and Table switch to the table twin. Agents `select`
+  by reading ("Mar"), `isolate` and `showAll` series, and `showTable`, as in React. With the
+  table showing, the switch is how an agent gets back to the chart.
+
+## Data Grid
+
+```html
+<uiset-data-grid label="Customers" selectable editable toolbar filename="customers" height="26rem"></uiset-data-grid>
+```
+
+```ts
+grid.columns = [
+  { id: "name", header: "Name", value: (c) => c.name, pinned: true, editable: true, hideable: false },
+  { id: "plan", header: "Plan", value: (c) => c.plan, options: ["Free", "Pro", "Team"], editable: true },
+  { id: "seats", header: "Seats", type: "number", value: (c) => c.seats, editable: true },
+  { id: "renews", header: "Renews", type: "date", value: (c) => c.renews, text: (c) => day.format(c.renews) },
+  { id: "active", header: "Active", type: "boolean", value: (c) => c.active, editable: true },
+]
+grid.getRowId = (c) => c.id
+grid.rows = customers
+grid.addEventListener("celledit", (e) => {
+  const { rowId, column, value } = e.detail // value is parsed: a number, a Date, a listed option
+  if (!allowed(value)) return e.preventDefault() // refused: the editor stays open
+  save(rowId, column, value)
+})
+grid.addEventListener("rowaction", (e) => open(e.detail.row))
+```
+
+- Columns are the React grid's (`type`, `options`, `width`, `minWidth`, `align`, `sortable`,
+  `filterable`, `groupable`, `editable`, `pinned`, `hidden`, `hideable`), and `render(row)`
+  returns a Node or text. Both share `data-grid/columns.ts` and `data-grid/view.ts`.
+- Attributes: `label`, `locale`, `selectable`, `editable` (with `celledit` listening),
+  `height`, `empty`, `persist` (a localStorage key for the layout), `density`, `toolbar` and
+  `filename` (for Export CSV).
+- State is live and reported: `selected` (selectedchange), `sort` (sortchange), `query`
+  (querychange), `filters` (filterschange), `groupBy` (groupbychange), `columnState`
+  (columnstatechange) and `density` (densitychange). Setting one fires no event; a person's
+  or agent's change does, and `preventDefault()` cancels it: a canceled change isn't
+  announced, doesn't move focus, and fails the agent step that asked for it.
+- `rows`, `columns`, `getRowId` and the state above can be set before the element is
+  defined; they're picked up when it is.
+- Everything the keyboard does in React works here: one tab stop, arrows, Page Up and Down,
+  Control+Home and End, Shift to select a range, copy and paste, Enter or typing to edit,
+  Space to check, Shift+F10 for the column menu, Alt+arrows to resize, Alt+Shift+arrows to
+  move. Only the rows near the view are drawn, in order. When rows or columns go (a search,
+  a hidden column), the active cell moves to the nearest one left, so the grid keeps its
+  tab stop. An edit left open with text that doesn't fit gives way when another cell starts
+  one.
+- Header cells, their menus and the toolbar's tools are kept as the grid redraws: an open
+  column menu stays open (Wider and Narrower keep it open), and closing it returns focus to
+  its header. Double-clicking a resize edge resets the width. A redraw only touches the
+  cells whose row, column or text changed, and a resize drag only changes widths.
+- `toolbar` adds search (or the selection, with Clear selection), column filters, grouping,
+  the View menu (columns and density) and Export CSV. Each tool shows the grid's state
+  however it changed, and follows `label` and header changes. `grid.exportCsv(name)` and
+  `grid.focusGrid()` work from code.
+- Agents `sortBy`, `filter`, `filterColumn`, `selectRows`, `clearSelection`, `editCell`,
+  `groupBy` and `showColumn` by the names people see, with the same checks.
+
+## Chat
+
+```html
+<uiset-chat-threads label="Chats" value="t1" newable renamable deletable></uiset-chat-threads>
+<uiset-chat id="chat" label="Conversation" editable></uiset-chat>
+<uiset-chat-composer id="composer" label="Message" attachments="image/*,.pdf"></uiset-chat-composer>
+```
+
+```ts
+// With AI SDK's useChat (Vue, Svelte or plain JavaScript), its state goes straight in:
+chat.messages = messages // [{ id, role, parts: [{ type: "text", text }, …] }]
+chat.status = status     // "ready" | "submitted" | "streaming" | "error"
+composer.toggleAttribute("running", status === "submitted" || status === "streaming")
+composer.addEventListener("send", (e) => sendMessage({ text: e.detail.text, files: e.detail.files }))
+composer.addEventListener("stop", () => stop())
+chat.addEventListener("retry", () => regenerate())
+```
+
+- Parts drawn: `text` (markdown, with GitHub tables, task lists and code blocks highlighted
+  by shiki), `reasoning` (open while it streams, then "Thought for 2s"), tool calls
+  (`tool-*` and `dynamic-tool`, with their state, input, output or error), `source-url`
+  (gathered into "Used 3 sources"), `file` (images shown, others linked) and UISet's own
+  `tasks` (`{ type: "tasks", title, tasks: [{ id, title, status }] }`).
+- Raw HTML in markdown is dropped, never rendered: model output is untrusted. While a text
+  part streams, half-written markdown is completed (remend) so it doesn't flicker.
+- The markdown parser is remark, as React's response uses, and loads only when a chat first
+  draws an answer.
+- Under each answer: Copy, Retry (on the last answer, firing `retry`) and Good or Bad
+  (`feedbackchange` with `{ value, id }`; `chat.feedback` is live). With `editable`, a user's
+  message has Edit (`edit`). A tool call in `approval-requested` shows Allow and Deny and
+  fires `approve` with `{ value, id, part }`; Allow carries `data-agent-confirm`.
+- `suggestions` show in the empty state, and a click fires `suggestion`.
+- The log follows new text unless you've scrolled up, then offers Jump to latest.
+- `<uiset-chat-composer>` sends on Enter (Shift+Enter for a new line), shows Stop while
+  `running`, brings back what you sent with Up and Down, takes files with `attachments` (its
+  value is the accept list), and suggests `commands` after "/" and `mentions` after "@".
+  Its event is `send`, not `submit`, which its own form's native event would share.
+- `<uiset-chat-threads>` takes `threads` (`{ id, title, updatedAt? }`) and `value`.
+  Choosing a chat sets `value` and fires `valuechange` (cancelable; not `select`, which a
+  text field's native event shares). It also fires `new`, `rename` with `{ value, title }`
+  and `delete` (after the person confirms in an alert dialog).
+- The composer's children go in its toolbar, beside Send. `<uiset-chat-model-picker
+  label="Model" value="balanced">` takes `models` (`{ value, label, description? }`) and
+  fires `valuechange`; `<uiset-chat-usage used="1200" limit="200000">` is a meter that
+  reads "1.2K of 200K tokens" and turns amber past 70% and red past 90%.
+
+```html
+<uiset-chat-composer label="Message" attachments>
+  <uiset-chat-model-picker id="model" value="balanced"></uiset-chat-model-picker>
+  <uiset-chat-usage used="0" limit="200000"></uiset-chat-usage>
+</uiset-chat-composer>
+```
+
+## Rich text
+
+```html
+<uiset-rich-text id="notes" label="Release notes" placeholder="Write the notes…"
+  value="## Release 2.4" name="notes" format="markdown" max-length="2000"></uiset-rich-text>
+<uiset-rich-text-content id="preview"></uiset-rich-text-content>
+```
+
+```ts
+notes.mentions = [{ value: "ada", label: "Ada Lovelace" }]
+notes.uploadImage = async (file) => ({ src: await upload(file), alt: file.name })
+notes.addEventListener("valuechange", (e) => {
+  save(e.detail.value)       // Markdown
+  preview.doc = e.detail.doc // the document, drawn read-only
+})
+```
+
+- The same editor as React's `RichTextEditor`: the toolbar is `<ui-toolbar>` with
+  `<ui-toggle>`s, a `<ui-select>` for the block type and a `<ui-popover>` for links; "/"
+  and "@" are `<ui-trigger-menu>`. The keys, Markdown shortcuts, paste rules and HTML
+  output are the ones in [Rich text](./rich-text.md).
+- `value` (attribute or property) is Markdown; `doc` is the document. `valuechange` fires
+  with `{ value, doc }` for edits, not caret moves; `submit` fires on Mod+Enter outside a
+  to-do.
+- `commands` replaces what "/" offers (`[]` turns it off), with the same shape as React's.
+  `toolbar="false"` leaves the toolbar out; `readonly` hides it and refuses edits;
+  `disabled` dims it too.
+- With `name`, a hidden field carries the HTML, or Markdown with `format="markdown"`.
+- Agents see `<uiset-rich-text-area>`, the editing surface, named by `label`, with
+  `setValue`, `insert` and `clear` taking Markdown.
+- `<uiset-rich-text-content value="…">` (or its `doc` property) draws saved text with the
+  editor's styles, from the document, never from an HTML string.
+
+## App Shell
+
+```html
+<uiset-app-shell label="Main navigation">
+  <a data-part="brand" href="/">Acme</a>
+  <nav data-part="sidebar" class="sidebar-nav" aria-label="Main">
+    <a class="sidebar-link" href="/" aria-current="page"><span class="sidebar-icon"></span><span class="sidebar-label">Home</span></a>
+  </nav>
+  <div data-part="header">…search, account…</div>
+  <uiset-page-header title="Customers" description="Everyone who has an account.">
+    <ui-button><button>Add customer</button></ui-button>
+  </uiset-page-header>
+  …the page…
+</uiset-app-shell>
+```
+
+- `<uiset-app-shell>` lays out its children by `data-part`: `brand` at the top of the
+  sidebar, `sidebar` under it, `header` in the header, and the rest in a `<main>` (or a
+  `<div>` with `content="div"`, when the page has its own).
+- Mod+B (or the toggle) collapses the sidebar to icons and back, remembered in the same
+  storage as the React AppShell (`uiset-sidebar`), and each link then gets a tooltip.
+  Below `narrow-below` (48rem by default) the sidebar moves into a drawer opened from the
+  header.
+- `<uiset-page-header title description level>` is the page's `h1` (or `h2`) with your
+  actions as children. `<uiset-empty-state title description icon level>` says what to do
+  when there's nothing yet, with its actions as children. On both, `title` names the page
+  or state; it isn't a tooltip.
+
+## Page templates
+
+Every React page template is a web page too, in `web/templates/`, built only from UI SDK's
+elements and UISet's. Each one's sample data is a framework-free module the React template
+imports as well (`registry/uiset/ui/templates/*-sample.ts`), so the two show the same thing.
+
+| Page | What it shows |
+| ---- | ------------- |
+| `auth.html` | Sign in, sign up, forgot and reset password, verify a code: browser checks, server messages, a strength meter |
+| `pricing.html` | Plans with a monthly or yearly switch, a comparison table and questions |
+| `dashboard.html` | A date range that rescopes the figures, charts and recent orders, in the App Shell |
+| `admin.html` | Records with search, filters and export; create and edit in a drawer; confirmed bulk delete |
+| `settings.html` | Profile, security, notifications, billing with usage and invoices, team, and a danger zone |
+| `inbox.html` | Folders, a message list you arrow through, the message with star, archive, delete and Undo, and compose |
+| `chat-app.html` | Chats, the conversation and a composer with a model picker and usage, streaming from a stand-in model |
+| `project-board.html` | Sprint progress and the issues as a board or a list, with search, a person filter, card details, a new-issue form and Undo |
+| `calendar-app.html` | A day, a week (`uiset-schedule`) or a month (`uiset-schedule-month`), a small month that jumps to a day, calendars to show or hide, and what's next |
+| `../ide.html` | The IDE in resizable panes |
+
+The chat app streams from `sampleAssistant` (`templates/chat-app-sample.ts`), an async
+generator of events (text, reasoning, tool calls, sources). Swap in your model there; the
+page turns its events into the chat's message parts, the same shape AI SDK's `useChat`
+holds, so `useChat`'s `messages` and `status` can go into `<uiset-chat>` directly instead.
+
+## Vue
+
+Tell Vue the tags are custom elements, then use them in templates:
+
+```ts
+// vite.config.ts
+vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith("ui-") || tag.startsWith("uiset-") } } })
+```
+
+```vue
+<uiset-root :skin="skin"><uiset-knob default-value="40" @valuechange="onChange">…</uiset-knob></uiset-root>
+```
+
+Or use UI SDK's Vue adapter (`@ui-sdk/vue`) for its components and load only `uiset.css`:
+the same `data-slot` attributes mean the same styles.
+
+## Svelte and Solid
+
+Both render custom elements as they are. Listen with `onvaluechange` in Svelte 5, or
+`on:valuechange` in Solid. As with Vue, UI SDK's own adapters work with `uiset.css` too.
+
+## React and the web
+
+Every kit is an element set, and every page template is a web page: Studio, Mobile, Board,
+Scheduler, Canvas, the IDE, the Agent Console, the Terminal, Charts with the sparkline and
+stat, the Data Grid, Chat and the App Shell, and the auth, pricing, dashboard, admin,
+settings, inbox, chat app and IDE pages. The rest of the registry wraps UI SDK's own
+components, which are already elements here (`ui-*`, dressed by `uiset.css`); UISet's
+pieces without behavior (badge, alert, card, item and description lists, breadcrumbs,
+skeleton, spinner, kbd) are classes in the same stylesheet.
+
+The three small parts with behavior of their own are elements too:
+
+```html
+<uiset-search-field label="Search mail" placeholder="Search mail…" shortcut="/"></uiset-search-field>
+<uiset-copy-button value="npm i @uiset/web" label="Copy" copied-label="Copied"></uiset-copy-button>
+<uiset-stepper label="Setup progress" value="details"></uiset-stepper>
+```
+
+- `<uiset-search-field>` fires `valuechange` with `{ value }`; `shortcut` ("/" by default,
+  `shortcut=""` for none) focuses it from anywhere, through UI SDK's shared shortcuts, and
+  shows as a key hint until something is typed. Clear empties it and keeps focus.
+- `<uiset-copy-button>` copies `value`, announces "Copied" and shows it for a moment.
+- `<uiset-stepper>` takes `steps` (`{ value, label, description? }`) and `value`; choosing a
+  step sets `value` and fires `valuechange`. With `linear` (on unless `linear="false"`),
+  later steps wait until the current one is reached.
+
+## Tests
+
+`tests/e2e/web/` runs against plain HTML with no React on the page: axe in all three skins
+and both themes, the root's attributes, skins restyling UI SDK's elements, the knob and
+swipe rows by keyboard, the patch bay by keyboard, by script and by an agent, the Studio
+instruments, a UI SDK dialog's focus, and the built files themselves. `mobile.spec.ts`,
+`board.spec.ts`, `scheduler.spec.ts`, `canvas.spec.ts`, `ide.spec.ts`,
+`agent-console.spec.ts`, `terminal.spec.ts`, `charts.spec.ts`, `data-grid.spec.ts` and
+`chat.spec.ts` cover those kits' pages, and `templates.spec.ts` the page templates (`web/mobile.html`, `web/board.html`,
+`web/schedule.html`, `web/canvas.html`, `web/ide.html`, `web/agent.html`,
+`web/terminal.html`, `web/charts.html`, `web/data-grid.html`, `web/chat.html`) the same way: axe in all six skin and theme pairs,
+keyboard, pointer, events, script and agents.

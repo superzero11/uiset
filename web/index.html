@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&family=Saira+Semi+Condensed:wght@400;500;600&family=Instrument+Sans:wdth,wght@75..100,400..700&family=Spline+Sans+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,400..700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+    <title>UISet for Web Components</title>
+    <script type="module">
+      // UI SDK's elements, one import each, then UISet's styles and elements.
+      import "@ui-sdk/web/button"
+      import "@ui-sdk/web/switch"
+      import "@ui-sdk/web/checkbox"
+      import "@ui-sdk/web/slider"
+      import "@ui-sdk/web/select"
+      import "@ui-sdk/web/tabs"
+      import "@ui-sdk/web/dialog"
+      import "@ui-sdk/web/segmented-control"
+      import "@ui-sdk/web/progress"
+      import "@ui-sdk/web/field"
+      import "@ui-sdk/web/meter"
+      import "@ui-sdk/web/toggle"
+      import "./src/uiset.ts"
+      import "./src/demo.ts"
+    </script>
+  </head>
+  <body>
+    <uiset-root skin="base" id="root">
+      <main class="web-demo">
+        <header class="web-demo-head">
+          <h1>UISet, no React</h1>
+          <p>UI SDK's own elements and UISet's, in plain HTML, in every skin.</p>
+          <ui-segmented-control id="skin" default-value="base" aria-label="Skin">
+            <ui-segmented-control-indicator></ui-segmented-control-indicator>
+            <ui-segmented-control-item value="base">Base</ui-segmented-control-item>
+            <ui-segmented-control-item value="blueprint">Blueprint</ui-segmented-control-item>
+            <ui-segmented-control-item value="studio">Studio</ui-segmented-control-item>
+            <ui-segmented-control-item value="phosphor">Phosphor</ui-segmented-control-item>
+            <ui-segmented-control-item value="ink">Ink</ui-segmented-control-item>
+          </ui-segmented-control>
+          <ui-segmented-control id="theme" default-value="system" aria-label="Theme">
+            <ui-segmented-control-indicator></ui-segmented-control-indicator>
+            <ui-segmented-control-item value="system">System</ui-segmented-control-item>
+            <ui-segmented-control-item value="light">Light</ui-segmented-control-item>
+            <ui-segmented-control-item value="dark">Dark</ui-segmented-control-item>
+          </ui-segmented-control>
+        </header>
+
+        <nav class="web-demo-pages" aria-label="Kits and pages">
+          <div>
+            <h2>Kits</h2>
+            <ul>
+              <li><a href="./chat.html">Chat</a></li>
+              <li><a href="./rich-text.html">Rich Text</a></li>
+              <li><a href="./data-grid.html">Data Grid</a></li>
+              <li><a href="./charts.html">Charts</a></li>
+              <li><a href="./board.html">Board</a></li>
+              <li><a href="./schedule.html">Scheduler</a></li>
+              <li><a href="./canvas.html">Canvas</a></li>
+              <li><a href="./ide.html">IDE</a></li>
+              <li><a href="./agent.html">Agent Console</a></li>
+              <li><a href="./terminal.html">Terminal</a></li>
+              <li><a href="./mobile.html">Mobile</a></li>
+            </ul>
+          </div>
+          <div>
+            <h2>Page templates</h2>
+            <ul>
+              <li><a href="./templates/auth.html">Auth</a></li>
+              <li><a href="./templates/pricing.html">Pricing</a></li>
+              <li><a href="./templates/dashboard.html">Dashboard</a></li>
+              <li><a href="./templates/admin.html">Admin</a></li>
+              <li><a href="./templates/settings.html">Settings</a></li>
+              <li><a href="./templates/inbox.html">Inbox</a></li>
+              <li><a href="./templates/chat-app.html">Chat app</a></li>
+              <li><a href="./templates/project-board.html">Project board</a></li>
+              <li><a href="./templates/calendar-app.html">Calendar</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <section class="web-demo-grid" aria-label="Components">
+          <article>
+            <h2>Buttons and toggles</h2>
+            <div class="web-row">
+              <ui-button><button type="button">Save</button></ui-button>
+              <ui-button><button type="button" data-variant="outline">Cancel</button></ui-button>
+            </div>
+            <label class="web-row">
+              <ui-switch default-checked><ui-switch-thumb></ui-switch-thumb></ui-switch>
+              Email me updates
+            </label>
+            <label class="web-row">
+              <ui-checkbox><ui-checkbox-indicator aria-hidden="true">✓</ui-checkbox-indicator></ui-checkbox>
+              I agree to the terms
+            </label>
+          </article>
+
+          <article>
+            <h2>Slider and progress</h2>
+            <ui-slider default-value="40">
+              <ui-slider-value></ui-slider-value>
+              <ui-slider-control>
+                <ui-slider-track>
+                  <ui-slider-indicator></ui-slider-indicator>
+                  <ui-slider-thumb aria-label="Volume"></ui-slider-thumb>
+                </ui-slider-track>
+              </ui-slider-control>
+            </ui-slider>
+            <ui-progress value="62" aria-label="Upload">
+              <ui-progress-track><ui-progress-indicator></ui-progress-indicator></ui-progress-track>
+            </ui-progress>
+          </article>
+
+          <article>
+            <h2>Select and tabs</h2>
+            <ui-select placeholder="Choose a role">
+              <ui-select-label>Role</ui-select-label>
+              <ui-select-trigger><button type="button"><ui-select-value></ui-select-value></button></ui-select-trigger>
+              <ui-select-content>
+                <ui-select-item value="viewer">Viewer</ui-select-item>
+                <ui-select-item value="editor">Editor</ui-select-item>
+                <ui-select-item value="owner">Owner</ui-select-item>
+              </ui-select-content>
+            </ui-select>
+            <ui-tabs default-value="account">
+              <ui-tabs-list aria-label="Settings">
+                <ui-tabs-tab value="account"><button type="button">Account</button></ui-tabs-tab>
+                <ui-tabs-tab value="billing"><button type="button">Billing</button></ui-tabs-tab>
+              </ui-tabs-list>
+              <ui-tabs-panel value="account">Your name and email.</ui-tabs-panel>
+              <ui-tabs-panel value="billing">Your plan and invoices.</ui-tabs-panel>
+            </ui-tabs>
+          </article>
+
+          <article>
+            <h2>Dialog</h2>
+            <ui-dialog>
+              <ui-dialog-trigger><button type="button">Open details</button></ui-dialog-trigger>
+              <ui-dialog-backdrop hidden></ui-dialog-backdrop>
+              <ui-dialog-content hidden>
+                <ui-dialog-title>Project details</ui-dialog-title>
+                <ui-dialog-description>Review them before you continue.</ui-dialog-description>
+                <ui-dialog-close><button type="button">Close</button></ui-dialog-close>
+              </ui-dialog-content>
+            </ui-dialog>
+          </article>
+
+          <article>
+            <h2>A UISet knob</h2>
+            <div class="knob-field">
+              <span id="cutoff-label" class="knob-label">Cutoff</span>
+              <uiset-knob aria-labelledby="cutoff-label" default-value="40">
+                <uiset-knob-indicator></uiset-knob-indicator>
+                <uiset-knob-value></uiset-knob-value>
+              </uiset-knob>
+            </div>
+          </article>
+
+          <article class="web-wide">
+            <h2>Studio: patch bay, fader, meter, steps</h2>
+            <!-- Jacks ending in ":out" patch into ones ending in ":in": drag, or Enter on one and
+                 Enter on the other. Each jack's label names its port for agents too. -->
+            <uiset-patch-bay aria-label="Patch bay" id="patch-bay" class="web-patch-bay">
+              <span class="web-jack">
+                <span aria-hidden="true">LFO</span>
+                <uiset-patch-bay-jack value="lfo:out"><button aria-label="LFO out"></button></uiset-patch-bay-jack>
+              </span>
+              <span class="web-jack">
+                <span aria-hidden="true">Osc</span>
+                <uiset-patch-bay-jack value="osc:out"><button aria-label="Oscillator out"></button></uiset-patch-bay-jack>
+              </span>
+              <span class="web-jack">
+                <span aria-hidden="true">Cutoff</span>
+                <uiset-patch-bay-jack value="cutoff:in"><button aria-label="Cutoff in"></button></uiset-patch-bay-jack>
+              </span>
+              <span class="web-jack">
+                <span aria-hidden="true">Output</span>
+                <uiset-patch-bay-jack value="output:in"><button aria-label="Output in"></button></uiset-patch-bay-jack>
+              </span>
+            </uiset-patch-bay>
+            <div class="web-row web-instruments">
+              <div class="fader-field">
+                <ui-slider orientation="vertical" default-value="70">
+                  <ui-slider-value></ui-slider-value>
+                  <ui-slider-control>
+                    <ui-slider-track>
+                      <ui-slider-indicator></ui-slider-indicator>
+                      <ui-slider-thumb aria-label="Level"></ui-slider-thumb>
+                    </ui-slider-track>
+                  </ui-slider-control>
+                </ui-slider>
+                <span class="fader-label" aria-hidden="true">Level</span>
+              </div>
+              <ui-meter class="level-meter" value="62" aria-label="Signal">
+                <ui-meter-track><ui-meter-indicator></ui-meter-indicator></ui-meter-track>
+              </ui-meter>
+            </div>
+            <ui-toggle-group multiple class="step-sequencer" aria-label="Steps" default-value="1,3,5,7" style="--steps: 8">
+              <ui-toggle value="1"><button aria-label="Step 1" data-downbeat></button></ui-toggle>
+              <ui-toggle value="2"><button aria-label="Step 2"></button></ui-toggle>
+              <ui-toggle value="3"><button aria-label="Step 3"></button></ui-toggle>
+              <ui-toggle value="4"><button aria-label="Step 4"></button></ui-toggle>
+              <ui-toggle value="5"><button aria-label="Step 5" data-downbeat></button></ui-toggle>
+              <ui-toggle value="6"><button aria-label="Step 6"></button></ui-toggle>
+              <ui-toggle value="7"><button aria-label="Step 7"></button></ui-toggle>
+              <ui-toggle value="8"><button aria-label="Step 8"></button></ui-toggle>
+            </ui-toggle-group>
+          </article>
+
+          <article>
+            <h2>Search, copy and steps</h2>
+            <uiset-search-field id="search" label="Search projects" placeholder="Search projects…"></uiset-search-field>
+            <uiset-copy-button value="npm i @uiset/web" label="Copy install command" copied-label="Copied"></uiset-copy-button>
+            <uiset-stepper id="stepper" label="Setup progress" value="details"></uiset-stepper>
+          </article>
+
+          <article>
+            <h2>UISet swipe rows</h2>
+            <uiset-swipe-list class="swipe-list" aria-label="Messages" id="messages">
+              <uiset-swipe-row class="swipe-row" value="m1" aria-label="Grace Hopper: Compiler notes">
+                <uiset-swipe-actions class="swipe-actions" data-side="end" value="m1:end" row="m1" side="end">
+                  <button type="button" class="swipe-action" data-tone="danger">Delete</button>
+                </uiset-swipe-actions>
+                <uiset-swipe-content class="swipe-content" value="m1">Grace Hopper · Compiler notes</uiset-swipe-content>
+              </uiset-swipe-row>
+              <uiset-swipe-row class="swipe-row" value="m2" aria-label="Ada Lovelace: The second table">
+                <uiset-swipe-actions class="swipe-actions" data-side="end" value="m2:end" row="m2" side="end">
+                  <button type="button" class="swipe-action" data-tone="danger">Delete</button>
+                </uiset-swipe-actions>
+                <uiset-swipe-content class="swipe-content" value="m2">Ada Lovelace · The second table</uiset-swipe-content>
+              </uiset-swipe-row>
+            </uiset-swipe-list>
+          </article>
+        </section>
+      </main>
+    </uiset-root>
+  </body>
+</html>

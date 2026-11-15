@@ -1,0 +1,1461 @@
+/* The site's frame and pages: header, footer, docs, home. Plain (unlayered) CSS on the
+   site's own classes; UISet's components keep their skin styles. Design plan:
+   design/site-plan.md. */
+
+:root {
+  --site-max: 78rem;
+  --site-gutter: clamp(1rem, 4vw, 2.5rem);
+  --site-header: 3.75rem;
+  --site-display: "Instrument Sans", system-ui, sans-serif;
+}
+
+.site {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  --logo-accent: var(--ui-primary);
+}
+
+.site-main {
+  flex: 1;
+  outline: none;
+}
+
+/* ------------------------------------------------------------------ logo */
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ui-foreground);
+}
+
+.logo-mark {
+  flex: none;
+}
+
+.logo-word {
+  font-family: var(--site-display);
+  font-size: 1.25rem;
+  font-stretch: 75%;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+/* ------------------------------------------------------------------ header */
+
+.site-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--ui-border);
+  background: color-mix(in oklab, var(--ui-background) 88%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .site-top {
+    background: var(--ui-background);
+  }
+}
+
+.site-top-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: min(100% - var(--site-gutter) * 2, var(--site-max));
+  height: var(--site-header);
+  margin-inline: auto;
+}
+
+.site .site-logo {
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-inline-end: auto;
+}
+
+.site .site-nav a {
+  padding: 0.375rem 0.625rem;
+  border-radius: var(--ui-radius);
+  color: var(--ui-muted-foreground);
+  font-size: 0.9375rem;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--ui-foreground);
+  }
+
+  &[aria-current="page"] {
+    color: var(--ui-foreground);
+    font-weight: 600;
+  }
+}
+
+.site-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}
+
+.site-search {
+  gap: 0.5rem;
+  min-width: 12rem;
+  justify-content: flex-start;
+  color: var(--ui-muted-foreground);
+  font-weight: 400;
+
+  & [data-slot$="shortcut"],
+  & kbd {
+    margin-inline-start: auto;
+  }
+}
+
+.site .site-icon-link {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--ui-radius);
+  color: var(--ui-muted-foreground);
+
+  &:hover {
+    color: var(--ui-foreground);
+    background: var(--ui-muted);
+  }
+}
+
+.site-theme [data-slot="segmented-control-item"] {
+  padding-inline: 0.5rem;
+}
+
+.site-menu-button {
+  display: none;
+}
+
+.site-menu nav {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem;
+
+  & a {
+    padding: 0.75rem 0.5rem;
+    border-radius: var(--ui-radius);
+    font-size: 1.125rem;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--ui-muted);
+    }
+
+    &[aria-current="page"] {
+      font-weight: 600;
+      background: var(--ui-muted);
+    }
+  }
+}
+
+.site-menu {
+  overscroll-behavior: contain;
+}
+
+.site-menu .site-menu-theme {
+  margin-inline: 1rem;
+}
+
+@media (max-width: 64rem) {
+  .site-search {
+    min-width: 0;
+
+    & .site-search-label,
+    & [data-slot$="shortcut"] {
+      display: none;
+    }
+  }
+}
+
+/* A theme kept from an earlier visit, set on <html> before the first paint (index.html),
+   so a prerendered page doesn't flash the other scheme before the app takes over. */
+html[data-site-theme="light"] {
+  color-scheme: light;
+}
+
+html[data-site-theme="dark"] {
+  color-scheme: dark;
+}
+
+html[data-site-theme] .site:not([data-theme]) {
+  color-scheme: inherit;
+}
+
+html {
+  scroll-padding-top: calc(var(--site-header) + 1rem);
+}
+
+.site-menu-theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ui-border);
+  color: var(--ui-muted-foreground);
+
+  & .site-theme {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 52rem) {
+  .site-nav {
+    display: none;
+  }
+
+  .site-menu-button {
+    display: inline-flex;
+  }
+
+  .site-theme {
+    display: none;
+  }
+}
+
+/* The search palette */
+
+.site-search-dialog {
+  width: min(40rem, 100vw - 2rem);
+  padding: 0;
+  overflow: hidden;
+
+  & [data-slot="command-input"] {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 0;
+    border-bottom: 1px solid var(--ui-border);
+    background: transparent;
+    font-size: 1rem;
+  }
+}
+
+.site-search-list {
+  max-height: min(26rem, 60dvh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.375rem;
+}
+
+.site-search-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.site-search-section {
+  color: var(--ui-muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.site-search-empty {
+  padding: 1.5rem 1.25rem;
+  color: var(--ui-muted-foreground);
+}
+
+/* ------------------------------------------------------------------ footer */
+
+.site-bottom {
+  margin-top: 4rem;
+  border-top: 1px solid var(--ui-border);
+  background: var(--ui-muted);
+}
+
+.site-bottom-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: 2rem;
+  width: min(100% - var(--site-gutter) * 2, var(--site-max));
+  margin-inline: auto;
+  padding-block: 3rem 2rem;
+}
+
+.site-bottom-brand {
+  grid-column: span 2;
+
+  & p {
+    max-width: 22rem;
+    margin: 0.75rem 0 0;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+.site-bottom-col {
+  & h2 {
+    margin: 0 0 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  & ul {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  & a {
+    color: var(--ui-muted-foreground);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--ui-foreground);
+      text-decoration: underline;
+    }
+  }
+}
+
+.site-bottom-note {
+  width: min(100% - var(--site-gutter) * 2, var(--site-max));
+  margin: 0 auto;
+  padding-block: 1.25rem 2.5rem;
+  border-top: 1px solid var(--ui-border);
+  color: var(--ui-muted-foreground);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 40rem) {
+  .site-bottom-brand {
+    grid-column: auto;
+  }
+}
+
+/* ------------------------------------------------------------------ shared page parts */
+
+.page,
+.home > .band,
+.home > .hero {
+  width: min(100% - var(--site-gutter) * 2, var(--site-max));
+  margin-inline: auto;
+}
+
+.page {
+  padding-block: 2.5rem 2rem;
+}
+
+.page-narrow {
+  max-width: 44rem;
+}
+
+.page-head {
+  display: grid;
+  gap: 1rem;
+  max-width: 48rem;
+  margin-bottom: 2rem;
+
+  & h1 {
+    margin: 0;
+    font-family: var(--site-display);
+    font-size: clamp(2.5rem, 6vw, 3.75rem);
+    font-stretch: 75%;
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+
+  & > p {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+}
+
+.page-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.page-loading,
+.docs-loading {
+  width: min(100% - var(--site-gutter) * 2, var(--site-max));
+  margin: 3rem auto;
+  color: var(--ui-muted-foreground);
+}
+
+/* A link styled as a button, for navigation (Get started) rather than actions. */
+.site .button-link {
+  display: inline-flex;
+  align-items: center;
+  height: 2.5rem;
+  padding-inline: 1rem;
+  border: 1px solid var(--ui-input);
+  border-radius: var(--ui-radius);
+  background: var(--ui-background);
+  color: var(--ui-foreground);
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--ui-muted);
+  }
+
+  &[data-variant="solid"] {
+    border-color: var(--uiset-solid-border);
+    background: var(--uiset-solid-bg);
+    color: var(--uiset-solid-fg);
+
+    &:hover {
+      background: var(--uiset-solid-hover);
+    }
+  }
+}
+
+.band-more {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ------------------------------------------------------------------ install commands and code */
+
+.install-command {
+  display: grid;
+  /* The command scrolls inside its line; the copy button always shows whole. */
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 1.25);
+  background: var(--ui-muted);
+}
+
+.install-command-managers {
+  justify-self: start;
+  margin: 0.375rem;
+  border: 0;
+  background: transparent;
+
+  & [data-slot="segmented-control-item"] {
+    height: 1.75rem;
+    padding-inline: 0.625rem;
+    font-size: 0.8125rem;
+  }
+}
+
+.install-command-line {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  border-top: 1px solid var(--ui-border);
+
+  /* A long command wraps, at spaces first, so the whole of it shows and nothing scrolls. */
+  & code {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--site-mono);
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
+  }
+
+  & .copy-button {
+    flex: none;
+  }
+}
+
+.install-command-single .install-command-line {
+  border-top: 0;
+}
+
+.code-block {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 1.25);
+  background: var(--ui-muted);
+
+  & pre {
+    margin: 0;
+    padding: 1rem 1.125rem;
+    overflow-x: auto;
+    font-family: var(--site-mono);
+    font-size: 0.8125rem;
+    line-height: 1.65;
+    tab-size: 2;
+  }
+
+  & pre:focus-visible {
+    outline: 2px solid var(--ui-ring-border);
+    outline-offset: -2px;
+  }
+}
+
+.code-block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.375rem 0.5rem 0.375rem 1rem;
+  border-bottom: 1px solid var(--ui-border);
+  color: var(--ui-muted-foreground);
+  font-size: 0.8125rem;
+}
+
+/* ------------------------------------------------------------------ home */
+
+.home > .band {
+  border-top: 1px solid var(--ui-border);
+}
+
+.hero {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  padding-block: clamp(2.5rem, 7vw, 5rem) clamp(2.5rem, 6vw, 4.5rem);
+}
+
+@media (min-width: 64rem) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    align-items: start;
+  }
+}
+
+.hero-copy {
+  display: grid;
+  min-width: 0;
+  gap: 1.5rem;
+  align-content: start;
+
+  & h1 {
+    margin: 0;
+    font-family: var(--site-display);
+    font-size: clamp(3rem, 8vw, 5.75rem);
+    font-stretch: 75%;
+    font-weight: 700;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+}
+
+.hero-lede {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--ui-muted-foreground);
+  font-size: 1.1875rem;
+  line-height: 1.55;
+}
+
+.hero-actions,
+.themes-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.hero-copy .install-command {
+  max-width: 34rem;
+}
+
+.hero-stage {
+  display: grid;
+  gap: 0.875rem;
+  min-width: 0;
+}
+
+.hero-stage-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* The hero's one motion: the new skin wipes across the same live form. */
+.hero-surface {
+  view-transition-name: hero-stage;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-old(hero-stage) {
+  animation: none;
+}
+
+::view-transition-new(hero-stage) {
+  animation: hero-wipe 560ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes hero-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.hero-stage-note {
+  margin: 0;
+  color: var(--ui-muted-foreground);
+  font-size: 0.875rem;
+}
+
+/* UI SDK under UISet: two layers, the lower one drawn dashed (behavior, no look). */
+.layers {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.layer {
+  padding: 1.25rem 1.5rem 1.5rem;
+  border-radius: calc(var(--ui-radius) * 2);
+
+  & h3 {
+    margin: 0 0 1rem;
+    font-family: var(--site-display);
+    font-size: 1.5rem;
+    font-stretch: 75%;
+    font-weight: 700;
+  }
+
+  & dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: 1rem 1.5rem;
+    margin: 0;
+  }
+
+  & dt {
+    font-weight: 600;
+  }
+
+  & dd {
+    margin: 0.125rem 0 0;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+.layer-uiset {
+  border: 1.5px solid var(--ui-foreground);
+  background: var(--ui-background);
+}
+
+.layer-sdk {
+  border: 1.5px dashed var(--ui-input);
+}
+
+/* The four offerings: peers, so cards. */
+.offerings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site .offering {
+  display: grid;
+  gap: 0.375rem;
+  height: 100%;
+  padding: 1.25rem;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    border-color: var(--ui-input);
+    background: var(--ui-muted);
+  }
+}
+
+.offering-count {
+  font-family: var(--site-display);
+  font-size: 2.25rem;
+  font-stretch: 75%;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.offering-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.offering-what {
+  color: var(--ui-muted-foreground);
+  font-size: 0.9375rem;
+}
+
+.home-kits {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+/* A row of many tabs scrolls sideways on a phone rather than widening the page. */
+.home-kit-tabs,
+.template-tabs {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.home-kit-loading {
+  display: grid;
+  place-items: center;
+  min-height: 28rem;
+  margin: 0;
+  color: var(--ui-muted-foreground);
+}
+
+.home-kit-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  gap: 1rem;
+}
+
+.kit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 1rem;
+
+  & .install-command {
+    flex: 1 1 28rem;
+  }
+}
+
+.site .kit-docs {
+  padding-block: 0.5rem;
+  font-weight: 600;
+}
+
+.bench-summary {
+  display: grid;
+  gap: 1rem;
+
+  & > p {
+    margin: 0;
+    max-width: 44rem;
+    font-size: 1.125rem;
+  }
+}
+
+.bench-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: 1rem;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+
+  & div {
+    padding-top: 0.75rem;
+    border-top: 2px solid var(--ui-foreground);
+  }
+
+  & dt {
+    color: var(--ui-muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  & dd {
+    margin: 0.25rem 0 0;
+    font-family: var(--site-display);
+    font-size: 2rem;
+    font-stretch: 75%;
+    font-weight: 700;
+  }
+}
+
+.checks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1.5rem 2.5rem;
+  margin: 0;
+
+  & dt {
+    font-weight: 600;
+  }
+
+  & dd {
+    margin: 0.25rem 0 0;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+
+  & li {
+    display: grid;
+    min-width: 0;
+    align-content: start;
+    gap: 0.75rem;
+    counter-increment: step;
+  }
+
+  & h3 {
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    margin: 0;
+    font-size: 1.125rem;
+
+    &::before {
+      content: counter(step);
+      display: inline-grid;
+      place-items: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 999px;
+      background: var(--ui-foreground);
+      color: var(--ui-background);
+      font-size: 0.875rem;
+    }
+  }
+
+  & p {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+.framework-tabs {
+  display: grid;
+  gap: 1rem;
+  max-width: 52rem;
+
+  & [data-slot="tabs-panel"] {
+    display: grid;
+    gap: 0.75rem;
+  }
+}
+
+.faq {
+  max-width: 52rem;
+
+  & p {
+    max-width: 44rem;
+    margin: 0 0 1rem;
+    color: var(--ui-muted-foreground);
+    line-height: 1.6;
+  }
+}
+
+/* ------------------------------------------------------------------ kits, themes, agents */
+
+.band-intro .band-note {
+  margin-top: 0.75rem;
+  font-size: 0.9375rem;
+}
+
+.kit-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+
+.ide-stage {
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.skin-band {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (min-width: 56rem) {
+  .skin-band {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+  }
+}
+
+.skin-band-copy {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+
+  & h2 {
+    margin: 0;
+    font-family: var(--site-display);
+    font-size: 2.25rem;
+    font-stretch: 75%;
+    font-weight: 700;
+  }
+
+  & p {
+    margin: 0;
+  }
+}
+
+.skin-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 0;
+
+  & dt {
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+  }
+
+  & dd {
+    margin: 0;
+    font-weight: 600;
+  }
+}
+
+.skin-band-stage .skins-demo-form {
+  max-width: 26rem;
+}
+
+.bench-headline {
+  max-width: 44rem;
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.bench-task {
+  display: grid;
+  gap: 0.75rem;
+
+  & h3 {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+}
+
+.bench-prompt,
+.bench-method {
+  max-width: 48rem;
+  margin: 0;
+  color: var(--ui-muted-foreground);
+}
+
+.coding-agents {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1.5rem 2rem;
+
+  & h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.0625rem;
+  }
+
+  & p {
+    margin: 0 0 0.75rem;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+.coding-agents-prompt {
+  grid-column: 1 / -1;
+}
+
+/* ------------------------------------------------------------------ docs */
+
+.docs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.5rem;
+  width: min(100% - var(--site-gutter) * 2, var(--site-max));
+  margin-inline: auto;
+  padding-block: 2rem 2rem;
+}
+
+/* The sidebar follows the article in the page (for the skip link, headings and tab order)
+   and is placed beside it on wide screens. */
+@media (min-width: 56rem) {
+  .docs {
+    grid-template-columns: 14rem minmax(0, 1fr);
+
+    & > .docs-nav {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    & > .docs-main {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+}
+
+.docs-nav {
+  display: grid;
+  align-content: start;
+  gap: 1.5rem;
+  font-size: 0.9375rem;
+
+  & h2 {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  & ul {
+    display: grid;
+    gap: 0.125rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  & a {
+    display: block;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--ui-radius);
+    color: var(--ui-muted-foreground);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--ui-foreground);
+      background: var(--ui-muted);
+    }
+
+    &[aria-current="page"] {
+      color: var(--ui-foreground);
+      font-weight: 600;
+      background: var(--ui-muted);
+    }
+  }
+}
+
+@media (min-width: 56rem) {
+  .docs-nav {
+    position: sticky;
+    top: calc(var(--site-header) + 1.5rem);
+    max-height: calc(100dvh - var(--site-header) - 3rem);
+    overflow-y: auto;
+    padding-inline-end: 0.5rem;
+  }
+}
+
+@media (max-width: 56rem) {
+  .docs-nav {
+    padding-top: 2rem;
+    border-top: 1px solid var(--ui-border);
+  }
+}
+
+.docs-head {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+
+  & h1 {
+    margin: 0;
+    font-family: var(--site-display);
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-stretch: 75%;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.015em;
+  }
+}
+
+.docs-crumbs ol {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ui-muted-foreground);
+  font-size: 0.875rem;
+
+  & li + li::before {
+    content: "/" / "";
+    margin-inline-end: 0.5rem;
+  }
+}
+
+.docs-lede {
+  max-width: 44rem;
+  margin: 0;
+  color: var(--ui-muted-foreground);
+  font-size: 1.125rem;
+}
+
+.docs-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+}
+
+@media (min-width: 80rem) {
+  .docs-body {
+    grid-template-columns: minmax(0, 1fr) 13rem;
+  }
+}
+
+/* The docs' prose. Its element rules stop at a live example (a nested <UISet>): a dialog's
+   or calendar's h2 is the component's, not a section heading of the page. */
+.docs-article {
+  min-width: 0;
+  max-width: 46rem;
+  line-height: 1.7;
+
+  & > * + * {
+    margin-top: 1.125rem;
+  }
+
+  & h2:not([data-uiset] [data-uiset] *) {
+    margin-top: 2.75rem;
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+
+  & h3:not([data-uiset] [data-uiset] *) {
+    margin-top: 2rem;
+    font-size: 1.125rem;
+  }
+
+  & :is(p, li):not([data-uiset] [data-uiset] *) {
+    max-width: 44rem;
+  }
+
+  & :is(ul, ol):not([data-uiset] [data-uiset] *) {
+    padding-inline-start: 1.25rem;
+  }
+
+  & li:not([data-uiset] [data-uiset] *) + li {
+    margin-top: 0.375rem;
+  }
+
+  & :not(pre) > code:not([data-uiset] [data-uiset] *) {
+    overflow-wrap: anywhere;
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    background: var(--ui-muted);
+    font-family: var(--site-mono);
+    font-size: 0.875em;
+  }
+
+  & .code-block,
+  & .install-command {
+    margin-block: 1.25rem;
+  }
+}
+
+.site .heading-anchor {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--ui-input);
+  }
+}
+
+.docs-table {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 1.25);
+
+  & table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  & th,
+  & td {
+    padding: 0.625rem 0.875rem;
+    border-bottom: 1px solid var(--ui-border);
+    text-align: start;
+    vertical-align: top;
+  }
+
+  & thead th {
+    background: var(--ui-muted);
+    font-weight: 600;
+  }
+
+  & tr:last-child > * {
+    border-bottom: 0;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ui-ring-border);
+    outline-offset: 2px;
+  }
+}
+
+.docs-toc {
+  display: none;
+  font-size: 0.875rem;
+
+  & h2 {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  & ul {
+    display: grid;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  & li[data-level="3"] {
+    padding-inline-start: 0.75rem;
+  }
+
+  & a {
+    color: var(--ui-muted-foreground);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--ui-foreground);
+    }
+  }
+}
+
+@media (min-width: 80rem) {
+  .docs-toc {
+    display: block;
+    position: sticky;
+    top: calc(var(--site-header) + 1.5rem);
+    align-self: start;
+    max-height: calc(100dvh - var(--site-header) - 3rem);
+    overflow-y: auto;
+  }
+}
+
+/* A component's example on its docs page: Preview and Code tabs, with the skin beside them. */
+.docs-example {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.docs-example-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  /* At its own width, wrapping under the tabs when they don't fit side by side. */
+  > .skin-picker {
+    flex: none;
+    max-width: 100%;
+  }
+}
+
+/* The same type context as the components page, not the article's prose (line-height 1.7). */
+.docs-preview {
+  display: grid;
+  min-height: 12rem;
+  align-items: center;
+  padding: clamp(1rem, 4vw, 2.5rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+  background: var(--ui-background);
+  color: var(--ui-foreground);
+  font-size: var(--ui-font-size);
+  line-height: 1.55;
+}
+
+/* The example at the width of a components-page card, centered in the frame, so it looks as
+   it does there; wide examples (grids, charts, app shells) take the frame's width. The card's
+   chrome isn't needed inside the frame; its row and stack helpers are. */
+.docs-preview .example {
+  justify-self: center;
+  width: min(100%, 22rem);
+  padding: 0;
+  border: 0;
+}
+
+.docs-preview .example[data-wide] {
+  width: 100%;
+}
+
+/* Where the API reference comes from, set apart from UISet's own words. */
+.docs-sdk-credit {
+  margin-top: 3rem;
+  padding: 0.875rem 1rem;
+  border-inline-start: 3px solid var(--ui-border);
+  background: var(--ui-muted);
+  border-radius: 0 var(--ui-radius) var(--ui-radius) 0;
+  font-size: 0.9375rem;
+
+  p {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+.docs-agent-view {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+
+  > * {
+    margin: 0;
+  }
+
+  > .code-block {
+    justify-self: stretch;
+  }
+
+  pre {
+    max-height: 24rem;
+    overflow: auto;
+  }
+}
+
+.docs-example-uses {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+
+  p {
+    margin: 0;
+  }
+}
+
+.docs-article > .docs-page-foot {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--ui-border);
+}
+
+.docs-page-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9375rem;
+}
+
+.docs-prevnext {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 1rem;
+
+  & a {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1rem;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) * 1.5);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--ui-muted);
+    }
+
+    &[rel="next"] {
+      text-align: end;
+    }
+  }
+
+  & span {
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+    font-weight: 400;
+  }
+}
+
+/* ------------------------------------------------------------------ the social card */
+
+.og-card {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 2.5rem;
+  align-items: center;
+  width: 1200px;
+  height: 630px;
+  padding: 64px;
+  overflow: hidden;
+  background: var(--ui-background);
+  color: var(--ui-foreground);
+}
+
+.og-copy {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.og-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--site-display);
+  font-size: 3.5rem;
+  font-stretch: 75%;
+  font-weight: 700;
+}
+
+.og-title {
+  margin: 0;
+  font-family: var(--site-display);
+  font-size: 3.4rem;
+  font-stretch: 75%;
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+
+.og-facts {
+  margin: 0;
+  color: var(--ui-muted-foreground);
+  font-size: 1.5rem;
+}
+
+.og-skins {
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+  gap: 12px;
+  height: 500px;
+}
+
+.og-skin {
+  display: grid;
+  grid-template-columns: 7.5rem auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0 1.5rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 14px;
+  background: var(--ui-background);
+  color: var(--ui-foreground);
+  font-size: 1rem;
+}
+
+.og-skin-name {
+  font-weight: 600;
+  font-size: 1.125rem;
+}

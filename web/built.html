@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&family=Saira+Semi+Condensed:wght@400;500;600&family=Instrument+Sans:wdth,wght@75..100,400..700&family=Spline+Sans+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,400..700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+    <title>UISet for Web Components, from the build</title>
+    <!-- The two files `pnpm web:build` makes, as a page outside this repo would load them. -->
+    <link rel="stylesheet" href="./dist/uiset.css" />
+    <script type="module">
+      import "@ui-sdk/web/button"
+      import "@ui-sdk/web/switch"
+      import "./dist/uiset.js"
+    </script>
+  </head>
+  <body>
+    <uiset-root skin="studio" theme="dark">
+      <main style="padding: 2rem; display: grid; gap: 1rem; justify-items: start">
+        <ui-button><button type="button">Save</button></ui-button>
+        <label><ui-switch default-checked><ui-switch-thumb></ui-switch-thumb></ui-switch> Email me</label>
+        <span id="cutoff">Cutoff</span>
+        <uiset-knob aria-labelledby="cutoff" default-value="25">
+          <uiset-knob-indicator></uiset-knob-indicator>
+          <uiset-knob-value></uiset-knob-value>
+        </uiset-knob>
+      </main>
+    </uiset-root>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "run": "settings-bridge-3",
+  "task": "settings",
+  "approach": "bridge",
+  "ok": true,
+  "detail": {
+    "name": "Atlas",
+    "triggers": [
+      "Public",
+      "Europe"
+    ],
+    "digest": "true",
+    "saved": true
+  },
+  "toolCalls": 3,
+  "textRead": 1641,
+  "seconds": 7.642,
+  "calls": [
+    {
+      "command": "snapshot",
+      "chars": 815,
+      "at": 1794748275228
+    },
+    {
+      "command": "act",
+      "chars": 600,
+      "at": 1794748279464
+    },
+    {
+      "command": "act",
+      "chars": 226,
+      "at": 1794748282870
+    }
+  ]
+}

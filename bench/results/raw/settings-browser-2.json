@@ -1,0 +1,72 @@
+{
+  "run": "settings-browser-2",
+  "task": "settings",
+  "approach": "browser",
+  "ok": true,
+  "detail": {
+    "name": "Atlas",
+    "triggers": [
+      "Public",
+      "Europe"
+    ],
+    "digest": "true",
+    "saved": true
+  },
+  "toolCalls": 10,
+  "textRead": 3895,
+  "seconds": 13.763,
+  "calls": [
+    {
+      "command": "snapshot",
+      "chars": 403,
+      "at": 1794748207783
+    },
+    {
+      "command": "fill",
+      "chars": 402,
+      "at": 1794748211455
+    },
+    {
+      "command": "select",
+      "chars": 69,
+      "at": 1794748211544,
+      "error": true
+    },
+    {
+      "command": "select",
+      "chars": 69,
+      "at": 1794748211613,
+      "error": true
+    },
+    {
+      "command": "click",
+      "chars": 412,
+      "at": 1794748211860
+    },
+    {
+      "command": "click",
+      "chars": 537,
+      "at": 1794748215216
+    },
+    {
+      "command": "click",
+      "chars": 525,
+      "at": 1794748217943
+    },
+    {
+      "command": "click",
+      "chars": 542,
+      "at": 1794748218207
+    },
+    {
+      "command": "click",
+      "chars": 524,
+      "at": 1794748221273
+    },
+    {
+      "command": "click",
+      "chars": 412,
+      "at": 1794748221546
+    }
+  ]
+}

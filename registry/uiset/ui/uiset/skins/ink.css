@@ -1,0 +1,352 @@
+/*
+  Ink: an electronic-paper reader. A matte grey screen, crisp ink, greys made of dots,
+  a reading serif for headings and long text, a legibility face for controls, and no
+  motion: a change is a redraw. The interface has no color, so meaning never depends on
+  it; only data (charts, calendar events) takes a muted, print-like set.
+  Design plan: docs/ink.md.
+*/
+
+[data-uiset][data-skin="ink"] {
+  color-scheme: light;
+
+  --ink-screen: oklch(0.95 0 0);
+  --ink-ink: oklch(0.2 0 0);
+  --ink-grey: oklch(0.42 0 0);
+  --ink-tint: oklch(0.88 0 0);
+  --ink-rule: oklch(0.74 0 0);
+  --ink-hover: oklch(0.32 0 0);
+  /* Mid-grey as the medium makes it: a fine screen of dots, and 45° hatching. */
+  --ink-dots: radial-gradient(circle, var(--ink-ink) 0.85px, transparent 1.15px);
+  --ink-dots-size: 3px 3px;
+  --ink-hatch: repeating-linear-gradient(45deg, var(--ink-ink) 0 1.5px, transparent 1.5px 5px);
+  --ink-serif: "Literata", "Iowan Old Style", Georgia, serif;
+
+  --ui-background: var(--ink-screen);
+  --ui-foreground: var(--ink-ink);
+  --ui-muted: var(--ink-tint);
+  --ui-muted-foreground: var(--ink-grey);
+  --ui-border: var(--ink-rule);
+  --ui-input: var(--ink-ink);
+  --ui-primary: var(--ink-ink);
+  --ui-primary-foreground: var(--ink-screen);
+  --ui-destructive: var(--ink-ink);
+  --ui-ring: oklch(0.2 0 0 / 0.25);
+  --ui-ring-border: var(--ink-ink);
+  --ui-radius: 6px;
+  --ui-shadow: none;
+  --ui-font-sans: "Atkinson Hyperlegible", "Atkinson Hyperlegible Next", system-ui, sans-serif;
+  --ui-font-size: 0.9375rem;
+  --ui-rating-color: var(--ink-ink);
+
+  --uiset-sound: paper;
+  --uiset-solid-bg: var(--ink-ink);
+  --uiset-solid-fg: var(--ink-screen);
+  --uiset-solid-border: var(--ink-ink);
+  --uiset-solid-hover: var(--ink-hover);
+  --uiset-solid-weight: 700;
+  --uiset-popup-radius: 6px;
+  --uiset-switch-border: 2px;
+
+  /* No color for status: an icon and a word say it, a fill pattern backs it up. */
+  --tone-info: var(--ink-ink);
+  --tone-success: var(--ink-ink);
+  --tone-warning: var(--ink-ink);
+  --tone-danger: var(--ink-ink);
+  --tone-neutral: var(--ink-grey);
+
+  --uiset-cable-1: var(--ink-ink);
+  --uiset-cable-2: oklch(0.5 0.12 250);
+  --uiset-cable-3: oklch(0.58 0.15 55);
+  --uiset-cable-4: oklch(0.42 0.15 25);
+  --uiset-cable-5: oklch(0.38 0.15 300);
+
+  /* Code in ink and grey, as the page prints it. */
+  --shiki-token-keyword: var(--ink-ink);
+  --shiki-token-string: var(--ink-grey);
+  --shiki-token-string-expression: var(--ink-grey);
+  --shiki-token-function: var(--ink-ink);
+  --shiki-token-constant: var(--ink-grey);
+  --shiki-token-parameter: var(--ink-ink);
+  --shiki-token-comment: var(--ink-grey);
+  --shiki-token-link: var(--ink-ink);
+
+  --term-black: var(--ink-ink);
+  --term-red: var(--ink-ink);
+  --term-green: var(--ink-ink);
+  --term-yellow: var(--ink-grey);
+  --term-blue: var(--ink-ink);
+  --term-magenta: var(--ink-grey);
+  --term-cyan: var(--ink-grey);
+  --term-white: var(--ink-grey);
+
+  font-family: var(--ui-font-sans);
+  line-height: 1.4;
+  background-color: var(--ink-screen);
+  scroll-behavior: auto;
+
+  /* No motion, whatever the motion setting: a change is a redraw. */
+  &,
+  & *,
+  & ::before,
+  & ::after {
+    transition-duration: 0s;
+    transition-delay: 0s;
+    animation-duration: 0s;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+  }
+
+  & :not(.ide-code-input)::selection {
+    background: var(--ink-ink);
+    color: var(--ink-screen);
+  }
+
+  /* The reading face for headings and long text; the legibility face for everything else. */
+  &
+    :is(
+      h1,
+      h2,
+      h3,
+      [data-slot="dialog-title"],
+      [data-slot="alert-dialog-title"],
+      [data-slot="drawer-title"],
+      .rich-text-content,
+      .chat-markdown
+    ) {
+    font-family: var(--ink-serif);
+    letter-spacing: 0;
+  }
+
+  & :is(.rich-text-content, .chat-markdown) {
+    line-height: 1.6;
+  }
+
+  &
+    :is(
+      [data-slot="field-label"],
+      [data-slot="select-label"],
+      [data-slot="combobox-label"],
+      [data-slot="label"]:not(:has(> :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="switch"]))),
+      [data-slot="autocomplete-label"]
+    ) {
+    font-size: var(--ui-font-size);
+    font-weight: 700;
+  }
+
+  /* Controls: a firm ink edge. */
+  &
+    :is(
+      [data-slot="button"][data-variant="outline"],
+      [data-slot="input"],
+      [data-slot="select-trigger"],
+      [data-slot="textarea"],
+      [data-slot="password-input"],
+      [data-slot="date-input"],
+      [data-slot="time-input"],
+      [data-slot="date-picker-input"],
+      [data-slot="combobox-input"],
+      [data-slot="autocomplete-input"],
+      [data-slot="token-input-editor"],
+      [data-slot="color-picker-input"],
+      [data-slot="otp-input-slot"],
+      [data-slot="number-input-group"],
+      [data-slot="checkbox"],
+      [data-slot="radio"]
+    ) {
+    border-width: 1.5px;
+    border-color: var(--ink-ink);
+  }
+
+  & :is([data-slot="button"], button[data-slot="tooltip-trigger"], [data-slot="toolbar-button"], [data-slot="toggle"]) {
+    font-weight: 700;
+  }
+
+  /* Danger is a double rule round the button, as well as its word. */
+  & [data-slot="button"][data-variant="destructive"] {
+    border: 4px double var(--ink-ink);
+    background: var(--ink-screen);
+    color: var(--ink-ink);
+
+    &:hover:not([data-disabled]) {
+      background: var(--ink-tint);
+    }
+  }
+
+  /* An invalid field says so with a broken edge as well as its message. */
+  &
+    :is(
+      [data-slot="input"],
+      [data-slot="select-trigger"],
+      [data-slot="textarea"],
+      [data-slot="password-input"],
+      [data-slot="date-input"],
+      [data-slot="time-input"],
+      [data-slot="date-picker-input"],
+      [data-slot="combobox-input"],
+      [data-slot="autocomplete-input"],
+      [data-slot="token-input-editor"],
+      [data-slot="number-input-group"],
+      [data-slot="otp-input-slot"]
+    ):is([data-invalid], [aria-invalid="true"], :has([aria-invalid="true"])) {
+    border-width: 2px;
+    border-style: dashed;
+  }
+
+  /* Popups are a sheet laid on top: the screen, framed in ink. */
+  &
+    :is(
+      [data-slot="select-content"],
+      [data-slot="popover-content"],
+      [data-slot="menu-content"],
+      [data-slot="combobox-content"],
+      [data-slot="autocomplete-content"],
+      [data-slot="hover-card-content"],
+      [data-slot="date-picker-content"],
+      [data-slot="navigation-menu-viewport"],
+      [data-slot="trigger-menu-content"],
+      [data-slot="dialog-content"],
+      [data-slot="alert-dialog-content"],
+      [data-slot="drawer-content"],
+      [data-slot="preview-card-content"]
+    ) {
+    border: 2px solid var(--ink-ink);
+    background: var(--ink-screen);
+    box-shadow: none;
+  }
+
+  /* Chosen and highlighted things are solid ink. */
+  & :is([data-slot$="-item"], [data-slot$="-option"])[data-highlighted],
+  & [data-slot="toggle"][data-pressed],
+  & [data-slot="segmented-control-item"][data-checked] {
+    background: var(--ink-ink);
+    color: var(--ink-screen);
+    /* Inside a solid row, quiet text and chips reverse too (a hint, a shortcut, a count). */
+    --ui-muted: oklch(0.34 0 0);
+    --ui-muted-foreground: oklch(0.84 0 0);
+  }
+
+  & [data-slot="tabs-tab"][data-selected] {
+    box-shadow: inset 0 -3px var(--ink-ink);
+  }
+
+  & [data-slot="tabs-indicator"] {
+    display: none;
+  }
+
+  & [data-slot="segmented-control"] {
+    border: 1.5px solid var(--ink-ink);
+    background: transparent;
+  }
+
+  & [data-slot="segmented-control-indicator"] {
+    background: var(--ink-ink);
+    box-shadow: none;
+  }
+
+  & [data-slot="switch"] {
+    border: 2px solid var(--ink-ink);
+    background: var(--ink-screen);
+
+    &[data-checked] {
+      background: var(--ink-ink);
+    }
+  }
+
+  & [data-slot="switch-thumb"] {
+    background: var(--ink-ink);
+    box-shadow: none;
+
+    &[data-checked] {
+      background: var(--ink-screen);
+    }
+  }
+
+  & :is([data-slot="checkbox"], [data-slot="radio"]) {
+    background: var(--ink-screen);
+    box-shadow: none;
+
+    &:is([data-checked], [data-indeterminate]) {
+      background: var(--ink-ink);
+      color: var(--ink-screen);
+    }
+  }
+
+  & [data-slot="slider-track"] {
+    background: var(--ink-tint);
+    box-shadow: inset 0 0 0 1px var(--ink-ink);
+  }
+
+  & [data-slot="slider-thumb"] {
+    border: 2px solid var(--ink-ink);
+    background: var(--ink-screen);
+    box-shadow: none;
+  }
+
+  & :is([data-slot="progress-track"], [data-slot="meter-track"]) {
+    background: var(--ink-tint);
+    box-shadow: inset 0 0 0 1px var(--ink-ink);
+  }
+
+  /* An empty star is a screen of dots: there, but not filled. */
+  & [data-slot="rating-item"]::before {
+    background:
+      linear-gradient(
+        var(--ui-rating-direction),
+        var(--ui-rating-color) calc(var(--rating-fill, 0) * 100%),
+        transparent 0
+      ),
+      var(--ink-dots) 0 0 / 2.5px 2.5px;
+  }
+
+  /* A placeholder still loading is a screen of dots, not a shimmer. */
+  & [data-slot="skeleton"] {
+    background-color: var(--ink-tint);
+    background-image: var(--ink-dots);
+    background-size: var(--ink-dots-size);
+  }
+
+  /* Status bars: solid for success and information, dots for a warning, hatch for danger. */
+  & .alert {
+    border-color: var(--ink-ink);
+    background: var(--ink-screen);
+
+    &::before {
+      inline-size: 6px;
+    }
+
+    &[data-tone="warning"]::before {
+      background-color: transparent;
+      background-image: var(--ink-dots);
+      background-size: var(--ink-dots-size);
+    }
+
+    &[data-tone="danger"]::before {
+      background-color: transparent;
+      background-image: var(--ink-hatch);
+    }
+  }
+
+  & [data-slot="separator"] {
+    background: var(--ink-rule);
+  }
+
+  & ::placeholder {
+    color: var(--ink-grey);
+    opacity: 1;
+  }
+
+  /* Focus: a heavy ink outline, unmissable on the grey screen. */
+  & :focus-visible {
+    outline-width: 3px;
+  }
+
+  & input[type="number"] {
+    appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+  }
+}

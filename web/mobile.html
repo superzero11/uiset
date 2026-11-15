@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&family=Saira+Semi+Condensed:wght@400;500;600&family=Instrument+Sans:wdth,wght@75..100,400..700&family=Spline+Sans+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,400..700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+    <title>UISet Mobile, no React</title>
+    <script type="module">
+      import "@ui-sdk/web/button"
+      import "@ui-sdk/web/drawer"
+      import "@ui-sdk/web/listbox"
+      import "@ui-sdk/web/toast"
+      import "./src/uiset.ts"
+      import "./src/mobile-demo.ts"
+    </script>
+  </head>
+  <body>
+    <uiset-root skin="base" id="root">
+      <main class="web-phone mobile-frame" data-screen="inbox">
+        <!-- Inbox: an app bar, a list that pulls to refresh, rows that swipe. -->
+        <section class="web-screen" data-for="inbox">
+          <header class="mobile-app-bar">
+            <span></span>
+            <h1 class="mobile-app-bar-title">Inbox</h1>
+            <div class="mobile-app-bar-actions">
+              <ui-button><button type="button" data-variant="ghost" aria-label="Inbox options" id="options" data-icon="more"></button></ui-button>
+            </div>
+          </header>
+          <uiset-pull-refresh id="refresh" class="web-phone-body">
+            <uiset-swipe-list id="messages" aria-label="Messages" openable></uiset-swipe-list>
+          </uiset-pull-refresh>
+        </section>
+
+        <!-- Alarms: a sheet with time wheels. -->
+        <section class="web-screen" data-for="alarms" hidden>
+          <header class="mobile-app-bar">
+            <span></span>
+            <h1 class="mobile-app-bar-title">Alarms</h1>
+            <div class="mobile-app-bar-actions">
+              <ui-drawer id="alarm-sheet">
+                <ui-drawer-trigger><button type="button" data-variant="ghost" aria-label="New alarm" data-icon="plus"></button></ui-drawer-trigger>
+                <ui-drawer-backdrop hidden></ui-drawer-backdrop>
+                <ui-drawer-content hidden class="mobile-sheet">
+                  <span class="mobile-sheet-handle" aria-hidden="true"></span>
+                  <div class="mobile-sheet-head"><ui-drawer-title class="mobile-sheet-title">New alarm</ui-drawer-title></div>
+                  <div class="mobile-sheet-body">
+                    <div class="wheel-group" role="group" aria-label="Alarm time">
+                      <uiset-wheel>
+                        <ui-listbox class="wheel-list" keep-in-view="false" aria-label="Alarm time, hour" default-value="7" id="hour"></ui-listbox>
+                      </uiset-wheel>
+                      <span class="wheel-colon" aria-hidden="true">:</span>
+                      <uiset-wheel>
+                        <ui-listbox class="wheel-list" keep-in-view="false" aria-label="Alarm time, minute" default-value="30" id="minute"></ui-listbox>
+                      </uiset-wheel>
+                      <uiset-wheel>
+                        <ui-listbox class="wheel-list" keep-in-view="false" aria-label="Alarm time, AM or PM" default-value="AM" id="period">
+                          <ui-listbox-item class="wheel-option" value="AM">AM</ui-listbox-item>
+                          <ui-listbox-item class="wheel-option" value="PM">PM</ui-listbox-item>
+                        </ui-listbox>
+                      </uiset-wheel>
+                    </div>
+                    <ui-drawer-close value="save"><button type="button" id="save-alarm">Save alarm</button></ui-drawer-close>
+                  </div>
+                </ui-drawer-content>
+              </ui-drawer>
+            </div>
+          </header>
+          <div class="web-phone-body">
+            <ul class="mobile-alarms" id="alarms"><li><span class="mobile-alarm-time">7:30 AM</span></li></ul>
+          </div>
+        </section>
+
+        <!-- The bar along the bottom. -->
+        <nav class="mobile-tab-bar" aria-label="Sections">
+          <ul>
+            <li><ui-button><button type="button" class="mobile-tab" data-variant="ghost" data-tab="inbox" aria-current="page" data-icon="inbox" data-label="Inbox"></button></ui-button></li>
+            <li><ui-button><button type="button" class="mobile-tab" data-variant="ghost" data-tab="alarms" data-icon="bell" data-label="Alarms"></button></ui-button></li>
+          </ul>
+        </nav>
+
+        <!-- An action sheet: the choice comes back from drawer.api.open(). -->
+        <ui-drawer id="inbox-actions">
+          <ui-drawer-backdrop hidden></ui-drawer-backdrop>
+          <ui-drawer-content hidden class="mobile-sheet mobile-action-sheet">
+            <div class="mobile-sheet-head"><ui-drawer-title class="mobile-sheet-title">Inbox</ui-drawer-title></div>
+            <div class="mobile-action-list">
+              <ui-drawer-close value="read-all"><button type="button" class="mobile-action">Mark all as read</button></ui-drawer-close>
+              <ui-drawer-close value="clear"><button type="button" class="mobile-action" data-destructive data-agent-confirm="Delete all messages (Inbox)">Delete all</button></ui-drawer-close>
+            </div>
+            <ui-drawer-close><button type="button" class="mobile-action mobile-action-cancel">Cancel</button></ui-drawer-close>
+          </ui-drawer-content>
+        </ui-drawer>
+      </main>
+      <ui-toast-region aria-label="Notifications">
+        <template>
+          <ui-toast>
+            <div data-slot="stack">
+              <ui-toast-title></ui-toast-title>
+              <ui-toast-description></ui-toast-description>
+            </div>
+            <ui-toast-action><button type="button" data-variant="solid"></button></ui-toast-action>
+          <ui-toast-close><button type="button" aria-label="Dismiss"><svg class="uiset-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button></ui-toast-close></ui-toast>
+        </template>
+      </ui-toast-region>
+    </uiset-root>
+  </body>
+</html>

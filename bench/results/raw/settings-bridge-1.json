@@ -1,0 +1,50 @@
+{
+  "run": "settings-bridge-1",
+  "task": "settings",
+  "approach": "bridge",
+  "ok": true,
+  "detail": {
+    "name": "Atlas",
+    "triggers": [
+      "Public",
+      "Europe"
+    ],
+    "digest": "true",
+    "saved": true
+  },
+  "toolCalls": 6,
+  "textRead": 2976,
+  "seconds": 15.621,
+  "calls": [
+    {
+      "command": "snapshot",
+      "chars": 815,
+      "at": 1794748021851
+    },
+    {
+      "command": "query",
+      "chars": 264,
+      "at": 1794748026935
+    },
+    {
+      "command": "query",
+      "chars": 266,
+      "at": 1794748027326
+    },
+    {
+      "command": "act",
+      "chars": 600,
+      "at": 1794748033179
+    },
+    {
+      "command": "snapshot",
+      "chars": 805,
+      "at": 1794748034516
+    },
+    {
+      "command": "act",
+      "chars": 226,
+      "at": 1794748037472
+    }
+  ]
+}

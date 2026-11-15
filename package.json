@@ -1,0 +1,58 @@
+{
+  "name": "uiset",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Themes, components, kits and templates for Vercel's UI SDK. Keyboard, focus and ARIA come from UI SDK.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "vite --port ${PORT:-5620}",
+    "build": "pnpm registry:build && vite build",
+    "build:static": "pnpm build && node scripts/prerender.mjs",
+    "preview": "vite preview --port ${PORT:-5621}",
+    "registry:build": "node scripts/registry.mjs && REGISTRY_URL=${REGISTRY_URL:-https://uiset.dev} node scripts/registry.mjs && shadcn build registry.build.json --output public/r && node scripts/docs.mjs",
+    "docs:build": "node scripts/registry.mjs && node scripts/docs.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "test:e2e": "playwright test",
+    "web:dev": "vite --config web/vite.config.ts",
+    "web:build": "vite build --config web/vite.config.ts",
+    "check": "pnpm typecheck && pnpm test && pnpm web:build && pnpm test:e2e"
+  },
+  "dependencies": {
+    "@ui-sdk/core": "0.1.0-beta.2",
+    "@ui-sdk/react": "0.1.0-beta.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1",
+    "remark-parse": "11.0.0",
+    "remark-rehype": "11.1.2",
+    "remend": "1.4.0",
+    "shiki": "4.6.0",
+    "unified": "11.0.5"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.1",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.10",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@ui-sdk/web": "0.1.0-beta.2",
+    "@vitejs/plugin-react": "6.3.0",
+    "jsdom": "31.0.1",
+    "prettier": "3.10.1",
+    "shadcn": "4.23.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.8",
+    "vitest": "5.1.0"
+  }
+}

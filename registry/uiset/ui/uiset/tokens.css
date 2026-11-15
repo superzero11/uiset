@@ -1,0 +1,54 @@
+[data-uiset] {
+  --uiset-key-l: 0.5;
+  --uiset-key-c: 0.19;
+  --uiset-key-h: 268;
+  --uiset-key: oklch(var(--uiset-key-l) var(--uiset-key-c) var(--uiset-key-h));
+  --uiset-on-key: white;
+
+  --uiset-radius: var(--radius, 0.5rem);
+  --uiset-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --uiset-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --uiset-fast: 120ms;
+  --uiset-medium: 200ms;
+
+  --uiset-sound: soft;
+  --uiset-sound-volume: 0.6;
+  --uiset-typing: off;
+
+  /* Skins set these; base.css consumes them. Because they inherit, the nearest
+     [data-uiset] root always wins, so skins can nest without leaking. */
+  --uiset-solid-bg: var(--ui-primary);
+  --uiset-solid-fg: var(--ui-primary-foreground);
+  --uiset-solid-border: var(--ui-primary);
+  --uiset-solid-hover: color-mix(in oklab, var(--ui-primary), var(--ui-foreground) 14%);
+  --uiset-solid-weight: 500;
+  --uiset-popup-radius: calc(var(--ui-radius) * 1.5);
+
+  --uiset-cable-1: oklch(0.6 0.2 25);
+  --uiset-cable-2: oklch(0.6 0.16 250);
+  --uiset-cable-3: oklch(0.68 0.16 150);
+  --uiset-cable-4: oklch(0.72 0.15 80);
+  --uiset-cable-5: oklch(0.58 0.18 310);
+
+  --uiset-switch-width: 2rem;
+  --uiset-switch-thumb: 0.75rem;
+  --uiset-switch-inset: 3px;
+  /* The track's corners follow the thumb's, so the two always nest. */
+  --uiset-switch-thumb-radius: 999px;
+  --uiset-switch-border: 1px;
+}
+
+/* White text on the key below L 0.565, black above: both clear 4.5:1 there. */
+@supports (color: oklch(from red l c h)) {
+  [data-uiset] {
+    --uiset-on-key: oklch(from var(--uiset-key) clamp(0, (0.565 - l) * 1000, 1) 0 0);
+  }
+}
+
+[data-uiset][data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-uiset][data-theme="dark"] {
+  color-scheme: dark;
+}

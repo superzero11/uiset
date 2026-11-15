@@ -1,0 +1,89 @@
+{
+  "run": "scheduler-browser-2",
+  "task": "scheduler",
+  "approach": "browser",
+  "ok": true,
+  "detail": {
+    "matches": [
+      "Roadmap sync, Wednesday, November 18, 10:00 AM to 10:30 AM"
+    ]
+  },
+  "toolCalls": 14,
+  "textRead": 21394,
+  "seconds": 24.013,
+  "calls": [
+    {
+      "command": "snapshot",
+      "chars": 1485,
+      "at": 1794748208036
+    },
+    {
+      "command": "click",
+      "chars": 1915,
+      "at": 1794748210819
+    },
+    {
+      "command": "fill",
+      "chars": 1929,
+      "at": 1794748214070
+    },
+    {
+      "command": "select",
+      "chars": 69,
+      "at": 1794748214161,
+      "error": true
+    },
+    {
+      "command": "fill",
+      "chars": 1929,
+      "at": 1794748214396
+    },
+    {
+      "command": "fill",
+      "chars": 1929,
+      "at": 1794748214652
+    },
+    {
+      "command": "select",
+      "chars": 69,
+      "at": 1794748217477,
+      "error": true
+    },
+    {
+      "command": "select",
+      "chars": 69,
+      "at": 1794748220531,
+      "error": true
+    },
+    {
+      "command": "snapshot",
+      "chars": 1929,
+      "at": 1794748220754
+    },
+    {
+      "command": "click",
+      "chars": 2256,
+      "at": 1794748223122
+    },
+    {
+      "command": "click",
+      "chars": 2248,
+      "at": 1794748225408
+    },
+    {
+      "command": "snapshot",
+      "chars": 1932,
+      "at": 1794748229145
+    },
+    {
+      "command": "click",
+      "chars": 2041,
+      "at": 1794748229426
+    },
+    {
+      "command": "snapshot",
+      "chars": 1594,
+      "at": 1794748232049
+    }
+  ]
+}

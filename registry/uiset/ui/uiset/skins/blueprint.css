@@ -1,0 +1,320 @@
+/*
+  Blueprint: a technical drawing. Cyanotype paper, white linework, hatching for
+  filled states, dimension lines for tracks, lettering for labels.
+*/
+
+[data-uiset][data-skin="blueprint"] {
+  color-scheme: dark;
+  --blueprint-paper: oklch(0.36 0.11 254);
+  --blueprint-line: oklch(0.96 0.02 230);
+  --blueprint-faint: oklch(0.96 0.02 230 / 0.16);
+  --blueprint-grid: oklch(0.96 0.02 230 / 0.07);
+  --blueprint-hatch: repeating-linear-gradient(
+    -45deg,
+    var(--blueprint-line) 0 1.5px,
+    transparent 1.5px 5px
+  );
+
+  --ui-background: var(--blueprint-paper);
+  --ui-foreground: var(--blueprint-line);
+  --ui-muted: oklch(0.42 0.11 254);
+  --ui-muted-foreground: oklch(0.86 0.05 235);
+  --ui-border: oklch(0.96 0.02 230 / 0.45);
+  --ui-input: var(--blueprint-line);
+  --ui-primary: var(--blueprint-line);
+  --ui-primary-foreground: var(--blueprint-paper);
+  --ui-ring: oklch(0.96 0.02 230 / 0.35);
+  --ui-ring-border: oklch(0.9 0.13 200);
+  --ui-radius: 0;
+  --ui-shadow: none;
+  --ui-font-sans:
+    "Barlow Semi Condensed", "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
+  --ui-font-size: 0.9375rem;
+  --uiset-sound: paper;
+  --uiset-solid-bg: var(--blueprint-line);
+  --uiset-solid-fg: var(--blueprint-paper);
+  --uiset-solid-border: var(--blueprint-line);
+  --uiset-solid-hover: oklch(0.86 0.06 220);
+  --uiset-solid-weight: 600;
+  --uiset-popup-radius: 0;
+  --uiset-switch-inset: 4px;
+  /* A whole-pixel border (browsers draw 1.5px as 1 here), so the thumb's gap stays even
+     and the border survives forced colors. */
+  --uiset-switch-border: 1px;
+
+  font-family: var(--ui-font-sans);
+  background-color: var(--blueprint-paper);
+  background-image:
+    linear-gradient(var(--blueprint-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--blueprint-grid) 1px, transparent 1px),
+    linear-gradient(var(--blueprint-faint) 1px, transparent 1px),
+    linear-gradient(90deg, var(--blueprint-faint) 1px, transparent 1px);
+  background-size:
+    8px 8px,
+    8px 8px,
+    64px 64px,
+    64px 64px;
+  background-position: -1px -1px;
+
+  &
+    :is(
+      [data-slot="field-label"],
+      [data-slot="select-label"],
+      [data-slot="combobox-label"],
+      [data-slot="autocomplete-label"],
+      [data-slot="label"]:not(:has(> :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="switch"])))
+    ) {
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Lettering on every button, ghost ones too; the drawn outline only where there is one.
+     A menubar's menus are part of the bar, and buttons kits use as rows (a step, a chat, a
+     problem, a suggestion) show content, so they keep its case and get no chrome. */
+  &
+    :is(
+      [data-slot="button"],
+      [data-slot="toolbar-button"],
+      [data-slot="dialog-trigger"],
+      [data-slot="alert-dialog-trigger"],
+      [data-slot="drawer-trigger"],
+      [data-slot="popover-trigger"],
+      button[data-slot="tooltip-trigger"],
+      [data-slot="menu-trigger"],
+      [data-slot="file-input-trigger"],
+      [data-slot="dialog-close"],
+      [data-slot="alert-dialog-close"],
+      [data-slot="drawer-close"],
+      [data-slot="popover-close"]
+    ):not([data-slot="menubar"] [data-slot="menu-trigger"], .stepper-step, .chat-thread-link, .ide-problem, .ide-status-item, .ide-palette-trigger, .chat-suggestions *, .sidebar-link, .mobile-action, .mobile-tab) {
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  &
+    :is(
+      [data-slot="button"],
+      [data-slot="dialog-trigger"],
+      [data-slot="alert-dialog-trigger"],
+      [data-slot="drawer-trigger"],
+      [data-slot="popover-trigger"],
+      button[data-slot="tooltip-trigger"],
+      [data-slot="menu-trigger"],
+      [data-slot="file-input-trigger"],
+      [data-slot="dialog-close"],
+      [data-slot="alert-dialog-close"],
+      [data-slot="drawer-close"],
+      [data-slot="popover-close"]
+    ):not([data-variant="ghost"], [data-slot="menubar"] [data-slot="menu-trigger"], .stepper-step, .chat-thread-link, .ide-problem, .ide-status-item, .ide-palette-trigger, .chat-suggestions *, .sidebar-link, .mobile-action, .mobile-tab) {
+    border-width: 1.5px;
+  }
+
+  &
+    :is(
+      [data-variant="outline"],
+      :is(
+        [data-slot="dialog-trigger"],
+        [data-slot="alert-dialog-trigger"],
+        [data-slot="drawer-trigger"],
+        [data-slot="popover-trigger"],
+        [data-slot="menu-trigger"],
+        [data-slot="file-input-trigger"],
+        [data-slot="dialog-close"],
+        [data-slot="alert-dialog-close"],
+        [data-slot="drawer-close"],
+        [data-slot="popover-close"]
+      ):not([data-variant], [data-slot="menubar"] [data-slot="menu-trigger"])
+    ):not(.stepper-step, .chat-thread-link, .ide-problem, .ide-status-item, .ide-palette-trigger, .chat-suggestions *, .sidebar-link, .mobile-action, .mobile-tab) {
+    border-color: var(--blueprint-line);
+    background: transparent;
+    color: var(--blueprint-line);
+
+    /* A faint fill; hatching ran through the label (A2). */
+    &:is(:hover, [data-open], [data-popup-open]):not([data-disabled]) {
+      background-color: var(--blueprint-faint);
+      background-image: none;
+    }
+  }
+
+  & [data-slot="switch"] {
+    border: 1px solid var(--blueprint-line);
+    background: transparent;
+
+    &[data-checked] {
+      background-color: transparent;
+      background-image: var(--blueprint-hatch);
+    }
+  }
+
+  & [data-slot="switch-thumb"] {
+    border: 1.5px solid var(--blueprint-line);
+    background: var(--blueprint-paper);
+
+    &[data-checked] {
+      background: var(--blueprint-paper);
+    }
+  }
+
+  & [data-slot="slider-track"]:not([data-orientation="vertical"]) {
+    height: 1.5px;
+    background: var(--blueprint-line);
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      top: -6px;
+      width: 1.5px;
+      height: 13px;
+      background: var(--blueprint-line);
+    }
+
+    &::before {
+      inset-inline-start: 0;
+    }
+
+    &::after {
+      inset-inline-end: 0;
+    }
+  }
+
+  & [data-slot="slider-indicator"]:not([data-orientation="vertical"]) {
+    height: 7px;
+    translate: 0 -3px;
+    background: var(--blueprint-hatch);
+  }
+
+  & [data-slot="slider-thumb"] {
+    border: 1.5px solid var(--blueprint-line);
+    border-radius: 0;
+    background: var(--blueprint-paper);
+    rotate: 45deg;
+  }
+
+  & [data-slot="segmented-control"] {
+    border: 1.5px solid var(--blueprint-line);
+    background: transparent;
+  }
+
+  & [data-slot="segmented-control-indicator"] {
+    border-radius: 0;
+    background: var(--blueprint-line);
+  }
+
+  & [data-slot="segmented-control-item"] {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+
+    &[data-checked] {
+      color: var(--blueprint-paper);
+    }
+  }
+
+  /* Every text box is drawn as a line to write on (A6). */
+  &
+    :is(
+      [data-slot="input"],
+      [data-slot="select-trigger"],
+      [data-slot="textarea"],
+      [data-slot="password-input"],
+      [data-slot="date-input"],
+      [data-slot="time-input"],
+      [data-slot="date-picker-input"],
+      [data-slot="combobox-input"],
+      [data-slot="autocomplete-input"],
+      [data-slot="token-input-editor"],
+      [data-slot="color-picker-input"],
+      [data-slot="otp-input-slot"]
+    ) {
+    border: 0;
+    border-bottom: 1.5px solid var(--blueprint-line);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  &
+    :is(
+      [data-slot="select-content"],
+      [data-slot="popover-content"],
+      [data-slot="menu-content"],
+      [data-slot="combobox-content"],
+      [data-slot="autocomplete-content"],
+      [data-slot="hover-card-content"],
+      [data-slot="date-picker-content"],
+      [data-slot="navigation-menu-viewport"],
+      [data-slot="trigger-menu-content"],
+      [data-slot="dialog-content"],
+      [data-slot="alert-dialog-content"],
+      [data-slot="drawer-content"]
+    ) {
+    border: 1.5px solid var(--blueprint-line);
+    background: var(--blueprint-paper);
+    box-shadow: 6px 6px 0 var(--blueprint-faint);
+  }
+
+  & :is([data-slot="select-item"], [data-slot="menu-item"])[data-highlighted] {
+    background: var(--blueprint-line);
+    color: var(--blueprint-paper);
+  }
+
+  & [data-slot="tabs-tab"][data-selected] {
+    box-shadow: inset 0 -1.5px var(--blueprint-line);
+  }
+
+  /* What isn't reached yet is drawn faint (A3): an empty star, an upcoming step or marker. */
+  & [data-slot="rating-item"]::before {
+    background: linear-gradient(
+      var(--ui-rating-direction),
+      var(--ui-rating-color) calc(var(--rating-fill, 0) * 100%),
+      oklch(0.96 0.02 230 / 0.35) 0
+    );
+  }
+
+  & :is([data-slot="timeline-marker"][data-upcoming], .stepper li[data-state="upcoming"] .stepper-mark) {
+    border-color: oklch(0.96 0.02 230 / 0.45);
+    color: oklch(0.86 0.05 235);
+  }
+
+  /* An invalid field still says so in this skin's field style (C16). */
+  & :is([data-slot="input"], [data-slot="select-trigger"], [data-slot="textarea"], [data-slot="password-input"], [data-slot="date-input"], [data-slot="time-input"], [data-slot="date-picker-input"], [data-slot="combobox-input"], [data-slot="autocomplete-input"], [data-slot="token-input-editor"], [data-slot="number-input-control"], [data-slot="otp-input-slot"]):is([data-invalid], [aria-invalid="true"], :has([aria-invalid="true"])) {
+    border-bottom-color: var(--ui-destructive);
+  }
+
+  /* Plain number fields drop the browser's spinner; NumberInput has real buttons (C37). */
+  & input[type="number"] {
+    appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+  }
+
+  /* A vertical slider: the same dimension line, standing up (D7). */
+  & [data-slot="slider-track"][data-orientation="vertical"] {
+    width: 1.5px;
+    background: var(--blueprint-line);
+  }
+
+  & [data-slot="slider-indicator"][data-orientation="vertical"] {
+    width: 7px;
+    translate: -3px 0;
+    background: var(--blueprint-hatch);
+  }
+}
+
+/* Hatching is the drawing's fill, and Windows high contrast removes it (Firefox drops it
+   outright), so the states it marks take the system highlight there instead. */
+@media (forced-colors: active) {
+  [data-uiset][data-skin="blueprint"] {
+    & [data-slot="switch"][data-checked],
+    & [data-slot="slider-indicator"]:not([data-orientation="vertical"]),
+    & [data-slot="slider-indicator"][data-orientation="vertical"] {
+      background: Highlight;
+    }
+  }
+}

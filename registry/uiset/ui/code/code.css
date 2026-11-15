@@ -1,0 +1,25 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/*
+ * Code token colors for shiki's css-variables theme, shared by chat code blocks and the
+ * IDE's editor. Each is 4.5:1 on --ui-muted and on --ui-background in its scheme.
+ */
+@layer uiset.base {
+  :where([data-uiset]) {
+    --shiki-foreground: var(--ui-foreground);
+    --shiki-background: transparent;
+    /* Dark keyword at 0.84: Blueprint's code blocks sit on its muted blue, not its page. */
+    --shiki-token-keyword: light-dark(oklch(0.47 0.19 300), oklch(0.84 0.1 300));
+    --shiki-token-string: light-dark(oklch(0.45 0.13 150), oklch(0.82 0.13 150));
+    --shiki-token-string-expression: light-dark(
+      oklch(0.45 0.13 150),
+      oklch(0.82 0.13 150)
+    );
+    --shiki-token-comment: var(--ui-muted-foreground);
+    --shiki-token-function: light-dark(oklch(0.46 0.15 255), oklch(0.8 0.11 240));
+    --shiki-token-constant: light-dark(oklch(0.48 0.16 35), oklch(0.82 0.12 60));
+    --shiki-token-parameter: light-dark(oklch(0.44 0.12 20), oklch(0.82 0.09 30));
+    --shiki-token-punctuation: var(--ui-foreground);
+    --shiki-token-link: light-dark(oklch(0.46 0.15 255), oklch(0.8 0.11 240));
+  }
+}

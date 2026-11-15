@@ -1,0 +1,51 @@
+# UISet
+
+> Themes, components, kits and templates for Vercel's UI SDK, installed with the shadcn CLI. Behavior (keyboard, focus, ARIA, agent access) comes from UI SDK; UISet adds the skins, sound and haptics, and the kits apps are made of. React, and Web Components for every other framework.
+
+Rules for agents building with UISet:
+
+- Wrap the app (or a part of it) in `<UISet skin="base">` from `@/components/ui/uiset`. Every UISet and UI SDK component inside takes the skin.
+- Install items with `npx shadcn@latest add superzero11/uiset/<item>`; they land in `components/ui/` and import each other relatively.
+- Don't hand-write keyboard handling, focus traps or ARIA roles that a UI SDK component or behavior covers. Read the installed UI SDK docs at `node_modules/@ui-sdk/react/docs/llms.txt`.
+- Give every control a name (a label, `aria-label`, or `label` prop): UI SDK's agent bridge finds components by it.
+- Skins set CSS variables; style your own parts with `var(--ui-foreground)`, `var(--ui-muted-foreground)`, `var(--ui-border)`, `var(--ui-primary)` and friends, so they follow every skin.
+
+## Docs
+
+- [Overview and every item](https://uiset.dev/docs/README.md): what each item is and where its docs are
+- [Introduction](https://uiset.dev/docs/introduction.md): What UISet is, how it relates to UI SDK and shadcn/ui, and what's in it
+- [Installation](https://uiset.dev/docs/installation.md): Add UISet with the shadcn CLI, load each skin's fonts, or use the Web Components build
+- [Quick start](https://uiset.dev/docs/quick-start.md): A working settings screen in a few minutes
+- [Building with AI agents](https://uiset.dev/docs/ai.md): The skills and llms.txt for coding agents, and UI SDK's agent bridge for agents that use your app
+- [Web Components](https://uiset.dev/docs/web-components.md): Every kit and template as custom elements, for plain HTML, Vue, Svelte and Solid
+- [Templates](https://uiset.dev/docs/templates.md): Whole pages built only from UISet items
+- [Theming](https://uiset.dev/docs/theming.md): Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder
+- [Coming from shadcn/ui](https://uiset.dev/docs/migrate-from-shadcn.md): What maps to what, and how to move a shadcn/ui app over
+- [Roadmap](https://uiset.dev/docs/roadmap.md): What's shipped, what's next, and how UISet follows UI SDK
+- [Blueprint skin](https://uiset.dev/docs/blueprint.md): The Blueprint skin's design and tokens
+- [Studio skin](https://uiset.dev/docs/studio.md): The Studio skin's design and tokens
+- [Phosphor skin](https://uiset.dev/docs/phosphor.md): The Phosphor skin's design and tokens
+- [Ink skin](https://uiset.dev/docs/ink.md): The Ink skin's design and tokens
+- [Root](https://uiset.dev/docs/theming.md): `uiset`
+- [App frame and data display](https://uiset.dev/docs/app-shell.md): `app-shell`, `breadcrumbs`, `page-header`, `card`, `badge`, `stat`, `empty-state`, `skeleton`, `description-list`, `item-list`, `alert`, `kbd`, `spinner`, `stepper`, `search-field`, `copy-button`
+- [Rich text](https://uiset.dev/docs/rich-text.md): `rich-text`
+- [Chat](https://uiset.dev/docs/chat.md): `chat`, `chat-response`, `chat-parts`, `chat-composer`, `chat-sidebar`
+- [Data grid](https://uiset.dev/docs/data-grid.md): `data-grid`
+- [Charts](https://uiset.dev/docs/charts.md): `chart`, `line-chart`, `bar-chart`, `scatter-chart`, `heatmap`, `segmented-bar`, `sparkline`
+- [Board](https://uiset.dev/docs/board.md): `board`
+- [Scheduler](https://uiset.dev/docs/scheduler.md): `scheduler`
+- [Canvas](https://uiset.dev/docs/canvas.md): `canvas`
+- [IDE](https://uiset.dev/docs/ide.md): `ide`
+- [Mobile](https://uiset.dev/docs/mobile.md): `mobile`
+- [Terminal](https://uiset.dev/docs/terminal.md): `terminal`
+- [Studio](https://uiset.dev/docs/studio-kit.md): `knob`, `patch-bay`, `fader`, `level-meter`, `step-sequencer`
+- [Agent Console](https://uiset.dev/docs/agent-console.md): `agent-console`
+
+## UI SDK components
+
+- [Every UI SDK component's API and keys](https://ui-sdk.dev/docs): UISet installs each as its own item (`button`, `switch`, `slider`, `segmented-control`, `select`, `field`, `dialog`, `tabs`, `accordion`, `alert-dialog`, `autocomplete`, `avatar`, `calendar`, `carousel`, `checkbox`, `collapsible`, `color-picker`, `combobox`, `command`, `date-input`, `date-picker`, `drawer`, `file-input`, `hover-card`, `image-cropper`, `input`, `label`, `listbox`, `menu`, `menubar`, `meter`, `navigation-menu`, `number-input`, `otp-input`, `pagination`, `password-input`, `popover`, `preferences`, `progress`, `radio`, `rating`, `resizable`, `scroll-area`, `separator`, `textarea`, `time-input`, `timeline`, `toast`, `toggle`, `token-input`, `toolbar`, `tooltip`, `tree`, `trigger-menu`, `waterfall`)
+
+## Optional
+
+- [Everything in one file](https://uiset.dev/llms-full.txt): every docs page above, concatenated
+- [Registry](https://uiset.dev/r/registry.json): the shadcn registry index

@@ -1,0 +1,63 @@
+{
+  "run": "grid-bridge-3",
+  "task": "grid",
+  "approach": "bridge",
+  "ok": true,
+  "detail": {
+    "sample": [
+      {
+        "region": "Europe",
+        "amount": 9039.5
+      },
+      {
+        "region": "Europe",
+        "amount": 9037.62
+      },
+      {
+        "region": "Europe",
+        "amount": 9032.13
+      },
+      {
+        "region": "Europe",
+        "amount": 9023.66
+      }
+    ],
+    "allEurope": true,
+    "sortedDesc": true
+  },
+  "toolCalls": 6,
+  "textRead": 2470,
+  "seconds": 7.146,
+  "calls": [
+    {
+      "command": "snapshot",
+      "chars": 675,
+      "at": 1794748274921
+    },
+    {
+      "command": "act",
+      "chars": 118,
+      "at": 1794748277656
+    },
+    {
+      "command": "snapshot",
+      "chars": 681,
+      "at": 1794748277739
+    },
+    {
+      "command": "act",
+      "chars": 197,
+      "at": 1794748279907
+    },
+    {
+      "command": "snapshot",
+      "chars": 681,
+      "at": 1794748279994
+    },
+    {
+      "command": "act",
+      "chars": 118,
+      "at": 1794748282067
+    }
+  ]
+}

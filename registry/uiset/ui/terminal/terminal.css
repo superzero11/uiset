@@ -1,0 +1,199 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/*
+ * A terminal. ANSI colors map to tokens that hold 4.5:1 on the terminal's surface in each
+ * scheme, so output a program colors stays readable in every skin. "Black" and "white"
+ * follow the scheme rather than vanish into it.
+ */
+@layer uiset.base {
+  :where([data-uiset]) {
+    --term-black: light-dark(var(--ui-foreground), var(--ui-muted-foreground));
+    --term-red: light-dark(oklch(0.5 0.19 27), oklch(0.8 0.13 25));
+    --term-green: light-dark(oklch(0.48 0.13 150), oklch(0.84 0.15 150));
+    --term-yellow: light-dark(oklch(0.5 0.11 80), oklch(0.89 0.13 95));
+    --term-blue: light-dark(oklch(0.48 0.16 258), oklch(0.8 0.1 250));
+    --term-magenta: light-dark(oklch(0.5 0.18 330), oklch(0.82 0.12 330));
+    --term-cyan: light-dark(oklch(0.48 0.09 210), oklch(0.85 0.1 205));
+    --term-white: light-dark(var(--ui-muted-foreground), var(--ui-foreground));
+    /* Bright black: the grey programs write asides in, muted in both schemes. */
+    --term-grey: var(--ui-muted-foreground);
+  }
+
+  .terminal {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    block-size: var(--terminal-height, 22rem);
+    min-block-size: 0;
+    overflow: hidden;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 6px);
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+    font-family: var(--ui-font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .terminal-scroll {
+    min-block-size: 0;
+    overflow: auto;
+    padding: 0.75rem 0.875rem 0.25rem;
+    outline: none;
+    overscroll-behavior: contain;
+
+    &:focus-visible {
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: -2px;
+    }
+  }
+
+  .terminal-line {
+    min-block-size: 1.5em;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    tab-size: 4;
+    /* Lines out of view skip layout, so long output scrolls smoothly. */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 1.5em;
+
+    &[data-kind="err"] {
+      color: var(--term-red);
+    }
+
+    &[data-kind="info"] {
+      color: var(--ui-muted-foreground);
+    }
+
+    & a {
+      color: var(--term-blue);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
+  .terminal-ps1 {
+    color: var(--term-green);
+    font-weight: 600;
+    white-space: pre;
+  }
+
+  /* Program colors, scoped to terminal lines so they style nothing else on the page. */
+  .terminal-line {
+    [data-fg] { color: var(--term-fg); }
+    [data-fg="black"] { --term-fg: var(--term-black); }
+    [data-fg="red"] { --term-fg: var(--term-red); }
+    [data-fg="green"] { --term-fg: var(--term-green); }
+    [data-fg="yellow"] { --term-fg: var(--term-yellow); }
+    [data-fg="blue"] { --term-fg: var(--term-blue); }
+    [data-fg="magenta"] { --term-fg: var(--term-magenta); }
+    [data-fg="cyan"] { --term-fg: var(--term-cyan); }
+    [data-fg="white"] { --term-fg: var(--term-white); }
+    [data-fg="grey"] { --term-fg: var(--term-grey); }
+
+    /* Backgrounds are tints, so the text over them keeps its contrast. */
+    [data-bg] { background: color-mix(in oklch, var(--term-bg) 18%, transparent); border-radius: 2px; }
+    [data-bg="black"] { --term-bg: var(--term-black); }
+    [data-bg="red"] { --term-bg: var(--term-red); }
+    [data-bg="green"] { --term-bg: var(--term-green); }
+    [data-bg="yellow"] { --term-bg: var(--term-yellow); }
+    [data-bg="blue"] { --term-bg: var(--term-blue); }
+    [data-bg="magenta"] { --term-bg: var(--term-magenta); }
+    [data-bg="cyan"] { --term-bg: var(--term-cyan); }
+    [data-bg="white"] { --term-bg: var(--term-white); }
+    [data-bg="grey"] { --term-bg: var(--term-grey); }
+
+    /* Inverse is a solid fill of the text's color under the background color: a token that
+       clears 4.5:1 as text clears it as a fill, so badges like " PASS " stay readable. */
+    [data-inverse] {
+      border-radius: 2px;
+      background: var(--term-fg, var(--ui-foreground));
+      color: var(--ui-background);
+    }
+
+    [data-bold] { font-weight: 700; }
+    /* Dim text keeps its color (opacity would drop it under 4.5:1); plain dim text is muted. */
+    [data-dim]:not([data-fg]) { color: var(--ui-muted-foreground); }
+    [data-italic] { font-style: italic; }
+    [data-underline] { text-decoration: underline; }
+    [data-strike] { text-decoration: line-through; }
+    [data-underline][data-strike] { text-decoration: underline line-through; }
+  }
+
+  .terminal-prompt {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    /* One character after the prompt, as in the lines above it (B32). */
+    gap: 0 1ch;
+    padding: 0.25rem 0.875rem 0.75rem;
+  }
+
+  .terminal-input[data-slot] {
+    flex: 1;
+    /* Room to type in a narrow terminal; the status moves to its own row instead. */
+    min-inline-size: 10ch;
+    block-size: 1.5em;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+    font: inherit;
+    caret-color: var(--term-green);
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  .terminal:has(.terminal-input:focus-visible) {
+    outline: 2px solid var(--ui-ring-border);
+    outline-offset: 2px;
+  }
+
+  .terminal-status {
+    overflow: hidden;
+    color: var(--ui-muted-foreground);
+    font-size: 0.75rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .terminal-jump[data-slot] {
+    position: absolute;
+    inset-block-end: 3rem;
+    inset-inline-end: 1rem;
+    font-family: var(--ui-font-sans, system-ui);
+    font-size: 0.8125rem;
+  }
+}
+
+/* The prompt is a command line, not a form field: skins' field dressing is undone here. */
+@layer uiset.skin {
+  [data-uiset] .terminal .terminal-input[data-slot="input"] {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+
+    /* The whole terminal draws the ring; the line itself draws none. */
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .terminal-line [data-inverse] {
+      forced-color-adjust: none;
+      background: CanvasText;
+      color: Canvas;
+    }
+  }
+}

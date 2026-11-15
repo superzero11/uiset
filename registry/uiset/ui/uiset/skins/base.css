@@ -1,0 +1,65 @@
+/*
+  The base skin. It adopts a shadcn/ui theme when one is on the page (--background,
+  --primary, ...) so UISet drops into an existing app and matches it. Otherwise it
+  derives everything from the key color.
+*/
+
+[data-uiset][data-skin="base"] {
+  --ui-background: var(
+    --background,
+    light-dark(
+      oklch(0.995 0.002 var(--uiset-key-h)),
+      oklch(0.17 0.008 var(--uiset-key-h))
+    )
+  );
+  --ui-foreground: var(
+    --foreground,
+    light-dark(
+      oklch(0.21 0.012 var(--uiset-key-h)),
+      oklch(0.96 0.004 var(--uiset-key-h))
+    )
+  );
+  --ui-muted: var(
+    --muted,
+    light-dark(
+      oklch(0.962 0.006 var(--uiset-key-h)),
+      oklch(0.235 0.01 var(--uiset-key-h))
+    )
+  );
+  --ui-muted-foreground: var(
+    --muted-foreground,
+    light-dark(
+      oklch(0.47 0.016 var(--uiset-key-h)),
+      oklch(0.73 0.012 var(--uiset-key-h))
+    )
+  );
+  --ui-border: var(
+    --border,
+    light-dark(oklch(0.9 0.008 var(--uiset-key-h)), oklch(0.3 0.012 var(--uiset-key-h)))
+  );
+  /* Field and control edges hold 3:1 against the surface (WCAG 1.4.11). */
+  --ui-input: var(
+    --input,
+    light-dark(
+      oklch(0.6 0.014 var(--uiset-key-h)),
+      oklch(0.56 0.014 var(--uiset-key-h))
+    )
+  );
+  --ui-primary: var(--uiset-key);
+  --ui-primary-foreground: var(--uiset-on-key);
+  --ui-ring: color-mix(in oklab, var(--uiset-key) 30%, transparent);
+  --ui-ring-border: light-dark(
+    var(--uiset-key),
+    color-mix(in oklab, var(--uiset-key), white 35%)
+  );
+  --ui-radius: var(--uiset-radius);
+  --ui-font-size: 0.875rem;
+  --ui-shadow:
+    0 1px 2px light-dark(oklch(0.2 0.02 var(--uiset-key-h) / 0.08), oklch(0 0 0 / 0.5)),
+    0 12px 32px -12px
+      light-dark(oklch(0.2 0.04 var(--uiset-key-h) / 0.22), oklch(0 0 0 / 0.7));
+}
+
+[data-uiset][data-skin="base"]:not([data-key]) {
+  --uiset-key: var(--primary, oklch(0.5 0.19 268));
+}

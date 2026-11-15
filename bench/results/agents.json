@@ -1,0 +1,92 @@
+{
+  "ae86df3a1ad96be82": {
+    "run": "settings-browser-1",
+    "tokens": 68921,
+    "seconds": 30.7
+  },
+  "aad5f9ad3e846d7db": {
+    "run": "settings-bridge-1",
+    "tokens": 68397,
+    "seconds": 25.1
+  },
+  "a4881d27438b3ffb2": {
+    "run": "grid-browser-1",
+    "tokens": 73827,
+    "seconds": 29.3
+  },
+  "a22d9ca7c35785b8b": {
+    "run": "grid-bridge-1",
+    "tokens": 72925,
+    "seconds": 24.7
+  },
+  "ad63ee771a418b1a2": {
+    "run": "scheduler-browser-1",
+    "tokens": 70429,
+    "seconds": 36.6
+  },
+  "ad7dac5e40de93eac": {
+    "run": "scheduler-bridge-1",
+    "tokens": 68799,
+    "seconds": 19.1
+  },
+  "ab3aebedf4991a0f3": {
+    "run": "settings-browser-2",
+    "tokens": 68930,
+    "seconds": 20.1
+  },
+  "a5d5927c0dd6c938c": {
+    "run": "scheduler-browser-2",
+    "tokens": 71547,
+    "seconds": 29.6
+  },
+  "af33671eed5c48a09": {
+    "run": "settings-bridge-2",
+    "tokens": 68399,
+    "seconds": 16.2
+  },
+  "a310e87c1be69e7a1": {
+    "run": "grid-browser-2",
+    "tokens": 74112,
+    "seconds": 17.9
+  },
+  "a4a8d049235755d67": {
+    "run": "grid-bridge-2",
+    "tokens": 72325,
+    "seconds": 15.0
+  },
+  "a2ee5b2c78c2a68c2": {
+    "run": "scheduler-bridge-2",
+    "tokens": 68794,
+    "seconds": 13.1
+  },
+  "adb46e01877b92c06": {
+    "run": "settings-browser-3",
+    "tokens": 68916,
+    "seconds": 20.5
+  },
+  "a2e85ff2393d45e57": {
+    "run": "settings-bridge-3",
+    "tokens": 67666,
+    "seconds": 14.2
+  },
+  "af107ac34292499a4": {
+    "run": "grid-browser-3",
+    "tokens": 74816,
+    "seconds": 24.8
+  },
+  "a28a2099cda5cec4e": {
+    "run": "grid-bridge-3",
+    "tokens": 68243,
+    "seconds": 13.5
+  },
+  "a5a5c2d8b54ae35c2": {
+    "run": "scheduler-browser-3",
+    "tokens": 70538,
+    "seconds": 25.1
+  },
+  "a312c99472e70ac3e": {
+    "run": "scheduler-bridge-3",
+    "tokens": 68779,
+    "seconds": 11.6
+  }
+}

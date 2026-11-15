@@ -1,0 +1,7 @@
+registry.json
+registry.build.json
+public/r
+pnpm-lock.yaml
+skills-lock.json
+.claude/skills
+dist

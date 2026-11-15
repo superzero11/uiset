@@ -1,0 +1,63 @@
+{
+  "run": "grid-browser-2",
+  "task": "grid",
+  "approach": "browser",
+  "ok": true,
+  "detail": {
+    "sample": [
+      {
+        "region": "Europe",
+        "amount": 9039.5
+      },
+      {
+        "region": "Europe",
+        "amount": 9037.62
+      },
+      {
+        "region": "Europe",
+        "amount": 9032.13
+      },
+      {
+        "region": "Europe",
+        "amount": 9023.66
+      }
+    ],
+    "allEurope": true,
+    "sortedDesc": true
+  },
+  "toolCalls": 6,
+  "textRead": 54322,
+  "seconds": 12.551,
+  "calls": [
+    {
+      "command": "snapshot",
+      "chars": 8844,
+      "at": 1794748207655
+    },
+    {
+      "command": "click",
+      "chars": 9247,
+      "at": 1794748210679
+    },
+    {
+      "command": "fill",
+      "chars": 9042,
+      "at": 1794748213994
+    },
+    {
+      "command": "press",
+      "chars": 9031,
+      "at": 1794748214276
+    },
+    {
+      "command": "click",
+      "chars": 8996,
+      "at": 1794748217332
+    },
+    {
+      "command": "click",
+      "chars": 9162,
+      "at": 1794748220206
+    }
+  ]
+}

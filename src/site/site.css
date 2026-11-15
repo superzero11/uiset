@@ -1,0 +1,1227 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+:root {
+  --site-font: "Instrument Sans", system-ui, sans-serif;
+  --site-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --site-gutter: clamp(1rem, 4vw, 3rem);
+  --site-max: 76rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: 1rem;
+  top: -4rem;
+  /* Above the sticky header (z-index 20). */
+  z-index: 30;
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--ui-radius);
+  background: var(--ui-foreground);
+  color: var(--ui-background);
+}
+
+.skip-link:focus-visible {
+  top: 1rem;
+}
+
+/* Sections linked by #id land below the sticky header: html's scroll-padding-top (shell.css)
+   sets that offset for every anchor, so no per-element scroll-margin. */
+
+.site {
+  min-height: 100dvh;
+  font-family: var(--site-font);
+  font-size: 1rem;
+  line-height: 1.55;
+  --ui-font-sans: var(--site-font);
+}
+
+/* Plain links only: a link rendered as a component (data-slot) keeps its own colors. */
+.site a:not([data-slot], .terminal-line a) {
+  color: inherit;
+  text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+  text-underline-offset: 0.2em;
+}
+
+.site a:not([data-slot], .terminal-line a):hover {
+  text-decoration-color: currentColor;
+}
+
+.site-header,
+main > section,
+.site-footer {
+  width: min(100% - var(--site-gutter) * 2, var(--site-max));
+  margin-inline: auto;
+}
+
+.site-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1.25rem;
+}
+
+.wordmark {
+  font-size: 1.375rem;
+  font-weight: 700;
+  font-stretch: 75%;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.site-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  font-size: 0.9375rem;
+}
+
+.site-header nav a {
+  text-decoration: none;
+  color: var(--ui-muted-foreground);
+}
+
+.site-header nav a:hover {
+  color: var(--ui-foreground);
+}
+
+/* Hero */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  padding-block: clamp(2rem, 7vw, 5.5rem) clamp(3rem, 8vw, 6rem);
+}
+
+@media (min-width: 62rem) {
+  .hero {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+
+  .hero-copy {
+    position: sticky;
+    top: 2rem;
+  }
+}
+
+.hero h1 {
+  margin: 0 0 1.5rem;
+  font-size: clamp(2.75rem, 7.5vw, 5.25rem);
+  font-stretch: 75%;
+  font-weight: 650;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.hero p {
+  max-width: 34rem;
+  margin: 0 0 1.75rem;
+  font-size: 1.125rem;
+  color: var(--ui-muted-foreground);
+}
+
+.install {
+  display: inline-block;
+  max-width: 100%;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+  background: var(--ui-muted);
+  font-family: var(--site-mono);
+  font-size: 0.875rem;
+}
+
+/* Stage: the live specimen */
+
+.stage {
+  display: grid;
+  gap: 0.875rem;
+  min-width: 0;
+}
+
+.stage-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.sound-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.stage-surface {
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  overflow: clip;
+}
+
+.specimen,
+.specimen-fields {
+  display: grid;
+  gap: 1.375rem;
+  max-width: 30rem;
+  font-size: var(--ui-font-size);
+}
+
+.specimen [data-slot="select"] {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.specimen-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.specimen-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  padding-top: 0.375rem;
+}
+
+/* Bands */
+
+.band {
+  display: grid;
+  /* One column that can shrink, so a wide demo scrolls inside its stage instead of
+     widening the page. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+  padding-block: clamp(3rem, 7vw, 5rem);
+  border-top: 1px solid var(--ui-border);
+}
+
+.band-intro {
+  max-width: 40rem;
+}
+
+.band-intro h2 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-stretch: 80%;
+  font-weight: 650;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.band-intro p {
+  margin: 0;
+  color: var(--ui-muted-foreground);
+}
+
+/* A band's own h3s; a live demo's (a nested <UISet>) keep the component's look. */
+.band h3:where(:not(.rich-text-block, [data-uiset] [data-uiset] *)) {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Agent panel */
+
+.agent-panel {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 62rem) {
+  .agent-panel {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  }
+}
+
+.agent-snapshot h3 {
+  font-family: var(--site-mono);
+  font-weight: 500;
+}
+
+.agent-snapshot,
+.catalog {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+:is(.catalog, .agent-snapshot) table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+:is(.catalog, .agent-snapshot) :is(th, td) {
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  border-bottom: 1px solid var(--ui-border);
+  text-align: start;
+  vertical-align: top;
+}
+
+:is(.catalog, .agent-snapshot) thead th {
+  font-weight: 600;
+  color: var(--ui-muted-foreground);
+}
+
+:is(.catalog, .agent-snapshot) tbody th {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.agent-snapshot td:nth-child(n + 2),
+.catalog code {
+  font-family: var(--site-mono);
+  font-size: 0.8125rem;
+}
+
+.agent-script ul {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.agent-script [data-variant="ghost"] {
+  justify-content: flex-start;
+  width: 100%;
+  height: auto;
+  min-height: 2.25rem;
+  padding-inline: 0.5rem;
+  text-align: start;
+}
+
+.agent-script [data-variant="ghost"]:hover:not([data-disabled]) {
+  background: var(--ui-muted);
+}
+
+.agent-log {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 1rem;
+  font-family: var(--site-mono);
+  font-size: 0.8125rem;
+  color: var(--ui-muted-foreground);
+}
+
+/* Upcoming */
+
+.site-footer {
+  padding-block: 2.5rem 3rem;
+  border-top: 1px solid var(--ui-border);
+  font-size: 0.875rem;
+  color: var(--ui-muted-foreground);
+}
+
+/* Studio */
+
+/* The rack's stage is a plain frame in any skin, which paints its own surface; in the Studio
+   skin it's hardware, a dark rail with a drop shadow. */
+.studio-stage {
+  padding: clamp(0.5rem, 2vw, 1rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.studio-stage[data-skin="studio"] {
+  border: 0;
+  border-radius: 12px;
+  background: var(--studio-rack);
+  box-shadow:
+    inset 0 0 0 1px oklch(0 0 0 / 0.5),
+    0 24px 48px -24px oklch(0 0 0 / 0.5);
+}
+
+.rack-modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rack-module {
+  --screw: radial-gradient(circle, var(--studio-metal-low) 2.5px, transparent 3px);
+  position: relative;
+  display: flex;
+  flex: 1 1 9.5rem;
+  flex-direction: column;
+  gap: 1.125rem;
+  min-width: 0;
+  padding: 1.5rem 1rem 1.125rem;
+  border-radius: 3px;
+  background:
+    var(--screw) 4px 4px / 14px 14px no-repeat,
+    var(--screw) calc(100% - 4px) 4px / 14px 14px no-repeat,
+    var(--screw) 4px calc(100% - 4px) / 14px 14px no-repeat,
+    var(--screw) calc(100% - 4px) calc(100% - 4px) / 14px 14px no-repeat,
+    var(--studio-panel);
+  box-shadow: var(--studio-bevel);
+}
+
+.rack-module-wide {
+  flex-basis: 100%;
+}
+
+.rack-module h3 {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--studio-legend);
+}
+
+.rack-knobs,
+.rack-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem 1.25rem;
+}
+
+.rack-jacks {
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.rack-jack {
+  display: inline-grid;
+  justify-items: center;
+  gap: 0.3rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--studio-legend);
+}
+
+.rack-jack-kind {
+  color: var(--studio-legend-dim);
+  font-weight: 500;
+}
+
+.rack-play {
+  display: inline-grid;
+  justify-items: center;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.rack-meter {
+  --level-width: 6.5rem;
+  align-self: center;
+  margin-inline: -2.6rem;
+  rotate: -90deg;
+}
+
+.rack-hint {
+  margin: 0.75rem 0.25rem 0;
+  font-size: 0.8125rem;
+  color: var(--studio-legend-dim);
+}
+
+.agent-panel[data-compact] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.agent-panel[data-compact] .agent-script ul {
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.rack-module [data-slot="segmented-control"] {
+  align-self: stretch;
+}
+
+.rack-module [data-slot="segmented-control-item"] {
+  flex: 1;
+  padding-block: 0.5rem;
+}
+
+.wave-glyph {
+  width: 1.5rem;
+  height: 0.75rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+/* Agent Console demo */
+
+.console-stage {
+  display: grid;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (min-width: 62rem) {
+  .console-stage {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  }
+}
+
+.console-target {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.project-settings,
+.project-fields {
+  display: grid;
+  gap: 1.125rem;
+  font-size: var(--ui-font-size);
+}
+
+.project-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 1rem;
+}
+
+/* React's Select renders no element of its own, so each label and trigger pair sits in one. */
+.project-select {
+  display: grid;
+  gap: 0.375rem;
+  min-inline-size: 0;
+}
+
+.project-switch {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.project-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.project-notice {
+  color: var(--ui-muted-foreground);
+}
+
+.project-deleted p {
+  margin: 0;
+}
+
+.console-demo {
+  --chat-thread-height: 19rem;
+}
+
+.console-demo [data-slot="tabs-panel"] {
+  padding-top: 0.75rem;
+}
+
+.console-note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--ui-muted-foreground);
+}
+
+/* Data grid demo */
+
+.grid-stage {
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.charts-demo {
+  display: grid;
+  gap: 2.5rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+}
+
+.charts-demo-stats {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+}
+
+.grid-demo-total {
+  font-variant-numeric: tabular-nums;
+  color: var(--ui-muted-foreground);
+}
+
+/* Chat demo */
+
+.chat-stage {
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.chat-app {
+  display: grid;
+  gap: 1rem;
+  --chat-thread-height: 34rem;
+}
+
+@media (min-width: 56rem) {
+  .chat-app {
+    grid-template-columns: 15rem minmax(0, 1fr);
+  }
+}
+
+.chat-main {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+
+
+.chat-cite-line {
+  font-size: 0.8125rem;
+  color: var(--ui-muted-foreground);
+}
+
+.chat-message-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Components page */
+
+.components-main {
+  width: min(100% - var(--site-gutter) * 2, var(--site-max));
+  margin-inline: auto;
+  padding-bottom: 4rem;
+}
+
+.components-intro {
+  display: grid;
+  gap: 1rem;
+  padding-block: 2.5rem 2rem;
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
+    font-stretch: 75%;
+    line-height: 1;
+  }
+
+  p {
+    max-width: 40rem;
+    margin: 0;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+.components-surface {
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
+  align-items: start;
+  font-size: var(--ui-font-size);
+}
+
+.gallery-group {
+  grid-column: 1 / -1;
+  margin: 1.5rem 0 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.example {
+  display: grid;
+  gap: 0.875rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) + 4px);
+
+  /* The example's own header only; unlayered rules here would restyle components inside. */
+  > header {
+    display: grid;
+    gap: 0.125rem;
+  }
+
+  > header h3 {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  > header p {
+    margin: 0;
+    font-family: var(--site-mono);
+    font-size: 0.75rem;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+/* One column that can shrink: a demo with its own width (Command) stays inside its card. */
+.example-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.example .row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* A popup's actions sit together at its end, at their own size. */
+.example .actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.example .stack {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.example-note {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--ui-muted-foreground);
+}
+
+.example-strong {
+  margin: 0;
+  font-weight: 600;
+}
+
+.dropzone {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1.5px dashed var(--ui-input);
+  border-radius: calc(var(--ui-radius) + 4px);
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+}
+
+.resizable-demo {
+  height: 8rem;
+  min-height: 8rem;
+  border: 1px solid var(--ui-border);
+}
+
+.scroll-demo {
+  height: 8rem;
+}
+
+.command-demo {
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) + 4px);
+}
+
+.color-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slide {
+  display: grid;
+  place-items: center;
+  min-height: 6rem;
+  padding: 1rem;
+  border-radius: var(--ui-radius);
+  background: var(--ui-muted);
+  text-align: center;
+}
+
+.example-body > :is([data-slot$="-trigger"], [data-slot="button"]) {
+  justify-self: start;
+}
+
+.example[data-wide] {
+  grid-column: 1 / -1;
+}
+
+.shell-demo {
+  --app-shell-height: 26rem;
+  height: 26rem;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) + 4px);
+}
+
+.shell-demo .app-content {
+  overflow: auto;
+}
+
+.shell-demo-search {
+  flex: 0 1 16rem;
+  margin-inline-start: auto;
+}
+
+.shell-demo-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 1rem;
+}
+
+.skeleton-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.75rem;
+}
+
+/* Templates page */
+
+/* On a phone the template tabs scroll in their row instead of widening the page. */
+.components-main [data-slot="tabs-list"] {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.components-main [data-slot="tabs-tab"] {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.template-panel {
+  min-inline-size: 0;
+  display: grid;
+  gap: 1rem;
+  padding-block-start: 1rem;
+}
+
+.template-what {
+  margin: 0;
+  color: var(--ui-muted-foreground);
+}
+
+.template-frame {
+  --auth-height: 46rem;
+  --app-shell-height: 46rem;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.template-logo {
+  display: inline-block;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  border-radius: 0.375rem;
+  background: var(--ui-primary);
+}
+
+.board-demo {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.scheduler-demo {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+/* The phone itself (radius, status bar, home indicator, insets) is the kit's .mobile-frame. */
+.mobile-demo {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  inline-size: min(100%, 24rem);
+  block-size: 40rem;
+  margin-inline: auto;
+}
+
+.mobile-demo-body {
+  min-block-size: 0;
+  overflow: auto;
+}
+
+.mobile-demo-empty {
+  margin: 0;
+  padding: 2rem 1rem;
+  color: var(--ui-muted-foreground);
+  text-align: center;
+}
+
+.mobile-demo-help {
+  display: flex;
+  margin-inline: auto;
+}
+
+/* Every row keeps a gutter for the unread dot, as mail apps do, so names line up whether
+   a message is read or not and the dot never meets the edge. */
+.mobile-message {
+  display: grid;
+  grid-template-columns: 0.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.125rem 0.625rem;
+
+  &::before {
+    content: "";
+    grid-row: 1;
+    grid-column: 1;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 50%;
+  }
+
+  &[data-unread]::before {
+    background: var(--mobile-accent);
+  }
+
+  &[data-unread] .mobile-message-from {
+    font-weight: 700;
+  }
+}
+
+.mobile-message-time,
+.mobile-message-subject {
+  color: var(--ui-muted-foreground);
+  font-size: 0.875rem;
+}
+
+.mobile-message-subject {
+  grid-column: 2 / -1;
+}
+
+.mobile-alarms {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    gap: 0.125rem;
+    padding: 0.75rem 1rem;
+    border-block-end: 1px solid var(--ui-border);
+  }
+}
+
+.mobile-alarm-time {
+  font-size: 2rem;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+}
+
+.mobile-alarm-label {
+  color: var(--ui-muted-foreground);
+  font-size: 0.875rem;
+}
+
+.canvas-demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 17rem;
+  gap: 1rem;
+  min-width: 0;
+
+  > .canvas-toolbar {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 56rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Rich text editor demo */
+
+.editor-demo {
+  display: grid;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  .editor-demo {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  }
+}
+
+.editor-demo-editor {
+  --rich-text-min-height: 22rem;
+  --rich-text-max-height: 34rem;
+}
+
+.editor-demo-output {
+  min-width: 0;
+
+  & [data-slot="tabs-panel"] {
+    max-block-size: 34rem;
+    overflow: auto;
+    padding-block-start: 0.75rem;
+  }
+}
+
+.editor-demo-source {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: var(--ui-radius);
+  background: var(--ui-muted);
+  font-family: var(--ui-font-mono, ui-monospace, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* The comment box example */
+.comment-box {
+  display: grid;
+  gap: 0.75rem;
+  max-inline-size: 40rem;
+}
+
+.comment-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & > li {
+    padding: 0.625rem 0.875rem;
+    border-radius: var(--ui-radius);
+    background: var(--ui-muted);
+  }
+}
+
+.comment-editor {
+  --rich-text-min-height: 4.5rem;
+  --rich-text-max-height: 14rem;
+}
+
+/* Skins band: the same form in every skin */
+
+.skins-demo {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12.5rem), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skins-demo-card {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  block-size: 100%;
+  padding: 1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+
+  & h3 {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+}
+
+.skins-demo-what {
+  margin: 0 0 0.5rem;
+  color: var(--ui-muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.skins-demo-form {
+  display: grid;
+  gap: 0.875rem;
+}
+
+.skins-demo-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.skins-demo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Theme builder */
+
+.theme-page {
+  display: grid;
+  gap: 1.5rem;
+  max-inline-size: 76rem;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.theme-layout {
+  display: grid;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 62rem) {
+  .theme-layout {
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+  }
+}
+
+.theme-controls {
+  display: grid;
+  gap: 1rem;
+
+  & h2 {
+    margin: 0.5rem 0 0;
+    font-size: 1rem;
+  }
+}
+
+.theme-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.theme-preset[aria-pressed="true"] {
+  border-color: var(--ui-foreground);
+}
+
+.theme-swatch {
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.15);
+}
+
+.theme-checks {
+  display: grid;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--ui-border);
+    border-inline-start: 4px solid var(--tone-danger);
+    border-radius: var(--ui-radius);
+    font-size: 0.875rem;
+
+    &[data-pass] {
+      border-inline-start-color: var(--tone-success);
+    }
+  }
+}
+
+.theme-code {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  border-radius: var(--ui-radius);
+  background: var(--ui-muted);
+  font-family: var(--ui-font-mono, ui-monospace, monospace);
+  font-size: 0.8125rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.theme-previews {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.theme-preview {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.theme-preview-name {
+  margin: 0;
+  color: var(--ui-muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.theme-preview-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.theme-preview-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-hint {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  margin: 0;
+  font-size: 0.875rem;
+
+  & p {
+    margin: 0;
+  }
+}

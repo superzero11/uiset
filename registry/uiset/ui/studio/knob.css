@@ -1,0 +1,116 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  .knob-field {
+    display: inline-grid;
+    justify-items: center;
+    gap: 0.375rem;
+    font-size: var(--ui-font-size, 0.875rem);
+  }
+
+  .knob-label {
+    font-weight: 500;
+  }
+
+  [data-slot="knob"] {
+    --knob-size: 3.5rem;
+    --knob-ring: 4px;
+    --knob-track: var(--ui-muted);
+    --knob-fill: var(--ui-primary);
+    --knob-cap: var(--ui-background);
+    --knob-cap-edge: var(--ui-input);
+    --knob-pointer: var(--ui-foreground);
+    --knob-angle: calc(-135deg + 270deg * var(--knob-fraction, 0));
+
+    display: inline-grid;
+    justify-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: calc(var(--ui-radius, 0px) + 4px);
+    touch-action: none;
+    user-select: none;
+    cursor: ns-resize;
+
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  [data-slot="knob-indicator"] {
+    position: relative;
+    display: block;
+    width: var(--knob-size);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: conic-gradient(
+      from -135deg,
+      var(--knob-fill) calc(270deg * var(--knob-fraction, 0)),
+      var(--knob-track) 0 270deg,
+      transparent 0
+    );
+    mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - var(--knob-ring) - 0.5px),
+      #000 calc(100% - var(--knob-ring))
+    );
+  }
+
+  /* The cap and its pointer sit outside the ring's mask, on the root. */
+  [data-slot="knob"] {
+    position: relative;
+  }
+
+  [data-slot="knob"]::after {
+    content: "";
+    position: absolute;
+    top: calc(0.25rem + var(--knob-ring) + 6px);
+    left: 50%;
+    width: 2px;
+    height: calc(var(--knob-size) / 2 - var(--knob-ring) - 6px);
+    margin-left: -1px;
+    border-radius: 1px;
+    background: var(--knob-pointer);
+    transform-origin: 50% 100%;
+    rotate: var(--knob-angle);
+    pointer-events: none;
+  }
+
+  [data-slot="knob"]::before {
+    content: "";
+    position: absolute;
+    top: calc(0.25rem + var(--knob-ring) + 3px);
+    left: 50%;
+    width: calc(var(--knob-size) - var(--knob-ring) * 2 - 6px);
+    aspect-ratio: 1;
+    translate: -50% 0;
+    border: 1px solid var(--knob-cap-edge);
+    border-radius: 50%;
+    background: var(--knob-cap);
+    pointer-events: none;
+  }
+
+  [data-slot="knob-value"] {
+    min-width: 4ch;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    color: var(--ui-muted-foreground);
+  }
+
+  @media (forced-colors: active) {
+    [data-slot="knob-indicator"] {
+      background: conic-gradient(
+        from -135deg,
+        Highlight calc(270deg * var(--knob-fraction, 0)),
+        GrayText 0 270deg,
+        transparent 0
+      );
+      forced-color-adjust: none;
+    }
+
+    [data-slot="knob"]::after {
+      background: CanvasText;
+      forced-color-adjust: none;
+    }
+  }
+}

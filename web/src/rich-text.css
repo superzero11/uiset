@@ -1,0 +1,28 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/* The web editor's elements take the boxes their React twins have. */
+@layer uiset.tokens {
+  uiset-rich-text,
+  uiset-rich-text-area,
+  uiset-rich-text-content {
+    display: block;
+  }
+}
+
+@layer uiset.base {
+  /* Wrappers that only group parts stay out of the toolbar's row. */
+  uiset-rich-text :is(.rich-text-block-select, .rich-text-toolbar ui-popover) {
+    display: contents;
+  }
+
+  uiset-rich-text ui-trigger-menu {
+    display: block;
+    min-inline-size: 0;
+  }
+
+  uiset-rich-text .rich-text-toolbar[hidden],
+  uiset-rich-text .rich-text-count[hidden],
+  uiset-rich-text .rich-text-link-problem[hidden] {
+    display: none;
+  }
+}

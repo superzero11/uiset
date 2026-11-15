@@ -1,0 +1,636 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/* Phone app parts: swipe rows, wheels, sheets, bars and pull to refresh. Touch targets 44px+. */
+@layer uiset.base {
+  /* Accent text: the primary pulled toward the text color, 4.5:1 in every skin and scheme. */
+  :where([data-uiset]) {
+    --mobile-accent: color-mix(in oklch, var(--ui-primary) 55%, var(--ui-foreground));
+  }
+
+  /* The bars keep clear of the status bar, the home indicator and rounded corners: the
+     device's safe areas, or --mobile-inset-top, -bottom and -inline where a page draws its
+     own phone (a frame in docs or a preview, a web view that reports none). Each bar reads
+     them itself, so an inset set on any ancestor reaches it. */
+
+  /* A phone for previews and docs: rounded like a device, with a status bar and a home
+     indicator, and the insets that keep the bars clear of both. */
+  .mobile-frame {
+    --mobile-inset-top: 1.75rem;
+    --mobile-inset-bottom: 1.25rem;
+    --mobile-inset-inline: 0.75rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--ui-border);
+    border-radius: 2.25rem;
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+    /* The phone's own stacking context: sheets and toasts open over it, not the page. */
+    isolation: isolate;
+    /* Sheets open in the browser's top layer; anchored here, they open inside the phone,
+       clipped to its corners, as on a device. Without anchor positioning they open at the
+       bottom of the window instead. */
+    anchor-name: --uiset-phone;
+    anchor-scope: --uiset-phone;
+
+    /* A sheet with snap points scroll-snaps in a window-sized container (UI SDK), so it
+       opens from the window's edge; every other sheet opens inside the phone. */
+    &:not(:has(.mobile-sheet[data-snaps][data-open])) [data-slot="drawer-backdrop"] {
+      position-anchor: --uiset-phone;
+      inset: anchor(top) anchor(right) anchor(bottom) anchor(left);
+      inline-size: auto;
+      block-size: auto;
+      border-radius: 2.25rem;
+    }
+
+    /* The sheet itself (its container's position is an inline style UI SDK sets). */
+    /* On a phone the page is the phone: no frame inside it, no pretend status bar. */
+    @media (max-width: 30rem) {
+      --mobile-inset-top: 0px;
+      --mobile-inset-bottom: 0px;
+      --mobile-inset-inline: 0px;
+      border: 0;
+      border-radius: 0;
+
+      &::before,
+      &::after {
+        display: none;
+      }
+    }
+
+    & [data-slot="drawer-content"]:not([data-snaps]) {
+      position: fixed;
+      position-anchor: --uiset-phone;
+      inset: auto anchor(right) anchor(bottom) anchor(left);
+      max-inline-size: none;
+      inline-size: auto;
+      max-block-size: calc(anchor-size(height) - 3rem);
+      border-end-start-radius: 2.25rem;
+      border-end-end-radius: 2.25rem;
+    }
+
+    &::before {
+      content: "9:41" / "";
+      position: absolute;
+      inset-block-start: 0.375rem;
+      inset-inline-start: 1.75rem;
+      z-index: 3;
+      font-size: 0.75rem;
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+      pointer-events: none;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block-end: 0.5rem;
+      inset-inline-start: 50%;
+      z-index: 3;
+      inline-size: 7rem;
+      block-size: 0.25rem;
+      translate: -50% 0;
+      border-radius: 999px;
+      background: color-mix(in oklch, var(--ui-foreground) 35%, transparent);
+      pointer-events: none;
+    }
+  }
+
+  /* Swipe list */
+  .swipe-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--ui-foreground);
+  }
+
+  .swipe-row {
+    border-block-end: 1px solid var(--ui-border);
+    outline: none;
+  }
+
+  /*
+   * Rings drawn inside: outside, a row's neighbors and the list's scroll edge cover them.
+   * These outrank base.css's ring ([data-uiset] [data-slot]...:focus-visible, 0,4,0).
+   */
+  [data-uiset] :is(.swipe-list, uiset-swipe-list) .swipe-row[data-slot]:focus-visible,
+  [data-uiset] .mobile-action-list .mobile-action[data-slot]:focus-visible,
+  [data-uiset] .mobile-sheet .mobile-action[data-slot]:focus-visible,
+  [data-uiset] .mobile-tab-bar .mobile-tab[data-slot]:focus-visible,
+  [data-uiset] .mobile-tab-bar a.mobile-tab:focus-visible {
+    outline: 2px solid var(--ui-ring-border);
+    outline-offset: -2px;
+  }
+
+  /* A filled swipe action rings in its own text color, which holds 4.5:1 on its fill. */
+  [data-uiset] .swipe-actions .swipe-action:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -4px;
+  }
+
+  [data-uiset] :is(.mobile-refresh, uiset-pull-refresh) .mobile-refresh-button[data-slot]:focus-visible {
+    outline: 2px solid var(--ui-ring-border);
+    outline-offset: -2px;
+  }
+
+  .swipe-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-block-size: 3.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--ui-background);
+    cursor: default;
+    transition: transform 220ms cubic-bezier(0.2, 0.9, 0.3, 1);
+
+    &[data-swiping] {
+      transition: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .swipe-actions {
+    position: absolute;
+    inset-block: 0;
+    display: flex;
+
+    &[data-side="start"] {
+      inset-inline-start: 0;
+    }
+
+    /* The first action of a side sits at the row's edge, where a long swipe ends. */
+    &[data-side="end"] {
+      inset-inline-end: 0;
+      flex-direction: row-reverse;
+    }
+  }
+
+  /* Past a full swipe, the side being swiped spans the row and its first action fills it. */
+  .swipe-row:has(> .swipe-content[data-full][data-swipe="start"]) > .swipe-actions[data-side="start"],
+  .swipe-row:has(> .swipe-content[data-full][data-swipe="end"]) > .swipe-actions[data-side="end"] {
+    inset-inline: 0;
+
+    & > .swipe-action:first-child {
+      flex: 1;
+    }
+  }
+
+  /* Swiping drags a finger or the mouse across text: nothing gets selected. */
+  .swipe-row:has(> [data-swiping]),
+  .mobile-refresh:is([data-state="pulling"], [data-state="ready"]) {
+    user-select: none;
+  }
+
+  /* A row's actions menu: out of sight until it has focus (from a screen reader's own keys). */
+  .swipe-content-body {
+    flex: 1;
+    min-inline-size: 0;
+  }
+
+  .swipe-menu[data-slot]:not(:focus-visible, [data-open], [aria-expanded="true"]) {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .swipe-action {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.25rem;
+    min-inline-size: 5rem;
+    padding-inline: 0.75rem;
+    border: 0;
+    background: var(--ui-primary);
+    color: var(--ui-primary-foreground);
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &[data-tone="danger"] {
+      background: var(--tone-danger);
+      color: var(--ui-background);
+    }
+
+    &[data-tone="neutral"] {
+      background: var(--ui-muted);
+      color: var(--ui-foreground);
+    }
+
+    .uiset-icon {
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+    }
+  }
+
+  /* Wheel picker */
+  .wheel-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  .wheel-colon {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  :is(.wheel, uiset-wheel) {
+    --wheel-row: 2.25rem;
+    position: relative;
+    inline-size: 4.5rem;
+
+    /* The band the chosen option sits in. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: calc(var(--wheel-row) * 2);
+      block-size: var(--wheel-row);
+      border-radius: var(--ui-radius);
+      background: var(--ui-muted);
+      pointer-events: none;
+    }
+  }
+
+  .wheel-list[data-slot] {
+    position: relative;
+    block-size: calc(var(--wheel-row) * 5);
+    max-block-size: none;
+    padding-block: calc(var(--wheel-row) * 2);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-snap-type: y mandatory;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .wheel-option[data-slot] {
+    justify-content: center;
+    block-size: var(--wheel-row);
+    min-block-size: var(--wheel-row);
+    padding-block: 0;
+    background: transparent;
+    font-size: 1.125rem;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    scroll-snap-align: center;
+
+    &[aria-selected="true"] {
+      font-weight: 650;
+    }
+  }
+
+  /* Sheets */
+  .mobile-sheet {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem calc(1rem + max(env(safe-area-inset-bottom), var(--mobile-inset-bottom, 0px)));
+    border-start-start-radius: 1rem;
+    border-start-end-radius: 1rem;
+  }
+
+  /* With snap points the sheet is as tall as UI SDK lets a drawer be, 85% of the screen,
+     and each point shows a part of it. */
+  .mobile-sheet[data-snaps] {
+    block-size: 85dvh;
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .mobile-sheet-handle {
+    justify-self: center;
+    inline-size: 2.5rem;
+    block-size: 0.3125rem;
+    min-block-size: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ui-muted-foreground);
+
+    /* The handle's target is bigger than its bar. */
+    &[data-slot] {
+      position: relative;
+      background-clip: content-box;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: -1.25rem -2rem;
+      }
+    }
+  }
+
+  .mobile-sheet-head {
+    display: grid;
+    gap: 0.25rem;
+    text-align: center;
+  }
+
+  .mobile-sheet-title {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: 650;
+  }
+
+  .mobile-sheet-description {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  .mobile-sheet-body {
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    min-block-size: 0;
+    overflow: auto;
+  }
+
+  /* The body spaces its children with its gap; their own margins would stack on it. */
+  :where(.mobile-sheet-body > *) {
+    margin-block: 0;
+  }
+
+  .mobile-action-list {
+    display: grid;
+    overflow: hidden;
+    border-radius: calc(var(--ui-radius) + 6px);
+    background: var(--ui-muted);
+  }
+
+  .mobile-action[data-slot] {
+    min-block-size: 3.25rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--ui-foreground);
+    font-size: 1.0625rem;
+
+    & + & {
+      border-block-start: 1px solid var(--ui-border);
+    }
+
+    &[data-destructive] {
+      color: var(--tone-danger);
+    }
+  }
+
+  .mobile-action-cancel[data-slot] {
+    border-radius: calc(var(--ui-radius) + 6px);
+    background: var(--ui-muted);
+    font-weight: 650;
+  }
+
+  /* Bars */
+  .mobile-tab-bar {
+    border-block-start: 1px solid var(--ui-border);
+    background: var(--ui-background);
+    padding-inline: var(--mobile-inset-inline, 0px);
+    padding-block-end: max(env(safe-area-inset-bottom), var(--mobile-inset-bottom, 0px));
+
+    ul {
+      display: grid;
+      grid-auto-columns: 1fr;
+      grid-auto-flow: column;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
+
+  .mobile-tab {
+    display: grid;
+    justify-items: center;
+    gap: 0.125rem;
+    inline-size: 100%;
+    min-block-size: 3.25rem;
+    padding: 0.375rem 0.25rem;
+    border: 0;
+    background: transparent;
+    color: var(--ui-muted-foreground);
+    font: inherit;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+
+    &[aria-current="page"] {
+      color: var(--mobile-accent);
+      font-weight: 650;
+    }
+  }
+
+  .mobile-tab-icon {
+    position: relative;
+
+    .uiset-icon {
+      inline-size: 1.5rem;
+      block-size: 1.5rem;
+    }
+  }
+
+  .mobile-tab-badge {
+    position: absolute;
+    inset-block-start: -0.25rem;
+    inset-inline-start: 1rem;
+    min-inline-size: 1.125rem;
+    padding-inline: 0.25rem;
+    border-radius: 999px;
+    background: var(--tone-danger);
+    color: var(--ui-background);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1.125rem;
+    text-align: center;
+  }
+
+  .mobile-app-bar {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    min-block-size: 3rem;
+    padding: max(env(safe-area-inset-top), var(--mobile-inset-top, 0px)) max(0.25rem, var(--mobile-inset-inline, 0px)) 0;
+    border-block-end: 1px solid var(--ui-border);
+    background: var(--ui-background);
+  }
+
+  .mobile-app-bar-back {
+    justify-self: start;
+    color: var(--mobile-accent);
+  }
+
+  .mobile-back-icon {
+    scale: -1 1;
+
+    &:dir(rtl) {
+      scale: 1 1;
+    }
+  }
+
+  .mobile-app-bar-title {
+    margin: 0;
+    overflow: hidden;
+    font-size: 1.0625rem;
+    font-weight: 650;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-app-bar-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.125rem;
+  }
+
+  /* Pull to refresh */
+  .mobile-refresh {
+    position: relative;
+    display: grid;
+    min-block-size: 0;
+    overflow: hidden;
+  }
+
+  .mobile-refresh-indicator {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    block-size: var(--pull, 0px);
+    overflow: hidden;
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+  }
+
+  .mobile-refresh-spinner {
+    inline-size: 1rem;
+    block-size: 1rem;
+    border: 2px solid currentColor;
+    border-block-start-color: transparent;
+    border-radius: 50%;
+
+    [data-state="refreshing"] & {
+      animation: mobile-spin 0.8s linear infinite;
+    }
+
+    [data-state="ready"] & {
+      border-color: var(--mobile-accent);
+    }
+  }
+
+  .mobile-refresh-scroll {
+    position: relative;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    translate: 0 var(--pull, 0px);
+    touch-action: pan-y;
+    transition: translate 260ms cubic-bezier(0.2, 0.9, 0.3, 1);
+
+    /* At the top, a finger pulling down is ours; scrolling down stays the browser's. */
+    &[data-at-top] {
+      touch-action: pan-x pan-down;
+    }
+
+    [data-state="pulling"] &,
+    [data-state="ready"] & {
+      transition: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  /* For the keyboard: shown when focused, like a skip link. */
+  .mobile-refresh-button[data-slot]:not(:focus) {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .mobile-refresh-button[data-slot]:focus {
+    inline-size: 100%;
+  }
+
+  @keyframes mobile-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .swipe-action {
+      border: 1px solid CanvasText;
+    }
+
+    .mobile-tab[aria-current="page"] {
+      outline: 2px solid Highlight;
+      outline-offset: -4px;
+    }
+  }
+}
+
+/* Tabs and app bar actions are a phone's own controls, not keys: a skin's button chrome
+   (Studio's pads, Blueprint's outlines) stays off them, while its type still applies. An
+   app bar action is a plain icon or word, with a round press state, as on a phone. */
+@layer uiset.skin {
+  [data-uiset] .mobile-tab-bar .mobile-tab[data-slot],
+  [data-uiset] .mobile-tab-bar .mobile-tab[data-slot]:is(:hover, :active) {
+    min-block-size: 3.25rem;
+    block-size: auto;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    translate: none;
+    scale: none;
+  }
+
+  [data-uiset] .mobile-app-bar [data-slot="button"]:is([data-variant="ghost"], .mobile-app-bar-back),
+  [data-uiset] .mobile-app-bar :is([data-slot$="-trigger"]):not([data-variant="solid"], [data-variant="outline"]) {
+    min-inline-size: 2.75rem;
+    min-block-size: 2.75rem;
+    border: 0;
+    border-radius: 999px;
+    box-shadow: none;
+    background: transparent;
+    color: var(--mobile-accent);
+    translate: none;
+    scale: none;
+
+    &:hover:not([data-disabled]) {
+      background: color-mix(in oklch, var(--ui-foreground) 8%, transparent);
+    }
+
+    &:active:not([data-disabled]) {
+      background: color-mix(in oklch, var(--ui-foreground) 14%, transparent);
+    }
+  }
+}

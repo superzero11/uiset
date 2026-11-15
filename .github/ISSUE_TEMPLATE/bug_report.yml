@@ -1,0 +1,51 @@
+name: Bug report
+description: Something in a UISet component, kit, template, skin or the docs doesn't work or look right.
+labels: [bug]
+body:
+  - type: input
+    id: item
+    attributes:
+      label: Which item?
+      description: The registry item or page, like `select`, the chat kit, or the docs page for Tabs.
+      placeholder: data-grid
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected
+      description: Steps to reproduce help most. A link to a small repro (StackBlitz, a repo) helps even more.
+    validations:
+      required: true
+  - type: dropdown
+    id: skin
+    attributes:
+      label: Skin and theme
+      multiple: true
+      options: [base, blueprint, studio, phosphor, ink, light, dark, a custom skin]
+  - type: dropdown
+    id: build
+    attributes:
+      label: Build
+      options: [React (shadcn registry), Web Components (@uiset/web), The website]
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: Safari 26 on macOS, Chrome 145 on Android
+  - type: input
+    id: versions
+    attributes:
+      label: UI SDK version
+      description: From your package.json, like 0.1.0-beta.2.
+  - type: checkboxes
+    id: input
+    attributes:
+      label: How were you using it?
+      options:
+        - label: Keyboard
+        - label: Screen reader
+        - label: Touch
+        - label: An AI agent through UI SDK's agent bridge

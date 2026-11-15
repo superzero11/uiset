@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&family=Saira+Semi+Condensed:wght@400;500;600&family=Instrument+Sans:wdth,wght@75..100,400..700&family=Spline+Sans+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,400..700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+    <title>UISet Admin records page, no React</title>
+    <script type="module">
+      import "@ui-sdk/web/alert-dialog"
+      import "@ui-sdk/web/drawer"
+      import "@ui-sdk/web/select"
+      import "@ui-sdk/web/toast"
+      import "../src/uiset.ts"
+      import "../src/templates/admin.ts"
+    </script>
+  </head>
+  <body>
+    <uiset-root skin="base" id="root">
+      <div class="web-template-page">
+        <div class="template-frame">
+          <uiset-app-shell label="Admin navigation">
+            <span data-part="brand" class="template-brand">Acme Cloud</span>
+            <nav data-part="sidebar" class="sidebar-nav" aria-label="Admin sections">
+              <div class="sidebar-group">
+                <p id="nav-records" class="sidebar-group-title">Records</p>
+                <ul aria-labelledby="nav-records">
+                  <li><a href="#customers" class="sidebar-link" aria-current="page"><span class="sidebar-icon" data-icon="users"></span><span class="sidebar-label">Customers</span></a></li>
+                  <li><a href="#orders" class="sidebar-link"><span class="sidebar-icon" data-icon="orders"></span><span class="sidebar-label">Orders</span></a></li>
+                  <li><a href="#invoices" class="sidebar-link"><span class="sidebar-icon" data-icon="card"></span><span class="sidebar-label">Invoices</span></a></li>
+                </ul>
+              </div>
+            </nav>
+            <div class="admin">
+              <uiset-page-header title="Customers" id="header">
+                <ui-button><button type="button" id="new-customer" data-icon="plus">New customer</button></ui-button>
+              </uiset-page-header>
+              <uiset-empty-state icon="users" title="No customers yet" description="Customers you add show up here, with their plan and seats." id="empty" hidden>
+                <ui-button><button type="button" id="add-first">Add a customer</button></ui-button>
+              </uiset-empty-state>
+              <uiset-data-grid label="Customers" id="customers" selectable editable toolbar filename="customers" persist="uiset-admin-customers" height="26rem" locale="en-US">
+                <ui-button data-part="selection"><button type="button" data-variant="outline" id="delete-selected" data-icon="trash">Delete selected</button></ui-button>
+              </uiset-data-grid>
+            </div>
+          </uiset-app-shell>
+        </div>
+      </div>
+
+      <ui-alert-dialog id="confirm">
+        <ui-alert-dialog-backdrop hidden></ui-alert-dialog-backdrop>
+        <ui-alert-dialog-content hidden>
+          <ui-alert-dialog-title id="confirm-title"></ui-alert-dialog-title>
+          <ui-alert-dialog-description>Their accounts, invoices and notes are deleted for good.</ui-alert-dialog-description>
+          <div class="admin-form-actions">
+            <ui-alert-dialog-close><button type="button">Keep them</button></ui-alert-dialog-close>
+            <ui-alert-dialog-close><button type="button" data-variant="destructive" id="confirm-delete"></button></ui-alert-dialog-close>
+          </div>
+        </ui-alert-dialog-content>
+      </ui-alert-dialog>
+
+      <ui-drawer side="end" id="drawer">
+        <ui-drawer-backdrop hidden></ui-drawer-backdrop>
+        <ui-drawer-content class="admin-drawer" hidden>
+          <ui-drawer-title id="drawer-title"></ui-drawer-title>
+          <ui-drawer-description id="drawer-description"></ui-drawer-description>
+          <div id="drawer-form"></div>
+        </ui-drawer-content>
+      </ui-drawer>
+
+      <template id="customer-form">
+        <form class="admin-form">
+          <ui-field name="name">
+            <ui-field-label>Full name</ui-field-label>
+            <ui-input><input name="name" required autocomplete="name" enterkeyhint="next" /></ui-input>
+            <ui-field-error match="valueMissing">Enter a name.</ui-field-error>
+          </ui-field>
+          <ui-field name="email">
+            <ui-field-label>Email</ui-field-label>
+            <ui-input><input name="email" type="email" required autocomplete="email" inputmode="email" enterkeyhint="next" autocapitalize="off" spellcheck="false" /></ui-input>
+            <ui-field-error match="valueMissing">Enter an email address.</ui-field-error>
+            <ui-field-error match="typeMismatch">Enter an email address like ada@example.com.</ui-field-error>
+          </ui-field>
+          <ui-field name="company">
+            <ui-field-label>Company</ui-field-label>
+            <ui-input><input name="company" required autocomplete="organization" /></ui-input>
+            <ui-field-error match="valueMissing">Enter a company.</ui-field-error>
+          </ui-field>
+          <div class="admin-form-row">
+            <ui-field name="plan"><ui-select name="plan" data-options="plan"><ui-select-label>Plan</ui-select-label><ui-select-trigger><button type="button"><ui-select-value></ui-select-value></button></ui-select-trigger><ui-select-content></ui-select-content></ui-select></ui-field>
+            <ui-field name="status"><ui-select name="status" data-options="status"><ui-select-label>Status</ui-select-label><ui-select-trigger><button type="button"><ui-select-value></ui-select-value></button></ui-select-trigger><ui-select-content></ui-select-content></ui-select></ui-field>
+          </div>
+          <ui-field name="seats">
+            <ui-field-label>Seats</ui-field-label>
+            <ui-input><input name="seats" type="number" required min="1" max="500" inputmode="numeric" /></ui-input>
+            <ui-field-error match="rangeUnderflow">At least one seat.</ui-field-error>
+            <ui-field-error match="rangeOverflow">Up to 500 seats; contact sales for more.</ui-field-error>
+            <ui-field-error match="valueMissing">Enter a number of seats.</ui-field-error>
+          </ui-field>
+          <div class="admin-form-actions">
+            <ui-drawer-close><button type="button">Cancel</button></ui-drawer-close>
+            <ui-button><button type="submit" data-submit></button></ui-button>
+          </div>
+        </form>
+      </template>
+
+      <ui-toast-region aria-label="Notifications">
+        <template>
+          <ui-toast><div data-slot="stack"><ui-toast-title></ui-toast-title><ui-toast-description></ui-toast-description></div><ui-toast-close><button type="button" aria-label="Dismiss"><svg class="uiset-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button></ui-toast-close></ui-toast>
+        </template>
+      </ui-toast-region>
+    </uiset-root>
+  </body>
+</html>

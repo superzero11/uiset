@@ -1,0 +1,40 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/* The web chat parts' own layout, where their structure differs from React's. */
+@layer uiset.base {
+  /* The attachments list holds its item template; it shows once a file is in it. */
+  uiset-chat-composer .chat-attachments:not(:has(ui-file-input-item)) {
+    display: none;
+  }
+
+  /* The conversation scrolls inside the space it's given (D1): one row that can shrink,
+     and a scroller that may be shorter than its messages. */
+  uiset-chat {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
+    min-block-size: 0;
+
+    & > .chat-thread-scroller {
+      min-block-size: 0;
+    }
+  }
+}
+
+@layer uiset.base {
+  /* The web menu's items hold their name, then the description under it. */
+  uiset-chat-composer .chat-menu ui-trigger-menu-item {
+    font-weight: 500;
+
+    & .chat-menu-hint {
+      font-weight: 400;
+    }
+  }
+}
+
+@layer uiset.base {
+  /* The model picker and usage sit in the composer's toolbar as their select and meter. */
+  uiset-chat-model-picker,
+  uiset-chat-usage {
+    display: contents;
+  }
+}

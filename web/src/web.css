@@ -1,0 +1,625 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/* Custom elements are inline by default; UISet's give themselves the box their React twins have.
+   These tag rules sit in a low layer (uiset.tokens), so a kit's own layout for the same
+   element (.agent-step, uiset-chat's grid) always wins over a plain display:block. */
+@layer uiset.base {
+  uiset-root {
+    display: block;
+  }
+}
+
+/* The demo page's layout (not part of the build's API). */
+/* The demo pages use the gallery's faces: Instrument Sans for Base (as the React gallery
+   sets it), and each skin's own face where it names one. */
+@layer uiset.tokens {
+  uiset-root {
+    --ui-font-sans: "Instrument Sans", system-ui, sans-serif;
+    font-family: var(--ui-font-sans);
+  }
+}
+
+.web-demo {
+  max-inline-size: 64rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: var(--ui-font-sans);
+}
+
+.web-demo-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-block-end: 1.5rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  p {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+/* Links to every kit's page and every page template. */
+.web-demo-pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2.5rem;
+  margin-block-end: 1.5rem;
+
+  h2 {
+    margin: 0 0 0.375rem;
+    font-size: 0.875rem;
+    color: var(--ui-muted-foreground);
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    color: var(--ui-foreground);
+    text-underline-offset: 0.2em;
+  }
+}
+
+.web-demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 1rem;
+
+  article {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 6px);
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+.web-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+body {
+  margin: 0;
+  font-family: var(--ui-font-sans);
+}
+
+@layer uiset.tokens {
+  uiset-root {
+    min-block-size: 100dvh;
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+  }
+}
+
+/* The demo's Studio card: a row of jacks with their names under them. */
+.web-demo-grid .web-wide {
+  grid-column: 1 / -1;
+}
+
+.web-patch-bay {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  padding: 1rem 1rem 4rem;
+}
+
+.web-jack {
+  display: grid;
+  justify-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--ui-muted-foreground);
+}
+
+.web-instruments {
+  gap: 2rem;
+}
+
+/* The grid's table is as wide as its columns (it sets its own width), so pinned columns
+   stay put when it scrolls sideways (D5). Inline, it would ignore that width. */
+@layer uiset.tokens {
+  uiset-data-grid-table {
+    display: block;
+  }
+}
+
+/* A sidebar part that holds more than the nav (a Compose button above it) spaces its
+   children as the sidebar itself does. */
+:is(.app-sidebar, .app-drawer-nav) > [data-part="sidebar"]:not(nav) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+/* A select in a field: its label and trigger stack as the field's own parts, as in React. */
+ui-field > ui-select {
+  display: contents;
+}
+
+/* The Mobile page: a phone-sized column with its bars at the ends. */
+.web-phone {
+  font-family: var(--ui-font-sans);
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  inline-size: min(100%, 24rem);
+  block-size: min(100dvh - 3rem, 46rem);
+  margin: 1.5rem auto;
+
+  @media (max-width: 30rem) {
+    inline-size: 100%;
+    block-size: 100dvh;
+    margin: 0;
+  }
+}
+
+.web-screen {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-block-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.web-phone-body {
+  min-block-size: 0;
+  overflow: auto;
+}
+
+.mobile-alarms {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0.75rem 1rem;
+    border-block-end: 1px solid var(--ui-border);
+  }
+}
+
+.mobile-alarm-time {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The Board page. */
+.web-board-page {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+  font-family: var(--ui-font-sans);
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+/* The Scheduler page. */
+.web-schedule-page {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+  font-family: var(--ui-font-sans);
+}
+
+/* Not when hidden: `display` would outrank the hidden attribute. */
+@layer uiset.tokens {
+  uiset-schedule-month:not([hidden]) {
+    display: block;
+  }
+}
+
+/* The web calendar lays its weeks out as rows of cells: in the month view, weekdays and
+   days share each row's width evenly, as the React month's table does. */
+.schedule-month :is([data-slot="calendar-weekdays"], [data-slot="calendar-week"]) > * {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+/* The Canvas page: the toolbar across, the canvas and its inspector side by side. */
+.web-canvas-page {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+  font-family: var(--ui-font-sans);
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+.web-canvas-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 17rem;
+  gap: 1rem;
+  min-width: 0;
+
+  > uiset-canvas-toolbar {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 56rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@layer uiset.tokens {
+  uiset-canvas,
+  uiset-canvas-toolbar,
+  uiset-canvas-inspector {
+    display: block;
+    min-width: 0;
+  }
+}
+
+/* The IDE page: the React template's frame, with files beside the editor and problems under it. */
+.web-ide-page {
+  padding: 1rem;
+  font-family: var(--ui-font-sans);
+}
+
+.web-ide-layout {
+  display: grid;
+  grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
+  min-block-size: 0;
+
+  /* On a phone the files sit above the editor, in a band that scrolls (D2). */
+  @media (max-width: 40rem) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 12rem) minmax(0, 1fr);
+
+    .template-ide-side {
+      overflow: auto;
+      border-inline-end: 0;
+      border-block-end: 1px solid var(--ui-border);
+    }
+  }
+}
+
+.web-ide-main {
+  display: grid;
+  grid-template-rows: minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  min-block-size: 0;
+  min-inline-size: 0;
+}
+
+.web-ide-panel-title {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+@layer uiset.tokens {
+  uiset-file-tree,
+  uiset-editor-tabs,
+  uiset-code-editor,
+  uiset-problems,
+  uiset-command-palette {
+    display: block;
+    min-block-size: 0;
+    min-inline-size: 0;
+  }
+
+  /* The editor scrolls its code inside itself, never over Problems (D2). */
+  uiset-code-editor {
+    overflow: hidden;
+  }
+}
+
+@layer uiset.tokens {
+  uiset-editor-tabs {
+    display: grid;
+    min-inline-size: 0;
+  }
+}
+
+/* The Agent Console page: the settings it acts on, and the console beside them. */
+.web-agent-page {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+  font-family: var(--ui-font-sans);
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+.web-agent-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+  gap: 1.5rem;
+  align-items: start;
+
+  @media (max-width: 52rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* The settings the agent works on, laid out as in the gallery. */
+.project-settings,
+.project-fields {
+  display: grid;
+  gap: 1.125rem;
+}
+
+.project-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 1rem;
+}
+
+.project-row [data-slot="select"] {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.project-switch {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.project-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.project-notice {
+  color: var(--ui-muted-foreground);
+}
+
+.console-demo [data-slot="tabs-panel"] {
+  padding-top: 0.75rem;
+}
+
+@layer uiset.tokens {
+  uiset-agent-console,
+  uiset-agent-step,
+  uiset-agent-activity,
+  uiset-agent-snapshot {
+    display: block;
+  }
+}
+
+.web-agent-log {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  p {
+    margin: 0.25rem 0 0;
+  }
+}
+
+.web-agent-suggestions,
+.web-agent-prompt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: end;
+  margin-block-start: 0.75rem;
+
+  > ui-field {
+    flex: 1;
+  }
+}
+
+/* The Terminal page. */
+.web-terminal-page {
+  display: grid;
+  gap: 1rem;
+  max-inline-size: 56rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  font-family: var(--ui-font-sans);
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+@layer uiset.tokens {
+  uiset-terminal {
+    display: grid;
+  }
+}
+
+/* The template pages: each sits in a frame, as in the gallery. */
+.web-template-page {
+  padding: 1.5rem 1rem;
+  font-family: var(--ui-font-sans);
+}
+
+.template-frame {
+  --auth-height: 46rem;
+  --app-shell-height: 46rem;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+  background: var(--ui-background);
+}
+
+.template-logo {
+  display: inline-block;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  border-radius: 0.375rem;
+  background: var(--ui-primary);
+}
+
+/* UISet's own blocks stay hidden when hidden: their classes set `display`. */
+uiset-empty-state[hidden],
+uiset-page-header[hidden],
+uiset-stat[hidden],
+uiset-data-grid[hidden] {
+  display: none;
+}
+
+/* The Charts page. */
+.web-charts-page {
+  display: grid;
+  gap: 1.5rem;
+  max-inline-size: 56rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+.web-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem;
+}
+
+.web-inline-trend uiset-sparkline {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@layer uiset.tokens {
+  uiset-line-chart,
+  uiset-bar-chart,
+  uiset-scatter-chart,
+  uiset-heatmap,
+  uiset-segmented-bar {
+    display: block;
+  }
+}
+
+/* The Data Grid page. */
+.web-grid-page {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+@layer uiset.tokens {
+  uiset-data-grid {
+    display: block;
+  }
+}
+
+/* The Chat page: the chat list beside the conversation and its message box. */
+.web-chat-page {
+  display: grid;
+  grid-template-columns: 16rem minmax(0, 1fr);
+  gap: 1rem;
+  block-size: 100dvh;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.web-chat-main {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  min-block-size: 0;
+
+  /* The conversation fills the column above the message box. */
+  uiset-chat {
+    --chat-thread-height: none;
+  }
+}
+
+/* On a phone the chat list sits above the conversation. */
+@media (max-width: 40rem) {
+  .web-chat-page {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+}
+
+@layer uiset.tokens {
+  uiset-chat,
+  uiset-chat-composer,
+  uiset-chat-threads {
+    display: block;
+    min-block-size: 0;
+  }
+}
+
+/* The Rich text page */
+.web-rich-text {
+  display: grid;
+  gap: 1.25rem;
+  align-items: start;
+
+  & uiset-rich-text {
+    --rich-text-min-height: 22rem;
+    --rich-text-max-height: 34rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .web-rich-text {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  }
+}
+
+.web-rich-text-output {
+  display: block;
+  min-inline-size: 0;
+
+  & ui-tabs-panel {
+    display: block;
+    max-block-size: 34rem;
+    overflow: auto;
+    padding-block-start: 0.75rem;
+  }
+}
+
+.web-rich-text-source {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: var(--ui-radius);
+  background: var(--ui-muted);
+  font-family: var(--ui-font-mono, ui-monospace, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

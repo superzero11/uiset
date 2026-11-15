@@ -1,0 +1,16 @@
+name: Idea or request
+description: A component, kit, skin or template UISet should have, or a change to one.
+labels: [idea]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What are you building, and what's missing?
+      description: The job you're trying to get done helps more than a component name.
+    validations:
+      required: true
+  - type: textarea
+    id: shape
+    attributes:
+      label: What would it look like?
+      description: An API sketch, a screenshot of something similar, or how it should behave with the keyboard and for agents.

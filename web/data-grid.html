@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&family=Saira+Semi+Condensed:wght@400;500;600&family=Instrument+Sans:wdth,wght@75..100,400..700&family=Spline+Sans+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,400..700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+    <title>UISet Data Grid, no React</title>
+    <script type="module">
+      import "@ui-sdk/web/toast"
+      import "./src/uiset.ts"
+      import "./src/data-grid-demo.ts"
+    </script>
+  </head>
+  <body>
+    <uiset-root skin="base" id="root">
+      <main class="web-grid-page">
+        <h1>Customers</h1>
+        <uiset-data-grid id="customers" label="Customers" selectable editable toolbar filename="customers" height="26rem"></uiset-data-grid>
+      </main>
+      <ui-toast-region aria-label="Notifications">
+        <template>
+          <ui-toast>
+            <div data-slot="stack">
+              <ui-toast-title></ui-toast-title>
+              <ui-toast-description></ui-toast-description>
+            </div>
+            <ui-toast-action><button type="button" data-variant="solid"></button></ui-toast-action>
+          <ui-toast-close><button type="button" aria-label="Dismiss"><svg class="uiset-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button></ui-toast-close></ui-toast>
+        </template>
+      </ui-toast-region>
+    </uiset-root>
+  </body>
+</html>

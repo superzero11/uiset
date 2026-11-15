@@ -1,0 +1,280 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  .board {
+    /* The drag preview and the live region sit against the board. */
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(15rem, 18rem);
+    align-items: start;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-block-end: 0.5rem;
+    color: var(--ui-foreground);
+  }
+
+  .board-column {
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    min-block-size: 12rem;
+    padding: 0.75rem;
+    border-radius: calc(var(--ui-radius) + 6px);
+    background: color-mix(in oklch, var(--ui-muted) 60%, var(--ui-background));
+  }
+
+  .board-column-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-inline: 0.25rem;
+  }
+
+  .board-column-title {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .board-column-count {
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+
+    [data-full] & {
+      color: var(--tone-warning);
+      font-weight: 600;
+    }
+  }
+
+  /* The column's card list: a drop zone even when empty. */
+  .board-cards {
+    display: grid;
+    gap: 0.5rem;
+    min-block-size: 2.75rem;
+    max-inline-size: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .board-card {
+    position: relative;
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 4px);
+    background: var(--ui-background);
+    box-shadow: 0 1px 0 color-mix(in oklch, var(--ui-foreground) 6%, transparent);
+    font-size: 0.875rem;
+    cursor: grab;
+    user-select: none;
+    outline: none;
+
+    &:hover {
+      border-color: color-mix(in oklch, var(--ui-foreground) 25%, var(--ui-border));
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: 2px;
+    }
+
+
+    /* The original stays behind as a ghost while its copy follows the pointer. */
+    &[data-dragging] {
+      opacity: 0.4;
+    }
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  /*
+   * Picked up with the keyboard: lifted, tinted, edged in the accent and ringed with a
+   * dashed outline, so it reads apart from a merely focused card. Specific enough
+   * to outrank base.css's focus ring, which sits in the same layer.
+   */
+  [data-uiset] .board .board-card[data-moving] {
+    border-color: var(--ui-primary);
+    background: color-mix(in oklch, var(--ui-primary) 8%, var(--ui-background));
+    box-shadow: var(--ui-shadow);
+    outline: 2px dashed var(--ui-primary);
+    outline-offset: 3px;
+  }
+
+  /* While a filter hides cards nothing moves, so cards don't offer to be grabbed. */
+  .board[data-filtered] .board-card {
+    cursor: pointer;
+  }
+
+  /* A finger drags from the handle, so it can still scroll the board from the rest of a card. */
+  .board-card-handle {
+    display: none;
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    color: var(--ui-muted-foreground);
+    touch-action: none;
+    cursor: grab;
+  }
+
+  @media (pointer: coarse) {
+    .board-card {
+      padding-inline-end: 2.75rem;
+    }
+
+    .board-card-handle {
+      display: grid;
+    }
+
+    .board[data-filtered] .board-card-handle {
+      display: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    [data-uiset] .board .board-card[data-moving] {
+      border-color: Highlight;
+      outline-color: Highlight;
+    }
+  }
+
+  [data-drag-preview].board-card {
+    box-shadow: var(--ui-shadow);
+    cursor: grabbing;
+
+    @media (prefers-reduced-motion: no-preference) {
+      rotate: 1.5deg;
+    }
+  }
+
+  .board-card-title {
+    font-weight: 500;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+  }
+
+  .board-card-labels,
+  .board-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.5rem;
+  }
+
+  .board-card-due {
+    color: var(--ui-muted-foreground);
+    font-size: 0.75rem;
+
+    &[data-overdue] {
+      color: var(--tone-danger);
+      font-weight: 600;
+    }
+  }
+
+  .board-card-avatar {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    margin-inline-start: auto;
+    font-size: 0.625rem;
+  }
+
+  .board-column-empty,
+  .board-column-note {
+    margin: 0;
+    padding: 0.5rem;
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+    text-align: center;
+  }
+
+  /* A long column name wraps under the plus (wider faces, like Phosphor's mono, need it). */
+  .board-add {
+    justify-content: flex-start;
+    inline-size: 100%;
+    block-size: auto;
+    min-block-size: calc(var(--ui-spacing) * 8);
+    padding-block: 0.375rem;
+    white-space: normal;
+    text-align: start;
+    color: var(--ui-muted-foreground);
+  }
+
+  .board-add-form {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .board-add-error,
+  .board-dialog-error {
+    margin: 0.25rem 0 0;
+    color: var(--tone-danger);
+    font-size: 0.8125rem;
+  }
+
+  .board-add-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .board-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+
+    .search-field {
+      flex: 1 1 14rem;
+      max-width: 22rem;
+    }
+  }
+
+  .board-dialog {
+    inline-size: min(calc(100vw - 2rem), 34rem);
+  }
+
+  .board-dialog-form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .board-dialog-row {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  }
+
+  .board-dialog-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+
+  .board-dialog-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .board-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .board-dialog-spacer {
+    flex: 1;
+  }
+}

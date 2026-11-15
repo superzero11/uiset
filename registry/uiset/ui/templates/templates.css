@@ -1,0 +1,1247 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  /* Auth */
+
+  .auth-layout {
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    min-block-size: var(--auth-height, 100dvh);
+    padding: clamp(1rem, 4vw, 3rem) 1rem;
+    background: color-mix(in oklch, var(--ui-muted) 55%, var(--ui-background));
+    color: var(--ui-foreground);
+  }
+
+  .auth-panel {
+    display: grid;
+    gap: 1.25rem;
+    /* Its padding counts in its width, with or without a page's box-sizing reset. */
+    box-sizing: border-box;
+    inline-size: min(100%, 24rem);
+    padding: clamp(1.25rem, 4vw, 2rem);
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 8px);
+    background: var(--ui-background);
+    box-shadow: var(--ui-shadow);
+  }
+
+  .auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 650;
+  }
+
+  .auth-heading {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .auth-title {
+    margin: 0;
+    font-size: 1.375rem;
+    font-weight: 650;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .auth-description {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    text-wrap: pretty;
+  }
+
+  .auth-form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .auth-label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .auth-link,
+  .auth-footer a,
+  .auth-check a {
+    color: var(--ui-foreground);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklch, var(--ui-foreground) 40%, transparent);
+    text-underline-offset: 0.2em;
+    font-size: 0.875rem;
+
+    &:hover {
+      text-decoration-color: currentColor;
+    }
+  }
+
+  .auth-check {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 0.5rem;
+
+    [data-slot="field-error"] {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .auth-submit {
+    inline-size: 100%;
+    min-block-size: 2.5rem;
+
+    &[data-pending] {
+      cursor: progress;
+    }
+
+    .spinner {
+      margin-inline-end: 0.25rem;
+    }
+  }
+
+  .auth-strength {
+    margin-block-start: 0.25rem;
+
+    [data-slot="meter-track"] {
+      block-size: 4px;
+    }
+
+    &[data-strength="1"] [data-slot="meter-indicator"] {
+      background: var(--tone-danger);
+    }
+    &[data-strength="2"] [data-slot="meter-indicator"] {
+      background: var(--tone-warning);
+    }
+    &[data-strength="3"] [data-slot="meter-indicator"],
+    &[data-strength="4"] [data-slot="meter-indicator"] {
+      background: var(--tone-success);
+    }
+  }
+
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1;
+      border-block-start: 1px solid var(--ui-border);
+    }
+  }
+
+  .auth-alternatives {
+    display: grid;
+    gap: 0.5rem;
+
+    > * {
+      inline-size: 100%;
+    }
+  }
+
+  .auth-footer {
+    color: var(--ui-muted-foreground);
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  /* Shared */
+
+  .template-brand {
+    font-weight: 650;
+  }
+
+  /* A template's text takes the skin's size and leading, whatever the page around it sets.
+     It lays out nothing itself: the app shell inside is the layout. */
+  .template-shell {
+    display: contents;
+    font-size: var(--ui-font-size);
+    line-height: var(--ui-line-height);
+  }
+
+  /* Dashboard */
+
+  .dashboard {
+    display: grid;
+    gap: 1.5rem;
+    min-width: 0;
+    container-type: inline-size;
+  }
+
+  /* A wrapper around the results (the web page redraws them as one) keeps the spacing. */
+  .dashboard-results {
+    display: grid;
+    gap: 1.5rem;
+    min-width: 0;
+  }
+
+  .dashboard-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Four figures: one row of four, two rows of two, or one column; never three and one. */
+  .dashboard-figures {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    @container (min-width: 54rem) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @container (max-width: 26rem) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .dashboard-charts {
+    display: grid;
+    gap: 2rem 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+
+    .dashboard-wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .dashboard-table {
+    display: grid;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .dashboard-section-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .dashboard-table-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+
+    .search-field {
+      flex: 1 1 14rem;
+      max-width: 22rem;
+    }
+  }
+
+  /* Settings */
+
+  .settings {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+    max-inline-size: 60rem;
+  }
+
+  /* The tab list scrolls sideways on a phone instead of widening the page. */
+  .settings > * {
+    min-width: 0;
+  }
+
+  .settings-tabs {
+    overflow-x: auto;
+  }
+
+  .settings-section {
+    display: grid;
+    gap: 1rem 2rem;
+    padding-block: 1.5rem;
+    border-block-end: 1px solid var(--ui-border);
+
+    @media (min-width: 52rem) {
+      grid-template-columns: 14rem minmax(0, 1fr);
+    }
+  }
+
+  .settings-section-intro {
+    h2 {
+      margin: 0 0 0.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0;
+      color: var(--ui-muted-foreground);
+      font-size: 0.875rem;
+    }
+  }
+
+  .settings-section-body {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  .settings-form {
+    display: grid;
+    gap: 1rem;
+    max-inline-size: 32rem;
+  }
+
+  .settings-avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .settings-avatar {
+    inline-size: 3.5rem;
+    block-size: 3.5rem;
+    font-size: 1.125rem;
+  }
+
+  .settings-actions,
+  .settings-team-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  /* A label and its switch on one row (UI SDK's field stacks its parts in a column). */
+  .settings-switch {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.375rem;
+  }
+
+  .settings-fieldset {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    legend {
+      margin-block-end: 0.25rem;
+      color: var(--ui-muted-foreground);
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+  }
+
+  .settings-usage {
+    display: grid;
+    gap: 0.875rem;
+  }
+
+  .settings-usage-label {
+    font-size: 0.875rem;
+  }
+
+  .settings-plan [data-slot="card-title"],
+  .settings-plan .card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .settings-muted {
+    margin: 0.125rem 0 0;
+    color: var(--ui-muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  .settings-danger {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid color-mix(in oklch, var(--tone-danger) 45%, var(--ui-border));
+    border-radius: calc(var(--ui-radius) + 4px);
+  }
+
+  /* Admin */
+
+  .admin {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .admin-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+
+    .search-field {
+      flex: 1 1 14rem;
+      max-width: 22rem;
+    }
+  }
+
+  .admin-tools-end {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-drawer {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+    inline-size: min(100vw, 28rem);
+    block-size: 100%;
+    padding: 1.5rem;
+    overflow-y: auto;
+    background: var(--ui-background);
+  }
+
+  .admin-form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .admin-form-row {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  }
+
+  .admin-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-block-start: 0.5rem;
+  }
+
+  /* Inbox */
+
+  .inbox-shell {
+    display: contents;
+  }
+
+  .inbox-article-subject:focus-visible {
+    outline: 2px solid var(--ui-ring-border);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  .inbox-compose {
+    inline-size: 100%;
+  }
+
+  /* Collapsed to icons, Compose is a square icon button like the rest of the rail. */
+  [data-sidebar="collapsed"] .app-shell:not([data-narrow]) .inbox-compose {
+    inline-size: 2.25rem;
+    min-inline-size: 0;
+    padding: 0;
+    justify-content: center;
+    justify-self: center;
+    margin-inline: auto;
+  }
+
+  .inbox {
+    display: grid;
+    gap: 0;
+    min-width: 0;
+    min-block-size: 36rem;
+    margin: calc(-1 * var(--app-shell-pad, 1.5rem));
+    border-block-start: 1px solid var(--ui-border);
+
+    @media (min-width: 60rem) {
+      grid-template-columns: minmax(18rem, 24rem) minmax(0, 1fr);
+    }
+  }
+
+  .inbox-list {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+    min-width: 0;
+    padding: 1rem;
+    border-inline-end: 1px solid var(--ui-border);
+  }
+
+  .inbox-list-header {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .inbox-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 650;
+  }
+
+  .inbox-messages {
+    display: grid;
+    gap: 0.125rem;
+    inline-size: 100%;
+    max-inline-size: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .inbox-message {
+    display: grid;
+    gap: 0.125rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: calc(var(--ui-radius) + 2px);
+    text-align: start;
+
+    &[data-highlighted] {
+      background: color-mix(in oklch, var(--ui-foreground) 5%, transparent);
+    }
+
+    &[aria-selected="true"] {
+      background: color-mix(in oklch, var(--ui-primary) 12%, var(--ui-background));
+    }
+  }
+
+  .inbox-message-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+
+    time {
+      color: var(--ui-muted-foreground);
+      font-size: 0.75rem;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .inbox-from {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    [data-unread] & {
+      font-weight: 650;
+    }
+  }
+
+  .inbox-subject {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    [data-unread] & {
+      font-weight: 600;
+    }
+  }
+
+  .inbox-dot {
+    flex-shrink: 0;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 50%;
+    background: var(--ui-primary);
+  }
+
+  .inbox-preview {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .inbox-reader {
+    min-width: 0;
+    padding: 1rem 1.5rem 2rem;
+  }
+
+  .inbox-article {
+    display: grid;
+    gap: 1.25rem;
+    max-inline-size: 44rem;
+  }
+
+  /* In a narrow reader the actions are icons, named by their hidden labels, on one line;
+     Back keeps its words. */
+  .inbox-reader {
+    container-type: inline-size;
+  }
+
+  @container (max-width: 34rem) {
+    .inbox-actions {
+      flex-wrap: nowrap;
+    }
+
+    .inbox-action-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  .inbox-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    padding-block-end: 0.75rem;
+    border-block-end: 1px solid var(--ui-border);
+  }
+
+  .inbox-back-icon {
+    scale: -1 1;
+
+    &:dir(rtl) {
+      scale: 1;
+    }
+  }
+
+  .inbox-article-header {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+  }
+
+  .inbox-article-subject {
+    margin: 0;
+    font-size: 1.375rem;
+    font-weight: 650;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .inbox-sender {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    inline-size: 100%;
+
+    > div {
+      display: grid;
+      flex: 1;
+    }
+
+    time {
+      color: var(--ui-muted-foreground);
+      font-size: 0.8125rem;
+    }
+  }
+
+  .inbox-email {
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+  }
+
+  .inbox-body {
+    margin: 0;
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  .inbox-reply {
+    justify-self: start;
+  }
+
+  .inbox-composer {
+    inline-size: min(calc(100vw - 2rem), 36rem);
+  }
+
+  /* Narrow: the list, or the message with a way back. */
+  @media (max-width: 59.99rem) {
+    .inbox[data-reading] .inbox-list,
+    .inbox:not([data-reading]) .inbox-reader {
+      display: none;
+    }
+  }
+
+  @media (min-width: 60rem) {
+    .inbox-back {
+      display: none;
+    }
+  }
+
+  /* Chat app */
+
+  .chat-app-template {
+    --chat-thread-height: 30rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1rem;
+    min-width: 0;
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+
+    @media (min-width: 56rem) {
+      grid-template-columns: 15rem minmax(0, 1fr);
+    }
+  }
+
+  .chat-app-main {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  /* Pricing */
+
+  .pricing {
+    container-type: inline-size;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+    padding: clamp(2rem, 6vw, 4rem) clamp(1rem, 4vw, 3rem);
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+  }
+
+  .pricing-header {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .pricing-title {
+    margin: 0;
+    max-inline-size: 20ch;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  .pricing-lede {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+  }
+
+  /* In the label's own color: a tone here would sit on whatever the selected segment is. */
+  .pricing-save {
+    margin-inline-start: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  /* Four plans: four across, two by two, or one column; never three and one. */
+  .pricing-plans {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    @container (min-width: 62rem) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @container (max-width: 34rem) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pricing-plan {
+    display: grid;
+    grid-template-rows: auto auto auto auto 1fr;
+    gap: 0.875rem;
+    padding: 1.5rem;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 8px);
+    background: var(--ui-background);
+
+    &[data-recommended] {
+      border-color: var(--ui-primary);
+      box-shadow: 0 0 0 1px var(--ui-primary), var(--ui-shadow);
+    }
+  }
+
+  .pricing-plan-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .pricing-plan-name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 650;
+  }
+
+  /* Equal-height description and price rows, so every card's button lines up. */
+  .pricing-plan-description {
+    min-block-size: 2lh;
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  .pricing-price {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+  }
+
+  .pricing-amount {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .pricing-per {
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+  }
+
+  .pricing-cta {
+    inline-size: 100%;
+    text-decoration: none;
+  }
+
+  .pricing-features {
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+
+    li {
+      display: flex;
+      align-items: start;
+      gap: 0.5rem;
+    }
+
+    .uiset-icon {
+      margin-block-start: 0.15rem;
+      color: var(--tone-success);
+    }
+  }
+
+  .pricing-section-title {
+    margin: 0 0 1rem;
+    font-size: 1.25rem;
+    font-weight: 650;
+  }
+
+  .pricing-table-scroller {
+    overflow-x: auto;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 4px);
+
+    &:focus-visible {
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: 2px;
+    }
+  }
+
+  .pricing-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+
+    th,
+    td {
+      padding: 0.75rem 1rem;
+      border-block-end: 1px solid var(--ui-border);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th:first-child {
+      padding-inline-start: 1rem;
+      text-align: start;
+      font-weight: 500;
+    }
+
+    thead th {
+      font-weight: 600;
+    }
+
+    .uiset-icon {
+      color: var(--tone-success);
+      vertical-align: middle;
+    }
+  }
+
+  .pricing-no {
+    color: var(--ui-muted-foreground);
+  }
+
+  .pricing-faq {
+    max-inline-size: 44rem;
+    margin-inline: auto;
+    inline-size: 100%;
+
+    /* The questions use the section's width (UI SDK caps an accordion at 28rem). */
+    [data-slot="accordion"] {
+      max-inline-size: none;
+    }
+  }
+
+  /* IDE */
+  .template-ide {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    block-size: min(46rem, calc(100dvh - 8rem));
+    min-block-size: 30rem;
+    overflow: hidden;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 6px);
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+  }
+
+  .template-ide-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding: 0.375rem 0.75rem;
+    border-block-end: 1px solid var(--ui-border);
+  }
+
+  .template-ide-project {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-weight: 600;
+
+    .uiset-icon {
+      inline-size: 1rem;
+      color: var(--ui-muted-foreground);
+    }
+  }
+
+  .template-ide-layout,
+  .template-ide-main {
+    min-block-size: 0;
+    block-size: 100%;
+  }
+
+  .template-ide-side {
+    background: color-mix(in oklch, var(--ui-muted) 35%, var(--ui-background));
+    border-inline-end: 1px solid var(--ui-border);
+  }
+
+  .template-ide-side > .ide-files {
+    block-size: 100%;
+  }
+
+  .template-ide-main [data-slot="resizable-panel"] {
+    display: grid;
+    min-block-size: 0;
+  }
+
+  .template-ide-panel {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-block-size: 0;
+  }
+
+  .template-ide-panel-body {
+    min-block-size: 0;
+    overflow: auto;
+  }
+
+  .template-ide-count {
+    min-inline-size: 1.25rem;
+    padding-inline: 0.375rem;
+    border-radius: 999px;
+    background: var(--ui-muted);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .template-ide-outline {
+    display: grid;
+    margin: 0;
+    padding: 0.25rem;
+    list-style: none;
+
+    [data-slot="button"] {
+      justify-content: flex-start;
+      inline-size: 100%;
+      font-family: var(--ui-font-mono);
+      font-size: 0.8125rem;
+    }
+  }
+
+  .template-ide-line {
+    margin-inline-start: auto;
+    color: var(--ui-muted-foreground);
+    font-family: var(--ui-font-sans, inherit);
+    font-size: 0.75rem;
+  }
+
+  /* Project board */
+
+  .project {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+
+    .page-header {
+      margin-block-end: 0.5rem;
+    }
+  }
+
+  .project-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  /* Members overlap a little, each ringed in the page's color so the edges read. */
+  .project-members {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li + li {
+      margin-inline-start: -0.375rem;
+    }
+  }
+
+  .project-member {
+    box-shadow: 0 0 0 2px var(--ui-background);
+  }
+
+  .project-progress {
+    max-inline-size: 30rem;
+  }
+
+  .project-progress-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .project .board-toolbar {
+    .project-view-switch {
+      margin-inline-start: auto;
+    }
+
+    /* The web page's search element and its person filter (a select in a field), sized
+       as React's toolbar sizes its own. */
+    > uiset-search-field {
+      flex: 1 1 14rem;
+      max-width: 22rem;
+    }
+
+    > [data-slot="field"] {
+      inline-size: 12rem;
+    }
+  }
+
+  .project-view {
+    min-width: 0;
+  }
+
+  /* Four columns share a wide page instead of scrolling it; narrower ones scroll the board. */
+  .project .board {
+    grid-auto-columns: minmax(13rem, 1fr);
+  }
+
+  .project-overdue {
+    color: var(--tone-danger);
+    font-weight: 600;
+  }
+
+  /* Calendar */
+
+  .calendar-sidebar {
+    display: grid;
+    align-content: start;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .calendar-new {
+    inline-size: 100%;
+  }
+
+  /* Collapsed to icons, New event is a square icon button and the rest waits for the
+     sidebar to open again. */
+  [data-sidebar="collapsed"] .app-shell:not([data-narrow]) {
+    .calendar-new {
+      inline-size: 2.25rem;
+      min-inline-size: 0;
+      padding: 0;
+      justify-content: center;
+      justify-self: center;
+      margin-inline: auto;
+    }
+
+    .calendar-mini,
+    .calendar-side-section {
+      display: none;
+    }
+  }
+
+  /* The small month fills the sidebar's width, with days a fingertip can still hit. */
+  .calendar-sidebar .calendar-mini {
+    --calendar-cell: 1.875rem;
+    justify-self: center;
+    inline-size: max-content;
+    padding: 0;
+    border: 0;
+    background: transparent;
+
+    [data-slot="calendar-heading"] {
+      font-size: 0.875rem;
+    }
+
+    [data-slot="calendar-previous"],
+    [data-slot="calendar-next"] {
+      inline-size: 2rem;
+      block-size: 2rem;
+    }
+
+    :is([data-slot="calendar-weekday"], [data-slot="calendar-day"]) {
+      inline-size: var(--calendar-cell);
+      block-size: var(--calendar-cell);
+      font-size: 0.8125rem;
+    }
+
+    [data-slot="calendar-weekday"] {
+      block-size: 1.5rem;
+      font-size: 0.75rem;
+    }
+  }
+
+  .calendar-side-section {
+    display: grid;
+    gap: 0.375rem;
+  }
+
+  .calendar-list {
+    display: grid;
+    gap: 2px;
+  }
+
+  /* Each calendar's checkbox wears its color: chart slots keep 3:1 against the page. */
+  .calendar-list-item {
+    align-items: center;
+    min-block-size: 2rem;
+    padding-inline: 0.5rem;
+    border-radius: var(--ui-radius);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--ui-muted);
+    }
+
+    [data-slot="checkbox"] {
+      --ui-primary: var(--series);
+      --ui-primary-foreground: var(--ui-background);
+      border-color: var(--series);
+    }
+  }
+
+  .calendar-upcoming {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .calendar-upcoming-item {
+    position: relative;
+    display: grid;
+    gap: 0.0625rem;
+    inline-size: 100%;
+    padding: 0.375rem 0.5rem 0.375rem 1rem;
+    border: 0;
+    border-radius: var(--ui-radius);
+    background: transparent;
+    color: var(--ui-foreground);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+
+    /* The calendar's color, as a short bar inset from the corners. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: 0.5rem;
+      inset-inline-start: 0.375rem;
+      inline-size: 3px;
+      border-radius: 999px;
+      background: var(--series);
+    }
+
+    &:hover {
+      background: var(--ui-muted);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: -2px;
+    }
+  }
+
+  .calendar-upcoming-title {
+    overflow: hidden;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .calendar-upcoming-when,
+  .calendar-upcoming-empty {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: 0.75rem;
+  }
+
+  .calendar-upcoming-empty {
+    padding-inline: 0.5rem;
+  }
+
+  /* Tall enough for the whole working day, 8 AM to 8 PM, without scrolling. */
+  .calendar-app {
+    --schedule-height: 40rem;
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  /* One New event per page: the sidebar's while it shows, the toolbar's once the sidebar
+     moves into the drawer. */
+  @media not (max-width: 48rem) {
+    .calendar-app .scheduler-actions > :is([data-slot="button"], ui-button) {
+      display: none;
+    }
+  }
+}
