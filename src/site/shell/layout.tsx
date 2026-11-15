@@ -250,7 +250,8 @@ function SiteLayout({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<SiteTheme>(initialTheme)
   const { pathname } = useLocation()
   const main = useRef<HTMLElement>(null)
-  const first = useRef(true)
+  // The page whose heading has focus, or was drawn first: moving focus waits for a new one.
+  const shown = useRef(pathname)
   const setTheme = (t: SiteTheme) => {
     setThemeState(t)
     try {
@@ -274,10 +275,8 @@ function SiteLayout({ children }: { children: ReactNode }) {
   // After moving to another page, focus goes to its heading, so a screen reader announces
   // the new page, as a page load would.
   useEffect(() => {
-    if (first.current) {
-      first.current = false
-      return
-    }
+    if (shown.current === pathname) return
+    shown.current = pathname
     const heading = main.current?.querySelector<HTMLElement>("h1")
     if (heading) {
       if (!heading.hasAttribute("tabindex")) heading.tabIndex = -1

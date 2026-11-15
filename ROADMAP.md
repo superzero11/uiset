@@ -262,8 +262,8 @@ Then one kit or skin every 3–4 days, driven by install metrics.
 | Tests: 8 unit (agent + feedback), 10 e2e (axe × skins × themes, keyboard, forced colors, RTL, agent) | done    | 5/5 mutations caught                                                                                                                                |
 | Registry build + fresh-app install test                                                              | done    | `scripts/install-test.sh`                                                                                                                           |
 | CI workflow (incl. nightly against UI SDK `beta`)                                                    | written | runs once the repo is on GitHub                                                                                                                     |
-| GitHub repo public under superzero11                                                                 | todo    | needs owner go-ahead                                                                                                                                |
-| Deploy the site to uiset.dev (Vercel, AppsYogi's Team)                                              | todo    | needs owner go-ahead; registry URL depends on it                                                                                                    |
+| GitHub repo public under superzero11                                                                 | done    | 2026-11-16: github.com/superzero11/uiset, first commit pushed; CI blocked until the account's billing issue is resolved |
+| Deploy the site to uiset.dev (Vercel, AppsYogi's Team)                                              | done    | 2026-11-16: live at https://uiset.dev; every item installs from the live registry (108/108); redeploy with `pnpm deploy:prod` |
 | studio                                                                                               | done    | Shipped 2026-11-14, three days early: knob, patch-bay, fader, level-meter, step-sequencer, studio skin, playable synth demo                         |
 | agent-console                                                                                        | done    | Shipped 2026-11-15, five days early: approvals, activity + undo, highlight, thread, prompt, snapshot, tool router; live demo with a simulated model |
 | chat (full set: chat, chat-response, chat-parts, chat-composer, chat-sidebar)                        | done    | Shipped 2026-11-15 under the owner's complete-set rule                                                                                              |
@@ -880,3 +880,25 @@ Then one kit or skin every 3–4 days, driven by install metrics.
   when the app's code has run (7 to 9 s on the mobile profile). Hydrating instead needs the
   first client render to match the saved page (theme, skin and kit in the address, the
   scheduler's dates), a follow-up.
+- 2026-11-16 — **Public.** The code is on github.com/superzero11/uiset and the site on
+  https://uiset.dev (prebuilt here and uploaded; Vercel's Git deploys are off, since its
+  build machines have no browser for the prerender). Commits use the GitHub no-reply address,
+  which GitHub requires for this account. Checked live: every page and deep link serves its
+  prerendered HTML, `/kits/` redirects to `/kits`, the registry, llms.txt, docs Markdown,
+  sitemap, robots and social card have the right types, and the pages load with no console
+  errors or failed requests. `REGISTRY=https://uiset.dev scripts/install-test.sh` installed,
+  typechecked and built all 108 items from the live registry; `superzero11/uiset/<item>`
+  resolves through GitHub. Known: an unknown path answers 200 with the app's not-found page
+  (a soft 404); CI won't run until the GitHub account's billing lock is lifted.
+- 2026-11-16 — **The README tells the home page's story, with pictures.** The first README
+  read like a reference manual. It now follows the home page: the pitch, UISet over UI SDK,
+  three install steps, what's in the set, a gallery of the kits, the skins (an animation of
+  one form through all five), the theme generator, the agent benchmark, docs, templates, Web
+  Components, the quality bar and the roadmap, with uiset.dev linked at the top and from
+  every picture. The pictures are drawn from the running site by `scripts/readme-assets.mjs`
+  (`.github/assets/*.webp`, about 740 KB), so they can be redrawn when the site changes; the
+  banner has light and dark versions. Per-kit API stays in the docs.
+- 2026-11-16 — **`@uiset/web` 0.1.0 is on npm**, published by the owner under the `uiset`
+  npm organization (MIT, homepage the Web Components guide, peers pinned to UI SDK
+  `0.1.0-beta.2`). With the registry and site already live, 0.1.0 is released: the changelog
+  carries the date, and the README links the package with a version badge.

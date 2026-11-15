@@ -3,6 +3,7 @@
 # then typechecks and builds that app. Proves the registry works outside this repo.
 #
 #   scripts/install-test.sh [workdir]
+#   REGISTRY=https://uiset.dev scripts/install-test.sh   # from the live registry instead
 set -euo pipefail
 
 repo="$(cd "$(dirname "$0")/.." && pwd)"
@@ -10,12 +11,17 @@ work="${1:-$(mktemp -d)}"
 port=5644
 app="$work/app"
 
-REGISTRY_URL="http://localhost:$port" pnpm --dir "$repo" -s registry:build >/dev/null
-
-python3 -m http.server "$port" --directory "$repo/public" >/dev/null 2>&1 &
-server=$!
-trap 'kill $server 2>/dev/null || true' EXIT
-for _ in $(seq 1 50); do curl -fs "http://localhost:$port/r/uiset.json" >/dev/null && break; sleep 0.1; done
+registry="${REGISTRY:-}"
+if [ -z "$registry" ]; then
+  # A registry built for, and served from, this machine.
+  REGISTRY_URL="http://localhost:$port" pnpm --dir "$repo" -s registry:build >/dev/null
+  python3 -m http.server "$port" --directory "$repo/public" >/dev/null 2>&1 &
+  server=$!
+  trap 'kill $server 2>/dev/null || true' EXIT
+  for _ in $(seq 1 50); do curl -fs "http://localhost:$port/r/uiset.json" >/dev/null && break; sleep 0.1; done
+  registry="http://localhost:$port"
+fi
+curl -fs "$registry/r/uiset.json" >/dev/null || { echo "no registry at $registry"; exit 1; }
 
 rm -rf "$app" && mkdir -p "$app/src"
 cd "$app"
@@ -82,7 +88,7 @@ pnpm add -s -D typescript@5.9.3 vite@8.3.8 @vitejs/plugin-react@6.3.0 @types/rea
 items=($(node -e 'for (const i of require(process.argv[1]).items) console.log(i.name)' "$repo/registry.json"))
 [ "${#items[@]}" -gt 0 ] || { echo "no items in registry.json"; exit 1; }
 for item in "${items[@]}"; do
-  npx -y shadcn@4.23.0 add "http://localhost:$port/r/$item.json" --yes --overwrite >/dev/null
+  npx -y shadcn@4.23.0 add "$registry/r/$item.json" --yes --overwrite >/dev/null
 done
 
 # Import every installed item so each file is typechecked and bundled.

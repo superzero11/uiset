@@ -12,6 +12,7 @@ import { skins } from "../shell/skin-picker"
 const dark: Partial<Record<Skin, "dark">> = { studio: "dark", phosphor: "dark" }
 
 function OgPage() {
+  const darkCard = new URLSearchParams(window.location.search).get("theme") === "dark"
   usePageMeta({ title: "UISet social card", description: "The image shown when UISet is shared.", path: "/og" })
   return (
     <div className="og-card">
@@ -27,7 +28,7 @@ function OgPage() {
       </div>
       <div className="og-skins" inert aria-hidden="true">
         {skins.map(({ value, label }) => (
-          <UISet key={value} skin={value} theme={dark[value] ?? "light"} className="og-skin">
+          <UISet key={value} skin={value} theme={dark[value] ?? (value === "base" && darkCard ? "dark" : "light")} className="og-skin">
             <span className="og-skin-name">{label}</span>
             <Switch defaultChecked aria-label="On" />
             <Slider defaultValue={64} aria-label="Level" />

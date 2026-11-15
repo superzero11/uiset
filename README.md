@@ -1,310 +1,319 @@
-# UISet
+<p align="center">
+  <a href="https://uiset.dev">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.webp">
+      <img src=".github/assets/banner-light.webp" alt="UISet: components, kits, templates and themes for Vercel's UI SDK. The same switch, slider and button in five skins: Base, Blueprint, Studio, Phosphor and Ink." width="100%">
+    </picture>
+  </a>
+</p>
 
-Themes, components, kits and templates for [Vercel's UI SDK](https://ui-sdk.dev).
+<h3 align="center">Build the whole interface on UI SDK.</h3>
 
-UI SDK handles how interfaces behave: keyboard, focus, selection, popups, ARIA, and an
-agent bridge that lets AI agents read and operate the page. UISet builds everything else
-on it: skins that change how it looks, sounds and feels, the kits apps are made of (chat,
-data grid, charts, board, scheduler, canvas, IDE, terminal and more) and whole page
-templates, for React and as Web Components. Switch skins and nothing about behavior
-changes.
+<p align="center">
+  UISet is the components, kits, templates and themes for <a href="https://ui-sdk.dev">Vercel's UI SDK</a>.<br>
+  UI SDK handles keyboard, focus, screen readers and agents. UISet adds how it looks,<br>
+  the big components real apps need, and whole pages. Install any piece with the shadcn CLI.
+</p>
 
-> UI SDK is in beta, and so is UISet. APIs may change before 1.0; see [Versioning](#versioning).
+<p align="center">
+  <a href="https://uiset.dev"><b>uiset.dev</b></a> &nbsp;·&nbsp;
+  <a href="https://uiset.dev/docs">Docs</a> &nbsp;·&nbsp;
+  <a href="https://uiset.dev/components">Components</a> &nbsp;·&nbsp;
+  <a href="https://uiset.dev/kits">Kits</a> &nbsp;·&nbsp;
+  <a href="https://uiset.dev/templates">Templates</a> &nbsp;·&nbsp;
+  <a href="https://uiset.dev/themes">Themes</a> &nbsp;·&nbsp;
+  <a href="https://uiset.dev/agents">Agents</a>
+</p>
 
-## Install
+<p align="center">
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-3655cd"></a>
+  <a href="https://ui-sdk.dev"><img alt="Built on UI SDK 0.1.0-beta.2" src="https://img.shields.io/badge/built%20on-UI%20SDK%200.1.0--beta.2-1f2328"></a>
+  <a href="https://uiset.dev/docs/installation"><img alt="A shadcn registry" src="https://img.shields.io/badge/shadcn-registry-1f2328"></a>
+  <a href="https://www.npmjs.com/package/@uiset/web"><img alt="@uiset/web on npm" src="https://img.shields.io/npm/v/@uiset/web?label=%40uiset%2Fweb&color=1f2328"></a>
+  <a href="CONTRIBUTING.md"><img alt="Tested in Chrome, Safari and Firefox" src="https://img.shields.io/badge/tested%20in-Chrome%2C%20Safari%2C%20Firefox-2e7d32"></a>
+</p>
 
-UISet is a shadcn registry. Add the root once, then any component:
+## UI SDK gives you behavior. UISet gives you everything else.
+
+UI SDK moved the hard part of UI into reusable behaviors: arrow keys, focus, selection,
+popups, drag and drop, and the ARIA that goes with them, plus a bridge that lets agents work
+the controls. It ships its components unstyled, and it leaves the large ones to you. That's
+where UISet starts.
+
+<table>
+  <tr>
+    <th width="50%" align="left">UISet</th>
+    <th width="50%" align="left">UI SDK, underneath</th>
+  </tr>
+  <tr>
+    <td valign="top">
+      <ul>
+        <li><b>Looks:</b> five skins, a theme generator, sound and haptics</li>
+        <li><b>55 styled components</b> and 16 app parts</li>
+        <li><b>12 kits:</b> chat, rich text, data grid, charts, scheduler and more</li>
+        <li><b>10 page templates</b> to start from</li>
+        <li><b>Web Components</b> for Vue, Svelte, Solid and HTML</li>
+        <li><b>A skill and llms.txt</b> for coding agents</li>
+      </ul>
+    </td>
+    <td valign="top">
+      <ul>
+        <li><b>Behaviors:</b> keyboard, focus, selection, popups, drag and drop</li>
+        <li><b>55 components</b>, unstyled</li>
+        <li><b>The agent bridge</b> and WebMCP</li>
+        <li><b>Five frameworks:</b> React, Vue, Svelte, Solid, Web Components</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+## Start in three steps
+
+**1. Add the root.** It brings the tokens, the skins and the sound into your project's
+components folder.
 
 ```bash
 npx shadcn@latest add superzero11/uiset/uiset
-npx shadcn@latest add superzero11/uiset/slider superzero11/uiset/switch
 ```
 
-This copies the source into `components/ui/` and installs `@ui-sdk/core` and
-`@ui-sdk/react`. No Tailwind required.
-
-## Use
-
-Wrap your app, or any part of it, in `<UISet>`:
+**2. Wrap your app.** Every UISet and UI SDK component inside takes the skin. With a shadcn
+theme on the page, the base skin uses it.
 
 ```tsx
-import { Slider } from "@/components/ui/slider"
-import { Switch } from "@/components/ui/switch"
 import { UISet } from "@/components/ui/uiset"
 
-export function Settings() {
-  return (
-    <UISet skin="blueprint" sound>
-      <Slider aria-label="Volume" defaultValue={64} />
-      <label>
-        <Switch name="night-mode" /> Night mode
-      </label>
-    </UISet>
-  )
+export function App() {
+  return <UISet skin="base">{/* your app */}</UISet>
 }
 ```
 
-| Prop       | Default    | What it does                                                      |
-| ---------- | ---------- | ----------------------------------------------------------------- |
-| `skin`     | `"base"`   | `"base"`, `"blueprint"`, `"studio"`, `"phosphor"` or `"ink"`.     |
-| `keyColor` | —          | `{ l, c, h }` in OKLCH. The accent; text on it picks black/white. |
-| `theme`    | `"system"` | `"light"`, `"dark"` or `"system"`.                                |
-| `sound`    | `false`    | Synthesized interaction sounds, tuned per skin.                   |
-| `haptics`  | `true`     | Vibration on Android, the system haptic on iOS 18+ Safari.        |
-
-The base skin adopts an existing shadcn/ui theme (`--background`, `--primary`, …) when
-your page has one, so UISet components match the rest of your app.
-
-| Skin        | Look                                                                    | Scheme | Faces to load                                  |
-| ----------- | ----------------------------------------------------------------------- | ------ | ---------------------------------------------- |
-| `base`      | Your shadcn theme, or one built from `keyColor`                         | both   | none (your app's)                              |
-| `blueprint` | A technical drawing: cyanotype paper, linework, hatching                | dark   | Barlow Semi Condensed                          |
-| `studio`    | A synth rack: gunmetal panels, rubber pads, amber lamps                 | dark   | Saira Semi Condensed                           |
-| `phosphor`  | A green-screen terminal: intensity, inverse video, faint scan lines     | dark   | Spline Sans Mono                               |
-| `ink`       | E-paper: ink on grey, dotted greys, a reading serif, no motion at all   | light  | Literata, Atkinson Hyperlegible                |
-
-Each skin falls back to system faces when its own aren't loaded. Load them from Google
-Fonts (or self-host them) for the intended look.
-
-### Studio kit
-
-A synth rack built from UI SDK behaviors. Try it, with sound, on the gallery.
+**3. Add what you need.** Components, kits or a whole page, each with one command, and each
+brings only what it uses.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/knob superzero11/uiset/patch-bay \
-  superzero11/uiset/fader superzero11/uiset/level-meter superzero11/uiset/step-sequencer
+npx shadcn@latest add superzero11/uiset/select superzero11/uiset/data-grid
 ```
 
-| Component       | Built on                                   | Notes                                                                                  |
-| --------------- | ------------------------------------------ | -------------------------------------------------------------------------------------- |
-| `Knob`          | a new primitive: `bindDrag`, `stepFromKey` | Drag up/down (Shift for fine), arrows, Page, Home/End, log scales, double-click resets |
-| `PatchBay`      | a new primitive: `createConnect`           | Patch by drag, by keyboard (Enter, arrows, Enter) or by agent (`plug`, `unplug`)       |
-| `Fader`         | `Slider`                                   | Vertical, with label and readout                                                       |
-| `LevelMeter`    | `Meter`                                    | LED ladder: green, amber, red                                                          |
-| `StepSequencer` | `ToggleGroup`                              | One tab stop, arrow keys, downbeats, a playhead                                        |
+The [installation guide](https://uiset.dev/docs/installation) covers fonts, the shadcn
+theme, and installing by hand. The [quick start](https://uiset.dev/docs/quick-start) builds a
+settings screen in a few minutes.
 
-```tsx
-<UISet skin="studio" sound>
-  <Knob label="Cutoff" min={80} max={8000} scale="log" defaultValue={900} />
-  <PatchBay
-    aria-label="Patch bay"
-    labels={{ "lfo:out": "LFO out", "cutoff:in": "Filter mod in" }}
-  >
-    <PatchBayJack port="lfo:out" label="LFO out" />
-    <PatchBayJack port="cutoff:in" label="Filter mod in" />
-  </PatchBay>
-</UISet>
-```
+## Everything a product needs, in one set
 
-### Chat kit
+Pick what you need: each item installs on its own and brings only what it uses. You never
+mix in a second UI library.
 
-Everything a chat product needs, built on UI SDK so it works with the keyboard and
-screen readers, takes your skin, and is visible to agents.
+<table>
+  <tr>
+    <td width="24%" valign="top"><a href="https://uiset.dev/components"><b>55 + 16 components</b></a></td>
+    <td valign="top">Every UI SDK component, styled, plus the app frame and data display parts: sidebar layout, page header, cards, badges, stats, alerts.</td>
+  </tr>
+  <tr>
+    <td width="24%" valign="top"><a href="https://uiset.dev/kits"><b>12 kits</b></a></td>
+    <td valign="top">The big pieces apps need and UI SDK leaves to you: chat, rich text, a data grid, charts, a board, a scheduler, a canvas, an IDE, a terminal, mobile patterns, Studio and the Agent Console.</td>
+  </tr>
+  <tr>
+    <td width="24%" valign="top"><a href="https://uiset.dev/templates"><b>10 templates</b></a></td>
+    <td valign="top">Whole pages to start from: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, IDE.</td>
+  </tr>
+  <tr>
+    <td width="24%" valign="top"><a href="https://uiset.dev/themes"><b>5 skins</b></a></td>
+    <td valign="top">Five skins you can switch live and nest, and a generator that turns one color into a complete, checked theme.</td>
+  </tr>
+</table>
 
-| Item            | What's in it                                                                                                                                                      |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `chat`          | Thread that follows new messages, messages, actions, versions, suggestions, plans                                                                                 |
-| `chat-response` | Streaming markdown that repairs half-finished syntax, never renders raw HTML; code blocks with copy, wrap and skin-colored highlighting (shiki, loaded on demand) |
-| `chat-parts`    | Reasoning that opens while the model thinks, tool calls, sources, citations, images                                                                               |
-| `chat-composer` | Enter to send, ArrowUp history, `/` commands, `@` mentions, attachments by drop, paste or picker, model picker, usage meter                                       |
-| `chat-sidebar`  | Chat list with rename and confirmed delete, and a floating assistant launcher                                                                                     |
+## Kits you'd otherwise build yourself
+
+These are the real components, running on [uiset.dev/kits](https://uiset.dev/kits). Each is
+keyboard-first, readable by screen readers and agents, and styled by the skin around it.
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/kits#chat"><img src=".github/assets/kit-chat.webp" alt="The chat kit: a thread with a table, sources and a task list, a list of chats, and a composer with a model picker and a token meter."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/chat">Chat</a></b><br>Streaming Markdown and code, reasoning, tool calls, sources, plans, versions, and a composer with attachments, commands and mentions. Plug in any model.</p>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/kits#data"><img src=".github/assets/kit-data.webp" alt="The data grid: ten thousand orders with search, filters, grouping, a column view menu and CSV export."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/data-grid">Data grid</a></b><br>Ten thousand rows drawn as you scroll. Sort, filter, group, pin, resize and reorder columns, edit in place, copy and paste blocks, export.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/kits#writing"><img src=".github/assets/kit-writing.webp" alt="The rich text editor with a toolbar, headings, lists, to-dos, a quote and code, beside its Markdown preview."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/rich-text">Rich text</a></b><br>Headings, lists, to-dos, quotes, code and links, Markdown as you type, "/" for blocks and "@" for people. Saves Markdown or HTML. No editor library underneath.</p>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/kits#charts"><img src=".github/assets/kit-charts.webp" alt="Charts: three stats with sparklines, a line chart of revenue and costs, and an area chart of daily active users."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/charts">Charts</a></b><br>Lines, bars, areas, scatter, heatmaps and part-to-whole bars, with colors checked for color blindness. Arrow through the data or switch to a table.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/kits#board"><img src=".github/assets/kit-board.webp" alt="A kanban board with four columns, limits, labels, due dates and people."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/board">Board</a></b><br>Columns with limits and cards that move by drag or by keys. Every move is announced and can be undone.</p>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/kits#scheduler"><img src=".github/assets/kit-scheduler.webp" alt="A week calendar with events."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/scheduler">Scheduler</a></b><br>A week, a day, a month or a timeline of rooms. Draw, move and resize events with the pointer or the arrow keys.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/kits#canvas"><img src=".github/assets/kit-canvas.webp" alt="A node canvas: an answer pipeline of five connected nodes, a minimap, zoom controls and a details panel."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/canvas">Canvas</a></b><br>Pan and zoom, drag nodes, connect ports, lasso, a minimap and undo. Every node and port is reachable from the keyboard.</p>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/kits#ide"><img src=".github/assets/kit-ide.webp" alt="The IDE kit: a file tree, an editor tab with syntax colors, a problems panel and a status bar."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/ide">IDE</a></b><br>A file tree, tabs, a code editor with syntax colors, a command palette, problems, an outline and a status bar, in resizable panes.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/kits#terminal"><img src=".github/assets/kit-terminal.webp" alt="A terminal showing a file listing, its color palette, and a build with a progress bar."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/terminal">Terminal</a></b><br>ANSI colors kept readable in every skin, links, streaming output with progress lines, Tab completion and history.</p>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/kits#mobile"><img src=".github/assets/kit-mobile.webp" alt="A phone frame with an inbox, an app bar and a tab bar."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/mobile">Mobile</a></b><br>Rows that swipe aside to actions, wheel pickers, bottom sheets and action sheets, pull to refresh, an app bar and a tab bar.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/kits?skin=studio#studio"><img src=".github/assets/kit-studio.webp" alt="Studio in its own skin: a synth rack with an oscillator, filter, envelope, LFO and output, and a step sequencer."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/studio">Studio</a></b><br>Knobs, a fader, a level meter, a step sequencer and a patch bay that play real sound. Every control works from the keyboard.</p>
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://uiset.dev/agents#agents"><img src=".github/assets/agent-console.webp" alt="The Agent Console beside a settings form: asked to make the project public and move it to Europe, the agent changed both settings and lists them as done."></a>
+      <p><b><a href="https://uiset.dev/docs/kits/agent-console">Agent Console</a></b><br>Let an agent work in your app and stay in charge: approvals for risky steps, an activity log, undo, and what the agent sees.</p>
+    </td>
+  </tr>
+</table>
+
+## Five skins, one set of components
+
+<img align="right" width="380" src=".github/assets/skins.webp" alt="One live settings form switching through the five skins: Base, Blueprint, Studio, Phosphor and Ink.">
+
+A skin changes how everything looks, sounds and feels. Behavior never changes: the same
+keyboard, focus and screen reader experience in every one. Skins nest, so a panel can wear
+its own.
+
+- **Base:** adopts the shadcn/ui theme on your page, or builds one from a key color. Light and dark.
+- **Blueprint:** a technical drawing, with cyanotype paper, white linework and hatching.
+- **Studio:** a rack of synth modules, gunmetal faceplates and amber lamps. It sounds mechanical.
+- **Phosphor:** a monochrome video terminal, with a faint bloom and scan lines. It beeps.
+- **Ink:** electronic paper, a reading serif for long text, and no motion at all.
+
+Every skin is checked at 4.5:1 for text and 3:1 for controls and focus, in each theme it has.
+
+The **[theme generator](https://uiset.dev/themes/generator)** turns one key color into a
+complete theme for light and dark, checks every pair, fixes what fails with one click, and
+exports a UISet skin, shadcn/ui variables or W3C design tokens.
+
+<br clear="right">
+
+<p align="center">
+  <a href="https://uiset.dev/themes/generator"><img src=".github/assets/theme-generator.webp" alt="The theme generator: a key color with lightness, chroma and hue sliders, and the resulting theme previewed in light and dark." width="100%"></a>
+</p>
+
+## Agents can use it, not just look at it
+
+Every control is named for UI SDK's agent bridge, so an agent reads the page as data and
+works the controls directly, with no screenshots. Risky steps wait for a person in the
+Agent Console, and every change can be undone.
+
+We ran UI SDK's comparison on UISet's own kits: the same tasks, done by an agent with browser
+tools (a page snapshot, click, type) and by an agent with the bridge (snapshot, act, query).
+Across three tasks, **the bridge took 40% fewer tool calls, read 79% less text and finished
+40% sooner**, and every run of both finished its task.
+
+| Task (median of 3 runs) | Tool calls | Text read | Time |
+| --- | --- | --- | --- |
+| Project settings | 10 → **6** | 3,895 → **2,976** chars | 20.5 → **16.2** s |
+| Data grid: filter and sort | 6 → **6** | 54,343 → **9,700** chars | 24.8 → **15.0** s |
+| Scheduler: add an event | 11 → **3** | 17,464 → **3,661** chars | 29.6 → **13.1** s |
+
+Browser tools → bridge, with Claude Sonnet 5.5 through Claude Code. The method, prompts and
+every run are in [bench/](bench/README.md), and on [uiset.dev/agents](https://uiset.dev/agents).
+
+**For coding agents:** a skill teaches them to build with UISet the right way (install,
+skins, naming controls, styling with the variables, picking kits), and
+[llms.txt](https://uiset.dev/llms.txt) lists every docs page.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/chat superzero11/uiset/chat-response \
-  superzero11/uiset/chat-parts superzero11/uiset/chat-composer superzero11/uiset/chat-sidebar
+npx skills add superzero11/uiset
 ```
 
-### Data Grid
+## Docs for every item
 
-A grid that works like a spreadsheet, on UI SDK's grid, range, inline edit and
-virtualizer behaviors.
+<p align="center">
+  <a href="https://uiset.dev/docs/components/select"><img src=".github/assets/docs-page.webp" alt="A component's docs page: a live example with a skin picker, Preview and Code tabs, and the install command." width="100%"></a>
+</p>
 
-- **Ten thousand rows:** only the visible ones render; Control+End still reaches the last.
-- **Spreadsheet keys:** one tab stop, arrows, Shift to select a block, copy and paste with
-  the system clipboard, Enter or typing to edit, Escape to cancel.
-- **Columns:** sort (Shift for more than one), filter, group, pin, resize and move, from
-  the pointer, the column menu (Shift+F10) or the keyboard. The layout can be saved.
-- **Rows:** checkboxes, Shift-click ranges, bulk actions, CSV export of what you see.
-- **Edits that check themselves:** numbers, dates, yes/no and lists are parsed and
-  refused with a message when they don't fit.
-- **Agents** sort, filter, select and edit by the names a person sees, through the same
-  validation.
+Each of the 55 components has a page with a live example in every skin, its code, the install
+command, UI SDK's API reference and keyboard behavior, and what an agent reads from it. Each
+kit and skin has a guide. Every page is also plain Markdown, for agents and for reading here:
+start at [the introduction](https://uiset.dev/docs), or browse [docs/](docs/README.md).
 
-```bash
-npx shadcn@latest add superzero11/uiset/data-grid
-```
+## Templates
 
-Columns, keys and agent actions: [docs/data-grid.md](docs/data-grid.md).
+<p align="center">
+  <a href="https://uiset.dev/templates?template=dashboard"><img src=".github/assets/template-dashboard.webp" alt="The dashboard template: a sidebar, stats with sparklines, a revenue chart, and orders by channel." width="100%"></a>
+</p>
 
-### Charts
-
-Lines, areas, bars, scatter, heatmaps, part-to-whole bars, sparklines and stats with
-trends, drawn with thin marks in palettes checked for color blindness in every skin.
-
-- **Keyboard and screen readers:** each chart is one tab stop; arrows move through the
-  data and every position reads in full ("Aug: Revenue $70,000, Costs $52,000").
-- **A table twin** for every chart, a legend that isolates a series, and tooltips that
-  never hold the only copy of a number.
-- **Agents** read the values and can isolate a series, pin a point or open the table.
-- No pie or donut: a segmented bar shows a whole at a glance, ranked bars compare parts.
-
-```bash
-npx shadcn@latest add superzero11/uiset/line-chart superzero11/uiset/bar-chart
-```
-
-All chart items and how they work: [docs/charts.md](docs/charts.md).
-
-### Board
-
-A kanban board on UI SDK's transfer behavior: drag cards with the pointer, or carry them
-with Space and the arrows; column limits, add in place, a details dialog, filters, and
-agents that move cards by name. [docs/board.md](docs/board.md)
-
-```bash
-npx shadcn@latest add superzero11/uiset/board
-```
-
-### Scheduler
-
-A week, a day, a room timeline and a month, on UI SDK's spans behavior: draw, move and
-resize events with the pointer or arrows, overlaps in lanes (or refused for bookings),
-an event dialog, and agents that book by day and time. [docs/scheduler.md](docs/scheduler.md)
-
-```bash
-npx shadcn@latest add superzero11/uiset/scheduler
-```
-
-### Canvas
-
-A node editor on UI SDK's viewport, move, selection and connect behaviors: pan and zoom,
-drag or Alt+arrow nodes, arrows to the nearest node, wires by pointer or keyboard, box
-selection, a minimap, an inspector, undo, and agents that build flows by name.
-[docs/canvas.md](docs/canvas.md)
-
-```bash
-npx shadcn@latest add superzero11/uiset/canvas
-```
-
-### Mobile
-
-Phone app parts on UI SDK: rows that swipe aside to their actions, wheel pickers, bottom
-and action sheets, pull to refresh, an app bar and a tab bar, each with a keyboard path.
-[docs/mobile.md](docs/mobile.md)
-
-```bash
-npx shadcn@latest add superzero11/uiset/mobile
-```
-
-### Terminal
-
-A terminal for commands your app defines: ANSI colors kept readable in every skin, links,
-streaming output with progress lines, history, Tab completion, Ctrl+C and Ctrl+L, and
-agents that run commands and read the output. [docs/terminal.md](docs/terminal.md)
-
-```bash
-npx shadcn@latest add superzero11/uiset/terminal
-```
-
-### IDE
-
-A code editor's parts on UI SDK's Tree, Tabs, Command and Textarea: a file tree with
-version control marks and file operations, editor tabs, a code editor with syntax colors
-and indenting, a command palette, problems and a status bar, plus a whole IDE page.
-[docs/ide.md](docs/ide.md)
-
-```bash
-npx shadcn@latest add superzero11/uiset/ide
-npx shadcn@latest add superzero11/uiset/ide-app
-```
-
-### Web Components, Vue, Svelte and Solid
-
-The same skins dress UI SDK's own custom elements, so a page in plain HTML or any
-framework gets UISet's look from one stylesheet, with `<uiset-root>` and UISet's
-elements (knob, swipe rows) from one module. [docs/web-components.md](docs/web-components.md)
-
-### Rich text editor
-
-Headings, lists, to-dos, quotes, code, links and mentions, with a toolbar, Markdown as you
-type, "/" for blocks and "@" for people; Markdown and clean HTML out, and agents read and
-write the same Markdown. No editor library underneath. [Docs](docs/rich-text.md).
-
-```bash
-npx shadcn@latest add superzero11/uiset/rich-text
-```
-
-### Templates
-
-Whole pages built only from UISet items, to start from a working screen: **auth** (sign
-in, sign up, forgot and reset password, verify a code), **dashboard**, **settings**,
-**admin** records, **inbox**, **chat-app** (plug your model in as a stream of events)
-and **pricing**. See them live at `/templates` in any skin.
+Whole pages built only from UISet items: **auth, dashboard, settings, admin, inbox, chat app,
+project board, calendar, pricing and IDE**. Install one, render it, and swap the sample data
+for yours.
 
 ```bash
 npx shadcn@latest add superzero11/uiset/dashboard
 ```
 
-How each one plugs into your app: [docs/templates.md](docs/templates.md).
+## React, or anything that renders HTML
 
-### Agent Console
-
-The human side of UI SDK's agent bridge, for apps where an AI assistant changes things,
-not just chats. Works with any model.
-
-- **Approvals in your app:** steps marked `data-agent-confirm` wait for **Allow** in a
-  card above everything, even a modal the agent opened. No `window.confirm`.
-- **Activity with undo:** every change the agent made, in plain words, with **Show** to
-  flash it on the page and **Undo agent changes**, which keeps your own edits.
-- **Highlights:** the control an agent just changed gets outlined, and scrolled into view.
-- **Thread and prompt:** follows new messages, ArrowUp brings back earlier ones, Enter
-  sends without breaking input methods.
-- The console hides itself from agents, so one can't approve its own request.
+Every kit and template also ships as Web Components with the same styles and behavior, for
+Vue, Svelte, Solid, Angular and plain HTML. See the
+[Web Components guide](https://uiset.dev/docs/web-components); the package is
+[@uiset/web](https://www.npmjs.com/package/@uiset/web) on npm.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/agent-console
+npm install @uiset/web @ui-sdk/web
 ```
 
-Setup and how to connect a model: [docs/agent-console.md](docs/agent-console.md).
+```html
+<script type="module">
+  import "@uiset/web"
+</script>
 
-### Skins nest
+<uiset-root skin="ink">
+  <uiset-rich-text label="Release notes" value="## Release 2.4"></uiset-rich-text>
+</uiset-root>
+```
 
-Skins only set CSS variables, so the nearest `<UISet>` always wins. Put a Blueprint
-panel inside a Base page and neither leaks into the other.
+## Tested like the infrastructure it is
 
-### Sound and haptics for every UI SDK component
+A UI library is only as good as its worst state. These run on every change:
 
-UISet listens to UI SDK's `observe()` stream, so any UI SDK component inside a
-`<UISet>` root gets feedback, including ones you compose yourself, and including changes
-an agent makes. Sliders tick with a pitch that follows the value. Nothing plays until
-`sound` is on, and haptics stop under `prefers-reduced-motion`.
+- **Accessibility:** every component, kit and template is checked with axe in every skin
+  and theme: text contrast, control edges, names and roles.
+- **Three browsers:** the same tests in Chrome, Safari (WebKit) and Firefox.
+- **Keyboard:** each kit is driven by keyboard in its tests, focus included.
+- **Agents:** each kit has a test where an agent reads it and acts through UI SDK's bridge.
+- **Mutation checks:** each new behavior is broken on purpose to prove a test notices.
+- **Installs:** every item is installed on its own and all together into a fresh app, then
+  type-checked and built, from the live registry too.
+- **The rest:** right-to-left, Windows high contrast, reduced motion, phone widths, and React
+  and web versions side by side.
 
-## Docs, and building with an AI agent
+## Where it's going
 
-- [Every item and its docs](docs/README.md), [Theming](docs/theming.md),
-  [Coming from shadcn/ui](docs/migrate-from-shadcn.md), and the
-  [theme generator](https://uiset.dev/themes/generator), which turns one color into a
-  checked theme and exports a UISet skin, shadcn/ui variables or design tokens.
-- `llms.txt` and `llms-full.txt` at the site root list and contain the docs for coding
-  agents; they're generated from the registry (`pnpm docs:build`), so they match what
-  installs.
-- An agent skill teaches coding agents to build with UISet (install, skins, naming
-  controls for agents, styling with the variables, picking kits):
+UISet grows with UI SDK, in the open ([roadmap](https://uiset.dev/docs/roadmap)):
 
-  ```bash
-  npx skills add superzero11/uiset
-  ```
-
-## Quality bar
-
-Every component ships only when it passes:
-
-- axe (WCAG 2.2 AA, contrast included) in every skin, light and dark
-- the same tests in Chrome, Safari (WebKit) and Firefox
-- keyboard-only operation, with focus returning where it should
-- the UI SDK agent test: every control named, every setting changeable by an agent,
-  destructive steps refused without a person
-- forced colors, reduced motion and right to left
-- a clean install into a fresh app with the shadcn CLI
+- **More skins:** Cockpit, Paper and Print, each with its own sound.
+- **Framework guides:** step-by-step setups for Vue, Svelte, Solid and Angular with the Web
+  Components build.
+- **More templates:** onboarding, a settings console wired for agents, and a docs site.
+- **Following UI SDK:** tracking its releases, and reporting what we find upstream, until 1.0.
 
 ## Develop
 
@@ -313,13 +322,14 @@ pnpm install
 pnpm exec playwright install chromium webkit firefox
 pnpm dev            # the site at http://localhost:5620
 pnpm check          # typecheck, unit tests, browser tests
-pnpm registry:build # registry.json and public/r
+pnpm registry:build # registry.json, public/r, the docs and llms.txt
 scripts/install-test.sh
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the rules and what a pull request needs,
-[ROADMAP.md](ROADMAP.md) for what's next, and [SECURITY.md](SECURITY.md) to report a
-vulnerability privately. Everyone taking part follows the [code of conduct](CODE_OF_CONDUCT.md).
+[CONTRIBUTING.md](CONTRIBUTING.md) has the rules and what a pull request needs, and
+[ROADMAP.md](ROADMAP.md) the plan and the decisions behind it. Report security issues
+privately ([SECURITY.md](SECURITY.md)). Everyone taking part follows the
+[code of conduct](CODE_OF_CONDUCT.md).
 
 ## Versioning
 
@@ -331,4 +341,5 @@ release, add them again and review the diff.
 
 ## License
 
-MIT. Built on UI SDK by Vercel Labs. UISet is a community project, not affiliated with Vercel.
+MIT. Built on [UI SDK](https://ui-sdk.dev) by Vercel Labs. UISet is a community project, not
+affiliated with Vercel.

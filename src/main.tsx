@@ -30,10 +30,11 @@ function Site() {
       </Suspense>
     )
   const Page = route(pathname)
-  // The social card is screenshotted on its own (scripts/prerender.mjs), without the site's frame.
+  // The social card is screenshotted on its own (scripts/prerender.mjs), without the site's frame;
+  // ?theme=dark draws the README banner's dark variant (scripts/readme-assets.mjs).
   if (pathname === "/og")
     return (
-      <UISet skin="base" theme="light" className="site">
+      <UISet skin="base" theme={new URLSearchParams(window.location.search).get("theme") === "dark" ? "dark" : "light"} className="site">
         <Suspense>
           <Page />
         </Suspense>

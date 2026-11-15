@@ -22,7 +22,8 @@
     "test:e2e": "playwright test",
     "web:dev": "vite --config web/vite.config.ts",
     "web:build": "vite build --config web/vite.config.ts",
-    "check": "pnpm typecheck && pnpm test && pnpm web:build && pnpm test:e2e"
+    "check": "pnpm typecheck && pnpm test && pnpm web:build && pnpm test:e2e",
+    "deploy:prod": "vercel build --prod && vercel deploy --prebuilt --prod"
   },
   "dependencies": {
     "@ui-sdk/core": "0.1.0-beta.2",

@@ -219,6 +219,22 @@ test("links to sections of the same page land on them and stay", async ({ page }
   await expect(heading("studio")).toBeInViewport()
 })
 
+// After moving to another page its heading takes focus, so a screen reader announces it. A
+// first load focuses nothing: React's development double effects once focused the heading,
+// drawing a focus ring on every page as it opened.
+test("the heading takes focus after moving to another page, not on first load", async ({ page }) => {
+  // The page's own heading: the first in main (a kit demo may hold another).
+  const heading = page.locator("main h1").first()
+  await page.goto("/kits")
+  await expect(heading).toBeVisible()
+  await page.waitForTimeout(300)
+  await expect(heading).not.toBeFocused()
+  await page.getByRole("navigation", { name: "Site", exact: true }).getByRole("link", { name: "Templates" }).click()
+  await expect(page).toHaveURL(/\/templates$/)
+  await expect(heading).toHaveText(/template/i)
+  await expect(heading).toBeFocused()
+})
+
 test.describe("Studio", () => {
   test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" })
