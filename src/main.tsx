@@ -5,6 +5,7 @@ import "./site/agent"
 import { preloadRoute, route, staticPaths } from "./site/routes"
 import { SiteLayout } from "./site/shell/layout"
 import { setPreloader, useLocation } from "./site/shell/router"
+import "./site/fonts.css"
 import "./site/site.css"
 
 const BenchPage = lazy(() => import("./site/bench").then((m) => ({ default: m.BenchPage })))

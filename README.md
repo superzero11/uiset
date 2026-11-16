@@ -27,7 +27,7 @@
 
 <p align="center">
   <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-3655cd"></a>
-  <a href="https://ui-sdk.dev"><img alt="Built on UI SDK 0.1.0-beta.2" src="https://img.shields.io/badge/built%20on-UI%20SDK%200.1.0--beta.2-1f2328"></a>
+  <a href="https://ui-sdk.dev"><img alt="Built on UI SDK 0.1.0-beta.5" src="https://img.shields.io/badge/built%20on-UI%20SDK%200.1.0--beta.5-1f2328"></a>
   <a href="https://uiset.dev/docs/installation"><img alt="A shadcn registry" src="https://img.shields.io/badge/shadcn-registry-1f2328"></a>
   <a href="https://www.npmjs.com/package/@uiset/web"><img alt="@uiset/web on npm" src="https://img.shields.io/npm/v/@uiset/web?label=%40uiset%2Fweb&color=1f2328"></a>
   <a href="CONTRIBUTING.md"><img alt="Tested in Chrome, Safari and Firefox" src="https://img.shields.io/badge/tested%20in-Chrome%2C%20Safari%2C%20Firefox-2e7d32"></a>
@@ -292,7 +292,7 @@ npm install @uiset/web @ui-sdk/web
 
 ## Tested like the infrastructure it is
 
-A UI library is only as good as its worst state. These run on every change:
+A UI library is only as good as its worst state. These run before every change:
 
 - **Accessibility:** every component, kit and template is checked with axe in every skin
   and theme: text contrast, control edges, names and roles.
@@ -334,10 +334,10 @@ privately ([SECURITY.md](SECURITY.md)). Everyone taking part follows the
 ## Versioning
 
 UISet follows UI SDK's beta. Each release pins exact `@ui-sdk/*` versions (now
-`0.1.0-beta.2`), and the nightly build runs against UI SDK's newest beta to catch changes
-early. Until UI SDK 1.0, a minor release of UISet may change an API, and the
-[changelog](CHANGELOG.md) says what to do. Registry items are source in your app: to take a
-release, add them again and review the diff.
+`0.1.0-beta.5`), and moves to a new beta once the whole suite passes on it. Until UI SDK
+1.0, a minor release of UISet may change an API, and the [changelog](CHANGELOG.md) says what
+to do. Registry items are source in your app: to take a release, add them again and review
+the diff.
 
 ## License
 

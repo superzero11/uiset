@@ -219,6 +219,37 @@ test("links to sections of the same page land on them and stay", async ({ page }
   await expect(heading("studio")).toBeInViewport()
 })
 
+// The search palette fills its dialog, and its results start right under the field (the
+// palette once kept its standalone width, and the empty message's padding left a gap).
+test("search fills its dialog, finds a page and goes to it", async ({ page }) => {
+  await page.goto("/")
+  await page.getByRole("button", { name: "Search docs" }).click()
+  const dialog = page.getByRole("dialog", { name: "Search the docs" })
+  const field = dialog.getByRole("combobox", { name: "Search components, kits, templates and guides" })
+  await expect(field).toBeFocused()
+  const first = dialog.getByRole("option").first()
+  await expect(first).toBeVisible()
+  const [box, palette, input, option] = await Promise.all([
+    dialog.boundingBox(),
+    dialog.locator('[data-slot="command"]').boundingBox(),
+    field.boundingBox(),
+    first.boundingBox(),
+  ])
+  // Within the dialog's border.
+  expect(palette!.width).toBeGreaterThanOrEqual(box!.width - 4)
+  expect(input!.width).toBeGreaterThanOrEqual(box!.width - 4)
+  expect(option!.y - (input!.y + input!.height)).toBeLessThan(12)
+  await field.fill("data grid")
+  await expect(dialog.getByRole("option").first()).toContainText("Data grid")
+  await field.fill("zzzz")
+  await expect(dialog.getByRole("status")).toContainText("Nothing matches")
+  await field.fill("select")
+  await expect(dialog.getByRole("option", { name: /^Select/ }).first()).toBeVisible()
+  await page.keyboard.press("Enter")
+  await expect(page).toHaveURL(/\/docs\/components\/select$/)
+  await expect(dialog).toBeHidden()
+})
+
 // After moving to another page its heading takes focus, so a screen reader announces it. A
 // first load focuses nothing: React's development double effects once focused the heading,
 // drawing a focus ring on every page as it opened.

@@ -4,11 +4,12 @@
 //
 //   pnpm build:static   (vite build, then this script)
 //
-// Writes dist/<path>/index.html for every page, dist/app.html (the bare app, for paths that
-// aren't pages), dist/sitemap.xml, dist/robots.txt and dist/og.png.
+// Writes dist/<path>/index.html for every page, dist/404.html (what any other address gets,
+// with a 404 status), dist/sitemap.xml, dist/robots.txt and dist/og.png. Then checks that every
+// link between pages lands on one, since an address that isn't a page now answers 404.
 
 import { chromium } from "@playwright/test"
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
+import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { preview } from "vite"
 
@@ -16,8 +17,8 @@ const SITE = JSON.parse(readFileSync("uiset.config.json", "utf8")).homepage
 const port = 5698
 const base = `http://localhost:${port}`
 
-// The bare app, for paths that aren't pages: Vite's own index.html, before this script fills
-// it. Run twice on one build, index.html is already a page, and app.html is kept.
+// The bare app: Vite's own index.html, before this script fills it, kept to read its module
+// preloads. Run twice on one build, index.html is already a page, and app.html is kept.
 if (/<div id="root"><\/div>/.test(readFileSync("dist/index.html", "utf8"))) copyFileSync("dist/index.html", "dist/app.html")
 else if (!existsSync("dist/app.html")) throw new Error("dist/index.html is already prerendered and there's no dist/app.html: run vite build first.")
 
@@ -42,9 +43,6 @@ async function render(path) {
   const html = `<!doctype html>\n${await page.evaluate(() => document.documentElement.outerHTML)}`
     .replaceAll(base, "")
     .replace(/<link rel="modulepreload"[^>]*>/g, (tag) => (appPreloads.has(/href="([^"]+)"/.exec(tag)?.[1] ?? "") ? tag : ""))
-    // A stylesheet that loads without blocking paint (the fonts) ran its onload here; put it
-    // back as it ships, or every page would wait for it.
-    .replaceAll(`media="all" onload="this.media='all'"`, `media="print" onload="this.media='all'"`)
   await page.close()
   if (errors.length) console.warn(`  ${path}: ${errors.join("; ")}`)
   // A page that names this machine would send visitors' browsers to their own.
@@ -67,6 +65,22 @@ try {
     writeFileSync(file, html)
   }
   console.log(`prerendered ${paths.length} pages`)
+
+  // Any other address: the not-found page, served with a 404 status (Vercel's 404.html).
+  writeFileSync("dist/404.html", await render("/404"))
+
+  // Every link from one page to another must land on a page or a file: there's no catch-all.
+  const broken = new Set()
+  for (const path of paths) {
+    const html = readFileSync(path === "/" ? "dist/index.html" : join("dist", path, "index.html"), "utf8")
+    for (const [, href] of html.matchAll(/<a\b[^>]*\bhref="(\/(?!\/)[^"#?]*)/g)) {
+      const target = href.replace(/\/+$/, "") || "/"
+      const file = join("dist", target)
+      const found = target === "/" || existsSync(join(file, "index.html")) || (existsSync(file) && statSync(file).isFile())
+      if (!found) broken.add(`${target} (from ${path})`)
+    }
+  }
+  if (broken.size) throw new Error(`Links to addresses that aren't pages:\n  ${[...broken].join("\n  ")}`)
 
   // The social card: the /og page, drawn at 1200×630.
   const og = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 })

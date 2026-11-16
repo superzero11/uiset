@@ -102,6 +102,10 @@ template and kit stands on it, and it's the most "mix-in a second library" risk 
 ## 3c. UI SDK issues to report upstream
 
 Verify each against the latest beta, then file on vercel-labs/ui before launch.
+Checked on 0.1.0-beta.5 (2026-11-16, repros in a worktree): all still present except #4
+(not reproduced; dropped) and #18 (Chrome's own textarea undo; not filed); #7 is upstream
+#541. UISet's typecheck, unit tests and Chromium e2e also pass on beta.5 unchanged. Drafts:
+`launch/ui-sdk-issues.md` (not in git).
 
 1. **Image cropper nests sliders.** The selection is `role="slider"` with handle sliders
    inside it; slider children are presentational, so screen readers may not reach the
@@ -902,3 +906,32 @@ Then one kit or skin every 3–4 days, driven by install metrics.
   npm organization (MIT, homepage the Web Components guide, peers pinned to UI SDK
   `0.1.0-beta.2`). With the registry and site already live, 0.1.0 is released: the changelog
   carries the date, and the README links the package with a version badge.
+- 2026-11-16 — **Real 404s, and the first paint keeps its font.** Every unknown address used
+  to be rewritten to the app with a 200 (a soft 404). vercel.json now has no catch-all: the
+  build writes `dist/404.html` (the not-found page, marked noindex, with no canonical), Vercel
+  serves it with a 404 status, `/theme` redirects to `/themes/generator`, and the prerender
+  fails if any page links to an address that isn't a page or a file. Mobile LCP was the same
+  paragraph drawn twice: once from the prerendered HTML in the fallback font, then again by
+  React after the web font had loaded, slightly larger, so Chrome counted the second, late
+  paint (home 5.9 s, kits 6.3 s on Lighthouse mobile). The fonts now come from the site
+  (`scripts/fonts.mjs` → `public/fonts`, OFL licenses alongside, `src/site/fonts.css`) and
+  index.html preloads Instrument Sans, so the first paint already uses it and React's redraw
+  is the same size: in local runs the observed LCP equals first paint on home, kits and docs,
+  and visitors no longer connect to Google. Hydrating the prerendered DOM would avoid the
+  redraw entirely, but the prerender saves the browser's DOM rather than React's server
+  output (no text separators or Suspense markers), so it isn't a drop-in change.
+- 2026-11-16 — **Search palette fills its dialog.** The palette kept its standalone 22rem
+  width inside the 40rem dialog, and the empty-results message (a live region that's always
+  there) was padded even when empty, leaving a gap under the field. A test checks the widths
+  and the gap. The placeholder is shorter so it fits a phone. The favicon was still the old
+  Veneer "V"; it's the UISet mark now.
+- 2026-11-16 — **UI SDK 0.1.0-beta.5, and CI by hand.** UI SDK's `beta` tag reached beta.5
+  (its `latest` tag is beta.3). UISet moved its pins without code changes: web.css is
+  byte-identical, and the bridge changes (Combobox `setValue` refuses non-items, read-only
+  inputs show as disabled, `registerTools` passes `consequentialHint`) don't touch UISet's
+  usage. `registerTools(agent, { allow: () => true })` stays: the bridge's own `allow`
+  (Agent Console approvals) already sends every `step.confirm` to the person first.
+  Registry, docs and the README say beta.5; `@uiset/web` 0.1.1 carries the new peers (the
+  owner publishes it). The GitHub account's Actions are on hold, and a run that can't start
+  showed as a failed check on every commit, so CI is `workflow_dispatch` only until that's
+  lifted (the file says how to restore its triggers); `pnpm check` runs before every change.

@@ -3,9 +3,40 @@
   "buildCommand": "pnpm build:static",
   "outputDirectory": "dist",
   "trailingSlash": false,
-  "rewrites": [{ "source": "/(.*)", "destination": "/app.html" }],
+  "redirects": [
+    {
+      "source": "/theme",
+      "destination": "/themes/generator",
+      "permanent": true
+    }
+  ],
   "headers": [
-    { "source": "/llms(.*).txt", "headers": [{ "key": "Content-Type", "value": "text/plain; charset=utf-8" }] },
-    { "source": "/docs/(.*).md", "headers": [{ "key": "Content-Type", "value": "text/markdown; charset=utf-8" }] }
+    {
+      "source": "/llms(.*).txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/docs/(.*).md",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/markdown; charset=utf-8"
+        }
+      ]
+    },
+    {
+      "source": "/fonts/(.*).woff2",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
   ]
 }

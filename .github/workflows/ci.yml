@@ -1,12 +1,12 @@
 name: CI
 
+# Started by hand for now: the account's Actions are on hold, and a run that can't start shows
+# as a failed check on every commit. Until then, `pnpm check` runs before every change. To
+# turn it back on, restore these triggers:
+#   push: { branches: [main] }
+#   pull_request:
+#   schedule: [{ cron: "17 3 * * *" }]   # nightly, also against UI SDK's newest beta
 on:
-  push:
-    branches: [main]
-  pull_request:
-  schedule:
-    # Nightly against the newest UI SDK beta, to catch upstream breakage early.
-    - cron: "17 3 * * *"
   workflow_dispatch:
 
 permissions:

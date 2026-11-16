@@ -9,7 +9,7 @@ stylesheet, and UISet's own primitives register as `<uiset-*>` elements.
 pnpm web:build   # makes web/dist/uiset.js and web/dist/uiset.css
 ```
 
-The build keeps UI SDK as a peer: install `@ui-sdk/web` and `@ui-sdk/core` (0.1.0-beta.2)
+The build keeps UI SDK as a peer: install `@ui-sdk/web` and `@ui-sdk/core` (0.1.0-beta.5)
 and import the UI SDK components you use. `uiset.css` already includes UI SDK's `web.css`.
 `uiset.js` is about 117 KB gzipped with every kit and `uiset.css` 39 KB; the chat's
 markdown parser (53 KB) loads only when a chat first draws an answer. The page templates

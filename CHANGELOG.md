@@ -8,6 +8,17 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add superzero11/uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
+## 0.1.1 (2026-11-16)
+
+On UI SDK `0.1.0-beta.5`.
+
+### Changed
+
+- **UI SDK `0.1.0-beta.5`.** Every item now pins `@ui-sdk/core`, `@ui-sdk/react` and
+  `@ui-sdk/web` at `0.1.0-beta.5`. UISet needed no code changes; its tests pass on it. To
+  take it, add your items again and update the `@ui-sdk/*` versions in your package.json.
+  `@uiset/web` 0.1.1 has the new peer versions.
+
 ## 0.1.0 (2026-11-16)
 
 The first public release, on UI SDK `0.1.0-beta.2` (`@ui-sdk/core`, `@ui-sdk/react`,

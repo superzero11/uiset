@@ -316,7 +316,7 @@ function DocsPage() {
           type: "article",
           structured: articleData({ title: page.title, description: page.description, path: page.path, trail: [{ name: "Docs", path: "/docs" }, ...(page.path === "/docs" ? [] : [{ name: page.title, path: page.path }])] }),
         }
-      : { title: "Page not found", description: "This docs page doesn't exist.", path: pathname },
+      : { title: "Page not found", description: "This docs page doesn't exist.", path: pathname, noindex: true },
   )
   return (
     <div className="docs">

@@ -111,7 +111,7 @@ function Search() {
             navigate(path)
           }}
         >
-          <CommandInput aria-label="Search components, kits, templates and guides" placeholder="Search components, kits, templates, guides…" />
+          <CommandInput aria-label="Search components, kits, templates and guides" placeholder="Search components, kits, templates…" />
           <CommandEmpty className="site-search-empty">{entries ? "Nothing matches. Try a component name, like \u201cselect\u201d or \u201cdata grid\u201d." : "Loading the index\u2026"}</CommandEmpty>
           <CommandList className="site-search-list">
             {(state: { items: CommandData }) =>

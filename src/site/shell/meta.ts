@@ -19,6 +19,8 @@ type PageMeta = {
   type?: "website" | "article"
   /** JSON-LD objects for this page. */
   structured?: object[]
+  /** A page that isn't one (not found): search engines skip it, and it names no canonical address. */
+  noindex?: boolean
 }
 
 function setTag(selector: string, create: () => HTMLElement, attr: string, value: string) {
@@ -42,7 +44,13 @@ function applyMeta(page: PageMeta) {
   const image = page.image ?? DEFAULT_IMAGE
   document.title = title
   setTag('meta[name="description"]', meta("name", "description"), "content", page.description)
-  setTag('link[rel="canonical"]', () => Object.assign(document.createElement("link"), { rel: "canonical" }), "href", url)
+  if (page.noindex) {
+    document.head.querySelector('link[rel="canonical"]')?.remove()
+    setTag('meta[name="robots"]', meta("name", "robots"), "content", "noindex")
+  } else {
+    document.head.querySelector('meta[name="robots"]')?.remove()
+    setTag('link[rel="canonical"]', () => Object.assign(document.createElement("link"), { rel: "canonical" }), "href", url)
+  }
   const og: Record<string, string> = {
     "og:title": title,
     "og:description": page.description,

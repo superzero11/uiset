@@ -1,6 +1,6 @@
 {
   "name": "@uiset/web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "UISet's skins, kits and elements for Web Components, Vue, Svelte, Solid and plain HTML, on UI SDK's custom elements.",
   "license": "MIT",
   "type": "module",
@@ -33,8 +33,8 @@
     "prepublishOnly": "cd .. && pnpm web:build"
   },
   "peerDependencies": {
-    "@ui-sdk/core": "0.1.0-beta.2",
-    "@ui-sdk/web": "0.1.0-beta.2",
+    "@ui-sdk/core": "0.1.0-beta.5",
+    "@ui-sdk/web": "0.1.0-beta.5",
     "shiki": "^4.6.0"
   },
   "peerDependenciesMeta": {

@@ -14,3 +14,9 @@ registry.build.json
 # skills-lock.json and installed locally with `npx skills add <source>`, not redistributed.
 .claude/skills/
 .claude/settings.local.json
+
+# Launch drafts: directory entries, posts and clips, kept out of the repo
+launch/
+
+# Agent worktrees
+.claude/worktrees/
