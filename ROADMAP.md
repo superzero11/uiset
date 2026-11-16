@@ -944,3 +944,16 @@ Then one kit or skin every 3–4 days, driven by install metrics.
   Once #12725 merges: send registry.directory the `namespace`, switch posts and docs to
   `@uiset/...`, and tag @shadcn. 21st.dev needs the owner's account. Posts and clips are in
   `launch/`.
+- 2026-11-16 — **The first paint no longer waits for scripts, and slow phones keep one LCP.**
+  On slow 4G with 4× CPU (Playwright, Pixel 7), the live pages painted at about 2 s and
+  reached LCP at 5–6 s: the site font still arrived after the first paint there, so React's
+  redraw came out larger and counted again, and forty module preloads competed with the CSS
+  and font. Now Instrument Sans (preloaded) uses `font-display: block`, so its text waits for
+  it and the redraw is the same size (the skins' faces keep `swap`), and the prerender drops
+  every module preload (the entry fetches its imports itself). Same conditions, medians of 3:
+  home LCP 6.0 s → 1.2 s, docs 4.0 s → 1.2 s, kits 1.7 s → 1.4 s; the app starts 0.25–0.5 s
+  later. Lighthouse mobile, local: home 0.67 → 0.79, kits 0.57 → 0.65, docs 0.78 → 0.93.
+  `dist/app.html` is gone (it only existed to read those preloads).
+- 2026-11-16 — **A daily community watch.** A scheduled task (9:30 IST, read-only) reports
+  stars, traffic, npm downloads, the directory PRs, the filed UI SDK issues, mentions and new
+  feedback, and keeps a ranked backlog of capabilities people ask for in `launch/watch/`.

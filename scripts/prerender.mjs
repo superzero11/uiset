@@ -9,7 +9,7 @@
 // link between pages lands on one, since an address that isn't a page now answers 404.
 
 import { chromium } from "@playwright/test"
-import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { preview } from "vite"
 
@@ -17,13 +17,8 @@ const SITE = JSON.parse(readFileSync("uiset.config.json", "utf8")).homepage
 const port = 5698
 const base = `http://localhost:${port}`
 
-// The bare app: Vite's own index.html, before this script fills it, kept to read its module
-// preloads. Run twice on one build, index.html is already a page, and app.html is kept.
-if (/<div id="root"><\/div>/.test(readFileSync("dist/index.html", "utf8"))) copyFileSync("dist/index.html", "dist/app.html")
-else if (!existsSync("dist/app.html")) throw new Error("dist/index.html is already prerendered and there's no dist/app.html: run vite build first.")
-
-// The module preloads Vite's own index.html carries (the entry's shared chunks): kept.
-const appPreloads = new Set([...readFileSync("dist/app.html", "utf8").matchAll(/<link rel="modulepreload"[^>]*href="([^"]+)"/g)].map((m) => m[1]))
+// Drawing pages needs Vite's own index.html, before this script fills it.
+if (!/<div id="root"><\/div>/.test(readFileSync("dist/index.html", "utf8"))) throw new Error("dist/index.html is already prerendered: run vite build first.")
 
 const server = await preview({ preview: { port, strictPort: true }, logLevel: "warn" })
 const browser = await chromium.launch(process.env.CI ? {} : { channel: "chrome" })
@@ -37,12 +32,13 @@ async function render(path) {
   await page.waitForFunction(() => !document.querySelector(".page-loading, .docs-loading"), null, { timeout: 20000 })
   await page.waitForTimeout(250)
   // Vite adds the CSS and module preloads for code the page loaded on demand with full URLs,
-  // here this local server's; on the site they must be relative to it. Preloads for every
-  // chunk this browser happened to load are dropped (the components page had 331): the
-  // drawn page needs only its CSS, and the app fetches its own code before it takes over.
+  // here this local server's; on the site they must be relative to it. Every module preload
+  // is dropped, the entry's own included: the drawn page needs only its CSS and font, and on
+  // a slow connection forty script preloads held its first paint back by about a second.
+  // The entry script fetches its imports itself, a little later, before the app takes over.
   const html = `<!doctype html>\n${await page.evaluate(() => document.documentElement.outerHTML)}`
     .replaceAll(base, "")
-    .replace(/<link rel="modulepreload"[^>]*>/g, (tag) => (appPreloads.has(/href="([^"]+)"/.exec(tag)?.[1] ?? "") ? tag : ""))
+    .replace(/<link rel="modulepreload"[^>]*>/g, "")
   await page.close()
   if (errors.length) console.warn(`  ${path}: ${errors.join("; ")}`)
   // A page that names this machine would send visitors' browsers to their own.

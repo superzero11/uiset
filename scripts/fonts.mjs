@@ -11,8 +11,10 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs"
 
 const FAMILIES = [
-  // The site's own face: text, and the condensed headings (the wdth axis).
-  { family: "Instrument Sans", axes: "wdth,wght@75..100,400..700", license: "ofl/instrumentsans" },
+  // The site's own face: text, and the condensed headings (the wdth axis). Preloaded, and its
+  // text waits for it (block): drawn first in a fallback face, the page's largest paragraph
+  // would be drawn again, larger, when React takes over, and count as a late LCP.
+  { family: "Instrument Sans", axes: "wdth,wght@75..100,400..700", license: "ofl/instrumentsans", display: "block" },
   // The skins' faces, used where a skin is shown.
   { family: "Barlow Semi Condensed", axes: "wght@400;500;600", license: "ofl/barlowsemicondensed" },
   { family: "Saira Semi Condensed", axes: "wght@400;500;600", license: "ofl/sairasemicondensed" },
@@ -34,13 +36,13 @@ async function get(url, as = "text") {
 
 rmSync(OUT, { recursive: true, force: true })
 mkdirSync(OUT, { recursive: true })
-const faces = [] // { family, subset, block, url: Google's file }
+const faces = [] // { family, subset, block, url: Google's file, display }
 const licenses = []
-for (const { family, axes, license } of FAMILIES) {
+for (const { family, axes, license, display = "swap" } of FAMILIES) {
   const css = await get(`https://fonts.googleapis.com/css2?family=${family.replaceAll(" ", "+")}:${axes}&display=swap`)
   // Each block follows a comment naming its subset.
   for (const [, subset, block] of css.matchAll(/\/\* ([a-z-]+) \*\/\s*(@font-face\s*{[^}]+})/g)) {
-    if (SUBSETS.includes(subset)) faces.push({ family, subset, block, url: /src:\s*url\(([^)]+)\)/.exec(block)[1] })
+    if (SUBSETS.includes(subset)) faces.push({ family, subset, block, display, url: /src:\s*url\(([^)]+)\)/.exec(block)[1] })
   }
   licenses.push(`## ${family}\n\n${(await get(`https://raw.githubusercontent.com/google/fonts/main/${license}/OFL.txt`)).trim()}\n`)
 }
@@ -59,7 +61,7 @@ writeFileSync(`${OUT}/LICENSE.md`, `# Font licenses\n\nThe fonts in this folder 
 writeFileSync(
   "src/site/fonts.css",
   `/* The site's fonts, served from /fonts (scripts/fonts.mjs writes this file and those). */\n\n${faces
-    .map(({ block, url }) => block.replace(url, `/fonts/${files.get(url)}`).replace(/font-display:\s*[a-z]+;/, "font-display: swap;"))
+    .map(({ block, url, display }) => block.replace(url, `/fonts/${files.get(url)}`).replace(/font-display:\s*[a-z]+;/, `font-display: ${display};`))
     .join("\n\n")}\n`,
 )
 console.log(`${files.size} font files, ${faces.length} faces`)
