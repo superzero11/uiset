@@ -88,7 +88,12 @@ pnpm add -s -D typescript@5.9.3 vite@8.3.8 @vitejs/plugin-react@6.3.0 @types/rea
 items=($(node -e 'for (const i of require(process.argv[1]).items) console.log(i.name)' "$repo/registry.json"))
 [ "${#items[@]}" -gt 0 ] || { echo "no items in registry.json"; exit 1; }
 for item in "${items[@]}"; do
-  npx -y shadcn@4.23.0 add "$registry/r/$item.json" --yes --overwrite >/dev/null
+  # One retry for a network hiccup; a failure that repeats names the item and shows why.
+  if ! out=$(npx -y shadcn@4.23.0 add "$registry/r/$item.json" --yes --overwrite 2>&1) &&
+    ! out=$(npx -y shadcn@4.23.0 add "$registry/r/$item.json" --yes --overwrite 2>&1); then
+    printf 'installing %s failed:\n%s\n' "$item" "$out"
+    exit 1
+  fi
 done
 
 # Import every installed item so each file is typechecked and bundled.

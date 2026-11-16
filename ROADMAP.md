@@ -935,3 +935,12 @@ Then one kit or skin every 3–4 days, driven by install metrics.
   owner publishes it). The GitHub account's Actions are on hold, and a run that can't start
   showed as a failed check on every commit, so CI is `workflow_dispatch` only until that's
   lifted (the file says how to restore its triggers); `pnpm check` runs before every change.
+- 2026-11-16 — **Launch submissions.** Opened shadcn-ui/ui#12725 (`@uiset` in the registry
+  directory; fork superzero11/ui), birobirobiro/awesome-shadcn-ui#772 (Registries) and
+  bytefer/awesome-shadcn-ui#61 (UI Libs). registry.directory took a POST submission (pending
+  review; its update token is in `launch/`, outside git). skills.sh lists skills from install
+  telemetry, so one `npx skills add superzero11/uiset` installed all 14. Filed
+  vercel-labs/ui#607–#624 from ROADMAP 3c (verified on beta.5) and added UISet's case to #541.
+  Once #12725 merges: send registry.directory the `namespace`, switch posts and docs to
+  `@uiset/...`, and tag @shadcn. 21st.dev needs the owner's account. Posts and clips are in
+  `launch/`.
