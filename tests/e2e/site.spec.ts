@@ -346,6 +346,50 @@ test.describe("Studio", () => {
     )
   })
 
+  // Cables are drawn in the patch bay's own pixels. Inside something that scales it (a zoomed
+  // canvas, a CSS transform), screen distances are no longer those pixels: a cable measured
+  // from them missed its jacks, and a dragged one trailed away from the pointer.
+  test("cables meet their jacks, and the pointer, inside a scaled container", async ({ page }) => {
+    await page.addStyleTag({ content: ".studio-stage { transform: scale(0.7); transform-origin: 0 0; }" })
+    // A new width makes the patch bay measure its jacks again, now that it is scaled.
+    await page.setViewportSize({ width: 1100, height: 900 })
+    await page.locator(".rack-modules").scrollIntoViewIfNeeded()
+    await page.getByRole("button", { name: "Envelope out" }).focus()
+    await page.keyboard.press("Enter")
+    await page.keyboard.press("ArrowLeft")
+    await page.keyboard.press("Enter")
+    await expect(page.locator(".patch-bay-cable:not([data-draft])")).toHaveCount(1)
+
+    /** Where a cable's two ends are on screen. */
+    const ends = (selector: string) =>
+      page.evaluate((sel) => {
+        const path = document.querySelector<SVGPathElement>(`${sel} path`)!
+        const bay = path.closest<HTMLElement>(".patch-bay")!
+        const box = bay.getBoundingClientRect()
+        const scale = box.width / bay.offsetWidth
+        return [path.getPointAtLength(0), path.getPointAtLength(path.getTotalLength())].map((p) => ({ x: box.left + p.x * scale, y: box.top + p.y * scale }))
+      }, selector)
+    const centre = async (name: string) => {
+      const box = (await page.getByRole("button", { name }).boundingBox())!
+      return { x: box.x + box.width / 2, y: box.y + box.height / 2 }
+    }
+    const far = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y)
+
+    const jacks = [await centre("Envelope out"), await centre("Filter mod in")]
+    for (const end of await ends(".patch-bay-cable:not([data-draft])")) expect(Math.min(...jacks.map((jack) => far(end, jack)))).toBeLessThan(2)
+
+    // A cable being dragged: its loose end is under the pointer.
+    const from = await centre("LFO out")
+    const pointer = { x: from.x - 140, y: from.y + 60 }
+    await page.mouse.move(from.x, from.y)
+    await page.mouse.down()
+    await page.mouse.move(pointer.x, pointer.y, { steps: 8 })
+    await expect(page.locator(".patch-bay-cable[data-draft]")).toHaveCount(1)
+    const loose = await ends(".patch-bay-cable[data-draft]")
+    expect(Math.min(...loose.map((end) => far(end, pointer)))).toBeLessThan(3)
+    await page.mouse.up()
+  })
+
   test("the sequencer is one tab stop with arrow keys between steps", async ({
     page,
   }) => {

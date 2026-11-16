@@ -957,3 +957,10 @@ Then one kit or skin every 3–4 days, driven by install metrics.
 - 2026-11-16 — **A daily community watch.** A scheduled task (9:30 IST, read-only) reports
   stars, traffic, npm downloads, the directory PRs, the filed UI SDK issues, mentions and new
   feedback, and keeps a ranked backlog of capabilities people ask for in `launch/watch/`.
+- 2026-11-16 — **Patch bay: cables hold inside a scaled container.** Found while filming the
+  Studio kit with a zooming camera: the patch bay turned screen positions into its own with
+  plain subtraction, so under an ancestor's `transform: scale()` a re-measure put the cables'
+  ends off their jacks (74 px at 0.7×) and a dragged cable trailed the pointer. `localPoint`
+  in `studio/cables.ts` divides the scale back out (the element's screen size over its layout
+  size); the React patch bay, its drag point and the web element all use it. An e2e test for
+  each scales the rack, forces a re-measure and checks the ends on screen. `@uiset/web` 0.1.2.

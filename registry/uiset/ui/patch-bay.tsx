@@ -9,7 +9,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react"
-import { cablePath as sag, type Point } from "./studio/cables"
+import { cablePath as sag, localPoint, type Point } from "./studio/cables"
 import { patchBay, type Cable, type PatchBayOptions } from "./studio/patch-bay"
 import "./studio/patch-bay.css"
 
@@ -24,14 +24,10 @@ function Cables({ cables, draft }: { cables: Cable[]; draft: ConnectDraft | null
     const root = svg.current?.parentElement
     if (!root) return
     const measure = () => {
-      const box = root.getBoundingClientRect()
       const next: Record<string, Point> = {}
       for (const jack of root.querySelectorAll<HTMLElement>("[data-port]")) {
         const rect = jack.getBoundingClientRect()
-        next[jack.dataset.port!] = {
-          x: rect.left - box.left + rect.width / 2,
-          y: rect.top - box.top + rect.height / 2,
-        }
+        next[jack.dataset.port!] = localPoint(root, rect.left + rect.width / 2, rect.top + rect.height / 2)
       }
       setCenters(next)
     }

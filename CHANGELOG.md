@@ -8,6 +8,14 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add superzero11/uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
+## 0.1.2 (unreleased)
+
+### Fixed
+
+- **Patch bay inside a scaled container.** Cables are now measured in the patch bay's own
+  pixels, so they stay on their jacks, and a cable being dragged stays under the pointer, when
+  something above it scales it (a zoomed canvas, a CSS transform). React and `@uiset/web`.
+
 ## 0.1.1 (2026-11-16)
 
 On UI SDK `0.1.0-beta.5`.

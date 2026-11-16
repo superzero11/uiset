@@ -4,7 +4,7 @@
 import { createParts, wrappedButton } from "@ui-sdk/web"
 import { knob } from "@/registry/uiset/ui/studio/knob"
 import { patchBay, type Cable } from "@/registry/uiset/ui/studio/patch-bay"
-import { cablePath } from "@/registry/uiset/ui/studio/cables"
+import { cablePath, localPoint } from "@/registry/uiset/ui/studio/cables"
 import "@/registry/uiset/ui/studio/knob.css"
 import "@/registry/uiset/ui/studio/patch-bay.css"
 import "@/registry/uiset/ui/studio/instruments.css"
@@ -91,11 +91,10 @@ function drawCables(el: HTMLElement, instance: PatchInstance) {
   const canvas = svg
   let centers: Record<string, { x: number; y: number }> = {}
   const measure = () => {
-    const box = el.getBoundingClientRect()
     centers = {}
     for (const jack of el.querySelectorAll<HTMLElement>("[data-port]")) {
       const rect = jack.getBoundingClientRect()
-      centers[jack.dataset.port!] = { x: rect.left - box.left + rect.width / 2, y: rect.top - box.top + rect.height / 2 }
+      centers[jack.dataset.port!] = localPoint(el, rect.left + rect.width / 2, rect.top + rect.height / 2)
     }
     draw()
   }

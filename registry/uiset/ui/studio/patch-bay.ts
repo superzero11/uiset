@@ -6,6 +6,7 @@ import {
   type ChangeDetails,
   type ConnectDraft,
 } from "@ui-sdk/core"
+import { localPoint } from "./cables"
 
 type Cable = { from: string; to: string }
 type PatchReason = "drag" | "connect-key" | "imperative"
@@ -80,10 +81,7 @@ const patchBay = definePrimitive({
       slot: "jack",
       draft: "connecting",
       canConnect: (from, to) => isOut(from) && isIn(to),
-      point: (x, y) => {
-        const box = surface?.getBoundingClientRect()
-        return box ? { x: x - box.left, y: y - box.top } : { x, y }
-      },
+      point: (x, y) => (surface ? localPoint(surface, x, y) : { x, y }),
       label,
       connect: (from, to, details) => toggle(from, to, details.reason, details.event),
     })

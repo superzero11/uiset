@@ -8,5 +8,17 @@ function cablePath(a: Point, b: Point) {
   return `M ${a.x} ${a.y} C ${a.x} ${a.y + drop}, ${b.x} ${b.y + drop}, ${b.x} ${b.y}`
 }
 
-export { cablePath }
+/**
+ * A point on the screen, in an element's own pixels. Screen distances stop being layout
+ * distances when an ancestor scales the element (a zoomed canvas, a CSS transform), and a
+ * cable drawn from them would miss its jacks: this divides the scale back out.
+ */
+function localPoint(surface: HTMLElement, x: number, y: number): Point {
+  const box = surface.getBoundingClientRect()
+  const scaleX = (surface.offsetWidth && box.width / surface.offsetWidth) || 1
+  const scaleY = (surface.offsetHeight && box.height / surface.offsetHeight) || 1
+  return { x: (x - box.left) / scaleX, y: (y - box.top) / scaleY }
+}
+
+export { cablePath, localPoint }
 export type { Point }

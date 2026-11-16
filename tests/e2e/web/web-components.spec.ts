@@ -95,6 +95,35 @@ test("the patch bay patches by keyboard, draws the cable and reports it", async 
   await expect(page.getByRole("button", { name: "Cutoff in" })).toHaveAttribute("aria-description", "Not patched")
 })
 
+// The same as the React patch bay: inside a scaled container the cable still ends on its jacks.
+test("a cable meets its jacks inside a scaled container", async ({ page }) => {
+  const bay = page.locator("uiset-patch-bay")
+  await bay.evaluate((el) => {
+    const frame = el.parentElement!
+    frame.style.transformOrigin = "0 0"
+    frame.style.transform = "scale(0.7)"
+    // A new width makes it measure its jacks again, now that it is scaled.
+    el.style.width = `${el.offsetWidth - 24}px`
+  })
+  await page.getByRole("button", { name: "LFO out" }).focus()
+  await page.keyboard.press("Enter")
+  await page.keyboard.press("ArrowRight")
+  await page.keyboard.press("Enter")
+  await expect(bay.locator("svg.patch-bay-cables .patch-bay-cable path")).toHaveCount(1)
+  const gaps = await bay.evaluate((el) => {
+    const path = el.querySelector<SVGPathElement>(".patch-bay-cable path")!
+    const box = el.getBoundingClientRect()
+    const scale = box.width / (el as HTMLElement).offsetWidth
+    const ends = [path.getPointAtLength(0), path.getPointAtLength(path.getTotalLength())].map((p) => ({ x: box.left + p.x * scale, y: box.top + p.y * scale }))
+    const jacks = ["LFO out", "Cutoff in"].map((name) => {
+      const r = el.querySelector(`[aria-label="${name}"]`)!.getBoundingClientRect()
+      return { x: r.x + r.width / 2, y: r.y + r.height / 2 }
+    })
+    return ends.map((end) => Math.min(...jacks.map((jack) => Math.hypot(end.x - jack.x, end.y - jack.y))))
+  })
+  for (const gap of gaps) expect(gap).toBeLessThan(2)
+})
+
 test("agents patch by the jacks' names, taken from the page", async ({ page }) => {
   const result = await act(page, [{ ref: "Patch bay", action: "plug", args: ["Oscillator out", "Output in"] }])
   expect(result.ok, result.error?.message).toBe(true)
