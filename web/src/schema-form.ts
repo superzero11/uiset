@@ -232,7 +232,10 @@ type View = {
 }
 
 const views = new WeakMap<HTMLElement, View>()
-const formOf = (el: HTMLElement) => el.querySelector<HTMLFormElement>(":scope > form") ?? el.appendChild(h("form", { class: "schema-form", novalidate: true }) as HTMLFormElement)
+// A dialog form's native submit does nothing outside an open dialog: in server HTML, before
+// the element is defined, Enter or Next can't load the page with what was typed in its URL.
+const formOf = (el: HTMLElement) =>
+  el.querySelector<HTMLFormElement>(":scope > form") ?? el.appendChild(h("form", { class: "schema-form", novalidate: true, method: "dialog" }) as HTMLFormElement)
 
 /** The parts that stay, made once per element: a property set draws again with them. */
 function viewOf(el: HTMLElement, instance: Instance): View {

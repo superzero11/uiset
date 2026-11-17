@@ -73,6 +73,23 @@ test("Enter in a field goes on to the next step; focus follows each step, and Ba
   await expect(form(page).getByRole("navigation", { name: "Steps" }).locator("[aria-current=step]")).toContainText("Who")
 })
 
+// Its HTML from a server, before the element is defined: a native submit must not load the
+// page with what was typed in its URL.
+test("before the element is defined, Enter or Next loads nothing and keeps what was typed", async ({ page, browser }) => {
+  const html = await page.locator("#invite").evaluate((el) => el.outerHTML)
+  const context = await browser.newContext({ javaScriptEnabled: false })
+  const plain = await context.newPage()
+  await plain.setContent(`<!doctype html><body>${html}</body>`)
+  const start = plain.url()
+  await plain.locator("[data-schema-field=email] input").fill("grace@example.com")
+  await plain.locator("[data-schema-field=name] input").press("Enter")
+  await plain.locator(".schema-form-actions button").click()
+  await plain.waitForTimeout(300)
+  expect(plain.url()).toBe(start)
+  await expect(plain.locator("[data-schema-field=email] input")).toHaveValue("grace@example.com")
+  await context.close()
+})
+
 test("a problem the server sends back shows on its step, with focus on the field", async ({ page }) => {
   await form(page).getByRole("textbox", { name: "Email" }).fill("ada@example.com")
   for (let step = 0; step < 3; step++) await next(page)

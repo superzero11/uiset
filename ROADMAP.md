@@ -1311,3 +1311,10 @@ checks, then a release, a deploy, and npm by the owner.
   to get a new instance. The whole suite in Chrome and WebKit: 1,566 passed, 1 failed (a
   canvas drag under load, 3 of 3 alone); a fresh-app install of all 114 items; the static
   site (92 pages).
+- 2026-11-17 — **The schema form's native submit is a no-op.** Checking the deploy found
+  that Next, now the form's submit, made the prerendered form submit natively before React
+  hydrated: a GET that loaded the page with the typed email in its URL (the fields have
+  names). The form is `method="dialog"` (React and web), whose native submit does nothing
+  outside an open dialog, while the submit event still fires for the hydrated form. Tests
+  copy the form's HTML into a page with JavaScript off and press Enter and Next (2 mutations
+  caught).

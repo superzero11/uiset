@@ -61,6 +61,24 @@ test("Enter in any field of a step goes on, and focus follows each step", async 
   await expect(email).toBeFocused()
 })
 
+// The server's HTML, before React hydrates it: a native submit must not load the page with
+// what was typed in its URL.
+test("before hydration, Enter or Next loads nothing and keeps what was typed", async ({ page, browser }) => {
+  await open(page)
+  const html = await form(page).evaluate((f) => f.outerHTML)
+  const context = await browser.newContext({ javaScriptEnabled: false })
+  const plain = await context.newPage()
+  await plain.setContent(`<!doctype html><body>${html}</body>`)
+  const start = plain.url()
+  await plain.locator("[data-schema-field=email] input").fill("grace@example.com")
+  await plain.locator("[data-schema-field=name] input").press("Enter")
+  await plain.locator(".schema-form-actions button").click()
+  await plain.waitForTimeout(300)
+  expect(plain.url()).toBe(start)
+  await expect(plain.locator("[data-schema-field=email] input")).toHaveValue("grace@example.com")
+  await context.close()
+})
+
 test("a problem the server sends back shows on its step, with focus on the field", async ({ page }) => {
   await open(page)
   await form(page).getByRole("textbox", { name: "Email" }).fill("ada@example.com")

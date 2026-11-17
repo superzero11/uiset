@@ -308,6 +308,9 @@ function SchemaForm<F extends Fields>({
       "aria-labelledby": heading ? titleId : undefined,
       // The form checks its own fields, so the browser's bubbles stay out of the way.
       noValidate: true,
+      // Before hydration a native submit (Enter, or Next) would load the page with what was
+      // typed in its URL. Outside an open dialog, a dialog form's submit does nothing.
+      method: "dialog",
       ...props,
       className: ["schema-form", className].filter(Boolean).join(" "),
       children: (state: RootState) => (
