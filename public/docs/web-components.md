@@ -715,7 +715,7 @@ notes.addEventListener("valuechange", (e) => {
 ## Content and forms
 
 The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
-`inline-edit` and `upload`. `web/content.html` has each of them.
+`inline-edit`, `upload` and `schema-form`. `web/content.html` has each of them.
 
 ```html
 <uiset-table label="Invoices" stack sticky-header sticky-column max-height="20rem">
@@ -740,6 +740,7 @@ The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
 
 <uiset-inline-edit label="Project name" value="Atlas" actions></uiset-inline-edit>
 <uiset-upload label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
+<uiset-schema-form confirm="Sends an invite email to the address given" done-message="Invite sent."></uiset-schema-form>
 ```
 
 ```ts
@@ -749,6 +750,8 @@ project.validate = (text) => (text.trim() ? null : "Give the project a name.")
 project.addEventListener("valuechange", (e) => rename(e.detail.value)) // preventDefault() refuses
 files.upload = (file, { signal, onProgress }) => send(file, signal, onProgress) // returns a Promise
 files.addEventListener("uploaded", (e) => attach(e.detail.result))
+invite.form = defineForm({ name: "invite_teammate", title: "Invite a teammate", fields: { … } })
+invite.send = async (values) => (await sendInvite(values)).problems // shown under their fields
 ```
 
 - `<uiset-table>` puts your `<table>` in a scroll area named by `label`. With `stack`, below
@@ -777,6 +780,11 @@ files.addEventListener("uploaded", (e) => attach(e.detail.result))
   The list is one tab stop: Enter on a row that stopped retries it, Delete removes it. It
   fires `valuechange`, `itemschange`, `uploaded`, `failed` and `reject`; `labels` and
   `messages` word it.
+- `<uiset-schema-form>` is React's `SchemaForm` on the same primitive: set `form` to what
+  `defineForm` returns (exported from `@uiset/web`) and `send` to what sends the values;
+  problems it returns show under their fields. It draws UI SDK's own fields, steps and a
+  review; `value` is live for `v-model`, and agents fill it by field name or label while a
+  person presses the submit. See [Forms](./forms.md#web-components).
 
 ## Page templates
 

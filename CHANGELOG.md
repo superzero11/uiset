@@ -8,6 +8,33 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add superzero11/uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
+## 0.3.0 (unreleased)
+
+### Added
+
+- **`schema-form`**: a form drawn from one definition. `defineForm` declares the fields
+  (text, email, link, phone, long text, number, choice, yes or no, date) with their checks,
+  and optional steps; the values' type comes from it. `SchemaForm` draws it with UISet's
+  controls, shows each problem under its field (as people leave a field, and on Next or
+  Submit, with focus on the first), walks the steps to a review, and shows the problems
+  your `onSubmit` sends back on their step. Any Standard Schema (zod, valibot, arktype)
+  adds rules across fields. An agent sees the form as one component and fills it by field
+  name or label with `fill`, hearing exactly what's wrong; the submit carries
+  `data-agent-confirm`, so a person sends it. `formTool` and `registerFormTool` make the
+  same definition an agent tool, for a model SDK or the browser's agent (WebMCP). Enter in
+  any field of a step goes on, and focus follows the steps. React, and
+  `<uiset-schema-form>` for Web Components, where `send` returns the problems and `value`
+  works with `v-model`; `@uiset/web` exports `defineForm` and `formTool`. See
+  [Forms](./docs/forms.md#schema-form).
+
+### Fixed
+
+- **`<uiset-stepper>`** steps ahead of the current one in a linear flow looked enabled:
+  `disabled` is now on UI SDK's button wrapper, which marks the button for the skins, as
+  React's are.
+- **Stepper** labels center on their numbered marks at any line height, and the marks keep
+  their size on a page without a `border-box` reset.
+
 ## 0.2.0 (2026-11-17)
 
 On UI SDK `0.1.0-beta.5`. A minor release: two things work differently, each under

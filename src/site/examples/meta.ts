@@ -47,6 +47,12 @@ const groups: [string, ExampleMeta[]][] = [
         items: ["inline-edit"],
       },
       {
+        slug: "schema-form",
+        title: "Schema form",
+        parts: "SchemaForm, defineForm (Field, Stepper, agent fill)",
+        items: ["schema-form"],
+      },
+      {
         slug: "number-input",
         title: "Number input",
         parts: "NumberInput, NumberInputGroup, NumberInputControl",

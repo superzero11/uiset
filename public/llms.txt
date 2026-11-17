@@ -31,7 +31,7 @@ Rules for agents building with UISet:
 - [Ink skin](https://uiset.dev/docs/ink.md): The Ink skin's design and tokens
 - [Root](https://uiset.dev/docs/theming.md): `uiset`
 - [App frame and data display](https://uiset.dev/docs/app-shell.md): `app-shell`, `breadcrumbs`, `page-header`, `card`, `badge`, `stat`, `empty-state`, `skeleton`, `description-list`, `item-list`, `alert`, `kbd`, `spinner`, `stepper`, `search-field`, `copy-button`, `table`, `avatar-group`, `code-block`
-- [Forms](https://uiset.dev/docs/forms.md): `inline-edit`, `upload`
+- [Forms](https://uiset.dev/docs/forms.md): `schema-form`, `inline-edit`, `upload`
 - [Rich text](https://uiset.dev/docs/rich-text.md): `rich-text`
 - [Chat](https://uiset.dev/docs/chat.md): `chat`, `chat-response`, `chat-parts`, `chat-composer`, `chat-sidebar`
 - [Data grid](https://uiset.dev/docs/data-grid.md): `data-grid`

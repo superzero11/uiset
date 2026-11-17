@@ -270,19 +270,20 @@ checks, then a release, a deploy, and npm by the owner.
 - UI SDK's next beta: rerun everything on it and drop workarounds whose issues are fixed
   (#622 is closed upstream: the wheel's focus move; then #780–#782 as they land).
 
-**Batch 2: data apps**, the most-asked pieces still missing.
-1. Filter builder and saved views for the data grid (ideas #2): typed operators, a filter
-   bar, saved views, and an agent setting a filter by name. M.
-2. Data grid remote rows (server sort, filter and cursor paging), tree rows and detail rows
-   (ideas #5). M–L.
-3. App shell variants: nested menus that fly out when collapsed, drill-down, a double
-   sidebar, a top bar (ideas #3). M.
-
-**Batch 3: agent-first**, what no other registry does.
-4. Schema form and multi-step form: one schema renders the form and registers an agent tool,
+**Batch 3: agent-first**, first: what no other registry does (owner, 2026-11-17).
+1. Schema form and multi-step form: one schema renders the form and registers an agent tool,
    so an agent fills it by field name, with validation and approval (ideas #4). M.
-5. Agent-readiness check: a test helper and CLI that flag unnamed and ambiguous controls,
+   **Done 2026-11-17** (`schema-form` in React, `<uiset-schema-form>` for Web Components).
+2. Agent-readiness check: a test helper and CLI that flag unnamed and ambiguous controls,
    with a score per page (ideas #7). S–M.
+
+**Batch 2: data apps**, next: the most-asked pieces still missing.
+3. Filter builder and saved views for the data grid (ideas #2): typed operators, a filter
+   bar, saved views, and an agent setting a filter by name. M.
+4. Data grid remote rows (server sort, filter and cursor paging), tree rows and detail rows
+   (ideas #5). M–L.
+5. App shell variants: nested menus that fly out when collapsed, drill-down, a double
+   sidebar, a top bar (ideas #3). M.
 
 **Batch 4: a skin and screens.**
 6. Print skin, from a written design plan first (Swiss and letterpress type, section 3).
@@ -1249,4 +1250,64 @@ checks, then a release, a deploy, and npm by the owner.
   behaviors (the grid's option editor, the knob's live `value`), which the changelog's policy
   makes a minor release; the owner approved 0.2.0. Everything written as 0.1.2 above is in it.
   The owner publishes `@uiset/web` to npm.
+- 2026-11-17 — **Batch 3 before Batch 2.** Asked which batch matters most, I said the
+  agent-first one: none of 563 registries mention an agent operating the UI, the schema form
+  has the backlog's joint-highest demand (8 signals), and a community UI SDK inspector
+  appeared on 2026-11-15, so the readiness check is time-sensitive. Batch 2 improves kits
+  where others already lead. The owner agreed: Batch 3 first, starting with the schema form,
+  then Batch 2.
+- 2026-11-17 — **`schema-form` (React).** UI SDK has no per-form tool API: components join the
+  bridge through `definePrimitive`'s `agent` key, and `registerTools` exposes snapshot, act
+  and query. So the form is a primitive (`schema-form/form.ts`) with `fill`, `goTo` and
+  `reset` for agents, its fields as items, and its values and step in the snapshot; and
+  `schema-form/tool.ts` turns the definition into a tool whose `execute` fills the form
+  through the bridge, so `allow` and the submit's `data-agent-confirm` still decide. The
+  definition is UISet's own (typed, no dependency), with any Standard Schema for rules
+  across fields; JSON Schema comes from it for tools. WebMCP probed in jsdom: UI SDK calls
+  `registerTool(tool, { signal })` and unregisters by aborting, and `registerFormTool` does
+  the same. Found while building: the step's Next and the review's Submit sat in one slot,
+  so React reused the button and turned it into a submit during its own click, which sent
+  the form (Chrome; jsdom doesn't do this), so they're keyed apart and an e2e test guards
+  it; the last step's action and the stepper's review step were both named "Review", so
+  the action says Next everywhere; the review's narrow layout needed a container to query;
+  Enter in a step's only field would have submitted, so a submit before the review is Next.
+  An agent pressing the form's submit by name works; pressing it through the form fails
+  ("has nothing to press"), which the docs say. Checked by eye in 5 skins, light and dark,
+  and at phone width. Tests: 35 unit for the definition, 10 React and agent, 11 e2e in Chrome
+  and WebKit (steps, server errors, agent fill and approval, phone width, axe in every skin
+  and theme on a problem and on the review); 12 mutations caught (removing one key alone
+  changes nothing, since one key keeps the buttons apart). The React suite in Chrome: 415
+  passed, 5 failed (board and canvas drags, unchanged kits, 34 of 34 on a rerun alone); a
+  fresh-app install of all 114 items; the static site (92 pages).
 
+- 2026-11-17 — **`<uiset-schema-form>` (Web Components).** On the same primitive, with the
+  labels, the review's wording and the focus target shared with React
+  (`schema-form/labels.ts`). The root binds the `<form>` inside it (createParts' `target`),
+  so it submits as a form does and has the form role. `send` is a function property rather
+  than an `onSubmit` event: an event can't return the problems to show, and Vue reads any
+  `on…` binding as a listener. `value` is live through createParts' `state`, and setting it
+  fires nothing, as with UI SDK's own number input, radio group, select, checkbox, switch
+  and date input (checked). A page sets `form` after the element is on the page, so the
+  primitive now takes a definition given later, and fields it adds start at their defaults.
+  Found while building, and fixed in React too: Enter did nothing on a step with two or
+  more text fields (a form with no submit button submits on Enter only with one field), so
+  Next is the form's submit on a step; and a step change dropped focus to the page when it
+  took away what had it (the field Enter was pressed in, Back on the first step, an Edit),
+  so focus goes to the new step's first field, or to Send on the review (keyboard only:
+  Safari doesn't focus a button a mouse presses). Found on the web only: WebKit dropped
+  every click on Next, because each draw rewrote the buttons' text and WebKit cancels a
+  click whose pressed text node was replaced; and taking out a focused field fired its
+  blur check inside the draw, which drew again mid-draw, so draws don't nest. Found in
+  `<uiset-stepper>`: upcoming steps in a linear flow looked enabled (UI SDK's button takes
+  `disabled` on its wrapper); and the stepper's labels sat high beside their marks on a page
+  with a normal line height, and the marks grew without a `border-box` reset. Checked by eye
+  in 5 skins, light and dark, and at phone width, beside React's. Tests: 476 unit (2 new for
+  the primitive's `setValues` and late definition, and the element's API typed against the
+  primitive's); 18 web e2e (steps, Enter and focus, server problems, every control, agent
+  fill and approval, `v-model`, a select and checkbox from script, `disabled` and `label`,
+  taken off the page and back, phone width, axe in every skin) and 12 React, in Chrome,
+  WebKit and Firefox (Docker; its axe tests use DOM queries, as the Content page's do). 16
+  mutations caught; one missed until the move test took the element off the page long enough
+  to get a new instance. The whole suite in Chrome and WebKit: 1,566 passed, 1 failed (a
+  canvas drag under load, 3 of 3 alone); a fresh-app install of all 114 items; the static
+  site (92 pages).

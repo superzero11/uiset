@@ -36,7 +36,7 @@ const guides: DocPage[] = [
 
 const kits: DocPage[] = [
   { slug: "app-shell", title: "App frame and data display", file: "app-shell.md", item: "app-shell" },
-  { slug: "forms", title: "Forms: inline edit and upload", file: "forms.md", item: "upload" },
+  { slug: "forms", title: "Forms: schema form, inline edit and upload", file: "forms.md", item: "schema-form" },
   { slug: "chat", title: "Chat", file: "chat.md", item: "chat" },
   { slug: "rich-text", title: "Rich text", file: "rich-text.md", item: "rich-text" },
   { slug: "data-grid", title: "Data grid", file: "data-grid.md", item: "data-grid" },

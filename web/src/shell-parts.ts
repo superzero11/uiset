@@ -226,7 +226,6 @@ class UISetStepper extends Evented<UISetStepperEvents>() {
             class: "stepper-step",
             "data-step": step.value,
             "aria-current": state === "current" ? "step" : null,
-            disabled: linear && index > current,
           },
           h("span", { class: "stepper-mark", "aria-hidden": "true" }, state === "complete" ? iconElement("check") : String(index + 1)),
           h("span", { class: "stepper-text" }, h("span", { class: "stepper-label" }, step.label), step.description ? h("span", { class: "stepper-description" }, step.description) : null),
@@ -237,7 +236,8 @@ class UISetStepper extends Evented<UISetStepperEvents>() {
           this.dispatchEvent(new CustomEvent("valuechange", { detail: { value: step.value } }))
           reportInput(this)
         })
-        return h("li", { "data-state": state }, h("ui-button", null, button))
+        // UI SDK's button takes `disabled` on the wrapper, and marks the button for the skins.
+        return h("li", { "data-state": state }, h("ui-button", { disabled: linear && index > current }, button))
       }),
     )
     if (focused) this.querySelector<HTMLElement>(`[data-step="${CSS.escape(focused)}"]`)?.focus()

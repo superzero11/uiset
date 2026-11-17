@@ -69,6 +69,12 @@
           <uiset-inline-edit id="project" label="Project name" value="Atlas" actions></uiset-inline-edit>
           <uiset-upload id="files" label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
         </section>
+
+        <section aria-labelledby="schema-form-heading">
+          <h2 id="schema-form-heading">Schema form</h2>
+          <uiset-schema-form id="invite" heading="3" confirm="Sends an invite email to the address given" done-message="Invite sent."></uiset-schema-form>
+          <p id="invite-sent" hidden></p>
+        </section>
       </main>
     </uiset-root>
   </body>

@@ -13,6 +13,8 @@ import type { swipeList } from "@/registry/uiset/ui/mobile/swipe-list"
 import type { schedulePrimitive } from "@/registry/uiset/ui/scheduler/schedule"
 import type { patchBay } from "@/registry/uiset/ui/studio/patch-bay"
 import type { terminalPrimitive } from "@/registry/uiset/ui/terminal/session"
+import type { schemaForm } from "@/registry/uiset/ui/schema-form/form"
+import type { UISetSchemaForm } from "@/web/src/uiset"
 import type { UISetBoard, UISetCanvas, UISetDataGrid, UISetDataGridColumn, UISetKnob, UISetKnobEvents, UISetLineChart, UISetPatchBay, UISetScatterChart, UISetSchedule, UISetSearchField, UISetSwipeList, UISetTerminal } from "@/web/src/uiset"
 
 // What a primitive's API must be assignable to: the type a page sees on the element.
@@ -26,6 +28,7 @@ export const canvas: Shown<UISetCanvas> = unchecked as TypesOf<typeof canvasPrim
 export const swipes: Shown<UISetSwipeList> = unchecked as TypesOf<typeof swipeList>["api"]
 export const bay: Shown<UISetPatchBay> = unchecked as TypesOf<typeof patchBay>["api"]
 export const terminal: Shown<UISetTerminal> = unchecked as TypesOf<typeof terminalPrimitive>["api"]
+export const form: Shown<UISetSchemaForm> = unchecked as TypesOf<typeof schemaForm>["api"]
 
 // A chart's accessors are checked against the datum a page names.
 type Month = { month: string; revenue: number }

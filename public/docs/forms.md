@@ -1,25 +1,141 @@
-# Forms: inline edit and upload
+# Forms: schema form, inline edit and upload
 
-Two things forms need that UI SDK leaves to you. `InlineEdit` is text you edit where it
-shows, on UI SDK's `createInlineEdit`. `Upload` is a drop zone and a queue of uploads on UI
-SDK's File input: each file shows its progress and can be canceled, retried or removed.
-Fields, selects, checkboxes, date and number inputs are UI SDK's own components; see
-[the list](./README.md#ui-sdk-components). Without React, they are `<uiset-inline-edit>` and
-`<uiset-upload>` in [Web Components](./web-components.md#content-and-forms).
+Three things forms need that UI SDK leaves to you. `SchemaForm` draws a whole form from one
+definition, steps and review included, and the same definition lets an agent fill it.
+`InlineEdit` is text you edit where it shows, on UI SDK's `createInlineEdit`. `Upload` is a
+drop zone and a queue of uploads on UI SDK's File input: each file shows its progress and can
+be canceled, retried or removed. Fields, selects, checkboxes, date and number inputs are UI
+SDK's own components; see [the list](./README.md#ui-sdk-components).
 
 ```bash
-npx shadcn@latest add superzero11/uiset/inline-edit superzero11/uiset/upload
+npx shadcn@latest add superzero11/uiset/schema-form superzero11/uiset/inline-edit superzero11/uiset/upload
 ```
 
 ## Parts
 
 | Part                                                    | Item          | What it is                                                        |
 | ------------------------------------------------------- | ------------- | ----------------------------------------------------------------- |
+| `SchemaForm`                                            | `schema-form` | A form drawn from `defineForm`: fields, steps, review, submit     |
+| `defineForm`, `validateForm`, `toJSONSchema`            | `schema-form` | The definition, its checks, and its fields as JSON Schema         |
+| `formTool`, `registerFormTool`                          | `schema-form` | The form as an agent tool, for a model SDK or the browser's agent |
 | `InlineEdit`                                            | `inline-edit` | A value that turns into a field when you press it                 |
 | `InlineEditRoot`, `InlineEditPreview`, `InlineEditInput`, `InlineEditSave`, `InlineEditCancel`, `InlineEditError` | `inline-edit` | Its parts, for a layout of your own |
 | `Upload`                                                | `upload`      | A drop zone, a Choose files button and the list of uploads        |
 | `useUploadQueue`, `UploadRow`, `UploadPreview`          | `upload`      | The queue as a hook and one file's row, for a layout of your own  |
 | `createUploadQueue`                                     | `upload`      | The queue with no React in it                                     |
+
+## Schema form
+
+Describe the form once. Its fields draw the form with UISet's controls, check what people
+type, and become an agent tool's input:
+
+```tsx
+import { defineForm, SchemaForm, type FormValues } from "@/components/ui/schema-form"
+
+const invite = defineForm({
+  name: "invite_teammate", // the tool's name
+  title: "Invite a teammate",
+  description: "They get an email with a link to join the workspace.",
+  fields: {
+    email: { kind: "email", label: "Email", required: true },
+    role: {
+      kind: "choice",
+      label: "Role",
+      display: "radio",
+      default: "editor",
+      options: [
+        { value: "viewer", label: "Viewer" },
+        { value: "editor", label: "Editor" },
+      ],
+    },
+    seats: { kind: "number", label: "Seats", min: 1, max: 50, step: 1, default: 1 },
+    notify: { kind: "boolean", label: "Email me when they join", display: "switch" },
+  },
+  steps: [
+    { title: "Who", fields: ["email"] },
+    { title: "Access", fields: ["role", "seats", "notify"] },
+  ],
+})
+
+type Invite = FormValues<typeof invite.fields> // { email: string; role: "viewer" | "editor" | null; … }
+
+<SchemaForm
+  form={invite}
+  labels={{ submit: "Send invite" }}
+  confirm="Sends an invite email to the address given"
+  doneMessage="Invite sent."
+  onSubmit={async (values) => {
+    const response = await sendInvite(values)
+    if (response.status === 409) return { email: "They're already in this workspace." }
+  }}
+/>
+```
+
+- **Kinds:** `text`, `email`, `url`, `tel`, `textarea`, `number`, `choice` (a select, or
+  radios with `display: "radio"`), `boolean` (a checkbox, or a switch) and `date` (an ISO
+  date). Each takes `label`, `description`, `required`, `placeholder` and `default`, and the
+  checks its kind has: `min` and `max` (length, value or date), `step` (1 for whole numbers),
+  `pattern` with `patternMessage`, and `validate(value, values)` for a rule of your own.
+- **Rules across fields:** pass any Standard Schema as `schema` (zod, valibot, arktype and
+  others implement it). It runs on submit once every field passes; an issue goes under the
+  field its path names, or above the actions.
+- **When problems show:** leaving a field shows what's wrong with what was typed; an empty
+  required field waits for Next or Submit. Those check the step, or everything, and move
+  focus to the first problem. A field showing a problem is checked again as it changes.
+- **Steps:** every field is in one step. Next checks the step, and so does Enter in any
+  of its fields; the steps above the form go back to any step done; the last Next shows a
+  review of every value with an Edit per step, and Submit sends. When a step change takes
+  away what had focus (the field you pressed Enter in, Back on the first step, an Edit),
+  focus goes to the new step's first field, or to the submit on the review.
+- **`onSubmit`** gets the values. Return problems by field (`{ email: "…" }`), or under
+  `form` for the whole form, and they show where they belong, on their step, with focus on
+  the first. A thrown error shows under `form`. `doneMessage` is said and shown once it's sent.
+- **Controlled or not:** `value`, `defaultValue`, `onValueChange`, and `step`,
+  `defaultStep`, `onStepChange`, as every UI SDK component.
+- **Words:** `labels` (Next, Back, Submit, the review's words) and the definition's
+  `messages` translate everything it says.
+
+### An agent fills it; a person sends it
+
+The form is one component to an agent, named by its title, with its fields as items and
+three actions:
+
+```ts
+await agent.act({
+  steps: [{ ref: "Invite a teammate", action: "fill", args: [{ Email: "grace@example.com", role: "Editor", seats: "3" }] }],
+})
+```
+
+- **`fill`** takes values by field name or label, as each field takes them: a number from
+  "3", a choice by its value or its label, a switch from "yes". What it can't fill, and
+  what it fills but is wrong, shows under the fields and comes back as the step's error, so
+  the agent can correct it: `Seats is at most 50. No field "phone". Its fields: Email, Role,
+  Seats, …`.
+- **`goTo(step)`** shows a step, checking the steps on the way as Next does; the review is
+  the step after the last. **`reset`** starts over.
+- **The submit needs a person.** The submit button carries `data-agent-confirm` with
+  `confirm` (the form's title by default), so an agent's press waits for your bridge's
+  `allow` to ask, or fails with "Needs a person". `confirm={false}` lets an agent send it.
+
+### The same definition as a tool
+
+`formTool(form, agent)` is the form as a tool a model calls: its name, a description, the
+fields as JSON Schema, and `execute`, which fills the form on the page through your bridge,
+so `allow` and the confirmation still apply and the person sees every value land.
+
+```ts
+import { jsonSchema, tool } from "ai"
+import { formTool, registerFormTool } from "@/components/ui/schema-form"
+
+const invite = formTool(inviteForm, agent) // add { submit: "Send invite" } to press it after filling
+const tools = { [invite.name]: tool({ description: invite.description, inputSchema: jsonSchema(invite.inputSchema), execute: invite.execute }) }
+
+// Or for the browser's own agent, over WebMCP, beside UI SDK's registerTools:
+const unregister = registerFormTool(inviteForm, agent)
+```
+
+`toJSONSchema(form)` gives the schema alone: `required` fields, `enum` for choices (with
+their labels in the description), `format` for emails, links and dates, and the limits.
 
 ## Inline edit
 
@@ -127,6 +243,7 @@ Outside React, `createUploadQueue(() => options)` is the same queue: call `start
 
 | Keys                       | Where                 | Does                                                      |
 | -------------------------- | --------------------- | --------------------------------------------------------- |
+| Enter                      | a schema form's field | Next on a step; Submit on the review or a form with no steps |
 | Enter, Space, F2           | an inline edit's value | Start editing, with the text selected                     |
 | Enter                      | its field             | Save. Focus goes back to the value                        |
 | Escape                     | its field             | Put the text back. Focus goes back to the value           |
@@ -149,12 +266,39 @@ order, because the keys above do the same from the field or the row.
   give. Each row's Cancel and Retry are buttons named for the file ("Retry report.pdf"),
   which an agent presses. Each upload's progress bar is listed as "Uploading report.pdf".
 - Removing one file is not something an agent can do yet: UI SDK's bridge doesn't offer the
-  File input's Remove buttons, and its `removeFile` takes a `File`. `clear` removes them
-  all.
+  File input's Remove buttons, and its `removeFile` takes a `File` (reported as
+  vercel-labs/ui#782). `clear` removes them all.
 - Neither asks for confirmation.
 
 ## Web Components
 
-`<uiset-inline-edit>` and `<uiset-upload>` aren't built yet. The upload queue
-(`upload/queue.ts`) and the inline edit primitive (`inline-edit/inline-edit.ts`) have no
-React in them, so the elements will share them.
+`<uiset-schema-form>`, `<uiset-inline-edit>` and `<uiset-upload>` are in
+[Web Components](./web-components.md#content-and-forms), on the same primitives and queue.
+The schema form's element takes the same definition, from `@uiset/web`:
+
+```html
+<uiset-schema-form id="invite" confirm="Sends an invite email to the address given" done-message="Invite sent."></uiset-schema-form>
+```
+
+```ts
+import { defineForm, formTool } from "@uiset/web"
+
+const invite = document.querySelector("uiset-schema-form")! // typed by @uiset/web
+invite.labels = { submit: "Send invite" }
+invite.send = async (values) => {
+  const response = await sendInvite(values)
+  if (response.status === 409) return { email: "They're already in this workspace." }
+}
+invite.form = defineForm({ … }) // as above
+invite.addEventListener("valuechange", (e) => save(e.detail.value)) // preventDefault() refuses
+```
+
+- `send` is React's `onSubmit`: what it returns shows. `value` is live, as a text field's:
+  read it after `input`, set it to fill the fields (fields left out go to their defaults;
+  setting it fires nothing). Vue's `v-model` works on it.
+- `defaultValue` (set it before `form`), `default-step`, `step`, `disabled`, `labels` and
+  `locale` are React's props. `heading` is the title's level (2, 3 or 4, or `false`); with `false`, name it with
+  `label`. `confirm="false"` lets an agent send it.
+- It fires `valuechange` and `stepchange`. `api` has `fill`, `goTo`, `next`, `back`,
+  `submit` and `reset`, and agents see the same form React's does. `formTool` and
+  `registerFormTool` take the element's `form` and your bridge.

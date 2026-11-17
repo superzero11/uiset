@@ -3,6 +3,8 @@ import { createAgent } from "@ui-sdk/web/agent"
 import type { Uploader } from "@/registry/uiset/ui/upload/queue"
 import type { UISetCodeBlock, UISetCodeTabs } from "./content"
 import type { InlineEditElement } from "./inline-edit"
+import type { UISetSchemaForm } from "./schema-form"
+import { defineForm } from "@/registry/uiset/ui/schema-form/schema"
 import type { UISetUpload } from "./upload"
 
 const invoices = [
@@ -57,5 +59,48 @@ const upload: Uploader = (file, { signal, onProgress }) =>
     })
   })
 ;(document.getElementById("files") as UISetUpload).upload = upload
+
+// The same invite as the React gallery's: three steps and a review. The pretend server says
+// one address is already in the workspace.
+const invite = defineForm({
+  name: "invite_teammate",
+  title: "Invite a teammate",
+  description: "They get an email with a link to join the workspace.",
+  fields: {
+    email: { kind: "email", label: "Email", required: true, placeholder: "ada@example.com" },
+    name: { kind: "text", label: "Name", max: 80 },
+    role: {
+      kind: "choice",
+      label: "Role",
+      display: "radio",
+      required: true,
+      default: "editor",
+      options: [
+        { value: "viewer", label: "Viewer" },
+        { value: "editor", label: "Editor" },
+        { value: "admin", label: "Admin" },
+      ],
+    },
+    seats: { kind: "number", label: "Seats", min: 1, max: 50, step: 1, default: 1, description: "How many people this invite admits." },
+    start: { kind: "date", label: "Start date" },
+    message: { kind: "textarea", label: "Message", max: 280 },
+    notify: { kind: "boolean", label: "Email me when they join", display: "switch", default: true },
+  },
+  steps: [
+    { title: "Who", fields: ["email", "name"] },
+    { title: "Access", fields: ["role", "seats", "start"] },
+    { title: "Message", fields: ["message", "notify"] },
+  ],
+})
+const inviteForm = document.getElementById("invite") as UISetSchemaForm
+inviteForm.labels = { submit: "Send invite" }
+inviteForm.send = async (values) => {
+  await new Promise((resolve) => setTimeout(resolve, 400))
+  if (values.email === "ada@example.com") return { email: "Ada is already in this workspace." }
+  const sent = document.getElementById("invite-sent")!
+  sent.textContent = `Sent to ${values.email} as ${values.role}.`
+  sent.hidden = false
+}
+inviteForm.form = invite
 
 Object.assign(window, { agent: createAgent() })

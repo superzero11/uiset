@@ -29,6 +29,12 @@
   min-inline-size: 0;
 }
 
+/* The schema form's last action sits at the end of its row, as in React: <ui-button> lays
+   out as its button. */
+.schema-form-actions > ui-button:last-child > button {
+  margin-inline-start: auto;
+}
+
 /* A select in a field: its label and trigger stack as the field's own parts, as in React. */
 ui-field > ui-select {
   display: contents;

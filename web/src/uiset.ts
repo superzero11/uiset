@@ -22,6 +22,7 @@ import { defineStudio } from "./studio"
 import { defineContent } from "./content"
 import { defineInlineEdit } from "./inline-edit"
 import { defineUpload } from "./upload"
+import { defineSchemaForm } from "./schema-form"
 import { defineTerminal } from "./terminal"
 import "./web.css"
 import type { UISetAgentConsole, UISetAgentStep, UISetAgentApprovals, UISetAgentActivity, UISetAgentSnapshot } from "./agent-console"
@@ -41,6 +42,7 @@ import type { KnobElement, PatchBayElement } from "./studio"
 import type { UISetAvatarGroup, UISetCodeBlock, UISetCodeTabs, UISetCountBadge, UISetPackageCommand, UISetTable } from "./content"
 import type { InlineEditElement } from "./inline-edit"
 import type { UISetUpload } from "./upload"
+import type { UISetSchemaForm } from "./schema-form"
 import type { TerminalElement } from "./terminal"
 import { ElementBase } from "./dom"
 
@@ -96,6 +98,7 @@ function define() {
   defineContent()
   defineInlineEdit()
   defineUpload()
+  defineSchemaForm()
 }
 
 define()
@@ -146,6 +149,7 @@ declare global {
     "uiset-rich-text-content": UISetRichTextContent
     "uiset-scatter-chart": UISetScatterChart
     "uiset-schedule": UISetSchedule
+    "uiset-schema-form": UISetSchemaForm
     "uiset-schedule-month": UISetScheduleMonth
     "uiset-search-field": UISetSearchField
     "uiset-segmented-bar": UISetSegmentedBar
@@ -168,6 +172,7 @@ export type { UISetBoardEvents } from "./board"
 export type { UISetCodeTabsEvents } from "./content"
 export type { UISetInlineEditEvents } from "./inline-edit"
 export type { UISetUploadEvents, UploadLabels as UISetUploadLabels } from "./upload"
+export type { UISetSchemaFormEvents } from "./schema-form"
 export type { UISetCanvasEvents } from "./canvas"
 export type { UISetChartEvents } from "./chart"
 export type { UISetChatEvents, UISetChatComposerEvents, UISetChatModelPickerEvents, UISetChatThreadsEvents } from "./chat"
@@ -198,6 +203,7 @@ export type {
   UISetPackageCommand,
   UISetTable,
   UISetUpload,
+  UISetSchemaForm,
   UISetBarChart,
   UISetBoard,
   UISetCanvas,
@@ -244,5 +250,11 @@ export type {
   UISetStat,
 }
 export { iconElement, iconPaths } from "@/registry/uiset/ui/shell/icon-paths"
+// The schema form's definition, its checks, and the same definition as an agent tool.
+export { defineForm, toJSONSchema, validateForm } from "@/registry/uiset/ui/schema-form/schema"
+export { formTool, registerFormTool } from "@/registry/uiset/ui/schema-form/tool"
+export type { FieldSpec, FormDefinition, FormErrors, FormValues, StandardSchemaV1 } from "@/registry/uiset/ui/schema-form/schema"
+export type { FormTool, FormToolOptions, FormToolResult } from "@/registry/uiset/ui/schema-form/tool"
+export type { SchemaFormLabels as UISetSchemaFormLabels } from "@/registry/uiset/ui/schema-form/labels"
 export type { IconName } from "@/registry/uiset/ui/shell/icon-paths"
 export { skins, UISetRoot }

@@ -1511,6 +1511,77 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "schema-form",
+      "type": "registry:ui",
+      "title": "Schema form",
+      "description": "A form from one definition: its fields with UISet's controls, steps with a review, checks as people type and on submit, and an agent that fills it by field name while a person approves the submit. The same definition is JSON Schema for an agent tool.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.5",
+        "@ui-sdk/react@0.1.0-beta.5"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/button",
+        "superzero11/uiset/checkbox",
+        "superzero11/uiset/date-input",
+        "superzero11/uiset/field",
+        "superzero11/uiset/number-input",
+        "superzero11/uiset/radio",
+        "superzero11/uiset/select",
+        "superzero11/uiset/stepper",
+        "superzero11/uiset/switch",
+        "superzero11/uiset/textarea"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/schema-form.tsx",
+          "type": "registry:ui",
+          "target": "@ui/schema-form.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/schema-form/schema.ts",
+          "type": "registry:file",
+          "target": "@ui/schema-form/schema.ts"
+        },
+        {
+          "path": "registry/uiset/ui/schema-form/form.ts",
+          "type": "registry:file",
+          "target": "@ui/schema-form/form.ts"
+        },
+        {
+          "path": "registry/uiset/ui/schema-form/tool.ts",
+          "type": "registry:file",
+          "target": "@ui/schema-form/tool.ts"
+        },
+        {
+          "path": "registry/uiset/ui/schema-form/labels.ts",
+          "type": "registry:file",
+          "target": "@ui/schema-form/labels.ts"
+        },
+        {
+          "path": "registry/uiset/ui/schema-form/schema-form.css",
+          "type": "registry:file",
+          "target": "@ui/schema-form/schema-form.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icons.tsx",
+          "type": "registry:file",
+          "target": "@ui/shell/icons.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icon-paths.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/icon-paths.ts"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "upload",
       "type": "registry:ui",
       "title": "Upload",

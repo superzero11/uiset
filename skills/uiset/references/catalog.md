@@ -32,6 +32,7 @@ Install any item with `npx shadcn@latest add superzero11/uiset/<item>`. Docs: ht
 
 ## Forms (docs/forms.md)
 
+- `schema-form`: A form from one definition: its fields with UISet's controls, steps with a review, checks as people type and on submit, and an agent that fills it by field name while a person approves the submit. The same definition is JSON Schema for an agent tool.
 - `inline-edit`: Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons.
 - `upload`: A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use.
 

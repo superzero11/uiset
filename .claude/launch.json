@@ -6,6 +6,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["dev"],
       "port": 5620
+    },
+    {
+      "name": "uiset-web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["web:dev"],
+      "port": 5640
     }
   ]
 }
