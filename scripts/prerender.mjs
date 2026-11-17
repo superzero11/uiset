@@ -41,8 +41,9 @@ async function render(path) {
     .replace(/<link rel="modulepreload"[^>]*>/g, "")
   await page.close()
   if (errors.length) console.warn(`  ${path}: ${errors.join("; ")}`)
-  // A page that names this machine would send visitors' browsers to their own.
-  const local = /https?:\/\/(localhost|127\.0\.0\.1)[:/]/.exec(html)
+  // A page that links or loads from this machine would send visitors' browsers to their own.
+  // Text may name it, like a docs example run against a local app.
+  const local = /(?:\b(?:href|src|srcset|action|poster|content)=["'][^"']*|url\(\s*["']?)https?:\/\/(?:localhost|127\.0\.0\.1)[:/]/.exec(html)
   if (local) throw new Error(`${path} still points at ${local[0]}…; make it relative before writing it.`)
   return html
 }
