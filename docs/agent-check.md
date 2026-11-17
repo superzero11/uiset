@@ -3,7 +3,8 @@
 An agent uses a UI SDK app through its agent bridge: it finds each control by name and calls
 its actions. `agent-check` checks a page the way the agent sees it, through the bridge
 itself, and scores it: the share of controls an agent can find by name. It works with any
-framework UI SDK serves, since the bridge is the same in each.
+framework UI SDK serves, since the bridge is the same in each. Try it on
+[the Agents page](/agents#agent-check), with and without three mistakes in a form.
 
 ```bash
 npx shadcn@latest add superzero11/uiset/agent-check

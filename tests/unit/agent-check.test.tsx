@@ -136,7 +136,7 @@ test("past the snapshot's 100 components, it finds the rest through query and sa
   expect(report.problems.map((problem) => problem.kind)).toEqual(["overflow", "unnamed"])
   // `more` is the bridge's count, which takes in components earlier tests removed.
   expect(report.problems[0]).toMatchObject({ shown: 100, more: fresh.snapshot().at(-1)!.more, unchecked: 0 })
-})
+}, 30_000) // A query per name over 100-odd components: slow in jsdom while the suite runs.
 
 test("past 100 of one kind, it says how many it couldn't check", async () => {
   const fresh = createAgent()
@@ -155,7 +155,7 @@ test("past 100 of one kind, it says how many it couldn't check", async () => {
   expect(report.controls).toBeLessThan(205)
   expect(unchecked).toBeGreaterThanOrEqual(205 - report.controls)
   expect(overflow.message).toContain(`${unchecked} couldn't be checked`)
-})
+}, 30_000)
 
 test("a check limited to a root looks for unseen controls only there", async () => {
   render(
@@ -184,11 +184,21 @@ test("components no step targets (no actions) may share a name; a control agents
           <span>Free</span> <span>plan</span>
         </button>
       </section>
+      <div>
+        <div className="card-title">
+          <h3>Revenue report</h3>
+        </div>
+        <button type="button">Export CSV</button>
+      </div>
       <Button>Warning: Remove the console.log</Button>
     </main>,
   )
   const report = await checkAgentReadiness(agent)
-  expect(report.problems).toEqual([expect.objectContaining({ kind: "unseen", control: 'button "Free plan"', near: '"Plan mix"' })])
+  expect(report.problems).toEqual([
+    expect.objectContaining({ kind: "unseen", control: 'button "Free plan"', near: '"Plan mix"' }),
+    // A title in the first child, like a card's title row, places it too.
+    expect.objectContaining({ kind: "unseen", control: 'button "Export CSV"', near: '"Revenue report"' }),
+  ])
 })
 
 test("a list the bridge finds through one of its items isn't a component a step by that name takes", async () => {

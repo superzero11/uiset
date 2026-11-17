@@ -1353,3 +1353,13 @@ checks, then a release, a deploy, and npm by the owner.
   command to install the … template" button. Tests: 8 unit (every rule, past 100, `ignore`,
   `root`) with 14 mutations caught, and 2 e2e (WebMCP tools on the React site, a named global
   on a web page) with 5 mutations caught; the fresh-app install of 115 items.
+  Then, at the owner's question ("I don't see it anywhere in the gallery"): the gallery shows
+  components, so the check got a live demo on the Agents page instead. "Check this page" runs
+  the real check through the site's bridge, beside a form with a switch for three mistakes
+  an agent meets and a person doesn't (an avatar with no name for the bridge, "Country" inside
+  "Revenue by country", a plain button), so a nameless button wasn't one: it fails axe too.
+  Building it, the check found the page's own clashes, now fixed for every page: each install
+  command's package manager control was named "Package manager" (eleven on /kits), and a
+  command's copy button "Copy the command", inside each install button's "Copy the command to
+  install …". Without the mistakes, /agents scores 100. The "near" of a control agents can't
+  see now also reads a heading in a container's first child, like a card's title row.

@@ -93,7 +93,11 @@ function InstallCommand({ items, className, label = "Install" }: { items: string
   const command = `${manager.run} ${items.map((item) => (item.includes("/") ? item : `superzero11/uiset/${item}`)).join(" ")}`
   return (
     <div className={["install-command", className].filter(Boolean).join(" ")} role="group" aria-label={label}>
-      <SegmentedControl className="install-command-managers" aria-label="Package manager" value={pm} onValueChange={(value) => value && setManager(value as Manager)}>
+      {/* Named for its command: a page can show several, and a step by name must find one. */}
+      <SegmentedControl
+        className="install-command-managers"
+        aria-label={`Package manager to ${label.charAt(0).toLowerCase()}${label.slice(1)}`}
+        value={pm} onValueChange={(value) => value && setManager(value as Manager)}>
         {managers.map((m) => (
           <SegmentedControlItem key={m.id} value={m.id}>
             {m.label}
@@ -110,11 +114,12 @@ function InstallCommand({ items, className, label = "Install" }: { items: string
 
 /** One shell command with copy (for commands that aren't a shadcn install). */
 function CommandLine({ command, className }: { command: string; className?: string }) {
+  // Named for the command, so it differs from the install commands' "Copy the command to …".
   return (
     <div className={["install-command", "install-command-single", className].filter(Boolean).join(" ")}>
       <div className="install-command-line">
         <code translate="no">{command}</code>
-        <CopyButton value={command} label="Copy" aria-label="Copy the command" />
+        <CopyButton value={command} label="Copy" aria-label={`Copy ${command}`} />
       </div>
     </div>
   )

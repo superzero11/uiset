@@ -1,5 +1,6 @@
 import { UISet } from "@/registry/uiset/ui/uiset"
 import { benchmark, type Metrics } from "../benchmark-results"
+import { AgentCheckDemo } from "../agent-check-demo"
 import { ConsoleDemo } from "../console-demo"
 import { ProjectSettings } from "../project-settings"
 import { CodeBlock, CommandLine, InstallCommand } from "../shell/code"
@@ -143,6 +144,23 @@ await agent.act({ steps: [{ ref: "Orders", action: "filter", args: ["Region", "E
           <InstallCommand items={["agent-console"]} label="Install the Agent Console" />
           <a className="kit-docs" href="/docs/kits/agent-console">
             Agent Console docs
+          </a>
+        </div>
+      </section>
+
+      <section className="band" id="agent-check" aria-labelledby="agent-check-title">
+        <div className="band-intro">
+          <h2 id="agent-check-title">Check that an agent can use your pages</h2>
+          <p>
+            An agent finds each control by its name. The agent-readiness check asks a page&rsquo;s bridge what an agent sees, and scores the page: every control named, each name
+            finding one control, and none the agent can&rsquo;t see. Run it on this page, with and without the mistakes in the form.
+          </p>
+        </div>
+        <AgentCheckDemo />
+        <div className="kit-actions">
+          <InstallCommand items={["agent-check"]} label="Install the agent-readiness check" />
+          <a className="kit-docs" href="/docs/agent-check">
+            Agent readiness check docs
           </a>
         </div>
       </section>

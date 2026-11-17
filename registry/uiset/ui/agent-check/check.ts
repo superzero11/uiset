@@ -131,7 +131,10 @@ function findUnseenControls(root?: ParentNode | string | null): UnseenControl[] 
     // Where it is, in words a person finds on the page: an id, a name, or a heading around it.
     let near: string | undefined
     for (let at = el.parentElement; at && !near; at = at.parentElement) {
-      const heading = at.querySelector(":scope > :is(h1, h2, h3, h4, h5, h6, figcaption, legend), :scope > header :is(h1, h2, h3, h4, h5, h6)")
+      // Its own heading: a direct child, or one in a header or in its first child (a title row).
+      const heading = at.querySelector(
+        ":scope > :is(h1, h2, h3, h4, h5, h6, figcaption, legend), :scope > :is(header, :first-child) :is(h1, h2, h3, h4, h5, h6)",
+      )
       const named = at.getAttribute("aria-label") || (heading?.textContent ?? "").replace(/\s+/g, " ").trim()
       if (at.id && at !== document.body) near = `#${at.id}`
       else if (named) near = `"${named.slice(0, 40)}"`

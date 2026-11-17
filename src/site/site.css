@@ -478,6 +478,145 @@ main > section,
   stroke-linejoin: round;
 }
 
+/* Agent readiness demo: the form with its mistakes, and the check's report beside it. */
+
+.readiness-stage {
+  display: grid;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (min-width: 62rem) {
+  .readiness-stage {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+}
+
+.readiness-form {
+  display: grid;
+  gap: 1.125rem;
+  font-size: var(--ui-font-size);
+
+  & h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+.readiness-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.readiness-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 1rem;
+}
+
+.readiness-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* A plain <button> made to look like the outline button beside it: the difference an agent
+   sees is the point. Sizes follow UI SDK's own button. */
+.readiness-plain-button {
+  display: inline-flex;
+  align-items: center;
+  block-size: calc(var(--ui-spacing) * 8);
+  padding-inline: calc(var(--ui-spacing) * 3);
+  border: 1px solid var(--ui-input);
+  border-radius: var(--ui-radius);
+  background: var(--ui-background);
+  color: var(--ui-foreground);
+  font: inherit;
+  font-size: var(--ui-font-size);
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--ui-muted);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ui-ring);
+    outline-offset: 2px;
+  }
+}
+
+.readiness-panel {
+  display: grid;
+  gap: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.readiness-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* The switch and its label on one line, as a toggle's are. */
+.readiness-switch {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.readiness-result {
+  display: grid;
+  gap: 0.75rem;
+
+  & p {
+    margin: 0;
+  }
+}
+
+.readiness-score {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  color: var(--ui-muted-foreground);
+}
+
+.readiness-number {
+  color: var(--ui-foreground);
+  font-size: 2.5rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.readiness-empty {
+  color: var(--ui-muted-foreground);
+}
+
+.readiness-problems {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  & li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 0.625rem;
+    overflow-wrap: anywhere;
+  }
+}
+
 /* Agent Console demo */
 
 .console-stage {
