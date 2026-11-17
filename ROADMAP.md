@@ -1579,6 +1579,17 @@ checks, then a release, a deploy, and npm by the owner.
   opens the inline edit with DOM queries, like its `beforeEach` (Firefox: the whole spec, 17
   passed; Chrome and WebKit: 35 passed, 1 skipped). Worth a Playwright report, with the
   owner's go-ahead, once it reproduces without UISet.
+- 2026-11-17 — **The Firefox crash is Playwright's known one; no report filed.** Asked to
+  report it, I cut it to a page with no UISet: `<div id="l">Email</div><input id="c"
+  aria-labelledby="l">`, a named `getByRole("textbox")`, then axe-core's `label` rule. That
+  crashes Playwright 1.65.1's Firefox (159.0) on arm64 and x86 Linux, in either order; Chromium
+  and WebKit pass, and so do an unnamed query or `aria-label`. It's microsoft/playwright#43967
+  (Mozilla bug 2090055: reading `ariaLabelledByElements` from both the page and Playwright's
+  isolated world), closed as fixed by the Firefox roll in #43982; #44135, the same crash
+  through axe, was closed as its duplicate. Playwright 1.66.0-alpha-2026-11-17 passes the
+  repro, so a new report would be a third copy. When UISet moves to Playwright 1.66, the
+  Content spec's DOM-query workarounds can go back to role queries. The reporter of #43967
+  says stock Firefox 159 crashes too when a page and an extension both read that property.
 - 2026-11-17 — **Chat and board names an agent can tell apart.** Filming the agent-check video,
   every kit and template was checked through the site's agent bridge: the chat template fell to
   94 after one reply, the site's chat demo scored 84 and its board demo 92 (the e2e walk of
