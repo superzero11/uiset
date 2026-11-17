@@ -183,6 +183,7 @@ await agent.act({ steps: [{ ref: "Orders", action: "filter", args: ["Region", "E
             <h3>Or give it the docs</h3>
             <p>
               <a href="/llms.txt">llms.txt</a> lists every page; <a href="/llms-full.txt">llms-full.txt</a> holds them all in one file. Every docs page has its Markdown one click away.
+              Agents that use Context7 find the same docs as <a href="https://context7.com/superzero11/uiset">/superzero11/uiset</a>.
             </p>
           </div>
           <div className="coding-agents-prompt">

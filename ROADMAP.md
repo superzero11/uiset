@@ -1367,3 +1367,10 @@ checks, then a release, a deploy, and npm by the owner.
   can't reach inside a component (no tabindex on a non-native widget, or a negative one) is
   that component's own part, not unseen. The rich text editor's task boxes were flagged
   before. Outside any component such a widget is still flagged, since nothing drives it.
+- 2026-11-17 — Listed on Context7 as `/superzero11/uiset`
+  (https://context7.com/superzero11/uiset), submitted from the owner's account from the GitHub
+  repo: 185 docs files, 3,358 snippets. Linked beside the skills install in docs/ai.md (a
+  "Context7" section with a `use library` prompt), the /agents page's "Or give it the docs"
+  card and the README. skills.sh already lists the skill at
+  https://www.skills.sh/superzero11/uiset/uiset. The outreach list of threads to answer is in
+  `launch/outreach.md`.

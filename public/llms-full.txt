@@ -498,6 +498,16 @@ What the skills tell an agent, in short:
 - Name every control; mark destructive actions with `data-agent-confirm`.
 - Style with the skin's CSS variables, never fixed colors, so it works in every skin.
 
+### Context7
+
+The same docs are on [Context7](https://context7.com/superzero11/uiset), for agents that use
+its MCP server. Add "use context7" to a prompt, or name the library so the agent skips the
+search:
+
+```text
+Build a settings screen with UISet. use library /superzero11/uiset for API and docs.
+```
+
 ### llms.txt
 
 [`/llms.txt`](/llms.txt) lists every docs page with a line on each, for agents that read

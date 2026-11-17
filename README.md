@@ -244,6 +244,9 @@ skins, naming controls, styling with the variables, picking kits), and
 npx skills add superzero11/uiset
 ```
 
+The docs are also on [Context7](https://context7.com/superzero11/uiset) as
+`/superzero11/uiset`, for agents that use its MCP server.
+
 ## Docs for every item
 
 <p align="center">
