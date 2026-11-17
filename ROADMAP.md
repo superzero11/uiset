@@ -1363,3 +1363,7 @@ checks, then a release, a deploy, and npm by the owner.
   command's copy button "Copy the command", inside each install button's "Copy the command to
   install …". Without the mistakes, /agents scores 100. The "near" of a control agents can't
   see now also reads a heading in a container's first child, like a card's title row.
+  Later the same day, asked by the session making UISet's pages score 100: a control Tab
+  can't reach inside a component (no tabindex on a non-native widget, or a negative one) is
+  that component's own part, not unseen. The rich text editor's task boxes were flagged
+  before. Outside any component such a widget is still flagged, since nothing drives it.

@@ -223,3 +223,33 @@ test("a list the bridge finds through one of its items isn't a component a step 
   expect(Array.isArray(found) && found.map((entry) => entry.component).sort()).toEqual(["button", "radio"])
   expect((await checkAgentReadiness(agent)).problems).toEqual([])
 })
+
+test("inside a component, a widget Tab can't reach is the component's own part; one Tab reaches is flagged", async () => {
+  render(
+    <main>
+      <div data-slot="rich-text-area">
+        {/* An editor's task box: no tabindex, so out of the Tab order, and the editor drives it. */}
+        <span role="checkbox" aria-checked="false">
+          Write the release notes
+        </span>
+        <span role="checkbox" aria-checked="false" tabIndex={0}>
+          Record the demo
+        </span>
+        {/* Native controls and editable areas are in the Tab order without a tabindex. */}
+        <button type="button">Insert table</button>
+        <div contentEditable suppressContentEditableWarning aria-label="Caption" />
+      </div>
+      {/* Outside any component, nothing drives it: flagged, Tab or not. */}
+      <span role="switch" aria-checked="false">
+        Dark mode
+      </span>
+    </main>,
+  )
+  const report = await checkAgentReadiness(agent)
+  expect(report.problems.map((problem) => problem.kind === "unseen" && problem.control)).toEqual([
+    'span[role=checkbox] "Record the demo"',
+    'button "Insert table"',
+    'div "Caption"',
+    'span[role=switch] "Dark mode"',
+  ])
+})

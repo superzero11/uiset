@@ -107,7 +107,14 @@ function findUnseenControls(root?: ParentNode | string | null): UnseenControl[] 
     if (el.closest('[hidden], [inert], [aria-hidden="true"], [data-agent-hidden]')) continue
     if ((el as HTMLButtonElement).disabled || el.getAttribute("aria-disabled") === "true") continue
     if (typeof el.checkVisibility === "function" && !el.checkVisibility()) continue
-    if (el.getAttribute("tabindex") === "-1" && el.parentElement?.closest("[data-slot]")) continue
+    // Out of the Tab order inside an element UI SDK bound: a part the component drives itself,
+    // like a grid's row checkbox (tabindex -1) or an editor's task box (no tabindex at all).
+    const tabindex = el.getAttribute("tabindex")
+    const tabbable =
+      tabindex !== null
+        ? Number(tabindex) >= 0
+        : /^(button|input|select|textarea)$/.test(el.localName) || el.getAttribute("contenteditable") === "" || el.getAttribute("contenteditable") === "true"
+    if (!tabbable && el.parentElement?.closest("[data-slot]")) continue
     const labelledBy = (el.getAttribute("aria-labelledby") ?? "")
       .split(/\s+/)
       .map((id) => (id ? document.getElementById(id)?.textContent : ""))
