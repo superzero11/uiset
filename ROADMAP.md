@@ -1566,3 +1566,15 @@ checks, then a release, a deploy, and npm by the owner.
   task boxes were already checkboxes in the editor; shown read-only they are pictures of the
   state, and the static view kept the editor's pointer cursor, so it looked clickable. The
   cursor is gone there; no control was added to a read-only view.
+- 2026-11-17 — **The Content page's Firefox crash, again the test's.** The Web Components
+  Content page's six axe tests crashed Playwright's Firefox page ("Page crashed") on every
+  run in Docker since `df18f88`, which added the schema form to that page; 0.2.0 (`45f6bc3`)
+  passes 6 of 6, `df18f88` fails 6 of 6. Probes on the live commit: a scan alone passes, role
+  queries alone pass, and role queries with the schema form left out of the scan pass. The
+  crash needs a `getByRole("textbox", { name })` query (even one matching nothing), then
+  axe's `label` or `label-title-only` rule on the schema form's inputs; the other 13 rules
+  that reach those inputs, the stepper and the buttons don't. Pages aren't affected: both
+  steps are test tooling, and the same scan without the role query passes. The test now
+  opens the inline edit with DOM queries, like its `beforeEach` (Firefox: the whole spec, 17
+  passed; Chrome and WebKit: 35 passed, 1 skipped). Worth a Playwright report, with the
+  owner's go-ahead, once it reproduces without UISet.

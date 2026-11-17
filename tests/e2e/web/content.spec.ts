@@ -9,8 +9,9 @@ const act = (page: Page, steps: unknown[]) => page.evaluate((s) => (window as un
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto("/content.html")
-  // A plain DOM query: in Playwright's Firefox, a role query here followed by an axe scan
-  // crashes the page (3 runs of 3; 0 of 3 with this).
+  // Plain DOM queries before an axe scan: in Playwright's Firefox, a role query followed by a
+  // scan crashes the page. A region query here did (3 runs of 3; 0 of 3 without), and so does
+  // a textbox query before axe's `label` rule reaches the schema form's inputs.
   await page.waitForFunction(() => !!document.querySelector("#invoices [role=region]"))
 })
 
@@ -20,12 +21,12 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     test(`the Content page passes axe in ${skin}, ${theme}`, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
-      // With the inline edit open and an error showing, and an upload in the list.
-      await page.getByRole("button", { name: /^Edit Project name/ }).click()
-      await page.getByRole("textbox", { name: "Project name" }).fill("")
-      await page.getByRole("textbox", { name: "Project name" }).press("Enter")
+      // With the inline edit open and an error showing, and an upload in the list. Plain DOM
+      // queries throughout, for the reason above.
+      await page.locator("#project uiset-inline-edit-preview button").click()
+      await page.locator("#project uiset-inline-edit-input input").fill("")
+      await page.locator("#project uiset-inline-edit-input input").press("Enter")
       await page.locator("#files input[type=file]").setInputFiles({ name: "notes.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4") })
-      // Plain DOM queries, for the same reason as above.
       await page.waitForFunction(
         () => !!document.querySelector("uiset-inline-edit-error") && !!document.querySelector('#files .upload-row[data-status="done"]'),
         undefined,
