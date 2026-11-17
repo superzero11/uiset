@@ -24,6 +24,9 @@ again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
   (`checkPageReadiness`, `expectPageReady`; Playwright and the command line fall back to it).
   `showAgentReadiness` draws the report over the page, and uiset.dev's Agents page has it as
   a bookmarklet for any page. See [Agent readiness check](./docs/agent-check.md).
+- **[uiset.dev/check](https://uiset.dev/check)**: paste a public page's link and see whether
+  an agent can use it. It loads the page in a browser that reaches public addresses only,
+  and a link to the report checks the page again.
 - **Every page template and Web Components page scores 100** on `agent-check`, and a test in
   each browser holds them there. Its first run on them scored the templates 50 to 91.
 

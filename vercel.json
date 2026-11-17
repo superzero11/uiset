@@ -3,6 +3,11 @@
   "buildCommand": "bash scripts/vercel-build.sh",
   "outputDirectory": "dist",
   "trailingSlash": false,
+  "functions": {
+    "api/agent-check.js": {
+      "maxDuration": 60
+    }
+  },
   "redirects": [
     {
       "source": "/theme",

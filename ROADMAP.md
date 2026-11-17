@@ -283,7 +283,9 @@ checks, then a release, a deploy, and npm by the owner.
    **Done 2026-11-17** (`schema-form` in React, `<uiset-schema-form>` for Web Components).
 2. Agent-readiness check: a test helper and CLI that flag unnamed and ambiguous controls,
    with a score per page (ideas #7). S–M. **Done 2026-11-17** (`agent-check`), and UISet's
-   own templates and Web Components pages score 100 on it, held by a test.
+   own templates and Web Components pages score 100 on it, held by a test. It reads any site
+   too, from a bookmarklet, and [uiset.dev/check](https://uiset.dev/check) checks a public
+   page from its pasted link.
 
 **Batch 2: data apps**, next: the most-asked pieces still missing.
 3. Filter builder and saved views for the data grid (ideas #2): typed operators, a filter
@@ -1452,3 +1454,34 @@ checks, then a release, a deploy, and npm by the owner.
   command runs it. A third preview built with the script alone. Left to the owner: connect
   `superzero11/uiset` to the Vercel project (Settings, Git), after which a push to main deploys
   and other branches get previews.
+- 2026-11-17 — **uiset.dev/check, the paste-a-link checker** (the owner: "Yes, build it").
+  `GET /api/agent-check?url=` loads the page in headless Chromium on a Vercel function
+  (`@sparticuz/chromium-min` 153 with `playwright-core` 1.65.1; the pack for the function's
+  processor, arm64, comes from its release on a cold start, as the full package is x64 only)
+  and runs `checkPage`. Vercel couldn't compile the function with the project's TypeScript 7,
+  so `scripts/api.mjs` bundles it to `api/agent-check.js`, with a sources hash a test checks.
+  Private networks: the address must resolve only to public IPs, on ports 80 and 443, and
+  every connection the browser makes, including redirects and WebSockets, goes through a
+  SOCKS5 proxy in the function (`proxy.ts`) that resolves the host itself and connects only
+  to the public address it checked, so a DNS answer that changes between lookups gets
+  nowhere. IPv6 is judged by its bytes: the first version let `[::ffff:7f00:1]`
+  (127.0.0.1 as a URL prints it) through, found while writing the proxy. The browser gets a
+  minimal environment, WebRTC sends nothing around the proxy, and Sparticuz's flags that
+  turn off web security are dropped. Each check has its own browser and proxy, killed after
+  45 seconds at most (the function has 60): the first preview reused one browser, which
+  Sparticuz runs as a single process, and the next check found it closed, while Hacker News
+  ran into Vercel's 300-second limit. A visitor gets 10 checks in 10 minutes (refused
+  addresses don't count), an instance runs two at once, and the CDN keeps each address's
+  report for 10 minutes. Tests: address ranges and spellings, the proxy as a SOCKS client
+  (refusals, a tunnel, early bytes), and in Chrome a page whose script, fetch, WebSocket and
+  redirect reach for a private host once allowed and once not; each rule was broken to see a
+  test fail. Preview: example.com 100 (13 s cold), Hacker News 63 (4 s), uiset.dev/agents 88
+  through its bridge (the demo's three planted mistakes), github.com 90, ui.shadcn.com 96;
+  private names (localtest.me, nip.io) and addresses refused, and redirects (through
+  postman-echo.com) to 169.254.169.254 and to the function runtime's API on 127.0.0.1:9001
+  stopped at the proxy, while one to example.com was followed. The /check page: a shared link
+  ran its check twice under React's development double effects, fixed; a long address in an
+  error widened the page on a phone, fixed and tested. A migration test in another session
+  found page mode reporting a UI SDK calendar's day cells (`role="gridcell"`, pointer
+  cursor) as only looking clickable: an interactive grid's cells, rows and headers are no
+  longer reported, nor scored, since a data grid's cells repeat each other's text.

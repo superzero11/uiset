@@ -16,6 +16,7 @@ const loaders = {
   themes: () => import("./pages/themes"),
   generator: () => import("./pages/generator"),
   agents: () => import("./pages/agents"),
+  check: () => import("./pages/check"),
   notFound: () => import("./pages/not-found"),
   og: () => import("./pages/og"),
 } satisfies Record<string, () => Promise<PageModule>>
@@ -36,6 +37,7 @@ function keyOf(pathname: string): Key {
   if (path === "/themes") return "themes"
   if (path === "/themes/generator" || path === "/theme") return "generator"
   if (path === "/agents") return "agents"
+  if (path === "/check") return "check"
   if (path === "/og") return "og"
   return "notFound"
 }
@@ -55,6 +57,6 @@ async function preloadRoute(pathname: string) {
 }
 
 /** Every page the build renders ahead of time (docs pages come from the docs list). */
-const staticPaths = ["/", "/components", "/kits", "/templates", "/themes", "/themes/generator", "/agents"]
+const staticPaths = ["/", "/components", "/kits", "/templates", "/themes", "/themes/generator", "/agents", "/check"]
 
 export { preloadRoute, route, staticPaths }

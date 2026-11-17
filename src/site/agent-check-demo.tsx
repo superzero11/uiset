@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { showAgentReadiness } from "@/registry/uiset/ui/agent-check/overlay"
-import { checkAgentReadiness, type AgentReadinessReport } from "@/registry/uiset/ui/agent-check/check"
+import { checkAgentReadiness, type AgentReadinessReport, type ReadinessSummary } from "@/registry/uiset/ui/agent-check/check"
 import { Avatar, AvatarFallback } from "@/registry/uiset/ui/avatar"
 import { Badge } from "@/registry/uiset/ui/badge"
 import { Button } from "@/registry/uiset/ui/button"
@@ -78,8 +78,9 @@ function CheckAnyPage() {
       <div className="readiness-anywhere-text">
         <h3>Check any page</h3>
         <p>
-          Drag the bookmarklet to your bookmarks bar, then click it on any page, yours on localhost included. It asks the page&rsquo;s UI SDK bridge when it finds one
-          (<code>window.agent</code>), reads the page&rsquo;s accessibility tree when not, and shows the report on the page.
+          For a public page, paste its link into the <a href="/check">agent readiness checker</a>. For your own, on localhost or behind a sign-in, drag the bookmarklet to
+          your bookmarks bar and click it on the page. Both ask the page&rsquo;s UI SDK bridge when they find one (<code>window.agent</code>), read the page&rsquo;s
+          accessibility tree when not, and show the report.
         </p>
       </div>
       <div className="readiness-anywhere-actions">
@@ -95,6 +96,34 @@ function CheckAnyPage() {
         Or from a terminal, for any URL: <code>npx tsx components/ui/agent-check/cli.ts https://your-site.com</code>
       </p>
     </div>
+  )
+}
+
+/** A report: the score, how many controls an agent can find, and each problem with its fix. */
+function ReadinessResult({ report, meterLabel = "Agent readiness of this page" }: { report: ReadinessSummary; meterLabel?: string }) {
+  const errors = report.problems.filter((problem) => problem.severity === "error").length
+  return (
+    <>
+      <p className="readiness-score">
+        <span className="readiness-number">{report.score}</span>
+        <span>/100</span>
+      </p>
+      <Meter value={report.score} aria-label={meterLabel} />
+      <p>
+        {report.ready} of {report.controls} controls on the page an agent can find by name.{" "}
+        {errors ? `${errors} ${errors === 1 ? "problem" : "problems"} to fix:` : "Nothing to fix."}
+      </p>
+      {report.problems.length > 0 && (
+        <ul className="readiness-problems">
+          {report.problems.map((problem, index) => (
+            <li key={`${problem.kind}-${index}`}>
+              <Badge tone={problem.severity === "error" ? "danger" : "warning"}>{problem.severity === "error" ? "Error" : "Warning"}</Badge>
+              <span>{problem.message}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
   )
 }
 
@@ -123,7 +152,6 @@ function AgentCheckDemo() {
     return () => cancelAnimationFrame(frame)
   }, [mistakes])
 
-  const errors = report?.problems.filter((problem) => problem.severity === "error").length ?? 0
   return (
     <div className="readiness-stage">
       <UISet skin="base" theme={theme} className="console-target">
@@ -142,25 +170,7 @@ function AgentCheckDemo() {
         <div className="readiness-result" aria-live="polite">
           {report ? (
             <>
-              <p className="readiness-score">
-                <span className="readiness-number">{report.score}</span>
-                <span>/100</span>
-              </p>
-              <Meter value={report.score} aria-label="Agent readiness of this page" />
-              <p>
-                {report.ready} of {report.controls} controls on this page an agent can find by name.{" "}
-                {errors ? `${errors} ${errors === 1 ? "problem" : "problems"} to fix:` : "Nothing to fix."}
-              </p>
-              {report.problems.length > 0 && (
-                <ul className="readiness-problems">
-                  {report.problems.map((problem, index) => (
-                    <li key={`${problem.kind}-${index}`}>
-                      <Badge tone={problem.severity === "error" ? "danger" : "warning"}>{problem.severity === "error" ? "Error" : "Warning"}</Badge>
-                      <span>{problem.message}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <ReadinessResult report={report} />
             </>
           ) : (
             <p className="readiness-empty">The check asks this page&rsquo;s agent bridge what an agent sees, and scores it.</p>
@@ -172,4 +182,4 @@ function AgentCheckDemo() {
   )
 }
 
-export { AgentCheckDemo }
+export { AgentCheckDemo, ReadinessResult }

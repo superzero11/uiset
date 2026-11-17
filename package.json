@@ -16,6 +16,7 @@
     "preview": "vite preview --port ${PORT:-5621}",
     "registry:build": "node scripts/registry.mjs && REGISTRY_URL=${REGISTRY_URL:-https://uiset.dev} node scripts/registry.mjs && shadcn build registry.build.json --output public/r && node scripts/docs.mjs",
     "docs:build": "node scripts/registry.mjs && node scripts/docs.mjs",
+    "api": "node scripts/api.mjs",
     "bookmarklet": "node scripts/bookmarklet.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -27,8 +28,10 @@
     "deploy:prod": "vercel build --prod && vercel deploy --prebuilt --prod"
   },
   "dependencies": {
+    "@sparticuz/chromium-min": "153.0.0",
     "@ui-sdk/core": "0.1.0-beta.5",
     "@ui-sdk/react": "0.1.0-beta.5",
+    "playwright-core": "1.65.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-markdown": "10.1.0",

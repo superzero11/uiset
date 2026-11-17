@@ -667,6 +667,81 @@ main > section,
   overflow-wrap: anywhere;
 }
 
+/* The link checker (/check): an address field, then the report. */
+.check-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+  /* Addresses and page titles can be one long word. */
+  overflow-wrap: break-word;
+}
+
+.check-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  & > [data-slot="input"] {
+    flex: 1 1 16rem;
+    min-inline-size: 0;
+  }
+}
+
+.check-result {
+  display: grid;
+  gap: 0.75rem;
+
+  &:empty {
+    display: none;
+  }
+
+  & p {
+    margin: 0;
+  }
+}
+
+.check-status {
+  color: var(--ui-muted-foreground);
+}
+
+.check-page-title {
+  display: grid;
+  gap: 0.25rem;
+
+  & h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  & p {
+    color: var(--ui-muted-foreground);
+    overflow-wrap: anywhere;
+  }
+}
+
+.check-share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ui-muted-foreground);
+}
+
+.check-more {
+  padding-block-start: 1.5rem;
+  border-block-start: 1px solid var(--ui-border);
+
+  & h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+  }
+
+  & p {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+  }
+}
+
 /* Agent Console demo */
 
 .console-stage {

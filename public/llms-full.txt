@@ -5693,7 +5693,8 @@ way the agent sees it, and scores it: the share of controls an agent can find by
 their own. On a UI SDK app it asks the agent bridge itself, in any framework UI SDK serves.
 On any other site it reads the page's accessibility tree, as browser agents do. Try both on
 [the Agents page](/agents#agent-check): the live check, with and without three mistakes in a
-form, and a bookmarklet that checks any page you're on.
+form, and a bookmarklet that checks any page you're on. For a public page, paste its link
+into [the checker](/check).
 
 ```bash
 npx shadcn@latest add @uiset/agent-check
@@ -5785,6 +5786,8 @@ Errors, which lower the score:
   only need a name of their own within their group, so every question can have its "Yes".
 - **`unseen`**: something that looks clickable (a pointer cursor starts on it, or it has an
   `onclick`) but isn't a button or link, so an agent reading the page sees no control there.
+  An interactive grid's cells, rows and headers, like a calendar's days, are what agents see
+  there; they aren't reported, or scored, since a data grid's cells repeat each other's text.
 
 Names follow the browser's rules closely but not completely: `aria-labelledby`, `aria-label`,
 a label, the text inside (images by their `alt`, icons by their `title`, hidden parts left
@@ -5826,6 +5829,16 @@ one within a few seconds, and reads the page when not; `--mode bridge` or `--mod
 chooses. `--agent <global>` names the bridge's global when the app doesn't register WebMCP
 tools, `--root <selector>` limits where it looks, `--channel chrome` uses installed Chrome
 instead of Playwright's Chromium, and `--json` prints the reports as JSON.
+
+## Paste a link
+
+[uiset.dev/check](/check) runs the same check on any public page: paste its link, and it
+loads the page in a browser and shows the report. A link to the report
+(`uiset.dev/check?url=example.com`) checks the page again when it opens, and each address's
+report is kept for ten minutes. It loads public pages only: an address on a private network,
+or anything a page or its redirects reach there, isn't loaded. It skips images, video and
+fonts, which don't change what an agent finds, and stops a page that takes over 45 seconds.
+For a page on localhost or behind a sign-in, use the bookmarklet.
 
 ## The bookmarklet
 

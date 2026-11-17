@@ -222,6 +222,9 @@ function checkPageReadiness(
   for (const el of Array.from(scope.querySelectorAll("*"))) {
     if (isControl.has(el) || /^(html|body|label|option|svg|path|use|g|circle|rect|line|polyline|polygon|img|input|select|textarea)$/.test(el.localName)) continue
     if (el.closest(`${selector}, label`) !== null || el.querySelector(selector) !== null) continue
+    // A grid's cells, rows and headers (a calendar's days) are what agents see there. They
+    // aren't scored as controls: a data grid's cells repeat each other's text.
+    if (/^(gridcell|row|columnheader|rowheader)$/.test(el.getAttribute("role")?.trim().split(/\s+/)[0] ?? "") && el.closest('[role="grid"], [role="treegrid"]')) continue
     const clicks = el.hasAttribute("onclick")
     const pointer = getComputedStyle(el).cursor === "pointer" && (!el.parentElement || getComputedStyle(el.parentElement).cursor !== "pointer")
     if (!clicks && !pointer) continue

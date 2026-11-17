@@ -106,6 +106,20 @@ test("what looks clickable but isn't a control is reported; what sits in or hold
   expect(report).toMatchObject({ controls: 5, ready: 3, score: 60 })
 })
 
+// A grid's cells are what agents see there (a calendar's days, a data grid's cells), though a
+// data grid's cells repeat each other's text, so they aren't scored as controls of their own.
+test("an interactive grid's cells, rows and headers aren't reported as only looking clickable", () => {
+  page(`
+    <table role="grid" aria-label="November 2026">
+      <tr role="row" style="cursor: pointer"><th role="columnheader" style="cursor: pointer">Mo</th></tr>
+      <tr role="row"><td role="gridcell" tabindex="0" style="cursor: pointer">16</td><td role="gridcell" tabindex="-1" style="cursor: pointer">17</td></tr>
+    </table>
+    <table><tr><td style="cursor: pointer">A plain table's cell</td><td role="gridcell" style="cursor: pointer">Outside any grid</td></tr></table>`)
+  const report = checkPageReadiness()
+  expect(report.problems.map((problem) => problem.kind === "unseen" && problem.control)).toEqual(['td "A plain table\'s cell"', 'td "Outside any grid"'])
+  expect(report).toMatchObject({ controls: 2, ready: 0 })
+})
+
 test("hidden, disabled and agent-hidden controls aren't counted", () => {
   page(`
     <button hidden>Hidden</button>
