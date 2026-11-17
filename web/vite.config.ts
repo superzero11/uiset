@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs"
 import { createRequire } from "node:module"
 import { fileURLToPath } from "node:url"
 import { defineConfig } from "vite"
+import { cacheDirFor } from "../scripts/vite-cache-dir.ts"
 
 // UISet for Web Components: the same CSS and primitives as the React registry, built into
 // one module and one stylesheet for any page or framework (Vue, Svelte, Solid, plain HTML).
@@ -13,6 +14,7 @@ const entries = (pkg: string) =>
 
 export default defineConfig({
   root: fileURLToPath(new URL(".", import.meta.url)),
+  cacheDir: cacheDirFor(process.argv, 5640),
   server: { port: 5640, strictPort: true },
   preview: { port: 5641, strictPort: true },
   optimizeDeps: {

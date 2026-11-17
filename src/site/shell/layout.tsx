@@ -208,6 +208,7 @@ const footerColumns = [
     title: "More",
     links: [
       ["Agents and the benchmark", "/agents"],
+      ["Agent readiness checker", "/check"],
       ["Roadmap", "/docs/roadmap"],
       ["GitHub", "https://github.com/superzero11/uiset"],
       ["llms.txt", "/llms.txt"],

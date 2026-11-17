@@ -3,6 +3,7 @@ import { createRequire } from "node:module"
 import { fileURLToPath } from "node:url"
 import react from "@vitejs/plugin-react"
 import { defineConfig, type Plugin } from "vite"
+import { cacheDirFor } from "./scripts/vite-cache-dir.ts"
 
 // Pre-bundle every UI SDK entry at startup. Discovering one mid-session makes Vite
 // re-bundle and briefly serve a second copy of React.
@@ -35,6 +36,7 @@ const api = (): Plugin => ({
 })
 
 export default defineConfig({
+  cacheDir: cacheDirFor(process.argv),
   plugins: [react(), api()],
   optimizeDeps: {
     include: [

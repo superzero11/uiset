@@ -29,6 +29,9 @@ again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
   and a link to the report checks the page again.
 - **Every page template and Web Components page scores 100** on `agent-check`, and a test in
   each browser holds them there. Its first run on them scored the templates 50 to 91.
+- **A horizontal Timeline** (`orientation="horizontal"`), which was unstyled: the markers on
+  one line, each event's text under its marker, and the connector running on to the next.
+  In Windows high contrast, connectors in both directions now show.
 
 ### Changed
 

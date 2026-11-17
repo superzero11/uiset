@@ -451,6 +451,35 @@
   background: var(--ui-border);
 }
 
+/* Horizontal, like a roadmap: the markers share one line, each event's text sits under its
+   marker, and the connector runs across the gap to the next marker. */
+[data-uiset] [data-slot="timeline"][data-orientation="horizontal"] {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  column-gap: 1.5rem;
+}
+
+[data-uiset] [data-slot="timeline-item"][data-orientation="horizontal"] {
+  position: relative;
+  display: grid;
+  align-content: start;
+  row-gap: 0.125rem;
+
+  & > [data-slot="timeline-marker"] {
+    justify-self: start;
+    margin: 0 0 0.5rem;
+  }
+}
+
+[data-uiset] [data-slot="timeline-connector"][data-orientation="horizontal"] {
+  position: absolute;
+  top: calc(0.375rem - 1px);
+  inset-inline: 1.25rem -1rem;
+  height: 2px;
+  background: var(--ui-border);
+}
+
 [data-uiset]
   [data-slot="timeline-item"]:is([data-last], :last-child)
   [data-slot="timeline-connector"] {
@@ -514,6 +543,10 @@
   [data-uiset]
     :is([data-slot="waterfall-bar"], [data-slot="timeline-marker"][data-complete]) {
     background: Highlight;
+  }
+
+  [data-uiset] [data-slot="timeline-connector"] {
+    background: CanvasText;
   }
 }
 

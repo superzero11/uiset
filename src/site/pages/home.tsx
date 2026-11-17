@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react"
 import { flushSync } from "react-dom"
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, AccordionTrigger } from "@/registry/uiset/ui/accordion"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/registry/uiset/ui/tabs"
+import { Timeline, TimelineConnector, TimelineDescription, TimelineItem, TimelineMarker, TimelineTime, TimelineTitle } from "@/registry/uiset/ui/timeline"
 import { UISet, type Skin } from "@/registry/uiset/ui/uiset"
 import { benchmark } from "../benchmark-results"
 import { ChatDemo } from "../chat-demo"
@@ -14,6 +15,30 @@ import { SkinsDemo } from "../skins-demo"
 import { Specimen } from "../specimen"
 
 /* ------------------------------------------------------------------ content */
+
+// Newest first. Keep three: the row has room for three before it scrolls.
+const whatsNew = [
+  {
+    date: "2026-11-17",
+    title: "Agent readiness check",
+    href: "/agents#agent-check",
+    what: "See whether an agent can find every control on a page by name: a score, and what to fix. Run it in tests, from a bookmarklet, or on any public link.",
+  },
+  {
+    date: "2026-11-17",
+    title: "Schema form",
+    href: "/docs/kits/forms",
+    what: "A form drawn from a JSON Schema that registers itself as a tool agents can call. In React and as a Web Component.",
+  },
+  {
+    date: "2026-11-17",
+    title: "Listed in shadcn’s directory",
+    href: "/docs/installation",
+    what: "Install any item by its name, like @uiset/chat, with the shadcn CLI.",
+  },
+]
+
+const shortDate = (iso: string) => new Date(`${iso}T12:00:00Z`).toLocaleDateString("en", { month: "short", day: "numeric", timeZone: "UTC" })
 
 const faq = [
   {
@@ -144,6 +169,26 @@ function HomePage() {
 
   return (
     <div className="home">
+      <section className="whats-new" aria-labelledby="whats-new-title">
+        <div className="whats-new-head">
+          <h2 id="whats-new-title">What&rsquo;s new</h2>
+          <a href="https://github.com/superzero11/uiset/blob/main/CHANGELOG.md">Changelog</a>
+        </div>
+        <Timeline orientation="horizontal" loop={false} aria-labelledby="whats-new-title" className="whats-new-list">
+          {whatsNew.map((entry) => (
+            <TimelineItem key={entry.href}>
+              <TimelineMarker />
+              <TimelineConnector />
+              <TimelineTitle>
+                <a href={entry.href}>{entry.title}</a>
+              </TimelineTitle>
+              <TimelineTime dateTime={entry.date}>{shortDate(entry.date)}</TimelineTime>
+              <TimelineDescription>{entry.what}</TimelineDescription>
+            </TimelineItem>
+          ))}
+        </Timeline>
+      </section>
+
       {/* 1. What it is */}
       <section className="hero" aria-labelledby="hero-title">
         <div className="hero-copy">

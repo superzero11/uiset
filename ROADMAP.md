@@ -1485,3 +1485,30 @@ checks, then a release, a deploy, and npm by the owner.
   found page mode reporting a UI SDK calendar's day cells (`role="gridcell"`, pointer
   cursor) as only looking clickable: an interactive grid's cells, rows and headers are no
   longer reported, nor scored, since a data grid's cells repeat each other's text.
+- 2026-11-17 — **What's new on the home page, and the checker in the footer** (the owner's
+  list). Asked whether What's new needed a component of its own: no. UI SDK's Timeline is
+  made for "an activity feed, a changelog", and UISet styles it, but only vertically; a
+  horizontal Timeline was unstyled. base.css now gives it a look (markers on one line, text
+  under each, a connector to the next marker), the components page shows one ("Release
+  plan"), and the home page opens with the three latest releases in a row, which scrolls
+  sideways on a phone so the hero stays near the top. Its entry for the agent readiness check
+  goes to the Agents page's check (`/agents#agent-check`); the footer's "Agent readiness
+  checker" goes to `/check`. The footer link isn't called "Agent readiness check", which the
+  docs sidebar uses for `/docs/agent-check`, so no name finds two places. Held by
+  `tests/e2e/whats-new.spec.ts` (Chrome, WebKit, Firefox; three mutations caught: the row's
+  flow, the connector's reach, the footer's address), with axe passing on the components page
+  in every skin and theme. Screenshots checked in five skins, two themes, and at 1280, 820
+  and 375 px.
+- 2026-11-17 — **Each Vite server keeps its own dependency cache** (the owner: "Yes, add the
+  per-port cache fix"). Every server in the checkout shared `node_modules/.vite`. When one
+  bundled a different set of dependencies (another session's Tailwind test server, a dev
+  server after a lockfile change), a browser still holding the other server's page loaded
+  React from both bundles: a blank page with "Invalid hook call". With several agent sessions
+  each starting dev and e2e servers, it happened twice in an hour. `scripts/vite-cache-dir.ts`
+  names the folder for the server's port (`node_modules/.vite-5620`, `-5631`, `-5642`, and
+  the web config's own 5640). Both configs use it; Vitest and builds, with no port, keep
+  Vite's default. A unit test holds the naming (mutation caught: one shared folder). Checked
+  live: with a browser on the dev server, a second server bundling extra dependencies on 5631
+  left the dev server's cache untouched, and three more pages opened without errors. The
+  crash itself couldn't be reproduced on demand (bundles of the same dependencies come out
+  identical), so the check is that no server writes into another's folder.

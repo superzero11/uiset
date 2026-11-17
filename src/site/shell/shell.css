@@ -349,6 +349,7 @@ html {
 /* ------------------------------------------------------------------ shared page parts */
 
 .page,
+.home > .whats-new,
 .home > .band,
 .home > .hero {
   width: min(100% - var(--site-gutter) * 2, var(--site-max));
@@ -524,6 +525,55 @@ html {
 
 .home > .band {
   border-top: 1px solid var(--ui-border);
+}
+
+/* What's new: the latest releases in a row above the hero. On a phone the row scrolls
+   sideways, so the hero stays near the top. */
+
+.whats-new {
+  display: grid;
+  gap: 0.875rem;
+  padding-block: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--ui-border);
+}
+
+.whats-new-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+
+  & h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  & a {
+    font-size: 0.875rem;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+.whats-new-list [data-slot="timeline-description"] {
+  max-width: 40ch;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 47.99rem) {
+  .whats-new-list {
+    grid-auto-columns: minmax(15rem, 1fr);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    /* Room for the focus ring inside the scroller. */
+    margin: -4px;
+    padding: 4px;
+
+    & > [data-slot="timeline-item"] {
+      scroll-snap-align: start;
+    }
+  }
 }
 
 .hero {
