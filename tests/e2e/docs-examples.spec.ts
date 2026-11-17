@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test"
 import { exampleMetas, exampleSlugByItem, uiSdkComponents } from "../../src/site/examples/meta"
+import { openGallery } from "./gallery"
 
 // A component's example looks the same on its docs page as on the components page. The docs'
 // prose styles (headings, paragraphs, line height) once reached into live examples: a dialog's
@@ -30,7 +31,7 @@ for (const item of uiSdkComponents) {
 
     // The components page draws all 79 examples; WebKit and Firefox take longer over it.
     test.slow()
-    await page.goto("/components")
+    await openGallery(page, "/components")
     const gallery = `section.example:has(#${id}) .example-body`
     await expect(page.locator(gallery)).toBeVisible({ timeout: 20_000 })
     const expected = await styles(page, gallery)

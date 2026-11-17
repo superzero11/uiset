@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test"
+import { openGallery } from "./gallery"
 
 const term = (page: Page) => page.getByRole("group", { name: "Shell", exact: true })
 const input = (page: Page) => term(page).getByRole("textbox", { name: /Command/ })
@@ -10,7 +11,7 @@ const run = async (page: Page, line: string) => {
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/components")
+  await openGallery(page, "/components")
   await term(page).scrollIntoViewIfNeeded()
 })
 
@@ -99,7 +100,7 @@ test("every ANSI color clears 4.5:1 on the terminal in every skin and theme", as
     for (const theme of ["light", "dark"]) {
       if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme as "light" | "dark" })
-      await page.goto(`/components?skin=${skin}&theme=${theme}`)
+      await openGallery(page, `/components?skin=${skin}&theme=${theme}`)
       await term(page).scrollIntoViewIfNeeded()
       await run(page, "colors")
       const worst = await term(page).evaluate((root) => {
@@ -195,7 +196,7 @@ test.describe("review fixes", () => {
       for (const theme of ["light", "dark"]) {
         if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
         await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme as "light" | "dark" })
-        await page.goto(`/components?skin=${skin}&theme=${theme}`)
+        await openGallery(page, `/components?skin=${skin}&theme=${theme}`)
         await term(page).scrollIntoViewIfNeeded()
         await run(page, "colors")
         await expect(output(page).locator("[data-inverse]").first()).toBeVisible()

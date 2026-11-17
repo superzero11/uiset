@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test"
+import { openGallery } from "./gallery"
 
 const calendar = (page: Page) => page.getByRole("group", { name: "Team calendar", exact: true })
 const track = (page: Page, name: string) => calendar(page).getByRole("group", { name })
@@ -7,7 +8,7 @@ const example = (page: Page) => page.locator("#example-scheduler").locator("xpat
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/components")
+  await openGallery(page, "/components")
   await example(page).scrollIntoViewIfNeeded()
 })
 
@@ -178,7 +179,7 @@ test("event edges and today's name clear contrast in every skin and theme", asyn
     for (const theme of ["light", "dark"]) {
       if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme as "light" | "dark" })
-      await page.goto(`/components?skin=${skin}&theme=${theme}`)
+      await openGallery(page, `/components?skin=${skin}&theme=${theme}`)
       await example(page).scrollIntoViewIfNeeded()
       const ratios = await calendar(page).evaluate((root) => {
         const canvas = document.createElement("canvas").getContext("2d", { willReadFrequently: true })!
@@ -219,7 +220,7 @@ test.describe("on a touch screen", () => {
     test.skip(browserName !== "chromium", "drives touches through Chrome's DevTools protocol")
     const errors: string[] = []
     page.on("pageerror", (error) => errors.push(error.message))
-    await page.goto("/components")
+    await openGallery(page, "/components")
     const week = calendar(page)
     await week.scrollIntoViewIfNeeded()
     const before = await week.evaluate((el) => el.querySelectorAll(".schedule-event").length)

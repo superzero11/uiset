@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test"
+import { openGallery } from "./gallery"
 
 const board = (page: Page) => page.getByRole("group", { name: "Sprint board", exact: true })
 const column = (page: Page, name: string) => board(page).getByRole("listbox", { name })
@@ -6,7 +7,7 @@ const card = (page: Page, name: string) => board(page).getByRole("option", { nam
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/components")
+  await openGallery(page, "/components")
   await board(page).scrollIntoViewIfNeeded()
 })
 

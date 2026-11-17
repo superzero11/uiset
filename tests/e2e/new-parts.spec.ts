@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test, type Page } from "@playwright/test"
+import { openGallery } from "./gallery"
 
 // The parts added after launch: table, avatar group, count badge, code block, inline edit and
 // upload. What needs a real browser: layout, sticky cells, focus and keys.
@@ -9,7 +10,7 @@ const example = (page: Page, title: string) =>
 
 async function open(page: Page, query = "") {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto(`/components${query}`)
+  await openGallery(page, `/components${query}`)
   await expect(page.locator(".components-surface")).toBeVisible({ timeout: 20_000 })
 }
 
@@ -340,7 +341,7 @@ for (const theme of ["light", "dark"] as const) {
     test(`${title} passes axe at phone width, ${theme}`, async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 800 })
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
-      await page.goto(`/components?theme=${theme}`)
+      await openGallery(page, `/components?theme=${theme}`)
       await expect(page.locator(".components-surface")).toBeVisible({ timeout: 20_000 })
       const section = example(page, title)
       await section.scrollIntoViewIfNeeded()

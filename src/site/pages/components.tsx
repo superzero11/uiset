@@ -1,5 +1,5 @@
 import { UISet, type Skin } from "@/registry/uiset/ui/uiset"
-import { ComponentsGallery } from "../components-page"
+import { ComponentsGallery, preloadGallery } from "../components-page"
 import { InstallCommand } from "../shell/code"
 import { useSiteTheme } from "../shell/layout"
 import { usePageMeta } from "../shell/meta"
@@ -34,4 +34,8 @@ function ComponentsPage() {
   )
 }
 
+// The router waits for the first examples, so they draw with the page.
+const preload = () => preloadGallery()
+
 export default ComponentsPage
+export { preload }

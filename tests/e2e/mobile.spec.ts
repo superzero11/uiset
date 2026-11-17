@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test"
+import { openGallery } from "./gallery"
 
 const phone = (page: Page) => page.locator(".mobile-demo")
 const list = (page: Page) => phone(page).getByRole("list", { name: "Messages" })
@@ -6,7 +7,7 @@ const row = (page: Page, from: string) => list(page).getByRole("listitem", { nam
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/components")
+  await openGallery(page, "/components")
   await phone(page).scrollIntoViewIfNeeded()
 })
 

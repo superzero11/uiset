@@ -1618,3 +1618,21 @@ checks, then a release, a deploy, and npm by the owner.
   checks all three (Chrome, WebKit, Firefox; mutations caught: a late page still landing, no
   bar, no loading on hover). The Components page's own weight is still there: on a slow
   phone it takes about 3.7 s whatever the router does.
+- 2026-11-18 — **The Components page opens at once and fills in behind** (the owner: "Do
+  this task here"). The gallery imported all 85 examples and their source text before the
+  page could open. Now `src/site/examples/index.ts` loads each example on request, the page
+  waits only for the first six (its `preload`), every card's heading is there from the start
+  (links to an example and find-in-page work), cards near the viewport load first, and the
+  rest fill in a few at a time while the browser is idle. A card still loading keeps a typical
+  card's room. A link to an example far down still lands on it: browsers keep a link's target
+  in view as the cards above it draw, even with scroll anchoring off (Safari has it only since
+  27). A re-scroll I wrote for that changed nothing in Chrome or WebKit, so it came out.
+  Measured on a local production build with a 4G connection and a 4x slower processor (the
+  same profile both times, three runs): click to new address 6.6 s → 0.6 s, with 229 files
+  loaded first → 11; click to heading drawn 9.4 s → 0.8 s; the whole gallery 9.6 s → 8.7 s,
+  now in the background. Tests that need every example (axe in every skin, the docs-page
+  comparison, the kits' specs) open the page with `tests/e2e/gallery.ts`, which waits for
+  `.gallery[data-ready]`; `tests/e2e/components-gallery.spec.ts` holds the new behavior (Chrome,
+  WebKit, Firefox; mutations caught: no loading as cards come into view, the page not waiting
+  for its first examples). All ten specs that open the page: 497 passed in Chrome and WebKit.
+  The static build prerenders the page with every example drawn.

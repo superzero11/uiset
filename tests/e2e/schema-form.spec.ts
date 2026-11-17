@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test, type Page } from "@playwright/test"
+import { openGallery } from "./gallery"
 
 // The schema form on the gallery: a person through its steps, the server's answer, an agent
 // filling it with the person approving the send, and axe in every skin and theme.
@@ -13,7 +14,7 @@ const actions = (page: Page) => form(page).locator(".schema-form-actions")
 
 async function open(page: Page, query = "") {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto(`/components${query}`)
+  await openGallery(page, `/components${query}`)
   await expect(page.locator(".components-surface")).toBeVisible({ timeout: 20_000 })
   await form(page).scrollIntoViewIfNeeded()
 }
@@ -143,7 +144,7 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     // Plain DOM queries only: in Playwright's Firefox a role query before an axe scan crashes the page.
     test(`passes axe in ${skin}, ${theme}, with a problem showing and on the review`, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
-      await page.goto(`/components?skin=${skin}&theme=${theme}`)
+      await openGallery(page, `/components?skin=${skin}&theme=${theme}`)
       const card = page.locator("section.example:has(.schema-form)")
       await card.locator("form").waitFor({ timeout: 20_000 })
       await card.scrollIntoViewIfNeeded()

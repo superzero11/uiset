@@ -12,7 +12,7 @@ import { SkinPicker } from "../shell/skin-picker"
 import { docPages } from "./nav"
 
 // A component's live example, its source, and what an agent reads from it, on its docs page.
-// Only this item's example module loads; the components page loads them all.
+// Only this item's example module loads.
 
 const modules = import.meta.glob<{ default: ComponentType }>("../examples/*.tsx")
 const sources = import.meta.glob<string>("../examples/*.tsx", { query: "?raw", import: "default" })

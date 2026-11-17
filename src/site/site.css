@@ -971,6 +971,11 @@ main > section,
   min-width: 0;
 }
 
+/* An example still loading (components-page.tsx) holds a typical card's room. */
+.example:not([data-ready]) > .example-body {
+  min-block-size: 8rem;
+}
+
 .example .row {
   display: flex;
   flex-wrap: wrap;

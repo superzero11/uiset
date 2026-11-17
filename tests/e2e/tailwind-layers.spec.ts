@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test"
+import { openGallery } from "./gallery"
 
 // UISet in a Tailwind CSS 4 app, with nothing set up. What Tailwind puts on a page: its layer
 // order, a reset in `base` that clears every element's padding and border, and utilities.
@@ -44,18 +45,18 @@ test.beforeEach(async ({ page }) => {
 })
 
 test("Tailwind's reset doesn't strip UISet's controls", async ({ page }) => {
-  await page.goto("/components")
+  await openGallery(page, "/components")
   await ready(page)
   const plain = await look(page)
   await withTailwind(page)
-  await page.goto("/components")
+  await openGallery(page, "/components")
   await ready(page)
   expect(await look(page)).toEqual(plain)
 })
 
 test("Tailwind's utility classes win over UISet's styles", async ({ page }) => {
   await withTailwind(page)
-  await page.goto("/components")
+  await openGallery(page, "/components")
   await ready(page)
   await button(page).evaluate((el) => el.classList.add("tw-red"))
   await expect(button(page)).toHaveCSS("color", "rgb(255, 0, 0)")
@@ -64,7 +65,7 @@ test("Tailwind's utility classes win over UISet's styles", async ({ page }) => {
 })
 
 test("a page without Tailwind keeps the layer order it has", async ({ page }) => {
-  await page.goto("/components")
+  await openGallery(page, "/components")
   await ready(page)
   await expect(page.locator("#uiset-layer-order")).toHaveCount(0)
 })
