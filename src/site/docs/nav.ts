@@ -32,6 +32,7 @@ const guides: DocPage[] = [
   { path: "/docs/vue", title: "Vue", file: "vue.md", description: "UISet in a Vue 3 app: setup, passing data, events, two-way binding, skins, UI SDK's Vue components and server rendering." },
   { path: "/docs/svelte", title: "Svelte", file: "svelte.md", description: "UISet in a Svelte 5 app: setup, passing data with runes, events, skins, UI SDK's Svelte components and server rendering." },
   { path: "/docs/migrate", title: "Coming from shadcn/ui", file: "migrate-from-shadcn.md", description: "What maps to what, the API differences, and how to move a shadcn/ui app over one component at a time." },
+  { path: "/docs/agent-migration", title: "Agent migration recipe", file: "agent-migration.md", description: "Steps a coding agent follows to move a shadcn/ui app to UISet one component at a time, with a check after each step and an agent-readiness score at the end." },
   { path: "/docs/roadmap", title: "Roadmap", file: "roadmap.md", description: "What's shipped, what's next, and how UISet follows UI SDK to 1.0." },
 ].map((p) => ({ ...p, section: "Get started" }))
 

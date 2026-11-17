@@ -1,6 +1,9 @@
 @layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
 
-@import "@ui-sdk/core/web.css";
+/* UI SDK's own styles, under UISet's base rules. Nested here rather than in the page-wide
+   ui-sdk layer, which UI SDK puts first in the page, so a reset like Tailwind's can't outrank
+   them (see layers.ts). */
+@import "@ui-sdk/core/web.css" layer(uiset.base.sdk);
 @import "./tokens.css" layer(uiset.tokens);
 @import "./base.css" layer(uiset.base);
 @import "./skins/base.css" layer(uiset.skin);

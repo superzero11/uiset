@@ -24,6 +24,7 @@ Rules for agents building with UISet:
 - [Templates](https://uiset.dev/docs/templates.md): Whole pages built only from UISet items
 - [Theming](https://uiset.dev/docs/theming.md): Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder
 - [Coming from shadcn/ui](https://uiset.dev/docs/migrate-from-shadcn.md): What maps to what, and how to move a shadcn/ui app over
+- [Agent migration recipe](https://uiset.dev/docs/agent-migration.md): Steps a coding agent follows to move a shadcn/ui app to UISet, with a check after each step
 - [Roadmap](https://uiset.dev/docs/roadmap.md): What's shipped, what's next, and how UISet follows UI SDK
 - [Blueprint skin](https://uiset.dev/docs/blueprint.md): The Blueprint skin's design and tokens
 - [Studio skin](https://uiset.dev/docs/studio.md): The Studio skin's design and tokens

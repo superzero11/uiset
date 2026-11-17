@@ -3,6 +3,7 @@
 // share the `data-slot` attributes the React components use), and UISet's primitives
 // register as <uiset-*> elements through UI SDK's createParts.
 import { installUISet } from "@/registry/uiset/ui/uiset/feedback"
+import { orderLayers } from "@/registry/uiset/ui/uiset/layers"
 import "@/registry/uiset/ui/uiset/uiset.css"
 import "@/registry/uiset/ui/shell/shell.css"
 import { defineAgentConsole } from "./agent-console"
@@ -55,6 +56,8 @@ const skins = ["base", "blueprint", "studio", "phosphor", "ink"] as const
 class UISetRoot extends ElementBase {
   static observedAttributes = ["skin", "theme", "sound", "haptics"]
   connectedCallback() {
+    // Stylesheets loaded after the module are on the page once an element connects.
+    orderLayers()
     this.sync()
   }
   attributeChangedCallback() {
@@ -78,6 +81,7 @@ function define() {
   if (typeof customElements === "undefined" || customElements.get("uiset-root")) return
   customElements.define("uiset-root", UISetRoot)
   installUISet()
+  orderLayers()
 
   defineStudio()
 

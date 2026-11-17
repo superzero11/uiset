@@ -365,6 +365,8 @@ checks, then a release, a deploy, and npm by the owner.
 | `@uiset/web` 0.2.0: works as Vue and Svelte write it, ships types                                    | done, not published | 2026-11-16: bound attributes reach every element, `"false"` is off, lists as text, Clear fires `input`, late app shell children, a stylesheet with no demo rules, a module that imports in Node, and types for every element a page works with (the grid and charts take a row type). 27/27 mutations caught; Chrome, WebKit and Firefox; both guide apps rerun on the final build. 2026-11-17: typed events, `v-model` on twelve elements, and clean hydration under `data-uiset-hydrating` (decision log). The owner publishes |
 | Listed on LioRael/awesome-ui-sdk                                                                     | done    | 2026-11-16: the owner got UISet onto the new list of UI SDK libraries |
 | Data grid: a list column's editor in the skin                                                        | done    | 2026-11-16: UI SDK's Combobox in the cell replaces the browser's datalist, React and web; the editor's focus ring stays inside its cell |
+| Tailwind CSS 4 apps work with no setup                                                               | done, web not published | 2026-11-17: in a shadcn/ui app (Tailwind 4), Tailwind's reset stripped UISet's controls and UISet outranked utility classes. UI SDK's web.css now sits in `uiset.base.sdk`, and `uiset/layers.ts` puts `uiset` between Tailwind's `base` and `components` when a page has Tailwind's layers (React root and `<uiset-root>`). Same computed styles as a hand-made fix in a test app, both import orders, popups included; the site's 57 pages and the web demos unchanged (79,128 and 6,856 elements compared); 6 unit and 5 e2e tests (Chrome, WebKit, Firefox), 4/4 mutations caught; the full Chromium and web e2e suites pass apart from a canvas drag test that fails the same way without the change |
+| Agent migration recipe (`docs/agent-migration.md`)                                                   | done | 2026-11-17: a shadcn/ui app moved to UISet by a coding agent, step by step with checks; written from a test migration of a 17-component app. Corrected Installation, Looking for, Coming from shadcn/ui on the way |
 
 ## 10. Decision log
 
@@ -1485,6 +1487,20 @@ checks, then a release, a deploy, and npm by the owner.
   found page mode reporting a UI SDK calendar's day cells (`role="gridcell"`, pointer
   cursor) as only looking clickable: an interactive grid's cells, rows and headers are no
   longer reported, nor scored, since a data grid's cells repeat each other's text.
+
+- 2026-11-17 — Tailwind CSS 4 needs no setup. A test migration of a shadcn/ui app found two
+  problems: UI SDK puts its `ui-sdk` layer first in the page, so Tailwind's reset (in `base`)
+  outranked web.css and stripped every control's padding, border and radius; and UISet's
+  layers, first read after Tailwind's, outranked utility classes (`text-red-600` on a Button
+  stayed white). Fix: `uiset.css` imports web.css into `uiset.base.sdk` (below UISet's own
+  base rules, so nothing changes without Tailwind: the site's computed styles are identical),
+  and `uiset/layers.ts` restates the page's own layer order with `uiset` just after `base`
+  when the page has Tailwind's `theme, base … utilities`, keeping every other layer where the
+  page put it and `ui-sdk` first. It runs at import and before the root's first paint. Pages
+  without Tailwind are left alone; renaming UISet's layers into Tailwind's `components` was
+  rejected (35 files, users' skins, and a risk to Panda-style layer orders). Server-rendered
+  pages get the order at hydration; one optional line in the global stylesheet gives it to the
+  first paint (docs/installation.md, With Tailwind CSS).
 - 2026-11-17 — **Every page's links have names of their own** (the owner: "fix the duplicate
   link names in the site nav"). Page mode, run on all 95 pages, found 65 sets of links sharing
   a name but opening different pages, 230 times in all. In-page links were named like other pages: "On this page"

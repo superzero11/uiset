@@ -21,6 +21,7 @@ npx shadcn@latest add @uiset/uiset
 - [Templates](./templates.md): Whole pages built only from UISet items.
 - [Theming](./theming.md): Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder.
 - [Coming from shadcn/ui](./migrate-from-shadcn.md): What maps to what, and how to move a shadcn/ui app over.
+- [Agent migration recipe](./agent-migration.md): Steps a coding agent follows to move a shadcn/ui app to UISet, with a check after each step.
 - [Roadmap](./roadmap.md): What's shipped, what's next, and how UISet follows UI SDK.
 - [Blueprint skin](./blueprint.md): The Blueprint skin's design and tokens.
 - [Studio skin](./studio.md): The Studio skin's design and tokens.

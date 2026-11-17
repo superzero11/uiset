@@ -54,6 +54,13 @@ old names:
 
 ### Fixed
 
+- **Tailwind CSS 4 apps, with no setup.** In a shadcn/ui app, Tailwind's reset stripped the
+  padding, borders and radius from UISet's controls, and UISet's styles beat Tailwind's
+  utility classes. UI SDK's stylesheet now sits inside UISet's layer, and on a page with
+  Tailwind's layers the root puts UISet between Tailwind's `base` and `components` (React
+  and `<uiset-root>`). Pages without Tailwind look exactly as before. Add the root again
+  (`npx shadcn@latest add @uiset/uiset --overwrite`) to take it; for server rendering, see
+  [With Tailwind CSS](./docs/installation.md#with-tailwind-css).
 - **IDE:** the editor's tabs are named "Open files" for agents, who saw the first file's name
   (React) or no name (Web Components); the command palette has a name while closed (its
   content stays mounted, so its title names it); a problem's name has a space between its

@@ -60,6 +60,7 @@ const extraDocs = [
   ["templates.md", "Templates", "Whole pages built only from UISet items"],
   ["theming.md", "Theming", "Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder"],
   ["migrate-from-shadcn.md", "Coming from shadcn/ui", "What maps to what, and how to move a shadcn/ui app over"],
+  ["agent-migration.md", "Agent migration recipe", "Steps a coding agent follows to move a shadcn/ui app to UISet, with a check after each step"],
   ["roadmap.md", "Roadmap", "What's shipped, what's next, and how UISet follows UI SDK"],
   ["blueprint.md", "Blueprint skin", "The Blueprint skin's design and tokens"],
   ["studio.md", "Studio skin", "The Studio skin's design and tokens"],

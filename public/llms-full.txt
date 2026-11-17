@@ -28,6 +28,7 @@ npx shadcn@latest add @uiset/uiset
 - [Templates](./templates.md): Whole pages built only from UISet items.
 - [Theming](./theming.md): Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder.
 - [Coming from shadcn/ui](./migrate-from-shadcn.md): What maps to what, and how to move a shadcn/ui app over.
+- [Agent migration recipe](./agent-migration.md): Steps a coding agent follows to move a shadcn/ui app to UISet, with a check after each step.
 - [Roadmap](./roadmap.md): What's shipped, what's next, and how UISet follows UI SDK.
 - [Blueprint skin](./blueprint.md): The Blueprint skin's design and tokens.
 - [Studio skin](./studio.md): The Studio skin's design and tokens.
@@ -261,16 +262,19 @@ writes `components.json`, which tells the CLI where components go and what `@/` 
 npx shadcn@latest init
 ```
 
-UISet doesn't need Tailwind. If `init` asks, any choice works.
+UISet doesn't need Tailwind, and works beside it ([With Tailwind CSS](#with-tailwind-css)).
 
 ### 2. Add the root
 
-The root brings the tokens, the five skins, sound and haptics, and pins UI SDK's packages
-(`@ui-sdk/core` and `@ui-sdk/react`) at the exact version UISet is tested with.
+The root brings the tokens, the five skins, sound and haptics, and installs UI SDK's packages
+(`@ui-sdk/core` and `@ui-sdk/react`) at the version UISet is tested with.
 
 ```bash
 npx shadcn@latest add @uiset/uiset
 ```
+
+npm records them with a `^`, which lets a later UI SDK beta in. Pin the version the root
+installed: `npm install --save-exact @ui-sdk/core@<version> @ui-sdk/react@<version>`.
 
 ### 3. Wrap your app
 
@@ -289,6 +293,23 @@ export function App() {
 With a shadcn/ui theme on the page, the base skin uses its colors and radius. Without one,
 pass `keyColor={{ l: 0.5, c: 0.19, h: 268 }}` or make a theme in the
 [theme generator](/themes/generator).
+
+### With Tailwind CSS
+
+Nothing to set up for Tailwind CSS 4. On a page with Tailwind's layers, UISet puts its own
+between Tailwind's `base` and `components`: Tailwind's reset doesn't touch UISet's controls,
+and your utility classes still win over UISet's styles. An older copy of the root (one
+without `components/ui/uiset/layers.ts`) doesn't do this; add the root again with
+`--overwrite`.
+
+On a server-rendered page, as in Next.js, UISet sets that order when the page hydrates. For
+the first paint to have it too, import your global stylesheet before any UISet component, as
+Next.js and Vite apps usually do, and put this line at the top of it, before
+`@import "tailwindcss";`:
+
+```css
+@layer theme, base, uiset, components, utilities;
+```
 
 ### 4. Add what you need
 
@@ -528,6 +549,9 @@ Wrap the app in <UISet skin="base"> from @/components/ui/uiset.
 Don't hand-write keyboard handling or ARIA that a UI SDK component covers, and give every control a name.
 ```
 
+Moving an existing shadcn/ui app instead? Give the agent the
+[Agent migration recipe](./agent-migration.md).
+
 ## Agents that use your app
 
 UI SDK's agent bridge gives an agent the page as data: each component's name, value and
@@ -637,13 +661,14 @@ npx shadcn@latest add @uiset/<item>
 ## Whole pages
 
 Sign in and sign up, a dashboard, settings, an admin records page, an inbox, a chat app, a
-project board, a calendar, pricing and an IDE are [templates](./templates.md): one command
+project board, a calendar, pricing and an IDE are [page templates](./templates.md): one command
 each, built only from the items above.
 
 ## Questions that come up
 
 - **Do I need Tailwind?** No. UISet is plain CSS in cascade layers. Tailwind keeps working
-  beside it: your utilities aren't in UISet's layers, so they win.
+  beside it: UISet sits between Tailwind's reset and its utilities, so your utility classes
+  win ([With Tailwind CSS](./installation.md#with-tailwind-css)).
 - **Does it work outside React?** Yes. Every kit and template is also a custom element in
   `@uiset/web`, for [Vue](./vue.md), [Svelte](./svelte.md), Solid, Angular and plain HTML.
   See [Web Components](./web-components.md).
@@ -3112,6 +3137,9 @@ screen reader and agent behavior come built in, and the API follows UI SDK's.
 
 ## Moving an app over
 
+If a coding agent is doing the move, give it the [Agent migration recipe](./agent-migration.md):
+the same steps, written for an agent, with a check after each one.
+
 1. **Commit first.** UISet items have the same file names as shadcn's
    (`components/ui/button.tsx`), and the CLI asks before it overwrites one.
 2. **Add the root** and wrap the app. Your theme variables are picked up as they are:
@@ -3126,9 +3154,14 @@ screen reader and agent behavior come built in, and the API follows UI SDK's.
    </UISet>
    ```
 
-3. **Replace components one at a time**, starting with leaves (button, badge, input) and
-   then the composite ones (dialog, select, menu). Each item is independent, so the app
-   keeps working between steps.
+   Tailwind CSS 4 needs no setup; for server rendering there's one optional line
+   ([With Tailwind CSS](./installation.md#with-tailwind-css)).
+
+3. **Replace components one at a time.** Move the shadcn files that import shadcn's button
+   (dialog, alert-dialog, sheet, calendar, pagination) before the button itself: UISet's
+   button has no `buttonVariants` and none of shadcn's sizes, so replacing it first breaks
+   them. Leaves like badge, input and checkbox can go at any time. With that order the app
+   keeps building between steps.
 4. **Run your tests.** Selectors by role and name keep working; selectors on Radix's
    `data-state` need the UI SDK attributes below.
 
@@ -3136,20 +3169,20 @@ screen reader and agent behavior come built in, and the API follows UI SDK's.
 
 | shadcn/ui            | UISet item        | Notes                                                                 |
 | -------------------- | ----------------- | --------------------------------------------------------------------- |
-| Button               | `button`          | `variant`: `solid` (default), `outline`, `ghost`                      |
+| Button               | `button`          | `variant`: `solid` (default), `outline`, `ghost`; no `size` and no `buttonVariants` |
 | Input, Label, Form   | `field`           | `Field`, `FieldLabel`, `Input`, `FieldDescription`, `FieldError`; native forms, no form library needed |
-| Select               | `select`          | `SelectTrigger` shows the chosen value by itself; `SelectLabel` names it |
+| Select               | `select`          | `SelectTrigger` shows the chosen value by itself; `SelectLabel` names it; `placeholder` goes on `Select`; `onValueChange` passes `string \| null` |
 | DropdownMenu         | `menu`            | `Menu`, `MenuTrigger`, `MenuContent`, `MenuItem`; handle `onAction` on the menu |
-| Dialog               | `dialog`          | `Dialog`, `DialogTrigger`, `DialogContent`, `DialogTitle`, `DialogClose`; no Header or Footer parts, use your own markup |
-| AlertDialog          | `alert-dialog`    | Same parts with an `AlertDialog` prefix                               |
-| Sheet                | `drawer`          | `Drawer`, with snap points and a handle                               |
+| Dialog               | `dialog`          | `Dialog`, `DialogTrigger`, `DialogContent`, `DialogTitle`, `DialogClose`; no Header or Footer parts, use your own markup; `DialogBackdrop` dims the page |
+| AlertDialog          | `alert-dialog`    | `AlertDialogClose` for both buttons (`value="confirm"` on the confirming one), `AlertDialogBackdrop`; no Header, Footer, Action or Cancel |
+| Sheet                | `drawer`          | `Drawer`, with snap points and a handle; `side` goes on `Drawer`       |
 | Popover, Tooltip, HoverCard | `popover`, `tooltip`, `hover-card` | Same idea, UI SDK's parts            |
 | Tabs                 | `tabs`            | `TabsTab` for TabsTrigger, `TabsPanel` for TabsContent                |
 | Accordion            | `accordion`       | `AccordionItem`, `AccordionTrigger`, `AccordionPanel` for AccordionContent |
 | Command              | `command`         | `CommandInput`, `CommandList`, `CommandItem`, `CommandEmpty`          |
 | Toast (Sonner)       | `toast`           | `toast("Saved", { description })`, with a `ToastRegion` in the app    |
 | Checkbox, Switch, Slider, RadioGroup | `checkbox`, `switch`, `slider`, `radio` | Same use; Slider takes a number or an array |
-| Calendar, DatePicker | `calendar`, `date-picker` | Plus `date-input` and `time-input` for typed dates            |
+| Calendar, DatePicker | `calendar`, `date-picker` | Values are ISO date strings (`value`, `onValueChange`); plus `date-input` and `time-input` for typed dates |
 | Table, DataTable     | `data-grid`       | Sorting, filters, grouping, pinning, editing and virtual rows built in |
 | Card, Badge, Alert, Skeleton, Breadcrumb | `card`, `badge`, `alert`, `skeleton`, `breadcrumbs` | See [App frame and data display](./app-shell.md) |
 | Sidebar              | `app-shell`       | A sidebar that collapses to icons and becomes a drawer on phones      |
@@ -3158,7 +3191,7 @@ screen reader and agent behavior come built in, and the API follows UI SDK's.
 Things shadcn/ui doesn't have: the [chat kit](./chat.md), a
 [rich text editor](./rich-text.md), [board](./board.md), [scheduler](./scheduler.md),
 [canvas](./canvas.md), [IDE](./ide.md), [terminal](./terminal.md), the
-[Agent Console](./agent-console.md) and whole-page [templates](./templates.md).
+[Agent Console](./agent-console.md) and [whole-page templates](./templates.md).
 
 ## API differences
 
@@ -3171,8 +3204,8 @@ Things shadcn/ui doesn't have: the [chat kit](./chat.md), a
   `onPressedChange`, with a second `details` argument that says why it changed (a click,
   a key, an agent) and can cancel it.
 - **Styling.** UISet ships plain CSS in cascade layers, not Tailwind classes. Tailwind
-  keeps working beside it: put a class on any part, and since your utilities aren't in
-  UISet's layers, they win.
+  keeps working beside it: a class on any part wins over UISet's styles
+  ([With Tailwind CSS](./installation.md#with-tailwind-css)).
 - **Names for agents.** UI SDK's agent bridge finds controls by their accessible names.
   A control with a visible label is already named; an icon button needs `aria-label`.
 
@@ -3182,6 +3215,292 @@ Nothing to change: the base skin reads `--background`, `--foreground`, `--muted`
 `--muted-foreground`, `--border`, `--input`, `--primary` and `--radius`. To set the
 accent without a shadcn theme, pass `keyColor`, or try one in the
 [theme generator](https://uiset.dev/themes/generator), which also exports shadcn/ui variables. See [Theming](./theming.md).
+
+
+<!-- docs/agent-migration.md -->
+
+# Agent migration recipe
+
+This page is written for a coding agent. It moves an app built with shadcn/ui (on Radix or
+Base UI) to UISet, one component at a time, with a check after every step. The app builds at
+every commit, and the people using it see the same screens. The person's version, with the
+reasoning, is [Coming from shadcn/ui](./migrate-from-shadcn.md).
+
+Give your agent this page:
+
+```text
+Move this app from shadcn/ui to UISet. Follow https://uiset.dev/docs/agent-migration.md
+step by step. Run each step's check before starting the next, commit after each component,
+and stop and tell me if a check fails twice.
+```
+
+An agent with the UISet skill (`npx skills add superzero11/uiset`) or Context7
+(`/superzero11/uiset`) can look up every item's docs on its own.
+
+The recipe was run end to end on a Vite app with 17 shadcn components (shadcn 4.23, Tailwind
+4, React 19): about 20 commits, the build passing after each, and an agent-readiness score of
+100 at the end.
+
+## Before you start
+
+The person does these:
+
+- **React 19.** UI SDK needs it. Upgrade first if the app is on 18.
+- **A clean branch.** Commit or stash everything, then branch.
+- **Tests, if there are any.** The recipe leans on typecheck and build, and every test the app
+  has makes a step safer.
+
+## Rules for the agent
+
+- **One component per step, one commit per step.** If a step breaks something you can't fix,
+  reset to the last commit and report.
+- **Don't change behavior or layout beyond the swap.** Same labels, same handlers, same data.
+  Note anything that has to change in `MIGRATION.md` instead of improvising.
+- **Behavior comes from UI SDK.** Never hand-write keyboard handling, focus traps or ARIA that
+  a UI SDK component covers. Each component's API is in
+  `node_modules/@ui-sdk/react/docs/components/<name>.md` once the root is installed.
+- **Never let the CLI ask.** Without a terminal, `shadcn add` meets an existing file with
+  "The file button.tsx already exists. Would you like to overwrite?", writes nothing, and
+  still exits 0. Run `npx shadcn@latest add @uiset/<item> --dry-run` to see what it would
+  overwrite, then add with `--overwrite` when replacing a shadcn file. `-y` doesn't skip that
+  prompt.
+- **Keep your own CSS out of `components/ui/uiset/`.** Every item depends on the root, so
+  `--overwrite` rewrites the root's stylesheets too.
+
+## Step 1: Take stock
+
+Find the components folder (`aliases.ui` in `components.json`, usually
+`src/components/ui` or `components/ui`), then list what's there, what uses it, and which
+shadcn files import each other:
+
+```bash
+ls src/components/ui
+grep -rhoE "from ['\"]@/components/ui/[a-z-]+['\"]" src | sort | uniq -c | sort -rn
+grep -lE "components/ui/button['\"]|from ['\"]\./button['\"]" src/components/ui/*.tsx
+grep -oE '"(radix-ui|@radix-ui/[a-z-]+|@base-ui[a-z/-]*|cmdk|vaul|sonner|react-day-picker|date-fns|input-otp|embla-carousel-react|recharts|react-resizable-panels|class-variance-authority|tw-animate-css)"' package.json
+```
+
+Write `MIGRATION.md` with one row per file in the components folder: the shadcn file, how
+many files import it, the UISet item from the table below, whether it's replaced in place or
+added beside, and a status column. Mark the files the third command found: they import
+shadcn's button.
+
+**Check:** every file in the components folder has a row, and every import the second command
+found points at a row.
+
+## Step 2: Record the baseline
+
+Run the app's typecheck, tests and build, and write the results in `MIGRATION.md`. Failures
+that exist now aren't yours to fix; failures that appear later are.
+
+**Check:** the baseline is in `MIGRATION.md`.
+
+## Step 3: Add the root
+
+```bash
+npx shadcn@latest add @uiset/uiset
+```
+
+Wrap the app's root (the layout in Next.js, `main.tsx` in Vite) once:
+
+```tsx
+import { UISet } from "@/components/ui/uiset"
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return <UISet skin="base">{children}</UISet>
+}
+```
+
+The base skin reads the app's shadcn variables (`--background`, `--foreground`, `--primary`,
+`--border`, `--radius` and the rest), so the theme carries over.
+
+**Tailwind CSS 4 needs nothing here.** UISet puts its layer between Tailwind's reset and its
+utilities, so the controls keep their look and the app's utility classes still win. If an
+older copy of the root is installed (no `components/ui/uiset/layers.ts`), add it again with
+`--overwrite`. In a server-rendered app (Next.js), also put
+`@layer theme, base, uiset, components, utilities;` at the top of the global stylesheet, so the
+first paint has that order too ([With Tailwind CSS](./installation.md#with-tailwind-css)).
+
+Then pin UI SDK to the exact version the root installed, since npm saves it with a `^` and a
+beta can change between versions:
+
+```bash
+npm install --save-exact @ui-sdk/core@<version> @ui-sdk/react@<version>
+```
+
+**Check:** typecheck and build pass, the pages render as before, and a `<button>` from UI SDK
+on any page still has its padding and border.
+
+## Step 4: Replace components, one at a time
+
+**Order.** UISet's button doesn't export `buttonVariants`, and it has none of shadcn's sizes or
+variant names, so replacing `button.tsx` first breaks every shadcn file that imports it (in the
+test app: dialog, alert-dialog, sheet, calendar and pagination, 28 type errors). Move the files
+Step 1 marked first, then the button. Leaves like badge, input, label, checkbox and switch can
+go at any time. Do the sidebar, a data table, charts and forms last, each as its own step.
+
+If one of the marked files has to wait, keep a copy of shadcn's button for it
+(`git show HEAD:src/components/ui/button.tsx > src/components/ui/button-shadcn.tsx`), point
+that file's import at the copy, and delete the copy when the last such file has moved.
+
+For each component:
+
+1. **Install it.** Same file name as shadcn's: `npx shadcn@latest add @uiset/<item>
+   --overwrite`. Different name (the "added beside" rows below): `npx shadcn@latest add
+   @uiset/<item>`, which leaves the old file in place.
+2. **Typecheck.** Every error is a call site to update. Fix each with the notes below and the
+   component's docs in `node_modules/@ui-sdk/react/docs/components/`. A prop that compiles
+   isn't proof: shadcn's calendar `mode` and `selected` typecheck and do nothing.
+3. **Move the imports** of an "added beside" item to the new file, then delete the old file.
+4. **Update tests** that select by Radix's `data-state` (see "Everywhere" below).
+5. **Check:** typecheck, tests and build pass, and `grep -r "components/ui/<old-name>" src`
+   finds nothing for a deleted file. Mark the row done in `MIGRATION.md` and commit.
+
+### What maps to what
+
+These shadcn files have a UISet item of the same name, which replaces them in place:
+`accordion`, `alert`, `alert-dialog`, `avatar`, `badge`, `button`, `calendar`, `card`,
+`carousel`, `checkbox`, `collapsible`, `combobox`, `command`, `dialog`, `drawer`, `field`,
+`hover-card`, `input`, `kbd`, `label`, `menubar`, `navigation-menu`, `pagination`, `popover`,
+`progress`, `resizable`, `scroll-area`, `select`, `separator`, `skeleton`, `slider`,
+`spinner`, `switch`, `table`, `tabs`, `textarea`, `toggle` and `tooltip`.
+
+The rest have another name, or stay:
+
+| shadcn/ui file | UISet item | Lands |
+|---|---|---|
+| `breadcrumb` | `breadcrumbs` | added beside |
+| `dropdown-menu`, `context-menu` | `menu` | added beside |
+| `input-otp` | `otp-input` | added beside |
+| `radio-group` | `radio` | added beside |
+| `sheet` | `drawer` | added beside |
+| `sonner` | `toast` | added beside |
+| `toggle-group` | `toggle` (`ToggleGroup`) | added beside |
+| `input-group` | `input` (`InputGroup`) | added beside |
+| `empty` | `empty-state` | added beside |
+| `item` | `item-list` | added beside |
+| `sidebar` | `app-shell` | added beside, as its own step at the end |
+| a data table on TanStack Table | `data-grid` | added beside, as its own step |
+| `chart` (Recharts) | `line-chart`, `bar-chart`, `scatter-chart`, `heatmap`, `segmented-bar` | added beside, as its own step |
+| `form` (React Hook Form) | none: keep it | stays; connect each UISet control through a `Controller` |
+| `aspect-ratio`, `typography`, `button-group` | none: keep them | stay |
+
+### Component by component
+
+What the test app needed, beyond renaming imports:
+
+- **button.** Variants are `solid` (the default), `outline` and `ghost`: `default` becomes
+  `solid`, `secondary` becomes `outline`, `link` becomes `ghost` rendering an `<a>`, and
+  `destructive` becomes `solid` with your own class plus `data-agent-confirm` saying what it
+  does. There's no `size`: drop it, and keep an `aria-label` on icon-only buttons. `asChild`
+  becomes `render`: `<Button render={<a href="/docs" />}>Docs</Button>`.
+- **Triggers and close buttons** of dialogs, menus and popovers are buttons themselves. Instead
+  of wrapping a `Button` with `asChild`, put the label inside the trigger and give it
+  `data-variant="solid"`, `"outline"` or `"ghost"` for a button's look.
+- **dialog.** No `DialogHeader` or `DialogFooter`: use your own `<div>`s. Add `<DialogBackdrop />`
+  for the dimmed page, and a `DialogClose` where shadcn drew its corner ×.
+- **alert-dialog.** No `AlertDialogHeader`, `Footer`, `Action` or `Cancel`. Both buttons are
+  `AlertDialogClose`; the confirming one takes `value="confirm"`. Add `<AlertDialogBackdrop />`.
+- **dropdown-menu → menu.** `Menu`, `MenuTrigger`, `MenuContent`, `MenuItem`. Give each item a
+  `value` and handle choices once with `onAction={(value) => …}` on `Menu`, instead of
+  `onSelect` on each item. `variant="destructive"` on an item becomes `destructive`; a label is
+  `MenuGroupLabel` inside a `MenuGroup`. A context menu is `Menu` with `MenuContextTrigger`.
+- **select.** `onValueChange` passes `string | null`, so `setState` for a string needs
+  `(v) => setValue(v ?? "")`. `placeholder` moves from `SelectValue` to `Select`, and
+  `<SelectLabel>` inside the `Select` names it, in place of a separate `Label`.
+- **tabs.** `TabsTrigger` is `TabsTab` and `TabsContent` is `TabsPanel`. Name the tabs
+  (`<Tabs aria-label="Settings sections">`): an agent needs it.
+- **accordion.** `AccordionContent` is `AccordionPanel`.
+- **sonner → toast.** UISet's toast exports `toast` and `Toaster`, and
+  `toast("Saved", { description })` reads the same. Only the imports change.
+- **calendar.** Dates are ISO strings: `value="2026-11-17"` and `onValueChange`, in place of
+  `mode`, `selected` and `onSelect` with `Date` objects.
+- **pagination.** A different model: the parts become one
+  `<Pagination aria-label="Results pages" pageCount={…} getHref={(page) => …} />`.
+- **sheet → drawer.** `Sheet`, `SheetTrigger` and `SheetContent` become `Drawer`,
+  `DrawerTrigger` and `DrawerContent`. `side` moves from the content to `Drawer`, and
+  `<DrawerBackdrop />` dims the page.
+- **badge.** `variant` becomes `tone`: `neutral`, `info`, `success`, `warning` or `danger`.
+- **tooltip.** There's no `TooltipProvider`; remove it.
+- **card.** Unchanged, except there's no `CardAction`.
+- **checkbox, switch, input, label, field.** Drop-in.
+
+### Everywhere
+
+- **Change handlers** are `onValueChange`, `onOpenChange`, `onCheckedChange` and
+  `onPressedChange`, with a second `details` argument that says why the value changed.
+- **State attributes.** Radix's `data-state="open"` and `data-state="checked"` are
+  `data-open` and `data-checked` (also `data-pressed`, `data-highlighted`, `data-disabled`),
+  and every part has a `data-slot`.
+- **Styling.** Tailwind classes on any part win over UISet's styles, so the app's own classes
+  keep working.
+
+## Step 5: Remove what nothing uses
+
+When the last component that used a package is gone, uninstall it. shadcn's Radix style
+depends on the `radix-ui` package (older apps on `@radix-ui/*`), plus `class-variance-authority`,
+`tw-animate-css`, `sonner`, `react-day-picker` and `date-fns`:
+
+```bash
+grep -rl "from \"sonner\"" src || npm uninstall sonner
+```
+
+Do the same for each package Step 1 found, and delete `components/ui` files that nothing
+imports. Keep `cn` in `lib/utils.ts` while the app's own code uses it, and remove the
+`tw-animate-css` import from the stylesheet with its package.
+
+**Check:** typecheck, tests and build pass.
+
+## Step 6: Check that an agent can use it
+
+An agent operates the app through UI SDK's agent bridge, so create one once, in its own module
+imported by the app's entry (`main.tsx` in Vite, a client component in Next.js):
+
+```ts
+// src/agent.ts
+import { createAgent, registerTools } from "@ui-sdk/react/agent"
+
+const agent = createAgent()
+
+// Ask a person before an agent presses anything.
+const unregister = registerTools(agent, {
+  allow: (step) => step.action !== "press" || confirm(`Press ${step.args[0]}?`),
+})
+
+// Vite only: drop the old tools when the module reloads.
+if (import.meta.hot) import.meta.hot.dispose(unregister)
+
+export { agent }
+```
+
+Then run the readiness check against the running app and its main pages:
+
+```bash
+npx shadcn@latest add @uiset/agent-check
+npx tsx src/components/ui/agent-check/cli.ts http://localhost:5173 /settings /billing
+```
+
+It uses the bridge when it finds one and scores each page. Add `--channel chrome` to use the
+installed Chrome instead of downloading Playwright's Chromium. In the test app it found an unnamed
+set of tabs, three names that each found two controls ("Save" in "Save profile", "Delete" in
+"Delete account", "Email" in "Email notifications") and a Delete with no
+`data-agent-confirm`. Fix each (a name, a more specific label, a confirmation), then add
+`expectAgentReady` to the app's tests so it stays that way. See
+[Agent readiness check](./agent-check.md).
+
+**Check:** every page scores 100, or each remaining problem is listed in `MIGRATION.md` with
+the reason it stays.
+
+## Step 7: Report
+
+Finish `MIGRATION.md` with:
+
+- what moved, and the commits;
+- what stayed and why (`form`, charts, anything UISet doesn't have);
+- the agent-readiness score of each page;
+- checks that fail, with the error.
+
+Then hand it back to the person to review the branch.
 
 
 <!-- docs/roadmap.md -->

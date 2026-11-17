@@ -44,6 +44,11 @@
           "target": "@ui/uiset/haptics.ts"
         },
         {
+          "path": "registry/uiset/ui/uiset/layers.ts",
+          "type": "registry:file",
+          "target": "@ui/uiset/layers.ts"
+        },
+        {
           "path": "registry/uiset/ui/uiset/skins/base.css",
           "type": "registry:file",
           "target": "@ui/uiset/skins/base.css"

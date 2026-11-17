@@ -14,16 +14,19 @@ writes `components.json`, which tells the CLI where components go and what `@/` 
 npx shadcn@latest init
 ```
 
-UISet doesn't need Tailwind. If `init` asks, any choice works.
+UISet doesn't need Tailwind, and works beside it ([With Tailwind CSS](#with-tailwind-css)).
 
 ### 2. Add the root
 
-The root brings the tokens, the five skins, sound and haptics, and pins UI SDK's packages
-(`@ui-sdk/core` and `@ui-sdk/react`) at the exact version UISet is tested with.
+The root brings the tokens, the five skins, sound and haptics, and installs UI SDK's packages
+(`@ui-sdk/core` and `@ui-sdk/react`) at the version UISet is tested with.
 
 ```bash
 npx shadcn@latest add @uiset/uiset
 ```
+
+npm records them with a `^`, which lets a later UI SDK beta in. Pin the version the root
+installed: `npm install --save-exact @ui-sdk/core@<version> @ui-sdk/react@<version>`.
 
 ### 3. Wrap your app
 
@@ -42,6 +45,23 @@ export function App() {
 With a shadcn/ui theme on the page, the base skin uses its colors and radius. Without one,
 pass `keyColor={{ l: 0.5, c: 0.19, h: 268 }}` or make a theme in the
 [theme generator](/themes/generator).
+
+### With Tailwind CSS
+
+Nothing to set up for Tailwind CSS 4. On a page with Tailwind's layers, UISet puts its own
+between Tailwind's `base` and `components`: Tailwind's reset doesn't touch UISet's controls,
+and your utility classes still win over UISet's styles. An older copy of the root (one
+without `components/ui/uiset/layers.ts`) doesn't do this; add the root again with
+`--overwrite`.
+
+On a server-rendered page, as in Next.js, UISet sets that order when the page hydrates. For
+the first paint to have it too, import your global stylesheet before any UISet component, as
+Next.js and Vite apps usually do, and put this line at the top of it, before
+`@import "tailwindcss";`:
+
+```css
+@layer theme, base, uiset, components, utilities;
+```
 
 ### 4. Add what you need
 

@@ -61,13 +61,14 @@ npx shadcn@latest add @uiset/<item>
 ## Whole pages
 
 Sign in and sign up, a dashboard, settings, an admin records page, an inbox, a chat app, a
-project board, a calendar, pricing and an IDE are [templates](./templates.md): one command
+project board, a calendar, pricing and an IDE are [page templates](./templates.md): one command
 each, built only from the items above.
 
 ## Questions that come up
 
 - **Do I need Tailwind?** No. UISet is plain CSS in cascade layers. Tailwind keeps working
-  beside it: your utilities aren't in UISet's layers, so they win.
+  beside it: UISet sits between Tailwind's reset and its utilities, so your utility classes
+  win ([With Tailwind CSS](./installation.md#with-tailwind-css)).
 - **Does it work outside React?** Yes. Every kit and template is also a custom element in
   `@uiset/web`, for [Vue](./vue.md), [Svelte](./svelte.md), Solid, Angular and plain HTML.
   See [Web Components](./web-components.md).

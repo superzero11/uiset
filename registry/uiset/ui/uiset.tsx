@@ -1,10 +1,13 @@
 "use client"
 
 import type * as React from "react"
+import { useInsertionEffect } from "react"
 import { installUISet } from "./uiset/feedback"
+import { orderLayers } from "./uiset/layers"
 import "./uiset/uiset.css"
 
 installUISet()
+orderLayers()
 
 type KeyColor = { l: number; c: number; h: number }
 type Skin = "base" | "blueprint" | "studio" | "phosphor" | "ink" | (string & {})
@@ -26,6 +29,8 @@ function UISet({
   style,
   ...props
 }: UISetProps) {
+  // Stylesheets imported after this module are on the page by the first render.
+  useInsertionEffect(() => orderLayers(), [])
   const keyStyle = keyColor && {
     "--uiset-key-l": keyColor.l,
     "--uiset-key-c": keyColor.c,

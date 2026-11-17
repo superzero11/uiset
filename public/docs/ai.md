@@ -54,6 +54,9 @@ Wrap the app in <UISet skin="base"> from @/components/ui/uiset.
 Don't hand-write keyboard handling or ARIA that a UI SDK component covers, and give every control a name.
 ```
 
+Moving an existing shadcn/ui app instead? Give the agent the
+[Agent migration recipe](./agent-migration.md).
+
 ## Agents that use your app
 
 UI SDK's agent bridge gives an agent the page as data: each component's name, value and

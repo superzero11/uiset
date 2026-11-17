@@ -6,6 +6,9 @@ screen reader and agent behavior come built in, and the API follows UI SDK's.
 
 ## Moving an app over
 
+If a coding agent is doing the move, give it the [Agent migration recipe](./agent-migration.md):
+the same steps, written for an agent, with a check after each one.
+
 1. **Commit first.** UISet items have the same file names as shadcn's
    (`components/ui/button.tsx`), and the CLI asks before it overwrites one.
 2. **Add the root** and wrap the app. Your theme variables are picked up as they are:
@@ -20,9 +23,14 @@ screen reader and agent behavior come built in, and the API follows UI SDK's.
    </UISet>
    ```
 
-3. **Replace components one at a time**, starting with leaves (button, badge, input) and
-   then the composite ones (dialog, select, menu). Each item is independent, so the app
-   keeps working between steps.
+   Tailwind CSS 4 needs no setup; for server rendering there's one optional line
+   ([With Tailwind CSS](./installation.md#with-tailwind-css)).
+
+3. **Replace components one at a time.** Move the shadcn files that import shadcn's button
+   (dialog, alert-dialog, sheet, calendar, pagination) before the button itself: UISet's
+   button has no `buttonVariants` and none of shadcn's sizes, so replacing it first breaks
+   them. Leaves like badge, input and checkbox can go at any time. With that order the app
+   keeps building between steps.
 4. **Run your tests.** Selectors by role and name keep working; selectors on Radix's
    `data-state` need the UI SDK attributes below.
 
@@ -30,20 +38,20 @@ screen reader and agent behavior come built in, and the API follows UI SDK's.
 
 | shadcn/ui            | UISet item        | Notes                                                                 |
 | -------------------- | ----------------- | --------------------------------------------------------------------- |
-| Button               | `button`          | `variant`: `solid` (default), `outline`, `ghost`                      |
+| Button               | `button`          | `variant`: `solid` (default), `outline`, `ghost`; no `size` and no `buttonVariants` |
 | Input, Label, Form   | `field`           | `Field`, `FieldLabel`, `Input`, `FieldDescription`, `FieldError`; native forms, no form library needed |
-| Select               | `select`          | `SelectTrigger` shows the chosen value by itself; `SelectLabel` names it |
+| Select               | `select`          | `SelectTrigger` shows the chosen value by itself; `SelectLabel` names it; `placeholder` goes on `Select`; `onValueChange` passes `string \| null` |
 | DropdownMenu         | `menu`            | `Menu`, `MenuTrigger`, `MenuContent`, `MenuItem`; handle `onAction` on the menu |
-| Dialog               | `dialog`          | `Dialog`, `DialogTrigger`, `DialogContent`, `DialogTitle`, `DialogClose`; no Header or Footer parts, use your own markup |
-| AlertDialog          | `alert-dialog`    | Same parts with an `AlertDialog` prefix                               |
-| Sheet                | `drawer`          | `Drawer`, with snap points and a handle                               |
+| Dialog               | `dialog`          | `Dialog`, `DialogTrigger`, `DialogContent`, `DialogTitle`, `DialogClose`; no Header or Footer parts, use your own markup; `DialogBackdrop` dims the page |
+| AlertDialog          | `alert-dialog`    | `AlertDialogClose` for both buttons (`value="confirm"` on the confirming one), `AlertDialogBackdrop`; no Header, Footer, Action or Cancel |
+| Sheet                | `drawer`          | `Drawer`, with snap points and a handle; `side` goes on `Drawer`       |
 | Popover, Tooltip, HoverCard | `popover`, `tooltip`, `hover-card` | Same idea, UI SDK's parts            |
 | Tabs                 | `tabs`            | `TabsTab` for TabsTrigger, `TabsPanel` for TabsContent                |
 | Accordion            | `accordion`       | `AccordionItem`, `AccordionTrigger`, `AccordionPanel` for AccordionContent |
 | Command              | `command`         | `CommandInput`, `CommandList`, `CommandItem`, `CommandEmpty`          |
 | Toast (Sonner)       | `toast`           | `toast("Saved", { description })`, with a `ToastRegion` in the app    |
 | Checkbox, Switch, Slider, RadioGroup | `checkbox`, `switch`, `slider`, `radio` | Same use; Slider takes a number or an array |
-| Calendar, DatePicker | `calendar`, `date-picker` | Plus `date-input` and `time-input` for typed dates            |
+| Calendar, DatePicker | `calendar`, `date-picker` | Values are ISO date strings (`value`, `onValueChange`); plus `date-input` and `time-input` for typed dates |
 | Table, DataTable     | `data-grid`       | Sorting, filters, grouping, pinning, editing and virtual rows built in |
 | Card, Badge, Alert, Skeleton, Breadcrumb | `card`, `badge`, `alert`, `skeleton`, `breadcrumbs` | See [App frame and data display](./app-shell.md) |
 | Sidebar              | `app-shell`       | A sidebar that collapses to icons and becomes a drawer on phones      |
@@ -52,7 +60,7 @@ screen reader and agent behavior come built in, and the API follows UI SDK's.
 Things shadcn/ui doesn't have: the [chat kit](./chat.md), a
 [rich text editor](./rich-text.md), [board](./board.md), [scheduler](./scheduler.md),
 [canvas](./canvas.md), [IDE](./ide.md), [terminal](./terminal.md), the
-[Agent Console](./agent-console.md) and whole-page [templates](./templates.md).
+[Agent Console](./agent-console.md) and [whole-page templates](./templates.md).
 
 ## API differences
 
@@ -65,8 +73,8 @@ Things shadcn/ui doesn't have: the [chat kit](./chat.md), a
   `onPressedChange`, with a second `details` argument that says why it changed (a click,
   a key, an agent) and can cancel it.
 - **Styling.** UISet ships plain CSS in cascade layers, not Tailwind classes. Tailwind
-  keeps working beside it: put a class on any part, and since your utilities aren't in
-  UISet's layers, they win.
+  keeps working beside it: a class on any part wins over UISet's styles
+  ([With Tailwind CSS](./installation.md#with-tailwind-css)).
 - **Names for agents.** UI SDK's agent bridge finds controls by their accessible names.
   A control with a visible label is already named; an icon button needs `aria-label`.
 
