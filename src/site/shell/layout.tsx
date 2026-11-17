@@ -5,7 +5,7 @@ import { Drawer, DrawerBackdrop, DrawerContent, DrawerTitle, DrawerTrigger } fro
 import { SegmentedControl, SegmentedControlItem } from "@/registry/uiset/ui/segmented-control"
 import { UISet } from "@/registry/uiset/ui/uiset"
 import { Logo } from "./logo"
-import { followLink, navigate, useLocation } from "./router"
+import { followLink, navigate, useLocation, warmLink } from "./router"
 import type { SearchEntry } from "./search-data"
 import "./shell.css"
 
@@ -287,7 +287,17 @@ function SiteLayout({ children }: { children: ReactNode }) {
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
-      <UISet skin="base" theme={theme} className="site" onClick={(event) => followLink(event)}>
+      <UISet
+        skin="base"
+        theme={theme}
+        className="site"
+        onClick={(event) => followLink(event)}
+        onPointerOver={warmLink}
+        onPointerDown={warmLink}
+        onFocus={warmLink}
+        onTouchStart={warmLink}
+      >
+        <div className="site-progress" aria-hidden="true" />
         <a className="skip-link" href="#main" data-reload="">
           Skip to content
         </a>

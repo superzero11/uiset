@@ -43,6 +43,53 @@
   line-height: 1;
 }
 
+/* ------------------------------------------------------------------ page loading */
+
+/* A page that takes a moment to load: a bar along the top while it does (router.tsx sets
+   data-navigating). It waits 150 ms, so quick moves between pages show nothing. */
+.site-progress {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 30;
+  block-size: 3px;
+  background: var(--ui-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  pointer-events: none;
+
+  &:dir(rtl) {
+    transform-origin: right;
+  }
+}
+
+html[data-navigating] {
+  cursor: progress;
+
+  & .site-progress {
+    transform: scaleX(0.9);
+    opacity: 1;
+    transition:
+      opacity 0.1s 0.15s,
+      transform 8s cubic-bezier(0.1, 0.8, 0.2, 1) 0.15s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-navigating] .site-progress {
+    transform: scaleX(1);
+    transition: opacity 0.1s 0.15s;
+  }
+}
+
+@media (forced-colors: active) {
+  .site-progress {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+}
+
 /* ------------------------------------------------------------------ header */
 
 .site-top {

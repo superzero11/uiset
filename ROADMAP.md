@@ -1602,3 +1602,19 @@ checks, then a release, a deploy, and npm by the owner.
   search's name then contained; the kit is unchanged and its `label` is documented. Still
   repeating between replies: a code block's "Wrap lines" and "Previous version". Not touched:
   uiset.dev's home page scores 85 through the bridge ("Skin", "Sound", "Kit", "Message").
+- 2026-11-17 — **Slow links show progress, and a second click doesn't open a page twice**
+  (the owner: links on uiset.dev sometimes opened after 5 to 6 seconds, and people clicked
+  again). The site's router loads a page's code before changing the address, with nothing on
+  screen meanwhile, so a slow page looked like a dead link. Measured on uiset.dev, click to
+  new heading: on this Mac 0.4 to 1 s; on a 4G connection with a 4x slower processor, Kits
+  1.8 s (53 files before the address changes), Components 3.7 s (197 files, then 2.5 s to
+  draw 79 live examples), Templates and Docs 0.5 s. Now: a bar runs along the top when a page
+  takes over 150 ms (`data-navigating` on `<html>`, `aria-busy` on the main area, a progress
+  cursor; still without motion when reduced motion is on, Highlight in forced colors), and
+  stays until the new page has drawn. Only the latest click lands, so clicking a slow link
+  again opens it once, a click on another link takes over, and Back takes over from a click
+  still loading. A page starts loading when its link is pointed at for 80 ms, pressed,
+  focused or touched. `tests/e2e/navigation.spec.ts` holds the Kits page's code back and
+  checks all three (Chrome, WebKit, Firefox; mutations caught: a late page still landing, no
+  bar, no loading on hover). The Components page's own weight is still there: on a slow
+  phone it takes about 3.7 s whatever the router does.
