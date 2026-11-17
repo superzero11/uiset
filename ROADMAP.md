@@ -1439,3 +1439,16 @@ checks, then a release, a deploy, and npm by the owner.
   localhost and signed-in pages. First runs: example.com 100, ui.shadcn.com 96 (two "Home"
   links to different places), Hacker News 64 (the search box has no label; 30 "hide"
   links). A child's `title` naming a link (HN's vote arrows) was missed at first, and fixed.
+- 2026-11-17 — **The site can build on Vercel, for deploy-on-push** (the owner's go-ahead).
+  Every deploy had been built on the owner's Mac (`vercel build`, then `--prebuilt`), so with
+  several sessions in one folder a deploy shipped whatever was uncommitted. Vercel's machines
+  could not build it: the prerender opens pages in Chromium, and they have none. Two private
+  previews of the committed code: Playwright's Chromium downloaded but failed for a missing
+  `libnspr4.so`; with Chromium's libraries installed by `dnf` first (the build image is Amazon
+  Linux) it built in 3 minutes, all 93 pages prerendered. `scripts/vercel-build.sh` does that
+  on a Vercel build machine only (VERCEL set, Linux, `dnf` present) and sets `CI` so the
+  prerender takes Playwright's Chromium; anywhere else it runs `pnpm build:static` as before,
+  and a local `vercel build` still prerenders with installed Chrome. `vercel.json`'s build
+  command runs it. A third preview built with the script alone. Left to the owner: connect
+  `superzero11/uiset` to the Vercel project (Settings, Git), after which a push to main deploys
+  and other branches get previews.
