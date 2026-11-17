@@ -8,7 +8,11 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add superzero11/uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
-## 0.3.0 (unreleased)
+## 0.3.0 (2026-11-17)
+
+On UI SDK `0.1.0-beta.5`. The first `@uiset/web` on npm since 0.1.1: 0.2.0 wasn't published
+on its own, so this release carries its changes too, including the two under its
+**Changed**. Nothing in 0.3.0 itself changes how existing code works.
 
 ### Added
 
@@ -38,7 +42,8 @@ again (`npx shadcn@latest add superzero11/uiset/<item>`) and review the diff.
 ## 0.2.0 (2026-11-17)
 
 On UI SDK `0.1.0-beta.5`. A minor release: two things work differently, each under
-**Changed** with what to do.
+**Changed** with what to do. `@uiset/web` 0.2.0 wasn't published to npm; 0.3.0 has these
+changes.
 
 ### Added
 

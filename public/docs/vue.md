@@ -6,7 +6,7 @@ whose own `<ui-*>` elements it dresses. This page covers what is specific to Vue
 passing data, events, skins, UI SDK's Vue components and server rendering. Every element's
 attributes, properties and events are in [Web Components](./web-components.md).
 
-This page describes `@uiset/web` 0.2.0 or later.
+This page describes `@uiset/web` 0.3.0 or later.
 
 ## Install
 
@@ -234,7 +234,7 @@ Four things to know:
 ```
 
 The grid's and search field's plain `label`, the boolean bindings and the text lists need
-`@uiset/web` 0.2.0 or later.
+`@uiset/web` 0.3.0 or later.
 
 ## Events out
 
@@ -259,7 +259,7 @@ the element's event map, as `onCellEdit` does above.
 
 ## Two-way binding
 
-`v-model` works on every element with a value a person changes (0.2.0 or later): the
+`v-model` works on every element with a value a person changes (0.3.0 or later): the
 search field, stepper, knob, patch bay, wheel, rich text, code editor, chat composer, chat
 threads, model picker, file tree and editor tabs. Vue treats a custom element like a text
 input: it sets `value` and reads it back on `input`, and each of these fires `input` once a
@@ -310,7 +310,7 @@ The same pair works for `:checked` and `@checkedchange` on `<ui-switch>`, `:valu
   stat): give them no children.
 - **The app shell moves its children** into its sidebar, header and main area. They keep
   updating there, and `v-if` works inside them and straight under the shell: a child that
-  appears later is placed in the main area after the others, and leaves again (0.2.0 or
+  appears later is placed in the main area after the others, and leaves again (0.3.0 or
   later).
 
 ## The element from script
@@ -333,7 +333,7 @@ onMounted(() => iconHost.value?.append(iconElement("check")))
 
 ## TypeScript
 
-- **The package ships its types** (0.2.0 or later): the functions it exports, a type for
+- **The package ships its types** (0.3.0 or later): the functions it exports, a type for
   each element with options of its own (`UISetDataGrid`, `UISetStepper`, `UISetPatchBay`
   and the rest; charts and the grid take your row type, as in `UISetLineChart<Month>` and
   `UISetDataGrid<Order>`), and entries in
@@ -383,7 +383,7 @@ at once. See [Theming](./theming.md) for the skins and their variables.
 | --------- | --------------------------------------------------------------------------- |
 | `skin`    | `"base"`, `"blueprint"`, `"studio"`, `"phosphor"` or `"ink"`                |
 | `theme`   | `"light"` or `"dark"`; `null` removes it and the page follows the system    |
-| `sound`   | `true` for interaction sounds, `false` for none (0.2.0 or later)            |
+| `sound`   | `true` for interaction sounds, `false` for none (0.3.0 or later)            |
 
 The themed skins have one scheme each (Studio is dark, Ink is light), so, as
 [Theming](./theming.md#skins) says, `theme` is for the base skin.
@@ -415,7 +415,7 @@ const keyStyle = computed(() => ({
 ### One skin inside another
 
 The nearest root wins, so a root inside a root gives a panel its own skin or theme. It is
-only as tall as what's in it (0.2.0 or later).
+only as tall as what's in it (0.3.0 or later).
 
 ```vue
 <uiset-root :skin="skin" :theme="theme">
@@ -431,7 +431,7 @@ only as tall as what's in it (0.2.0 or later).
 
 ### Fonts
 
-The base skin uses your app's own font: the root and its controls inherit it (0.2.0 or
+The base skin uses your app's own font: the root and its controls inherit it (0.3.0 or
 later). Each themed skin names its faces and falls back to system fonts. Load the ones you
 use, for example Studio's from Google Fonts in `index.html`:
 
@@ -556,7 +556,7 @@ were not compared.
 What was tested is Vue's own server renderer (`renderToString`, then `createSSRApp`
 hydrating in the browser, built with Vite's `--ssr` build). Nuxt was not tested.
 
-- **The module imports on a server** (0.2.0 or later). It defines nothing there, so code
+- **The module imports on a server** (0.3.0 or later). It defines nothing there, so code
   that runs in both places can import it.
 - **The server sends the tags and their text attributes.** Arrays, objects and functions
   are left out; Vue sets them as properties as it hydrates.
@@ -626,7 +626,7 @@ What each kit offers agents, approvals and the Agent Console are in
 
 On 2026-11-16, in a new Vite app from the `vue-ts` template: Vue 3.5.45, Vite 8.3.8,
 `@vitejs/plugin-vue` 6.0.11, `vue-tsc` 3.3.14 and TypeScript 6.0.3, with `@uiset/web`
-0.2.0 from a local build (before it was published), `@ui-sdk/web`, `@ui-sdk/core` and `@ui-sdk/vue`
+0.2.0 from a local build (0.2.0 never went to npm; 0.3.0 carries its changes), `@ui-sdk/web`, `@ui-sdk/core` and `@ui-sdk/vue`
 0.1.0-beta.5, on Node 24.21 and npm 11.19. The app typechecks (default settings and
 `strictTemplates`) and builds, also in a clean install with no `shiki`. Every code block on
 this page ran in it, and the production build was driven in Chrome 157 with Playwright:

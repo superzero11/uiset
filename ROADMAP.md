@@ -264,7 +264,8 @@ by eye in 5 skins × 2 themes and at phone width, keyboard, agent and axe tests,
 checks, then a release, a deploy, and npm by the owner.
 
 **Waiting on others.**
-- The owner publishes `@uiset/web` 0.2.0; then check it with `npm view --prefer-online`, and
+- The owner publishes `@uiset/web` 0.3.0 (0.2.0 was never published; 0.3.0 carries it);
+  then check it with `npm view --prefer-online`, and
   (with the owner's go-ahead) ask awesome-ui-sdk to list the Web Components.
 - shadcn-ui/ui#12725: once merged, the `@uiset` namespace steps (launch memory and section 7).
 - UI SDK's next beta: rerun everything on it and drop workarounds whose issues are fixed
@@ -1318,3 +1319,9 @@ checks, then a release, a deploy, and npm by the owner.
   outside an open dialog, while the submit event still fires for the hydrated form. Tests
   copy the form's HTML into a page with JavaScript off and press Enter and Next (2 mutations
   caught).
+- 2026-11-17 — **Release 0.3.0, with 0.2.0 unpublished.** The owner's `npm publish` from
+  `main` would have shipped the schema form as 0.2.0, which the changelog put in 0.3.0
+  (it also failed: `pnpm` wasn't on that shell's path, fixed with `corepack enable pnpm`).
+  Asked whether to publish 0.2.0 from its commit or release 0.3.0, the owner chose 0.3.0
+  now. npm goes from 0.1.1 to 0.3.0; the changelog says 0.3.0 carries 0.2.0's changes, and
+  the Vue and Svelte guides now say "0.3.0 or later" for what npm users first get there.

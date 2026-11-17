@@ -7,7 +7,7 @@ passing data with runes, events, skins, UI SDK's Svelte components and server re
 Every element's attributes, properties and events are in
 [Web Components](./web-components.md).
 
-This page describes `@uiset/web` 0.2.0 or later.
+This page describes `@uiset/web` 0.3.0 or later.
 
 ## Install
 
@@ -195,13 +195,13 @@ Five things to know:
   no `value` attribute in the page, so don't select on it in CSS or tests.
 - **An attribute that turns something on** (`selectable`, `editable`, `toolbar`, the
   root's `sound`) is written bare, as above, or given a boolean. `false` turns it off
-  (0.2.0 or later):
+  (0.3.0 or later):
 
 ```svelte
 <uiset-data-grid toolbar={flags.toolbar}></uiset-data-grid>
 ```
 
-- **A list can be text or an array** (0.2.0 or later). A sparkline's `values` and a stat's
+- **A list can be text or an array** (0.3.0 or later). A sparkline's `values` and a stat's
   `trend` take either; an empty place in the text is a gap:
 
 ```svelte
@@ -303,7 +303,7 @@ For a real `bind:`, wrap an element in a component with a `$bindable` prop:
   stat): give them no children.
 - **The app shell moves its children** into its sidebar, header and main area. They keep
   updating there, and `{#if}` works inside them and straight under the shell: a child that
-  appears later is placed in the main area after the others, and leaves again (0.2.0 or
+  appears later is placed in the main area after the others, and leaves again (0.3.0 or
   later).
 
 ## The element from script
@@ -332,7 +332,7 @@ For a real `bind:`, wrap an element in a component with a `$bindable` prop:
 
 ## TypeScript
 
-- **The package ships its types** (0.2.0 or later): the functions it exports, a type for
+- **The package ships its types** (0.3.0 or later): the functions it exports, a type for
   each element with options of its own (`UISetDataGrid`, `UISetStepper`, `UISetPatchBay`
   and the rest; charts and the grid take your row type, as in `UISetLineChart<Month>` and
   `UISetDataGrid<Order>`), and entries in
@@ -391,7 +391,7 @@ inside at once. See [Theming](./theming.md) for the skins and their variables.
 | --------- | ----------------------------------------------------------------------------- |
 | `skin`    | `"base"`, `"blueprint"`, `"studio"`, `"phosphor"` or `"ink"`                  |
 | `theme`   | `"light"` or `"dark"`; `undefined` removes it and the page follows the system |
-| `sound`   | `true` for interaction sounds, `false` for none (0.2.0 or later)              |
+| `sound`   | `true` for interaction sounds, `false` for none (0.3.0 or later)              |
 
 The themed skins have one scheme each (Studio is dark, Ink is light), so, as
 [Theming](./theming.md#skins) says, `theme` is for the base skin.
@@ -420,7 +420,7 @@ three variables, the color's OKLCH lightness, chroma and hue.
 ### One skin inside another
 
 The nearest root wins, so a root inside a root gives a panel its own skin or theme. It is
-only as tall as what's in it (0.2.0 or later).
+only as tall as what's in it (0.3.0 or later).
 
 ```svelte
 <uiset-root {skin} {theme}>
@@ -436,7 +436,7 @@ only as tall as what's in it (0.2.0 or later).
 
 ### Fonts
 
-The base skin uses your app's own font: the root and its controls inherit it (0.2.0 or
+The base skin uses your app's own font: the root and its controls inherit it (0.3.0 or
 later). Each themed skin names its faces and falls back to system fonts. Load the ones you
 use, for example Studio's from Google Fonts in `index.html`:
 
@@ -559,7 +559,7 @@ were not compared.
 What was tested is Svelte's own server renderer (`render` from `svelte/server`, then
 `hydrate` in the browser, built with Vite's `--ssr` build). SvelteKit was not tested.
 
-- **The module imports on a server** (0.2.0 or later). It defines nothing there, so code
+- **The module imports on a server** (0.3.0 or later). It defines nothing there, so code
   that runs in both places can import it.
 - **The server writes every value into the HTML as text.** An array becomes
   `rows="[object Object],…"` and a function becomes its source, as in
@@ -628,7 +628,7 @@ What each kit offers agents, approvals and the Agent Console are in
 
 On 2026-11-16, in a new Vite app from the `svelte-ts` template (plain Vite, not
 SvelteKit): Svelte 5.57.3, Vite 8.3.8, `@sveltejs/vite-plugin-svelte` 7.3.1, `svelte-check`
-4.7.8 and TypeScript 6.0.3, with `@uiset/web` 0.2.0 from a local build (before it was published),
+4.7.8 and TypeScript 6.0.3, with `@uiset/web` 0.2.0 from a local build (0.2.0 never went to npm; 0.3.0 carries its changes),
 `@ui-sdk/web`, `@ui-sdk/core` and `@ui-sdk/svelte` 0.1.0-beta.5, on Node 24.21 and npm
 11.19. The app passes `svelte-check` and builds, also in a clean install with no `shiki`.
 Every code block on this page ran in it, and the production build was driven in Chrome 157
