@@ -82,7 +82,7 @@ function TemplatesPage() {
         </div>
       </header>
       <Tabs value={template} onValueChange={(v) => v && setTemplate(v as TemplateId)}>
-        <TabsList aria-label="Template" className="template-tabs">
+        <TabsList aria-label="Templates" className="template-tabs">
           {templates.map((t) => (
             <TabsTab key={t.id} value={t.id}>
               {t.name}

@@ -100,7 +100,9 @@ function ChatThreadList({
                 <Button
                   variant="ghost"
                   className="chat-thread-link"
-                  aria-label={thread.title}
+                  // A verb of its own, so neither this nor "More for …" is the bare title a step
+                  // by that title would find twice.
+                  aria-label={`Open ${thread.title}`}
                   aria-description={
                     thread.updatedAt ? `Updated ${ago(thread.updatedAt)}` : undefined
                   }

@@ -89,6 +89,8 @@ class UISetTable extends ElementBase {
     // Anything put straight into the element (innerHTML, `append`) joins the table.
     for (const node of [...this.childNodes]) if (node !== frame) content.appendChild(node)
     attr(view, "aria-label", this.getAttribute("label") ?? "Table")
+    // On the root too: the web agent bridge names a scroll area from it, not its viewport.
+    attr(frame, "aria-label", this.getAttribute("label") ?? "Table")
     const stack = isOn(this, "stack")
     attr(frame, "data-stack", stack)
     attr(frame, "data-sticky-header", isOn(this, "sticky-header"))
@@ -164,6 +166,15 @@ class UISetAvatarGroup extends ElementBase {
     attr(this, "role", "group")
     attr(this, "aria-label", this.getAttribute("label") ?? "People")
     const avatars = [...this.children].filter((child) => child !== this.#more)
+    // Each avatar is named as an image, as UI SDK advises, so agents and screen readers read one
+    // name: its picture's alt text, or the hidden name beside its initials, when the page gave none.
+    for (const avatar of avatars) {
+      if (avatar.hasAttribute("aria-label") || avatar.hasAttribute("aria-labelledby")) continue
+      const name = avatar.querySelector("img[alt]")?.getAttribute("alt") || avatar.querySelector(".uiset-visually-hidden")?.textContent?.trim()
+      if (!name) continue
+      attr(avatar, "role", "img")
+      attr(avatar, "aria-label", name)
+    }
     const max = this.getAttribute("max") === null ? avatars.length : Math.max(0, Number(this.getAttribute("max")) || 0)
     avatars.forEach((avatar, index) => attr(avatar, "data-overflow", index >= max))
     const shown = Math.min(max, avatars.length)
@@ -260,6 +271,8 @@ class CodeLines {
   draw(code: string, label: string, options: LineOptions) {
     // A group, not a region: a page of code blocks shouldn't be a page of landmarks.
     attr(this.#view, "aria-label", label)
+    // On the root too: the web agent bridge names a scroll area from it, not its viewport.
+    attr(this.el, "aria-label", label)
     attr(this.el, "data-line-numbers", options.lineNumbers)
     attr(this.el, "data-wrap", options.wrap)
     this.el.style.setProperty("--code-block-max-height", options.maxHeight)
@@ -415,6 +428,8 @@ class UISetCodeTabs extends Evented<UISetCodeTabsEvents>() {
   private draw() {
     const { tabs, head, list, copy, panels } = this.#dom!
     attr(list, "aria-label", this.getAttribute("label") ?? "Versions")
+    // On the root too: the web agent bridge names tabs from it, not their list.
+    attr(tabs, "aria-label", this.getAttribute("label") ?? "Versions")
     const keep = new Set(this.#items.map((item) => item.value))
     for (const [value, view] of panels) {
       if (keep.has(value)) continue

@@ -1304,12 +1304,17 @@ function DataGrid<Row>({
 
 // Toolbar parts. Each works alone inside a DataGrid; DataGridToolbar arranges them.
 
-/** The quick filter: every word must appear somewhere in a row. */
+/**
+ * The quick filter: every word must appear somewhere in a row. Agents use the grid's own
+ * `filter`, which this repeats; the field's name, which holds the grid's, would make the
+ * grid's name find two components.
+ */
 function DataGridSearch({ placeholder }: { placeholder?: string }) {
   const grid = useDataGrid()
   const name = grid.label.toLowerCase()
   return (
     <SearchField
+      data-agent-hidden=""
       label={`Search ${name}`}
       placeholder={placeholder ?? `Search ${name}…`}
       value={grid.query}
@@ -1371,7 +1376,8 @@ function DataGridGroupBy() {
       <SelectLabel className="uiset-visually-hidden">
         Group {grid.label.toLowerCase()} by
       </SelectLabel>
-      <SelectTrigger data-variant="outline" />
+      {/* Agents group with the grid's own `groupBy`, as with the search. */}
+      <SelectTrigger data-variant="outline" data-agent-hidden="" />
       <SelectContent>
         <SelectItem value="none">No grouping</SelectItem>
         {groupable.map((column) => (

@@ -148,7 +148,8 @@ function CalendarAppTemplate({
           <Icon name="plus" />
           <span className="sidebar-label">New event</span>
         </TooltipTrigger>
-        <TooltipContent side="right" className="sidebar-tooltip">
+        {/* Hidden from agents: it repeats the button's name, which a closed tooltip takes (#604). */}
+        <TooltipContent side="right" className="sidebar-tooltip" data-agent-hidden="">
           New event
         </TooltipContent>
       </Tooltip>
@@ -188,8 +189,8 @@ function CalendarAppTemplate({
           <ul className="calendar-upcoming" aria-labelledby={upcomingId}>
             {next.map((e) => (
               <li key={e.id}>
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
                   className="calendar-upcoming-item"
                   style={series(e.color ?? 1)}
                   onClick={() => {
@@ -200,7 +201,7 @@ function CalendarAppTemplate({
                 >
                   <span className="calendar-upcoming-title">{e.title}</span>
                   <span className="calendar-upcoming-when">{when(e, today)}</span>
-                </button>
+                </Button>
               </li>
             ))}
           </ul>

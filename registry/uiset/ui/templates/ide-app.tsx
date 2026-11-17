@@ -241,7 +241,7 @@ function IdeTemplate({
       >
         <ResizablePanel defaultSize={narrow ? 30 : 24} minSize={narrow ? "6rem" : "12rem"} className="template-ide-side">
           <FileTree
-            label="Files"
+            label="Project files"
             headingLevel={headingLevel}
             paths={paths}
             value={selected}
@@ -325,7 +325,7 @@ function IdeTemplate({
             <ResizableHandle aria-label="Resize panel" />
             <ResizablePanel defaultSize={32} minSize={15}>
               <Tabs className="template-ide-panel" value={panel} onValueChange={(v: unknown) => setPanel(String(v))}>
-                <TabsList aria-label="Panel">
+                <TabsList aria-label="Bottom panel">
                   <TabsTab value="problems" ref={problemsTab}>
                     Problems {problems.length > 0 && <span className="template-ide-count">{problems.length}</span>}
                   </TabsTab>

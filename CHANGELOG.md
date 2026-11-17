@@ -20,6 +20,37 @@ again (`npx shadcn@latest add superzero11/uiset/<item>`) and review the diff.
   `expectAgentReady` for tests, `checkPage` for Playwright (through the tools a page
   registers with WebMCP, or a global), and a command that checks pages by URL. See
   [Agent readiness check](./docs/agent-check.md).
+- **Every page template and Web Components page scores 100** on `agent-check`, and a test in
+  each browser holds them there. Its first run on them scored the templates 50 to 91.
+
+### Changed
+
+What agents see, so a name finds one component. Update agent steps or tests that used the
+old names:
+
+- **Chat threads** are named "Open <title>" (React and Web Components), beside each one's
+  "More for <title>" menu, as UI SDK advises for a row's controls.
+- **The data grid's search field and Group by select are hidden from agents**, who use the
+  grid's own `filter` and `groupBy`; their names, which hold the grid's, made the grid's name
+  find two components. The web grid's filters popover too (`filterColumn`).
+- **A chart's legend is hidden from agents**, who use the chart's own `isolate`.
+- **The app shell's sidebar tooltips, and the inbox's Compose and the calendar's New event
+  tooltips, are hidden from agents.** A closed tooltip takes its trigger's name in UI SDK's
+  bridge (vercel-labs/ui#604), so the name found two components.
+
+### Fixed
+
+- **IDE:** the editor's tabs are named "Open files" for agents, who saw the first file's name
+  (React) or no name (Web Components); the command palette has a name while closed (its
+  content stays mounted, so its title names it); a problem's name has a space between its
+  message and its place ("…before shipping. index.ts:7:1"); the template's file tree is
+  "Project files".
+- **Calendar app:** the upcoming events are UI SDK buttons, so agents can open them.
+- **Web Components:** tables, code blocks and code tabs carry their name on the root
+  element, which the web bridge reads, and the avatar group names each avatar as an image
+  from its picture's alt text or its hidden name.
+- **Templates:** the auth template's "Email me a sign-in link" is "Send me a one-time link",
+  and the schema form example's Name field is "Full name".
 
 ## 0.3.0 (2026-11-17)
 

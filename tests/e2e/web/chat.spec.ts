@@ -112,19 +112,19 @@ test("a tool call waiting on the person offers Allow and Deny, and reports the c
 
 test("the thread list selects, renames and deletes after asking", async ({ page }) => {
   const threads = page.getByRole("navigation", { name: "Chats" })
-  await threads.getByRole("button", { name: "Pricing page copy", exact: true }).click()
-  await expect(threads.getByRole("button", { name: "Pricing page copy", exact: true })).toHaveAttribute("aria-current", "page")
+  await threads.getByRole("button", { name: "Open Pricing page copy", exact: true }).click()
+  await expect(threads.getByRole("button", { name: "Open Pricing page copy", exact: true })).toHaveAttribute("aria-current", "page")
   await threads.getByRole("button", { name: "More for Pricing page copy" }).click()
   await page.getByRole("menuitem", { name: "Rename" }).click()
   const rename = threads.getByRole("textbox", { name: "Rename Pricing page copy" })
   await rename.fill("Pricing copy v2")
   await rename.press("Enter")
-  await expect(threads.getByRole("button", { name: "Pricing copy v2", exact: true })).toBeFocused()
+  await expect(threads.getByRole("button", { name: "Open Pricing copy v2", exact: true })).toBeFocused()
   await threads.getByRole("button", { name: "More for Pricing copy v2" }).click()
   await page.getByRole("menuitem", { name: "Delete" }).click()
   const dialog = page.getByRole("alertdialog", { name: "Delete “Pricing copy v2”?" })
   await dialog.getByRole("button", { name: "Delete chat" }).click()
-  await expect(threads.getByRole("button", { name: "Pricing copy v2", exact: true })).toHaveCount(0)
+  await expect(threads.getByRole("button", { name: "Open Pricing copy v2", exact: true })).toHaveCount(0)
 })
 
 test("the log keeps each message's element: earlier messages aren't re-added, a streaming one changes in place", async ({ page }) => {
@@ -199,7 +199,7 @@ test("properties set before the elements are defined still draw", async ({ page 
   )
   await page.goto("/early-chat.html")
   await expect(page.locator("uiset-chat strong", { hasText: "early" })).toBeVisible()
-  await expect(page.getByRole("button", { name: "First chat", exact: true })).toBeVisible()
+  await expect(page.getByRole("button", { name: "Open First chat", exact: true })).toBeVisible()
   // And later sets still reach the element.
   await page.evaluate(() => ((document.getElementById("c") as unknown as { messages: unknown[] }).messages = []))
   await expect(page.getByText("How can I help?")).toBeVisible()
@@ -240,16 +240,16 @@ test("the composer sends a FileList, and Enter sends when the menu finds nothing
 
 test("the chat list keeps focus on what you chose, and a rename finished elsewhere leaves focus there", async ({ page }) => {
   const threads = page.getByRole("navigation", { name: "Chats" })
-  await threads.getByRole("button", { name: "Pricing page copy", exact: true }).focus()
+  await threads.getByRole("button", { name: "Open Pricing page copy", exact: true }).focus()
   await page.keyboard.press("Enter")
-  await expect(threads.getByRole("button", { name: "Pricing page copy", exact: true })).toBeFocused()
+  await expect(threads.getByRole("button", { name: "Open Pricing page copy", exact: true })).toBeFocused()
   await threads.getByRole("button", { name: "More for Pricing page copy" }).click()
   await page.getByRole("menuitem", { name: "Rename" }).click()
   await threads.getByRole("textbox", { name: /Rename/ }).fill("Copy v3")
   await composer(page).click()
   await page.keyboard.type("hello")
   await expect(composer(page)).toHaveValue("hello")
-  await expect(threads.getByRole("button", { name: "Copy v3", exact: true })).toBeVisible()
+  await expect(threads.getByRole("button", { name: "Open Copy v3", exact: true })).toBeVisible()
   // An update to the list while the delete dialog is open leaves the dialog alone.
   await threads.getByRole("button", { name: "More for Copy v3" }).click()
   await page.getByRole("menuitem", { name: "Delete" }).click()

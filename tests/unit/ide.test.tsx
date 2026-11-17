@@ -107,7 +107,7 @@ test("problems list worst first and say their severity in words", () => {
     />,
   )
   const buttons = screen.getAllByRole("button")
-  expect(buttons.map((b) => b.textContent)).toEqual(["Error: Brokenb.ts:1:2", "Note: Note thisa.ts:3"])
+  expect(buttons.map((b) => b.textContent)).toEqual(["Error: Broken b.ts:1:2", "Note: Note this a.ts:3"])
   fireEvent.click(buttons[0]!)
   expect(onChoose).toHaveBeenCalledWith(expect.objectContaining({ path: "b.ts", line: 1 }))
 })

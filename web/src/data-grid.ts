@@ -1409,7 +1409,9 @@ class UISetDataGrid<Datum = any> extends ElementBase {
     const searchInput = h("input", { id: inputId, type: "search", autocomplete: "off" }) as HTMLInputElement
     searchInput.addEventListener("input", () => this.set("query", searchInput.value))
     const searchLabel = h("ui-field-label", { class: "uiset-visually-hidden", for: inputId })
-    const search = h("ui-field", { "data-grid-search": "", class: "search-field" }, searchLabel, iconElement("search", "search-field-icon"), h("ui-input", null, searchInput))
+    // Agents use the grid's own `filter` and `groupBy`, which the search and the group select
+    // repeat; their names, which hold the grid's, would make the grid's name find several.
+    const search = h("ui-field", { "data-grid-search": "", class: "search-field", "data-agent-hidden": true }, searchLabel, iconElement("search", "search-field-icon"), h("ui-input", null, searchInput))
     const clearSelection = h("button", { type: "button", "data-variant": "ghost" }, "Clear selection")
     clearSelection.addEventListener("click", () => {
       // This bar goes away with the selection, so focus returns to the grid.
@@ -1425,9 +1427,11 @@ class UISetDataGrid<Datum = any> extends ElementBase {
     filtersClear.addEventListener("click", () => this.set("filters", {}))
     const filtersTitle = h("ui-popover-title")
     const filterList = h("div", { class: "data-grid-filter-list" })
+    // Agents use the grid's own `filterColumn`, which this repeats; its title, which holds the
+    // grid's name, would make the grid's name find two components.
     const filters = h(
       "ui-popover",
-      null,
+      { "data-agent-hidden": true },
       h("ui-popover-trigger", null, h("button", { type: "button", "data-variant": "outline", "data-filters-trigger": "" }, iconElement("filter"), "Filters", filtersBadge)),
       h("ui-popover-content", { class: "data-grid-filters", hidden: true }, filtersTitle, filterList, h("ui-button", null, filtersClear)),
     )
@@ -1437,7 +1441,7 @@ class UISetDataGrid<Datum = any> extends ElementBase {
     const groupList = h("ui-select-content")
     const group = h(
       "ui-select",
-      { "default-value": this.state.groupBy ?? "none" },
+      { "default-value": this.state.groupBy ?? "none", "data-agent-hidden": true },
       groupLabel,
       h("ui-select-trigger", null, h("button", { type: "button", "data-variant": "outline" }, h("ui-select-value"))),
       groupList,

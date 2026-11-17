@@ -85,7 +85,7 @@ function AuthDemo() {
             Continue with a passkey
           </Button>
           <Button variant="outline" type="button">
-            Email me a sign-in link
+            Send me a one-time link
           </Button>
         </>
       }

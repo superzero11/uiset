@@ -7,7 +7,7 @@ const invite = defineForm({
   description: "They get an email with a link to join the workspace.",
   fields: {
     email: { kind: "email", label: "Email", required: true, placeholder: "ada@example.com" },
-    name: { kind: "text", label: "Name", max: 80 },
+    name: { kind: "text", label: "Full name", max: 80 },
     role: {
       kind: "choice",
       label: "Role",

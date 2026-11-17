@@ -1175,12 +1175,19 @@
     list-style: none;
   }
 
+  /* A UI SDK button laid out as a list row: two lines, from the start, as tall as they are. */
   .calendar-upcoming-item {
     position: relative;
     display: grid;
+    justify-content: stretch;
+    justify-items: start;
+    align-items: start;
     gap: 0.0625rem;
     inline-size: 100%;
+    block-size: auto;
     padding: 0.375rem 0.5rem 0.375rem 1rem;
+    white-space: normal;
+    font-weight: inherit;
     border: 0;
     border-radius: var(--ui-radius);
     background: transparent;
@@ -1223,6 +1230,8 @@
     margin: 0;
     color: var(--ui-muted-foreground);
     font-size: 0.75rem;
+    /* Its own weight: a skin may make its button bold. */
+    font-weight: 400;
   }
 
   .calendar-upcoming-empty {

@@ -162,7 +162,7 @@ test("agents open files and edit code by the names people see", async ({ page })
   type Act = { ok: boolean; error?: { message: string } }
   const act = (steps: unknown[]) =>
     page.evaluate((s) => (window as unknown as { agent: { act: (x: unknown) => Promise<Act> } }).agent.act({ steps: s }), steps)
-  let result = await act([{ ref: "Files", action: "setValue", args: ["src/config.ts"] }])
+  let result = await act([{ ref: "Project files", action: "setValue", args: ["src/config.ts"] }])
   expect(result.ok, result.error?.message).toBe(true)
   await expect(file(page, "config.ts")).toHaveAttribute("aria-selected", "true")
   // An agent's choice of a file opens it, so its editor is there to write in.

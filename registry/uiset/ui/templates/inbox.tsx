@@ -157,7 +157,8 @@ function InboxTemplate({
               <Icon name="edit" />
               <span className="sidebar-label">Compose</span>
             </TooltipTrigger>
-            <TooltipContent side="right" className="sidebar-tooltip">
+            {/* Hidden from agents: it repeats the button's name, which a closed tooltip takes (#604). */}
+            <TooltipContent side="right" className="sidebar-tooltip" data-agent-hidden="">
               Compose
             </TooltipContent>
           </Tooltip>

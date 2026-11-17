@@ -104,6 +104,7 @@ function renderUpcoming() {
           {
             type: "button",
             class: "calendar-upcoming-item",
+            "data-variant": "ghost",
             onclick: () => {
               if (view === "month") setView("week")
               go(e.track)
@@ -114,7 +115,8 @@ function renderUpcoming() {
           h("span", { class: "calendar-upcoming-when" }, when(e, today)),
         )
         button.style.setProperty("--series", series(e.color ?? 1))
-        return h("li", null, button)
+        // In UI SDK's button, so agents can open the event as people do.
+        return h("li", null, h("ui-button", null, button))
       }),
     ),
   )

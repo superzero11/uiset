@@ -279,8 +279,8 @@ checks, then a release, a deploy, and npm by the owner.
    so an agent fills it by field name, with validation and approval (ideas #4). M.
    **Done 2026-11-17** (`schema-form` in React, `<uiset-schema-form>` for Web Components).
 2. Agent-readiness check: a test helper and CLI that flag unnamed and ambiguous controls,
-   with a score per page (ideas #7). S–M. **Done 2026-11-17** (`agent-check`). Next: make
-   UISet's own pages score 100 on it (its first run is in the decision log).
+   with a score per page (ideas #7). S–M. **Done 2026-11-17** (`agent-check`), and UISet's
+   own templates and Web Components pages score 100 on it, held by a test.
 
 **Batch 2: data apps**, next: the most-asked pieces still missing.
 3. Filter builder and saved views for the data grid (ideas #2): typed operators, a filter
@@ -1374,3 +1374,38 @@ checks, then a release, a deploy, and npm by the owner.
   card and the README. skills.sh already lists the skill at
   https://www.skills.sh/superzero11/uiset/uiset. The outreach list of threads to answer is in
   `launch/outreach.md`.
+- 2026-11-17 — **UISet's own pages score 100 on `agent-check`.** At the owner's request.
+  First run: React templates auth 75, dashboard 68, settings 88, admin 81, inbox 80, chat app
+  86, project board 97, calendar 69, pricing 91, IDE 80; the web pages 61 to 100, rich text 20.
+  Now every template (React and web) and every web page scores 100, held by
+  `tests/e2e/agent-ready-pages.spec.ts` and `tests/e2e/web/agent-ready-pages.spec.ts` in
+  Chrome, WebKit and Firefox (each fix mutation-checked: 23 caught; two names that changed nothing
+  came out: a second one on the web IDE's tabs, and one on the agent page's tabs). The fixes, by kind:
+  - **Controls that repeat a component's own action, hidden from agents** with
+    `data-agent-hidden`: the grid's search field and Group by select (`filter`, `groupBy`), the
+    web grid's filters popover (`filterColumn`), and a chart's legend (`isolate`). Their names
+    held the component's, so its name found two. A ToggleGroup legend was tried first: it
+    added a "Revenue series" beside the chart "Revenue", the same clash, so it was reverted.
+  - **Tooltips that repeat their trigger's name, hidden from agents** (the app shell's sidebar,
+    Compose, New event): a closed tooltip takes its trigger's name (#604). Probed in jsdom:
+    `data-agent-hidden` on the content drops the tooltip and keeps the button.
+  - **A verb for a row's main control**, as UI SDK advises: chat threads are "Open <title>"
+    beside "More for <title>".
+  - **Names an agent can tell apart:** "Send me a one-time link" (it held "Email" and "Sign
+    in"), "Full name" (beside the inline edit's "Project name"), "Bottom panel" (beside "Editor
+    and panel"), "Project files" (beside "Open files"), the site's "Templates" tabs.
+  - **Names that were missing:** the IDE palette's dialog has two triggers, so no name while
+    closed: its content is `keepMounted`, as UI SDK advises. The calendar's upcoming events
+    became UI SDK buttons (skins' list-button exceptions and the time line's own weight keep
+    their look, checked in five skins).
+  - **The web bridge names some components from their root element only**, though UI SDK's
+    web docs name tabs on `ui-tabs-list`: tabs, scroll areas and sliders named on an inner part
+    had no name. UISet's tables, code blocks, code tabs and IDE tabs now name the root too, and
+    the avatar group names each avatar as an image. The React editor tabs showed the first
+    file's name in Chrome (jsdom: "Open files") until the root was named. Worth filing upstream
+    with the owner's go-ahead: the web bridge ignoring a list's or viewport's name, and an icon
+    button named only by its tooltip (`type="label"`) having no name for agents.
+  Two other sessions worked in this folder at the same time: the owner's fork of this one made
+  the check skip untabbable parts inside a component (asked for here; the rich text editor's
+  task boxes) and added a live check to /agents, and the outreach session listed UISet on
+  Context7. Each committed its own files by name.

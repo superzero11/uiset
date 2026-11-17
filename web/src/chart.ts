@@ -205,7 +205,8 @@ class UISetChart<Options extends object> extends Evented<UISetChartEvents>() {
       const next = (event as CustomEvent<{ value: string | null }>).detail.value
       if (next) this.show(next as "chart" | "table")
     })
-    const legend = h("div", { class: "chart-legend", role: "group" })
+    // Agents isolate a series with the chart's own `isolate`, which these buttons repeat.
+    const legend = h("div", { class: "chart-legend", role: "group", "data-agent-hidden": true })
     const svg = document.createElementNS(svgNS, "svg")
     svg.setAttribute("class", "chart-svg")
     svg.setAttribute("aria-hidden", "true")

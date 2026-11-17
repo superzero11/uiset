@@ -291,7 +291,7 @@ test("chat app: a suggestion streams an answer with reasoning, a tool and source
   await expect(thread.getByText("Searched the docs")).toBeVisible()
   await expect(thread.getByText(/2 sources/i).first()).toBeVisible()
   // The chat takes its name from the question, and the usage meter counts the turn.
-  await expect(frame(page).getByRole("navigation", { name: "Chats" }).getByRole("button", { name: "Explain AbortController", exact: true })).toHaveAttribute("aria-current", "page")
+  await expect(frame(page).getByRole("navigation", { name: "Chats" }).getByRole("button", { name: "Open Explain AbortController", exact: true })).toHaveAttribute("aria-current", "page")
   await expect(frame(page).getByRole("meter", { name: "Context used" })).toHaveAttribute("aria-valuetext", /^[1-9].* of 200K tokens$/)
 })
 
@@ -305,20 +305,20 @@ test("chat app: Stop ends an answer, New chat starts an empty one, and deleting 
   await expect(composer).toBeFocused()
   const chats = frame(page).getByRole("navigation", { name: "Chats" })
   await chats.getByRole("button", { name: "New chat" }).click()
-  await expect(chats.getByRole("button", { name: "Untitled chat 2", exact: true })).toHaveAttribute("aria-current", "page")
+  await expect(chats.getByRole("button", { name: "Open Untitled chat 2", exact: true })).toHaveAttribute("aria-current", "page")
   await expect(frame(page).getByText("What are we working on?")).toBeVisible()
   await expect(composer).toBeFocused()
   // Back to the first chat: its question is still there.
-  await chats.getByRole("button", { name: "Draft release notes", exact: true }).click()
+  await chats.getByRole("button", { name: "Open Draft release notes", exact: true }).click()
   await expect(frame(page).getByRole("region", { name: "Conversation" })).toContainText("Draft release notes")
   for (const name of ["Draft release notes", "Untitled chat 2"]) {
     await chats.getByRole("button", { name: `More for ${name}` }).click()
     await page.getByRole("menuitem", { name: "Delete" }).click()
     await page.getByRole("button", { name: "Delete chat" }).click()
-    await expect(chats.getByRole("button", { name, exact: true })).toHaveCount(0)
+    await expect(chats.getByRole("button", { name: `Open ${name}`, exact: true })).toHaveCount(0)
   }
   // A new chat takes the next number: none is ever reused.
-  await expect(chats.getByRole("button", { name: "Untitled chat 3", exact: true })).toHaveAttribute("aria-current", "page")
+  await expect(chats.getByRole("button", { name: "Open Untitled chat 3", exact: true })).toHaveAttribute("aria-current", "page")
 })
 
 test("chat app: the model picker chooses a model, by keyboard or by an agent", async ({ page }) => {

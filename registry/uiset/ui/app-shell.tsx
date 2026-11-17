@@ -176,7 +176,9 @@ function SidebarItem({
           {badge && <span className="uiset-visually-hidden">, </span>}
           {badge && <span className="sidebar-badge">{badge}</span>}
         </TooltipTrigger>
-        <TooltipContent side="right" className="sidebar-tooltip">
+        {/* It only repeats the link's name, and a closed tooltip takes its trigger's name for
+            agents (vercel-labs/ui#604): hidden from them, so the name finds one component. */}
+        <TooltipContent side="right" className="sidebar-tooltip" data-agent-hidden="">
           {children}
         </TooltipContent>
       </Tooltip>

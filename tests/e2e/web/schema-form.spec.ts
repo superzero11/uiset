@@ -52,8 +52,8 @@ test("Enter in a field goes on to the next step; focus follows each step, and Ba
   const email = form(page).getByRole("textbox", { name: "Email" })
   const press = (name: string) => form(page).getByRole("button", { name, exact: true }).press("Enter")
   await email.fill("grace@example.com")
-  await form(page).getByRole("textbox", { name: "Name" }).fill("Grace")
-  await form(page).getByRole("textbox", { name: "Name" }).press("Enter")
+  await form(page).getByRole("textbox", { name: "Full name" }).fill("Grace")
+  await form(page).getByRole("textbox", { name: "Full name" }).press("Enter")
   // The field that had focus went with its step: focus is on the next step's first field.
   await expect(form(page).getByRole("radio", { name: "Editor" })).toBeFocused()
   // Back on the first step goes, so focus goes to the first field.

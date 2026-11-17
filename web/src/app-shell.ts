@@ -162,7 +162,8 @@ class UISetAppShell extends ElementBase {
       const label = link.querySelector(".sidebar-label")?.textContent ?? link.textContent ?? ""
       const tooltip = h("ui-tooltip", null)
       link.replaceWith(tooltip)
-      tooltip.append(h("ui-tooltip-trigger", null, link), h("ui-tooltip-content", { class: "sidebar-tooltip", side: "right" }, label))
+      // Hidden from agents: it repeats the link's name, which a closed tooltip takes (vercel-labs/ui#604).
+      tooltip.append(h("ui-tooltip-trigger", null, link), h("ui-tooltip-content", { class: "sidebar-tooltip", side: "right", "data-agent-hidden": true }, label))
     }
   }
 

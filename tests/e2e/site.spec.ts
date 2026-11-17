@@ -636,7 +636,7 @@ test.describe("Chat kit", () => {
     await field.fill("Launch plan v2")
     await field.press("Enter")
     await expect(
-      chat(page).getByRole("button", { name: "Launch plan v2", exact: true }),
+      chat(page).getByRole("button", { name: "Open Launch plan v2", exact: true }),
     ).toBeVisible()
   })
 

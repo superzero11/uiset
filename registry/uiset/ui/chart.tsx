@@ -124,8 +124,9 @@ function ChartLegend({
   isolated: string | null
   onIsolate: (key: string | null) => void
 }) {
+  // Agents isolate a series with the chart's own `isolate`, which these buttons repeat.
   return (
-    <div className="chart-legend" role="group" aria-label={`${title} series`}>
+    <div className="chart-legend" role="group" aria-label={`${title} series`} data-agent-hidden>
       {series.map((s) => (
         <button
           key={s.key}

@@ -111,3 +111,18 @@ Chromium, and `--json` prints the reports as JSON.
   ([vercel-labs/ui#612](https://github.com/vercel-labs/ui/issues/612)), so "Region" beside
   "Revenue by region" is reported, as a step by "Region" fails.
 - `unconfirmed` reads a button's words, so it can't know what a button with other words does.
+
+## Fixes that come up often
+
+- **A tooltip that repeats its trigger's name.** A closed tooltip takes its trigger's name
+  ([vercel-labs/ui#604](https://github.com/vercel-labs/ui/issues/604)), so the name finds two
+  components. Put `data-agent-hidden` on its content: agents read the trigger's name, and
+  people and screen readers are unaffected.
+- **A field or menu that repeats a component's action.** A grid's search field holds the
+  grid's name ("Search orders" beside "Orders"). When the component offers the same action
+  (`filter`), hide the field from agents with `data-agent-hidden`; they use the action.
+- **A row's controls.** Give each a verb of its own ("Open Launch plan", "More for Launch
+  plan"), so none is the bare title that finds both.
+- **Web Components named on an inner part.** The web bridge reads a component's name from
+  its root element: put the `aria-label` of a `ui-tabs-list`, a `ui-scroll-area-viewport` or a
+  `ui-slider-thumb` on `ui-tabs`, `ui-scroll-area` or `ui-slider` too.

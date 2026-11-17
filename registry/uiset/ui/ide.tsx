@@ -517,6 +517,8 @@ function EditorTabs({
   return (
     <Tabs
       className={["ide-tabs", className].filter(Boolean).join(" ")}
+      // The agent bridge names tabs from their root in the browser; the list names them for people.
+      aria-label={label}
       value={current}
       onValueChange={(next: unknown) => onValueChange(String(next))}
     >
@@ -1066,7 +1068,9 @@ function CommandPalette({
         )}
       </div>
       <DialogBackdrop />
-      <DialogContent className="ide-palette" initialFocus="input" finalFocus={() => (returnTo.current?.isConnected ? returnTo.current : undefined)}>
+      {/* Kept in the page, so its title names the dialog while it's closed: with two triggers it
+          takes no name from either (UI SDK's advice for a dialog with several triggers). */}
+      <DialogContent className="ide-palette" keepMounted initialFocus="input" finalFocus={() => (returnTo.current?.isConnected ? returnTo.current : undefined)}>
         <DialogTitle className="uiset-visually-hidden">
           {mode === "commands" ? "Run a command" : mode === "line" ? "Go to line" : "Go to file"}
         </DialogTitle>
@@ -1157,6 +1161,8 @@ function ProblemsList({
             <Icon name={severityIcon[p.severity]} className="ide-problem-icon" />
             <span className="uiset-visually-hidden">{severityName[p.severity]}: </span>
             <span className="ide-problem-message">{p.message}</span>
+            {/* A space in the name, which the layout's columns don't need. */}
+            <span className="uiset-visually-hidden"> </span>
             {/* The file's name, not its path: an agent naming the editor by path finds only it. */}
             <span className="ide-problem-where" title={p.path}>
               {baseName(p.path)}:{p.line}

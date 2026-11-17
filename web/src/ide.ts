@@ -552,6 +552,8 @@ class UISetEditorTabs extends Evented<UISetEditorTabsEvents>() {
     dom.empty.style.display = files.length ? "none" : ""
     dom.tabs.style.display = files.length ? "" : "none"
     attr(dom.list, "aria-label", this.getAttribute("label") ?? "Open files")
+    // On the root too: the web agent bridge names tabs from it, not their list.
+    attr(dom.tabs, "aria-label", this.getAttribute("label") ?? "Open files")
     const open = new Set(files.map((f) => f.path))
     for (const [path, view] of this.#views) if (!open.has(path)) (view.wrap.remove(), view.panel.remove(), this.#views.delete(path))
     const wraps: HTMLElement[] = []
@@ -1223,6 +1225,8 @@ class UISetProblems extends Evented<UISetProblemsEvents>() {
                 iconElement(severityIcon[p.severity], "ide-problem-icon"),
                 h("span", { class: "uiset-visually-hidden" }, `${severityName[p.severity]}: `),
                 h("span", { class: "ide-problem-message" }, p.message),
+                // A space in the name, which the layout's columns don't need.
+                h("span", { class: "uiset-visually-hidden" }, " "),
                 // The file's name, not its path: an agent naming the editor by path finds only it.
                 h("span", { class: "ide-problem-where", title: p.path }, `${baseName(p.path)}:${p.line}${p.col ? `:${p.col}` : ""}`),
               ),
