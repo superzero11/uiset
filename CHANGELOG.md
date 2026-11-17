@@ -18,8 +18,12 @@ again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
   that name fails), and controls a person can reach that agents can't see, with destructive
   buttons lacking `data-agent-confirm` and pages past 100 components as warnings.
   `expectAgentReady` for tests, `checkPage` for Playwright (through the tools a page
-  registers with WebMCP, or a global), and a command that checks pages by URL. See
-  [Agent readiness check](./docs/agent-check.md).
+  registers with WebMCP, or a global), and a command that checks pages by URL. On a site
+  without UI SDK it reads the page's accessibility tree instead, as browser agents do:
+  controls with no name, controls of one kind sharing a name, and what only looks clickable
+  (`checkPageReadiness`, `expectPageReady`; Playwright and the command line fall back to it).
+  `showAgentReadiness` draws the report over the page, and uiset.dev's Agents page has it as
+  a bookmarklet for any page. See [Agent readiness check](./docs/agent-check.md).
 - **Every page template and Web Components page scores 100** on `agent-check`, and a test in
   each browser holds them there. Its first run on them scored the templates 50 to 91.
 

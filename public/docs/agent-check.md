@@ -1,10 +1,11 @@
 # Agent readiness check
 
-An agent uses a UI SDK app through its agent bridge: it finds each control by name and calls
-its actions. `agent-check` checks a page the way the agent sees it, through the bridge
-itself, and scores it: the share of controls an agent can find by name. It works with any
-framework UI SDK serves, since the bridge is the same in each. Try it on
-[the Agents page](/agents#agent-check), with and without three mistakes in a form.
+An agent uses a page by finding each control by its name. `agent-check` checks a page the
+way the agent sees it, and scores it: the share of controls an agent can find by a name of
+their own. On a UI SDK app it asks the agent bridge itself, in any framework UI SDK serves.
+On any other site it reads the page's accessibility tree, as browser agents do. Try both on
+[the Agents page](/agents#agent-check): the live check, with and without three mistakes in a
+form, and a bookmarklet that checks any page you're on.
 
 ```bash
 npx shadcn@latest add @uiset/agent-check
@@ -70,11 +71,45 @@ fine:
 await expectAgentReady(agent, { ignore: (problem) => problem.kind === "unseen" && problem.control.includes("Legacy export") })
 ```
 
+## Any page, without a bridge
+
+`checkPageReadiness` reads the page itself: every button, link, field and widget the
+accessibility tree has, with the name a browser gives it. It needs nothing from the page, so
+it checks a site built with anything. `expectPageReady` is its test helper:
+
+```tsx
+import { render } from "@testing-library/react"
+import { test } from "vitest"
+import { expectPageReady } from "@/components/ui/agent-check/page"
+import { Checkout } from "./checkout"
+
+test("an agent reading the checkout page can tell every control apart", () => {
+  render(<Checkout />)
+  expectPageReady()
+})
+```
+
+Errors, which lower the score:
+
+- **`unnamed`**: a control with no name. Give it visible text, a label, or `aria-label`.
+- **`ambiguous`**: controls of one kind sharing a name, like three "Edit" buttons in a table,
+  or two "Read more" links that go to different places. Radios, tabs, options and menu items
+  only need a name of their own within their group, so every question can have its "Yes".
+- **`unseen`**: something that looks clickable (a pointer cursor starts on it, or it has an
+  `onclick`) but isn't a button or link, so an agent reading the page sees no control there.
+
+Names follow the browser's rules closely but not completely: `aria-labelledby`, `aria-label`,
+a label, the text inside (images by their `alt`, icons by their `title`, hidden parts left
+out), then `title` or `placeholder`. `root` and `ignore` work as they do with the bridge, and
+`elements: true` adds each problem's elements to the report.
+
 ## On a page, with Playwright
 
-`checkPage` runs the same check on a real page. It reaches the page's bridge as the browser's
-agent would: through the tools the app registers with WebMCP (`registerTools`), once
-`captureAgentTools` has run before the page loads, or through a global you name.
+`checkPage` runs the check on a real page. On a UI SDK page it reaches the bridge as the
+browser's agent would: through the tools the app registers with WebMCP (`registerTools`),
+once `captureAgentTools` has run before the page loads, or through a global you name. On any
+other page it reads the page. `mode: "bridge"` requires a bridge, and `mode: "page"` reads the
+page even where there is one.
 
 ```ts
 import { expect, test } from "@playwright/test"
@@ -91,17 +126,27 @@ test("settings is agent-ready", async ({ page }) => {
 
 ## From the command line
 
-`cli.ts` checks pages by URL in Chromium, and exits 1 when one scores under `--min-score`
-(100):
+`cli.ts` checks pages by URL in Chromium, any site or yours on localhost, and exits 1 when
+one scores under `--min-score` (100):
 
 ```bash
 npx tsx components/ui/agent-check/cli.ts http://localhost:3000 /settings /billing
 ```
 
-Paths after the first URL are read against it. `--agent <global>` names the bridge's global
-when the app doesn't register WebMCP tools, `--root <selector>` limits where it looks for
-controls agents can't see, `--channel chrome` uses installed Chrome instead of Playwright's
-Chromium, and `--json` prints the reports as JSON.
+Paths after the first URL are read against it. It uses a page's UI SDK bridge when it finds
+one within a few seconds, and reads the page when not; `--mode bridge` or `--mode page`
+chooses. `--agent <global>` names the bridge's global when the app doesn't register WebMCP
+tools, `--root <selector>` limits where it looks, `--channel chrome` uses installed Chrome
+instead of Playwright's Chromium, and `--json` prints the reports as JSON.
+
+## The bookmarklet
+
+The Agents page has a bookmarklet: drag it to your bookmarks bar and click it on any page,
+including yours on localhost and pages you're signed in to. It asks the page's bridge when
+it finds one at `window.agent`, reads the page when not, and draws the report over the page:
+choose a problem to outline its elements. It runs in your browser, so nothing leaves it.
+In your own app, `showAgentReadiness()` from `@/components/ui/agent-check/overlay` draws the
+same report, with your bridge if you pass it (`{ agent }`).
 
 ## Limits
 
@@ -111,6 +156,9 @@ Chromium, and `--json` prints the reports as JSON.
   ([vercel-labs/ui#612](https://github.com/vercel-labs/ui/issues/612)), so "Region" beside
   "Revenue by region" is reported, as a step by "Region" fails.
 - `unconfirmed` reads a button's words, so it can't know what a button with other words does.
+- Reading a page, `unseen` goes by what looks clickable: a click handler added from script on
+  an element with no pointer cursor isn't found. Frames from other sites and closed shadow
+  roots aren't read.
 
 ## Fixes that come up often
 

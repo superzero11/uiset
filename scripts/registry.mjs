@@ -622,9 +622,9 @@ const tools = [
     type: "registry:lib",
     title: "Agent readiness check",
     description:
-      "Checks whether an agent can use a page through its UI SDK agent bridge: every component named, each name finding one component, and every control a person can reach one the agent sees, with a score. In a test (expectAgentReady), on a page in Playwright, or from the command line.",
+      "Checks whether an agent can use a page: every control named, each name finding one control, and none that only looks clickable, with a score. Through a UI SDK app's agent bridge, or by reading any site's accessibility tree. In a test (expectAgentReady, expectPageReady), on a page in Playwright, from the command line, or drawn over the page (showAgentReadiness).",
     devDependencies: ["@playwright/test"],
-    files: ["agent-check/check.ts", "agent-check/playwright.ts", "agent-check/cli.ts"].map(support),
+    files: ["agent-check/check.ts", "agent-check/page.ts", "agent-check/overlay.ts", "agent-check/playwright.ts", "agent-check/cli.ts"].map(support),
   },
 ]
 

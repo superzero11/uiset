@@ -80,7 +80,7 @@ npx shadcn@latest add @uiset/uiset
 | `level-meter` | A UI SDK meter drawn as an LED ladder. | [Studio](./studio-kit.md) |
 | `step-sequencer` | A row of steps built on UI SDK ToggleGroup, with downbeats and a playhead. | [Studio](./studio-kit.md) |
 | `agent-console` | The human side of the UI SDK agent bridge: approvals in your app, an activity feed with undo, highlights where the agent changed something, a thread and a prompt. | [Agent Console](./agent-console.md) |
-| `agent-check` | Checks whether an agent can use a page through its UI SDK agent bridge: every component named, each name finding one component, and every control a person can reach one the agent sees, with a score. In a test (expectAgentReady), on a page in Playwright, or from the command line. | [Agent readiness](./agent-check.md) |
+| `agent-check` | Checks whether an agent can use a page: every control named, each name finding one control, and none that only looks clickable, with a score. Through a UI SDK app's agent bridge, or by reading any site's accessibility tree. In a test (expectAgentReady, expectPageReady), on a page in Playwright, from the command line, or drawn over the page (showAgentReadiness). | [Agent readiness](./agent-check.md) |
 
 ## UI SDK components
 

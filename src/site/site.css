@@ -617,6 +617,56 @@ main > section,
   }
 }
 
+/* The check for any page: the bookmarklet, its copy and a try here, and the command line. */
+.readiness-anywhere {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+
+  & h3 {
+    margin: 0 0 0.5rem;
+  }
+
+  & p {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+.readiness-anywhere-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* A link people drag to their bookmarks bar, drawn as a button so it looks like a thing to pick up. */
+.readiness-bookmarklet {
+  display: inline-flex;
+  align-items: center;
+  block-size: calc(var(--ui-spacing) * 8);
+  padding-inline: calc(var(--ui-spacing) * 3);
+  /* The input edge UI SDK's buttons use, which holds 3:1 in every skin; dashed, to pick up. */
+  border: 1px dashed var(--ui-input);
+  border-radius: var(--ui-radius);
+  color: var(--ui-foreground);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: grab;
+
+  &:focus-visible {
+    outline: 2px solid var(--ui-ring);
+    outline-offset: 2px;
+  }
+}
+
+.readiness-anywhere-cli code {
+  overflow-wrap: anywhere;
+}
+
 /* Agent Console demo */
 
 .console-stage {

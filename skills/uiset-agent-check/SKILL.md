@@ -1,6 +1,6 @@
 ---
 name: uiset-agent-check
-description: "UISet's Agent readiness for Vercel's UI SDK (item agent-check): installing it with the shadcn CLI, and using it in a test, in Playwright or from the command line. Checks whether an agent can use a page through its UI SDK agent bridge: every component named, each name finding one component, and every control a person can reach one the agent sees, with a score. In a test (expectAgentReady), on a page in Playwright, or from the command line. Use when a task asks whether agents can use a UI SDK app's pages, or to keep them agent-ready."
+description: "UISet's Agent readiness for Vercel's UI SDK (item agent-check): installing it with the shadcn CLI, and using it in a test, in Playwright or from the command line. Checks whether an agent can use a page: every control named, each name finding one control, and none that only looks clickable, with a score. Through a UI SDK app's agent bridge, or by reading any site's accessibility tree. In a test (expectAgentReady, expectPageReady), on a page in Playwright, from the command line, or drawn over the page (showAgentReadiness). Use when a task asks whether agents can use a UI SDK app's pages, or to keep them agent-ready."
 ---
 
 # UISet Agent readiness

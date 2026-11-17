@@ -38,6 +38,8 @@ type Problem =
   | { kind: "overflow"; severity: "warning"; shown: number; more: number; unchecked: number; message: string }
 
 type AgentReadinessReport = {
+  /** How it was read: through the page's UI SDK agent bridge. */
+  mode: "bridge"
   /** 0 to 100: the share of controls an agent can find by name. Errors lower it; warnings don't. */
   score: number
   /** The controls counted: the components the bridge lists, and the controls it can't see. */
@@ -277,12 +279,22 @@ async function checkAgentReadiness(agent: AgentBridge, options: CheckOptions = {
   const unseenCount = kept.filter((problem) => problem.kind === "unseen").length
   const controls = entries.length + unseenCount
   const ready = entries.filter((entry) => !notReady.has(entry.ref) || ignoredRefs.has(entry.ref)).length
-  return { score: controls ? Math.floor((100 * ready) / controls) : 100, controls, ready, problems: kept }
+  return { mode: "bridge", score: controls ? Math.floor((100 * ready) / controls) : 100, controls, ready, problems: kept }
+}
+
+/** What any report has: from the bridge (`checkAgentReadiness`) or the page (`checkPageReadiness`). */
+type ReadinessSummary = {
+  mode: "bridge" | "page"
+  score: number
+  controls: number
+  ready: number
+  problems: { kind: string; severity: "error" | "warning"; message: string }[]
 }
 
 /** The report as text: the score, then each problem on its own line. */
-function formatAgentReadiness(report: AgentReadinessReport, title?: string) {
-  const head = `${title ? `${title}: ` : ""}agent readiness ${report.score}/100 (${report.ready} of ${report.controls} controls an agent can find by name)`
+function formatAgentReadiness(report: ReadinessSummary, title?: string) {
+  const read = report.mode === "page" ? ", read from the page: no UI SDK bridge" : ""
+  const head = `${title ? `${title}: ` : ""}agent readiness ${report.score}/100 (${report.ready} of ${report.controls} controls an agent can find by name${read})`
   return [head, ...report.problems.map((problem) => `  ${problem.severity === "error" ? "error" : "warning"} ${problem.kind}: ${problem.message}`)].join("\n")
 }
 
@@ -300,4 +312,4 @@ async function expectAgentReady(agent: AgentBridge, options: CheckOptions & { mi
 }
 
 export { checkAgentReadiness, expectAgentReady, findUnseenControls, formatAgentReadiness, slotNames }
-export type { AgentBridge, AgentEntry, AgentReadinessReport, CheckOptions, Problem as AgentReadinessProblem, UnseenControl }
+export type { AgentBridge, AgentEntry, AgentReadinessReport, CheckOptions, Problem as AgentReadinessProblem, ReadinessSummary, UnseenControl }

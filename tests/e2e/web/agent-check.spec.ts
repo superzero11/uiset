@@ -25,7 +25,7 @@ test("reaches a global bridge, and finds names that find several components and 
     delete w.agent
   })
   await expect.poll(() => page.evaluate(() => (window as unknown as { contentAgent: { snapshot(): { label?: string }[] } }).contentAgent.snapshot().filter((entry) => entry.label === "Twin").length)).toBe(2)
-  const report = await checkPage(page, { agent: "contentAgent", root: "#probe" })
+  const report = await checkPage(page, { mode: "bridge", agent: "contentAgent", root: "#probe" })
   expect(report.problems.filter((problem) => problem.kind === "ambiguous" && problem.label === "Twin")).toHaveLength(1)
   expect(report.problems.filter((problem) => problem.kind === "unseen").map((problem) => problem.kind === "unseen" && problem.control)).toEqual(['button "Plain"'])
   expect(report.score).toBeLessThan(100)

@@ -1420,3 +1420,22 @@ checks, then a release, a deploy, and npm by the owner.
   shadcn 4.23.0 and latest: `add @uiset/uiset @uiset/schema-form @uiset/data-grid
   @uiset/agent-check` brought 22 items from uiset.dev, and the app typechecked and built. The
   installation docs keep the GitHub and URL forms as other addresses.
+- 2026-11-17 — **`agent-check` for any site, and a bookmarklet.** Asked whether "any developer"
+  could use it: the bridge check needs a UI SDK page, so `page.ts` reads any page's
+  accessibility tree instead, as browser agents do. Errors: a control with no name (an
+  approximation of the browser's name rules, tested by pairs whose names must come out
+  equal), controls of one kind sharing a name (links only when they go to different places;
+  radios, tabs, options and menu items only within their group), and what only looks
+  clickable (a pointer cursor that starts on it, or an `onclick`, on no control). Playwright's
+  `checkPage` and `cli.ts` use the bridge when a page has one and read the page otherwise;
+  functions sent into the page get a `__name` stand-in, since tsx compiles helpers with one.
+  `overlay.ts` draws the report over the page in a shadow root, with outlines on a problem's
+  elements; the Agents page offers it as a bookmarklet (16.7 KB, built by
+  `scripts/bookmarklet.mjs`; a test catches a stale bundle by its sources' hash), with a copy
+  for people who can't drag and a "Try it on this page". Asked about a paste-a-link checker
+  on uiset.dev: it needs a server-side browser (a Vercel function with Chromium, or a hosted
+  browser), with guards against private addresses and rate limits, as PageSpeed Insights
+  runs; the bookmarklet and command line came first, needing no server and reaching
+  localhost and signed-in pages. First runs: example.com 100, ui.shadcn.com 96 (two "Home"
+  links to different places), Hacker News 64 (the search box has no label; 30 "hide"
+  links). A child's `title` naming a link (HN's vote arrows) was missed at first, and fixed.

@@ -16,6 +16,7 @@
     "preview": "vite preview --port ${PORT:-5621}",
     "registry:build": "node scripts/registry.mjs && REGISTRY_URL=${REGISTRY_URL:-https://uiset.dev} node scripts/registry.mjs && shadcn build registry.build.json --output public/r && node scripts/docs.mjs",
     "docs:build": "node scripts/registry.mjs && node scripts/docs.mjs",
+    "bookmarklet": "node scripts/bookmarklet.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "format": "prettier --write .",
