@@ -264,8 +264,9 @@ by eye in 5 skins × 2 themes and at phone width, keyboard, agent and axe tests,
 checks, then a release, a deploy, and npm by the owner.
 
 **Waiting on others.**
-- The owner publishes `@uiset/web` 0.3.0 (0.2.0 was never published; 0.3.0 carries it);
-  then check it with `npm view --prefer-online`, and
+- `@uiset/web` 0.3.0 is on npm (the owner published it 2026-11-17; `latest`, 75 files,
+  checksum matching the checked build, a fresh install imports `defineForm` and
+  `formTool`). Next,
   (with the owner's go-ahead) ask awesome-ui-sdk to list the Web Components.
 - shadcn-ui/ui#12725: once merged, the `@uiset` namespace steps (launch memory and section 7).
 - UI SDK's next beta: rerun everything on it and drop workarounds whose issues are fixed
