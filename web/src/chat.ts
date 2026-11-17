@@ -23,6 +23,7 @@ import "@ui-sdk/web/select"
 import "@ui-sdk/web/toggle"
 import "@ui-sdk/web/toolbar"
 import "@ui-sdk/web/trigger-menu"
+import { actionName } from "@/registry/uiset/ui/chat/opening"
 import { tokenize } from "@/registry/uiset/ui/code/highlight"
 import "@/registry/uiset/ui/chat/chat.css"
 import "@/registry/uiset/ui/code/code.css"
@@ -649,8 +650,11 @@ class UISetChat extends Evented<UISetChatEvents>() {
 
   private actions(message: ChatMessage, last: boolean) {
     const toolbar = h("ui-toolbar", { class: "chat-actions", "aria-label": "Message actions" })
-    const button = (label: string, path: string, run: () => void) => {
-      const el = h("button", { type: "button", "aria-label": label, "data-focus-key": label }, icon(path))
+    // Every message has these actions, so each is named with its message's first words: an
+    // agent can tell which reply it presses. The focus key stays the action's.
+    const named = (action: string) => actionName(action, textOf(message))
+    const button = (action: string, path: string, run: () => void) => {
+      const el = h("button", { type: "button", "aria-label": named(action), "data-focus-key": action }, icon(path))
       el.addEventListener("click", run)
       toolbar.append(h("ui-toolbar-button", null, el))
     }
@@ -666,8 +670,8 @@ class UISetChat extends Evented<UISetChatEvents>() {
       const group = h(
         "ui-toggle-group",
         { "aria-label": "Feedback on this response", "default-value": current ?? "" },
-        h("ui-toggle", { value: "good" }, h("button", { type: "button", "aria-label": "Good response", "data-focus-key": "good" }, icon(icons.up))),
-        h("ui-toggle", { value: "bad" }, h("button", { type: "button", "aria-label": "Bad response", "data-focus-key": "bad" }, icon(icons.down))),
+        h("ui-toggle", { value: "good" }, h("button", { type: "button", "aria-label": named("Good response"), "data-focus-key": "good" }, icon(icons.up))),
+        h("ui-toggle", { value: "bad" }, h("button", { type: "button", "aria-label": named("Bad response"), "data-focus-key": "bad" }, icon(icons.down))),
       )
       group.addEventListener("valuechange", (event) => {
         const value = ((event as CustomEvent<{ value: string[] }>).detail.value[0] as Feedback | undefined) ?? null

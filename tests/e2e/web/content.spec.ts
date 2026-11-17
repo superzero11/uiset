@@ -200,6 +200,8 @@ test("inline edit: a refused change keeps the value; agents edit it by name", as
 
 test("upload: files go up with progress; one that fails retries with Enter; a file it can't take is listed with why", async ({ page }) => {
   const list = page.getByRole("list", { name: "Attachments" })
+  // Named with the upload's label, apart from any other upload on the page.
+  await expect(page.getByRole("button", { name: "Choose files, Attachments", exact: true })).toBeVisible()
   await page.locator("#files input[type=file]").setInputFiles([
     { name: "photo.png", mimeType: "image/png", buffer: Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]) },
     { name: "fail-report.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4") },

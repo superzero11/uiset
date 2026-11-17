@@ -231,6 +231,8 @@ class UISetUpload extends Evented<UISetUploadEvents>() {
     attr(input, "multiple", this.getAttribute("multiple") !== "false")
     prompt.textContent = words.prompt
     choose.textContent = words.choose
+    // Named with the upload's label too: a page can hold several, each saying Choose files.
+    attr(choose, "aria-label", `${words.choose}, ${label}`)
     hint.textContent = this.getAttribute("hint") ?? ""
     showIn(dropzone, hint, !!this.getAttribute("hint"), prompt.nextSibling)
     this.drawRows()

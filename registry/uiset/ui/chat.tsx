@@ -9,8 +9,9 @@ import {
 } from "@ui-sdk/react/collapsible"
 import { Toggle, ToggleGroup } from "@ui-sdk/react/toggle"
 import { Toolbar, ToolbarButton } from "@ui-sdk/react/toolbar"
-import { useEffect, useMemo, useRef, useSyncExternalStore, type ReactNode } from "react"
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react"
 import { Button } from "./button"
+import { actionName } from "./chat/opening"
 import "./chat/chat.css"
 
 type Role = "user" | "assistant" | "system"
@@ -159,20 +160,29 @@ function ChatMessageActions({
     await navigator.clipboard.writeText(text)
     announce("Copied")
   }
+  // Every message has these actions, so each is named with its message's first words, from
+  // `text` or else from the message on screen: an agent can tell which reply it presses.
+  const toolbar = useRef<HTMLDivElement>(null)
+  const [shown, setShown] = useState("")
+  useEffect(() => {
+    if (text !== undefined) return
+    setShown(toolbar.current?.closest(".chat-message")?.querySelector(".chat-message-content")?.textContent ?? "")
+  })
+  const named = (action: string) => actionName(action, text ?? shown)
   return (
-    <Toolbar aria-label={label} className="chat-actions">
+    <Toolbar ref={toolbar} aria-label={label} className="chat-actions">
       {text !== undefined && (
-        <ToolbarButton aria-label="Copy message" onClick={copy}>
+        <ToolbarButton aria-label={named("Copy message")} onClick={copy}>
           <Icon path={icons.copy} />
         </ToolbarButton>
       )}
       {onRetry && (
-        <ToolbarButton aria-label="Retry message" onClick={onRetry}>
+        <ToolbarButton aria-label={named("Retry message")} onClick={onRetry}>
           <Icon path={icons.retry} />
         </ToolbarButton>
       )}
       {onEdit && (
-        <ToolbarButton aria-label="Edit message" onClick={onEdit}>
+        <ToolbarButton aria-label={named("Edit message")} onClick={onEdit}>
           <Icon path={icons.edit} />
         </ToolbarButton>
       )}
@@ -182,10 +192,10 @@ function ChatMessageActions({
           value={feedback ? [feedback] : []}
           onValueChange={(value) => onFeedbackChange((value[0] as Feedback) ?? null)}
         >
-          <Toggle value="good" aria-label="Good response">
+          <Toggle value="good" aria-label={named("Good response")}>
             <Icon path={icons.up} />
           </Toggle>
-          <Toggle value="bad" aria-label="Bad response">
+          <Toggle value="bad" aria-label={named("Bad response")}>
             <Icon path={icons.down} />
           </Toggle>
         </ToggleGroup>

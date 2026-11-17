@@ -48,12 +48,21 @@ old names:
   grid's own `filter` and `groupBy`; their names, which hold the grid's, made the grid's name
   find two components. The web grid's filters popover too (`filterColumn`).
 - **A chart's legend is hidden from agents**, who use the chart's own `isolate`.
+- **A chat message's actions carry its first words** (React and Web Components):
+  `Copy message: "Here's a summary of the…"`, and the same for Retry message, Edit message,
+  Good response and Bad response, so each reply's actions have names of their own. A step
+  that pressed "Copy message" now names the message.
+- **Upload's Choose files button carries the upload's label** ("Choose files, Attachments"),
+  so two uploads on a page are told apart (React and `<uiset-upload>`).
 - **The app shell's sidebar tooltips, and the inbox's Compose and the calendar's New event
   tooltips, are hidden from agents.** A closed tooltip takes its trigger's name in UI SDK's
   bridge (vercel-labs/ui#604), so the name found two components.
 
 ### Fixed
 
+- **Rich text shown read-only no longer looks clickable on its to-do boxes.** Saved text
+  (`RichTextContent`, `<uiset-rich-text-content>`) kept the editor's pointer cursor on a
+  to-do's box, which is a picture of its state there.
 - **Tailwind CSS 4 apps, with no setup.** In a shadcn/ui app, Tailwind's reset stripped the
   padding, borders and radius from UISet's controls, and UISet's styles beat Tailwind's
   utility classes. UI SDK's stylesheet now sits inside UISet's layer, and on a page with

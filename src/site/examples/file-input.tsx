@@ -13,7 +13,7 @@ export default function FileInputExample() {
     <FileInput multiple accept="image/*,.pdf" className="stack">
       <FileInputDropzone className="dropzone">
         <p>Drop images or PDFs here, or paste them.</p>
-        <FileInputTrigger>Choose files</FileInputTrigger>
+        <FileInputTrigger>Choose images or PDFs</FileInputTrigger>
       </FileInputDropzone>
       <FileInputList aria-label="Chosen files">
         <FileInputItem className="row">

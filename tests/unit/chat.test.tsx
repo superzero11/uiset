@@ -204,10 +204,39 @@ test("message actions copy the text and record feedback", async () => {
     />,
   )
   await tick()
-  await userEvent.click(screen.getByRole("button", { name: "Copy message" }))
+  await userEvent.click(screen.getByRole("button", { name: 'Copy message: "The answer"' }))
   expect(writeText).toHaveBeenCalledWith("The answer")
-  await userEvent.click(screen.getByRole("button", { name: "Good response" }))
+  await userEvent.click(screen.getByRole("button", { name: 'Good response: "The answer"' }))
   expect(onFeedbackChange).toHaveBeenCalledWith("good")
+})
+
+// Every message has the same actions, so each one's names carry its message's first words: an
+// agent pressing "Copy message" can tell which reply it copies.
+test("each message's actions are named with its first words, from its text or from the message shown", async () => {
+  const summary = "Here's a summary of the release, in three parts."
+  render(
+    <ChatThread label="Conversation">
+      <ChatMessage from="user" actions={<ChatMessageActions onEdit={() => {}} />}>
+        Can you summarize the **release notes** for me?
+      </ChatMessage>
+      <ChatMessage from="assistant" actions={<ChatMessageActions text={summary} onRetry={() => {}} />}>
+        {summary}
+      </ChatMessage>
+      <ChatMessage from="assistant" actions={<ChatMessageActions text="Done." onFeedbackChange={() => {}} />}>
+        Done.
+      </ChatMessage>
+    </ChatThread>,
+  )
+  await tick()
+  const names = screen.getAllByRole("button").map((button) => button.getAttribute("aria-label"))
+  expect(names).toEqual([
+    'Edit message: "Can you summarize the release…"',
+    `Copy message: "Here's a summary of the…"`,
+    `Retry message: "Here's a summary of the…"`,
+    'Copy message: "Done."',
+    'Good response: "Done."',
+    'Bad response: "Done."',
+  ])
 })
 
 test("versions step back and forward and stop at the ends", async () => {

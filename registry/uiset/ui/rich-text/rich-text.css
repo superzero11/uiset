@@ -313,7 +313,9 @@
       }
     }
 
-    .rich-text-content[contenteditable="false"] & {
+    /* Read-only, in the editor or in saved text, the box is a picture of the task's state:
+       nothing to click, so it doesn't look clickable. */
+    :is(.rich-text-content[contenteditable="false"], .rich-text-static) & {
       cursor: default;
     }
   }

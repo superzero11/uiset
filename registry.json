@@ -2797,6 +2797,11 @@
           "path": "registry/uiset/ui/chat/chat.css",
           "type": "registry:file",
           "target": "@ui/chat/chat.css"
+        },
+        {
+          "path": "registry/uiset/ui/chat/opening.ts",
+          "type": "registry:file",
+          "target": "@ui/chat/opening.ts"
         }
       ]
     },

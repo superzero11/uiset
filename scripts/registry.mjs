@@ -450,7 +450,7 @@ const components = [
     "chat",
     "Chat",
     "A conversation built on UI SDK: thread that follows new messages, messages with avatars, actions and versions, suggestions, plans and a thinking shimmer.",
-    ["chat/chat.css"],
+    ["chat/chat.css", "chat/opening.ts"],
     ["button"],
   ],
   [

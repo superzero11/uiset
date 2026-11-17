@@ -133,7 +133,8 @@ const row = (name: string) => screen.getByText(name).closest<HTMLElement>('[data
 
 test("chosen files show as rows with their size, progress and status", async () => {
   const { user, input, live, started } = setup()
-  expect(screen.getByRole("button", { name: "Choose files" })).toBeTruthy()
+  // Named with the upload's label, apart from any other upload on the page.
+  expect(screen.getByRole("button", { name: "Choose files, Attachments" })).toBeTruthy()
   await user.upload(input, [file("notes.txt", 2048), file("plan.txt", 10)])
   await tick()
   expect(started).toEqual(["notes.txt", "plan.txt"])

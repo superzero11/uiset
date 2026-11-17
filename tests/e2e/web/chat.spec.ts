@@ -82,6 +82,31 @@ test("answers have Copy, Retry and feedback; a suggestion sends itself", async (
   await expect(log(page).locator(".chat-message[data-from=assistant]").last()).toContainText("Publish the changelog")
 })
 
+// Every message has the same actions, so each one's names carry its message's first words: an
+// agent pressing "Copy message" can tell which reply it copies.
+test("each message's actions are named with its first words", async ({ page }) => {
+  await page.locator("uiset-chat").evaluate((el) => {
+    el.setAttribute("editable", "")
+    ;(el as unknown as { messages: unknown[] }).messages = [
+      { id: "q", role: "user", parts: [{ type: "text", text: "Can you summarize the **release notes** for me?" }] },
+      { id: "a", role: "assistant", parts: [{ type: "text", text: "Here's a summary of the release, in three parts." }] },
+      { id: "b", role: "assistant", parts: [{ type: "text", text: "Done." }] },
+    ]
+  })
+  const names = (from: string) =>
+    log(page).locator(`.chat-message[data-from=${from}] .chat-actions button`).evaluateAll((buttons) => buttons.map((b) => b.getAttribute("aria-label")))
+  await expect.poll(() => names("user")).toEqual(['Edit message: "Can you summarize the release…"'])
+  expect(await names("assistant")).toEqual([
+    `Copy message: "Here's a summary of the…"`,
+    `Good response: "Here's a summary of the…"`,
+    `Bad response: "Here's a summary of the…"`,
+    'Copy message: "Done."',
+    'Retry message: "Done."',
+    'Good response: "Done."',
+    'Bad response: "Done."',
+  ])
+})
+
 test("while it answers, the composer shows Stop, and Stop ends the answer", async ({ page }) => {
   await page.locator("uiset-chat-composer").evaluate((el) => el.addEventListener("stop", () => ((window as unknown as { stops: number }).stops = ((window as unknown as { stops?: number }).stops ?? 0) + 1)))
   await composer(page).fill("Go")

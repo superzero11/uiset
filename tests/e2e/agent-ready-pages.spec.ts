@@ -22,15 +22,9 @@ for (const template of templates) {
 
 // Agents pick a control by its name alone, so on every page each control has a name of its
 // own: two links that share one open the same page, a section's link says it's a section, the
-// sidebar says which Studio is the kit, and a code block's copy button names the heading it's
-// under. Links in the docs to the site stay on the site.
-// Open, in the kits (ROADMAP): the chat kit names every message's actions alike, File input and
-// Upload both say "Choose files", and the rich text kit's task checks are images to agents.
-const knownOpen = (path: string, problem: { kind: string; name?: string; control?: string }) =>
-  (["/", "/kits"].includes(path) && problem.kind === "ambiguous" && /^(Copy message|Retry message|Good response|Bad response)$/.test(problem.name ?? "")) ||
-  (path === "/components" && problem.kind === "ambiguous" && problem.name === "Choose files") ||
-  (path === "/kits" && problem.kind === "unseen" && /^span "(Not done|Done)"$/.test(problem.control ?? ""))
-
+// sidebar says which Studio is the kit, a code block's copy button names the heading it's under,
+// and a chat message's actions carry its first words. Links in the docs to the site stay on the
+// site.
 test("on every page, an agent can tell every control apart, and docs links stay on the site", async ({ page, browserName }) => {
   test.skip(browserName !== "chromium", "Names come from the markup, the same in every browser; one walk of every page is enough")
   test.setTimeout(300_000)
@@ -42,7 +36,7 @@ test("on every page, an agent can tell every control apart, and docs links stay 
     await page.goto(path)
     await page.waitForFunction(() => !document.querySelector(".page-loading, .docs-loading"))
     const report = await checkPage(page, { mode: "page" })
-    for (const problem of report.problems) if (!knownOpen(path, problem)) found.push(`${path}: ${problem.message}`)
+    for (const problem of report.problems) found.push(`${path}: ${problem.message}`)
     const broken = await page.locator('a[href*="/blob/main//"]').evaluateAll((links) => links.map((link) => link.getAttribute("href")))
     for (const href of broken) found.push(`${path}: a site link sent to GitHub, ${href}`)
   }

@@ -230,8 +230,9 @@ your agent the conversation from your own state. What it does see, by name:
 - **Answers:** each reasoning, tool call, sources list and plan is a collapsible named by
   its header ("Thought for 4s", "Searched the docs, Done", "Used 2 sources"), with
   `setOpen`. "Message actions" is a toolbar to `press` Copy message, Retry message, Edit
-  message, Good response or Bad response; "Feedback on this response" also takes
-  `setValue`. Code blocks have "Wrap lines" and "Copy ts"; citations are hover cards
+  message, Good response or Bad response, each named with its message's first words so
+  an agent can tell one reply's from another's (`Copy message: "Here's a summary of the…"`);
+  "Feedback on this response" also takes `setValue`. Code blocks have "Wrap lines" and "Copy ts"; citations are hover cards
   ("Source 1: AbortController").
 - **Chats:** New chat, each chat as a button named by its title, and "More for title" to
   `press` Rename or Delete. Rename shows a "Rename title" field; an agent's `setValue`

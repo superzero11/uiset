@@ -1551,3 +1551,18 @@ checks, then a release, a deploy, and npm by the owner.
   the chat kit names every message's actions alike ("Copy message" on each reply), the File
   input and Upload demos both say "Choose files", and the rich text kit's task checks are
   clickable but reach agents as images (`role="img"`).
+- 2026-11-17 — **The kits' last shared names** (the owner: "Do this task here", after the
+  copy buttons). With them, the every-page test checks every control on every page with no
+  exceptions. The chat kit's message actions carried no sign of their message, so each reply
+  had the same Copy, Retry, Edit and feedback buttons; the owner chose names with the
+  message's first words (`Copy message: "Here's a summary of the…"`) over reply numbers,
+  which React's actions can't know without a new prop, or times, which repeat within a
+  minute. React reads them from `text`, or from the message shown when an app passes none
+  (Edit, on a person's message); `<uiset-chat>` from the message. One function,
+  `chat/opening.ts`, serves both. Upload's Choose files button now carries the upload's label
+  ("Choose files, Attachments"), joined with a comma rather than "for" so a translated
+  `choose` doesn't mix languages; the bridge already named the upload by its label, but the
+  page itself didn't. The File input demo says "Choose images or PDFs". The rich text kit's
+  task boxes were already checkboxes in the editor; shown read-only they are pictures of the
+  state, and the static view kept the editor's pointer cursor, so it looked clickable. The
+  cursor is gone there; no control was added to a read-only view.

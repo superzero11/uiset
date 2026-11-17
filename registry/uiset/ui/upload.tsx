@@ -252,7 +252,8 @@ function Upload({
         <Icon name="upload" className="upload-icon" />
         <p>{labels.prompt}</p>
         {hint && <p>{hint}</p>}
-        <FileInputTrigger>{labels.choose}</FileInputTrigger>
+        {/* Named with the upload's label too: a page can hold several, each saying Choose files. */}
+        <FileInputTrigger aria-label={`${labels.choose}, ${label}`}>{labels.choose}</FileInputTrigger>
       </FileInputDropzone>
       {rejected.length > 0 && (
         <ul className="upload-rejected">

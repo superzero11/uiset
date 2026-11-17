@@ -265,6 +265,8 @@ order, because the keys above do the same from the field or the row.
   ("report.pdf 248 kB Uploaded") and `clear`. An agent can't add files: it has none to
   give. Each row's Cancel and Retry are buttons named for the file ("Retry report.pdf"),
   which an agent presses. Each upload's progress bar is listed as "Uploading report.pdf".
+  Its Choose files button carries the label too ("Choose files, Attachments"), so an agent
+  reading the page can tell two uploads' apart.
 - Removing one file is not something an agent can do yet: UI SDK's bridge doesn't offer the
   File input's Remove buttons, and its `removeFile` takes a `File` (reported as
   vercel-labs/ui#782). `clear` removes them all.
