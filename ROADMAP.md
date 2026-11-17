@@ -183,19 +183,23 @@ Checked on 0.1.0-beta.5 (2026-11-16, repros in a worktree): all still present ex
     with its files as items, but offers no way to remove one: `removeFile` takes a `File`,
     which a step can't pass, and the Remove buttons aren't pressable by name ("file-input
     has nothing to press now"). `clear` works. Found building `upload`, whose Cancel and
-    Retry are UISet buttons for that reason. Not filed yet.
+    Retry are UISet buttons for that reason. Filed as vercel-labs/ui#782 (2026-11-17): in
+    plain UI SDK, `removeFile` with a name or an item's value returns `false` inside a step
+    the bridge reports as `ok`, and the value reaches the agent as `[{}, {}]`.
 25. **`bindScrollPicker` skips a selection that arrives while a scroll is settling.** In
     WebKit, a wheel in a sheet that has just opened has a scroll still settling; a value set
     then (an agent's `setValue`) is selected, focused and never glided to, so the wheel shows
     the old option, and the sheet's reveal-on-rest scroll then picks a third one as it
     passes. UISet's `keepWheelOnValue` (`registry/uiset/ui/mobile/wheel.ts`) scrolls the
     value back into the band when a scroll ends, or soon after a new value, and the
-    selected option isn't in it. Not filed yet.
+    selected option isn't in it. Filed as vercel-labs/ui#780 (2026-11-17), reproduced with
+    UI SDK alone: a wheel in a `<ui-drawer>`, its value set as the drawer opens with focus
+    moved along, ends on another option in WebKit, 10 runs of 10 (Chrome is fine).
 26. **A web drop zone's trigger gets no space above it.** UI SDK's `web.css` gives the
     trigger's wrapper (`:has(> [data-slot="file-input-trigger"])`) a top margin, but
     `<ui-file-input-trigger>` is `display: contents`, so the margin never shows; React's
     trigger is the button itself and gets it. UISet spaces the button in `web/src/web.css`.
-    Not filed yet.
+    Filed as vercel-labs/ui#781 (2026-11-17).
 
 ## 4. Architecture
 
@@ -250,6 +254,45 @@ Rules:
 | 30    | Dec 13       | Live skin switcher showcase + Product Hunt                      |
 
 Then one kit or skin every 3–4 days, driven by install metrics.
+
+### 6b. Next (planned 2026-11-17)
+
+The 30-day schedule above had shipped by 2026-11-16. What comes next, in order; the
+evidence for each is its row in `launch/watch/ideas.md`. Every batch ships in React and as
+Web Components together, with the gallery, docs and guide notes, and the checks in section 5:
+by eye in 5 skins × 2 themes and at phone width, keyboard, agent and axe tests, mutation
+checks, then a release, a deploy, and npm by the owner.
+
+**Waiting on others.**
+- The owner publishes `@uiset/web` 0.2.0; then check it with `npm view --prefer-online`, and
+  (with the owner's go-ahead) ask awesome-ui-sdk to list the Web Components.
+- shadcn-ui/ui#12725: once merged, the `@uiset` namespace steps (launch memory and section 7).
+- UI SDK's next beta: rerun everything on it and drop workarounds whose issues are fixed
+  (#622 is closed upstream: the wheel's focus move; then #780–#782 as they land).
+
+**Batch 2: data apps**, the most-asked pieces still missing.
+1. Filter builder and saved views for the data grid (ideas #2): typed operators, a filter
+   bar, saved views, and an agent setting a filter by name. M.
+2. Data grid remote rows (server sort, filter and cursor paging), tree rows and detail rows
+   (ideas #5). M–L.
+3. App shell variants: nested menus that fly out when collapsed, drill-down, a double
+   sidebar, a top bar (ideas #3). M.
+
+**Batch 3: agent-first**, what no other registry does.
+4. Schema form and multi-step form: one schema renders the form and registers an agent tool,
+   so an agent fills it by field name, with validation and approval (ideas #4). M.
+5. Agent-readiness check: a test helper and CLI that flag unnamed and ambiguous controls,
+   with a score per page (ideas #7). S–M.
+
+**Batch 4: a skin and screens.**
+6. Print skin, from a written design plan first (Swiss and letterpress type, section 3).
+7. SaaS console screens: team and roles, API keys and webhooks, audit log, usage, CSV import
+   (ideas #8). M.
+
+**Between batches**, small and asked for: a radial gauge and circular progress chart (ideas
+#9), an Angular guide (next framework by demand), tree select (ideas #14).
+
+**Later, one at a time:** Gantt, media player, map kit, generative UI adapters.
 
 ## 7. Launch playbook (per kit)
 
