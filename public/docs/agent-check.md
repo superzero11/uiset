@@ -94,8 +94,9 @@ Errors, which lower the score:
 
 - **`unnamed`**: a control with no name. Give it visible text, a label, or `aria-label`.
 - **`ambiguous`**: controls of one kind sharing a name, like three "Edit" buttons in a table,
-  or two "Read more" links that go to different places. Radios, tabs, options and menu items
-  only need a name of their own within their group, so every question can have its "Yes".
+  or two "Read more" links that go to different places. Links into one page count as one
+  place, whichever section they open. Radios, tabs, options and menu items only need a name
+  of their own within their group, so every question can have its "Yes".
 - **`unseen`**: something that looks clickable (a pointer cursor starts on it, or it has an
   `onclick`) but isn't a button or link, so an agent reading the page sees no control there.
   An interactive grid's cells, rows and headers, like a calendar's days, are what agents see

@@ -25,14 +25,23 @@ const slugify = (text: string) =>
     .trim()
     .replace(/\s+/g, "-")
 
+// A link to a section of this page is named for it, apart from the page of the same name:
+// "Agents section" here, the Agents page in the header.
+const sectionName = (heading: string) => `${heading.trim()} section`
+
 const textOf = (node: ReactNode): string =>
   Children.toArray(node)
     .map((child) => (typeof child === "string" || typeof child === "number" ? String(child) : isValidElement<{ children?: ReactNode }>(child) ? textOf(child.props.children) : ""))
     .join("")
 
-/** Links between docs files become site paths; links into the repo go to GitHub. */
+/**
+ * Links between docs files become site paths, and so do links to uiset.dev itself, so they
+ * stay on the site showing them. Site paths stay; links into the repo go to GitHub.
+ */
 function docHref(href: string | undefined): string | undefined {
-  if (!href || /^(https?:|mailto:|#)/.test(href)) return href
+  if (!href) return href
+  if (/^https:\/\/uiset\.dev\//.test(href)) return href.slice("https://uiset.dev".length)
+  if (/^(https?:|mailto:|#|\/)/.test(href)) return href
   const [file, hash] = href.split("#")
   const name = file!.split("/").at(-1)!
   if (name.endsWith(".md") && pathOfFile.has(name)) return `${pathOfFile.get(name)}${hash ? `#${hash}` : ""}`
@@ -66,7 +75,7 @@ const mdComponents: Components = {
     const id = slugify(textOf(children))
     return (
       <h2 id={id}>
-        <a className="heading-anchor" href={`#${id}`}>
+        <a className="heading-anchor" href={`#${id}`} aria-label={sectionName(textOf(children))}>
           {children}
         </a>
       </h2>
@@ -76,7 +85,7 @@ const mdComponents: Components = {
     const id = slugify(textOf(children))
     return (
       <h3 id={id}>
-        <a className="heading-anchor" href={`#${id}`}>
+        <a className="heading-anchor" href={`#${id}`} aria-label={sectionName(textOf(children))}>
           {children}
         </a>
       </h3>
@@ -98,6 +107,11 @@ const mdComponents: Components = {
 
 /* ------------------------------------------------------------------ layout parts */
 
+// Under their section's heading the sidebar's titles are clear, but agents find links by name
+// alone: Studio is a kit and a skin, and the header has a Templates link of its own.
+const sidebarName = (page: DocPage) =>
+  page.section === "Kits" ? `${page.title} kit` : page.section === "Skins" ? `${page.title} skin` : page.section === "Templates" ? `${page.title} guide` : undefined
+
 function Sidebar({ current }: { current: string }) {
   return (
     <nav className="docs-nav" aria-label="Docs">
@@ -109,7 +123,7 @@ function Sidebar({ current }: { current: string }) {
               .filter((p) => p.section === section)
               .map((p) => (
                 <li key={p.path}>
-                  <a href={p.path} aria-current={p.path === current ? "page" : undefined}>
+                  <a href={p.path} aria-current={p.path === current ? "page" : undefined} aria-label={sidebarName(p)}>
                     {p.title}
                   </a>
                 </li>
@@ -129,7 +143,9 @@ function OnThisPage({ headings }: { headings: { id: string; text: string; level:
       <ul>
         {headings.map((h) => (
           <li key={h.id} data-level={h.level}>
-            <a href={`#${h.id}`}>{h.text}</a>
+            <a href={`#${h.id}`} aria-label={sectionName(h.text)}>
+              {h.text}
+            </a>
           </li>
         ))}
       </ul>

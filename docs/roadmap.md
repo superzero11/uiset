@@ -40,5 +40,5 @@ with a test that shows them.
 
 ## Asking for things
 
-Open an issue on [GitHub](https://github.com/superzero11/uiset/issues) with what you're
+[Open an issue on GitHub](https://github.com/superzero11/uiset/issues) with what you're
 building and what's missing. Kits and templates that many people need come first.

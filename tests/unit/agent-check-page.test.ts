@@ -79,6 +79,16 @@ test("controls of one kind sharing a name are reported once, with how many", () 
   expect(report).toMatchObject({ controls: 8, ready: 3 })
 })
 
+test("links into one page are one place, whichever section they open; a section of this page isn't another page", () => {
+  page(`
+    <nav aria-label="Docs"><a href="/docs/dialog">Dialog</a></nav>
+    <main><a href="/docs/dialog#focus">Dialog</a><a href="http://localhost:3000/docs/dialog">Dialog</a>
+    <h2><a href="#agents">Agents</a></h2></main>
+    <header><a href="/agents">Agents</a></header>`)
+  const report = checkPageReadiness()
+  expect(report.problems.map((problem) => problem.kind === "ambiguous" && [problem.name, problem.count])).toEqual([["Agents", 2]])
+})
+
 test("radios, tabs and options need a name of their own only within their group", () => {
   page(`
     <fieldset><legend>Email me updates</legend><label><input type="radio" name="updates"> Yes</label><label><input type="radio" name="updates"> No</label></fieldset>

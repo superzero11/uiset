@@ -197,7 +197,7 @@ one streams a placeholder. It also takes `models`, `commands`, `mentions`, `sugg
 - Usage is an estimate per chat (`estimateTokens`: 900 plus 4 per character of each
   message sent), until your model reports its own.
 
-[Templates](./templates.md#connecting-a-model-to-chat-app) shows a model connected.
+[Connecting a model to the chat app template](./templates.md#connecting-a-model-to-chat-app) shows one connected.
 
 ## Keys
 

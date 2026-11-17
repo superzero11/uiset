@@ -1485,6 +1485,19 @@ checks, then a release, a deploy, and npm by the owner.
   found page mode reporting a UI SDK calendar's day cells (`role="gridcell"`, pointer
   cursor) as only looking clickable: an interactive grid's cells, rows and headers are no
   longer reported, nor scored, since a data grid's cells repeat each other's text.
+- 2026-11-17 — **Every page's links have names of their own** (the owner: "fix the duplicate
+  link names in the site nav"). Page mode, run on all 95 pages, found 65 sets of links sharing
+  a name but opening different pages, 230 times in all. In-page links were named like other pages: "On this page"
+  and heading links now say "Agents section", apart from the header's Agents page. The
+  sidebar names kits and skins ("Studio kit", "Studio skin") and its templates entry
+  ("Templates guide", apart from the header's gallery), as labels that keep the visible text.
+  Two docs links got text saying where they go. The walk also found every root-relative link
+  in the docs (`/check`, `/docs/components/dialog`), 24 on 13 pages, sent to a broken GitHub
+  address; site paths now stay on the site, and `https://uiset.dev/` links become site paths.
+  The check itself counted a link to a section of a page apart from a link to the page; links
+  into one page now count as one place. A test walks every page in Chromium and fails on a
+  shared name or a docs link sent to GitHub. Code blocks' copy buttons ("Copy the tsx code")
+  still share names on pages with several blocks in one language.
 - 2026-11-17 — **What's new on the home page, and the checker in the footer** (the owner's
   list). Asked whether What's new needed a component of its own: no. UI SDK's Timeline is
   made for "an activity feed, a changelog", and UISet styles it, but only vertically; a

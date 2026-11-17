@@ -201,8 +201,18 @@ function checkPageReadiness(
   for (const same of groups.values()) {
     if (same.length < 2) continue
     const { role, name } = same[0]!
-    // Links that go to the same place do the same thing, whatever an agent picks.
-    if (role === "link" && new Set(same.map((control) => (control.el as HTMLAnchorElement).href)).size === 1) continue
+    // Links that open the same page do the same thing, whatever an agent picks, even when one
+    // goes to a section of it.
+    const pageOf = (el: Element) => {
+      try {
+        const url = new URL(el.getAttribute("href") ?? "", el.ownerDocument.baseURI)
+        url.hash = ""
+        return url.href
+      } catch {
+        return el.getAttribute("href")
+      }
+    }
+    if (role === "link" && new Set(same.map((control) => pageOf(control.el))).size === 1) continue
     const near = nearOf(same[0]!.el)
     found.push({ elements: same.map((control) => control.el), problem: {
       kind: "ambiguous",
