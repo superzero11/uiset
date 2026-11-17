@@ -1541,3 +1541,13 @@ checks, then a release, a deploy, and npm by the owner.
   left the dev server's cache untouched, and three more pages opened without errors. The
   crash itself couldn't be reproduced on demand (bundles of the same dependencies come out
   identical), so the check is that no server writes into another's folder.
+- 2026-11-17 — **Copy buttons named for what they copy** (the owner: "fix the duplicate copy
+  button names too"). 31 sets of copy buttons shared a name on 20 pages: a code block's was
+  "Copy the tsx code", and the docs' install commands all said "Copy the command to install".
+  A code block without a file name now names the heading it's under, counting blocks of one
+  language there (`Copy the second vue code under "Data in"`), and an install command in the
+  docs names what it installs ("Copy the command to install agent-check"). The every-page test
+  now checks every control, not only links. Still open, in the kits, and listed in that test:
+  the chat kit names every message's actions alike ("Copy message" on each reply), the File
+  input and Upload demos both say "Choose files", and the rich text kit's task checks are
+  clickable but reach agents as images (`role="img"`).

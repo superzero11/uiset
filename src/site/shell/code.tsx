@@ -1,12 +1,41 @@
-import { useEffect, useState, useSyncExternalStore } from "react"
+import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } from "react"
 import { CopyButton } from "@/registry/uiset/ui/copy-button"
 import { SegmentedControl, SegmentedControlItem } from "@/registry/uiset/ui/segmented-control"
 import { tokenize, type Token } from "@/registry/uiset/ui/code/highlight"
 
 // Code on the site: highlighted blocks and install commands, each with a copy button.
 
+const ordinals = ["", "second ", "third ", "fourth ", "fifth ", "sixth ", "seventh ", "eighth ", "ninth ", "tenth "]
+
+/**
+ * The copy button's name: its file name, or else the heading it sits under, since agents find
+ * a button by name alone and a page can hold many blocks in one language. A heading over
+ * several blocks of one language counts them: "Copy the second vue code under "Data in"".
+ */
+function useCopyName(figure: RefObject<HTMLElement | null>, language: string | undefined, title: string | undefined) {
+  const what = language ? `${language} code` : "code"
+  const [name, setName] = useState(title ? `Copy ${title}` : `Copy the ${what}`)
+  useEffect(() => {
+    const el = figure.current
+    if (title || !el) return
+    const after = (a: Node, b: Node) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0
+    const scope = el.closest("main") ?? document
+    const heading = Array.from(scope.querySelectorAll("h1, h2, h3"))
+      .filter((h) => after(h, el))
+      .at(-1)
+    if (!heading) return
+    const before = Array.from(scope.querySelectorAll<HTMLElement>("figure.code-block:not([data-titled])")).filter(
+      (other) => other.dataset.language === (language ?? "") && after(heading, other) && after(other, el),
+    ).length
+    setName(`Copy the ${ordinals[before] ?? `${before + 1}th `}${what} under "${heading.textContent?.trim()}"`)
+  }, [figure, language, title])
+  return name
+}
+
 /** A block of code with its language's colors, an optional file name and a copy button. */
 function CodeBlock({ code, language, title, className }: { code: string; language?: string; title?: string; className?: string }) {
+  const figure = useRef<HTMLElement>(null)
+  const copyName = useCopyName(figure, language, title)
   const [tokens, setTokens] = useState<Token[][] | null>(null)
   useEffect(() => {
     let live = true
@@ -18,10 +47,10 @@ function CodeBlock({ code, language, title, className }: { code: string; languag
   }, [code, language])
   const lines = code.replace(/\n$/, "").split("\n")
   return (
-    <figure className={["code-block", className].filter(Boolean).join(" ")}>
+    <figure ref={figure} className={["code-block", className].filter(Boolean).join(" ")} data-language={language ?? ""} data-titled={title ? "" : undefined}>
       <figcaption className="code-block-head">
         <span className="code-block-title">{title ?? language ?? "Code"}</span>
-        <CopyButton value={code.replace(/\n$/, "")} label="Copy" aria-label={`Copy ${title ?? (language ? `the ${language} code` : "the code")}`} />
+        <CopyButton value={code.replace(/\n$/, "")} label="Copy" aria-label={copyName} />
       </figcaption>
       <pre translate="no" tabIndex={0} role="region" aria-label={title ? `${title} code` : "Code"}>
         <code>

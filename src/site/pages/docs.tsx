@@ -49,6 +49,7 @@ function docHref(href: string | undefined): string | undefined {
 }
 
 const shadcnAdd = /^\s*npx shadcn@latest add\s+([\s\S]+?)\s*$/
+const listOf = (names: string[]) => (names.length < 2 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`)
 
 /** A table that scrolls sideways on a phone, named after the heading it sits under. */
 function TableRegion({ children }: { children: ReactNode }) {
@@ -100,7 +101,11 @@ const mdComponents: Components = {
     const text = textOf(code.props.children)
     // A shadcn install becomes the site's install command: every package manager, and copy.
     const add = language === "bash" ? shadcnAdd.exec(text.replace(/\\\n/g, " ")) : null
-    if (add) return <InstallCommand items={add[1]!.split(/\s+/).filter(Boolean)} />
+    if (add) {
+      const items = add[1]!.split(/\s+/).filter(Boolean)
+      // Named for what it installs: a page can show several, and agents find each by name.
+      return <InstallCommand items={items} label={`Install ${listOf(items.map((item) => item.replace(/^@uiset\//, "")))}`} />
+    }
     return <CodeBlock code={text} language={language} />
   },
 }
