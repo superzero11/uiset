@@ -4,7 +4,7 @@ Calendars on UI SDK's `createSpans`: events people draw, move and resize with th
 pointer or the keyboard, on a week, a day, or a timeline of rooms.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/scheduler
+npx shadcn@latest add @uiset/scheduler
 ```
 
 ## Parts

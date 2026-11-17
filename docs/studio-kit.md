@@ -5,7 +5,7 @@ meter and a step sequencer. They make creative and audio tools, and they're the 
 demo of what a skin does: put them in the Studio skin and they look and sound like a rack.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/knob superzero11/uiset/patch-bay superzero11/uiset/fader superzero11/uiset/level-meter superzero11/uiset/step-sequencer
+npx shadcn@latest add @uiset/knob @uiset/patch-bay @uiset/fader @uiset/level-meter @uiset/step-sequencer
 ```
 
 ## Parts

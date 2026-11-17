@@ -26,7 +26,7 @@ haptics, and the larger parts UI SDK doesn't ship. Items install with the shadcn
 ## Install and wrap
 
 ```bash
-npx shadcn@latest add superzero11/uiset/uiset superzero11/uiset/button superzero11/uiset/field
+npx shadcn@latest add @uiset/uiset @uiset/button @uiset/field
 ```
 
 ```tsx

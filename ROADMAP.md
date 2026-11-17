@@ -269,8 +269,11 @@ checks, then a release, a deploy, and npm by the owner.
   `formTool`). The owner asked awesome-ui-sdk to list the Web Components:
   LioRael/awesome-ui-sdk#1, open.
 - `@uiset` is in shadcn's registry directory (merged in shadcn-ui/ui#12677, which closed our
-  #12725), and `npx shadcn@latest view @uiset/<item>` works. Waiting on the owner's go-ahead:
-  install lines to `@uiset/<item>`, and the namespace on registry.directory.
+  #12725), and `npx shadcn@latest view @uiset/<item>` works. Install lines read
+  `@uiset/<item>` since 2026-11-17. registry.directory refused the namespace update (422: "not
+  listed in the official shadcn registry index"), though shadcn's `registries.json` lists it:
+  its check seems to use an older copy. Retry the update (POST with the token in
+  `launch/registry-directory-response.json`) once shadcn's index pages show `@uiset`.
 - UI SDK's next beta: rerun everything on it and drop workarounds whose issues are fixed
   (#622 is closed upstream: the wheel's focus move; then #780–#782 as they land).
 
@@ -1409,3 +1412,11 @@ checks, then a release, a deploy, and npm by the owner.
   the check skip untabbable parts inside a component (asked for here; the rich text editor's
   task boxes) and added a live check to /agents, and the outreach session listed UISet on
   Context7. Each committed its own files by name.
+- 2026-11-17 — **Install lines are `@uiset/<item>`** (the owner's go-ahead). The docs, the README,
+  the site's command builder (`src/site/shell/code.tsx`) and the generated skills and llms files
+  (`scripts/docs.mjs`, from `uiset.config.json`'s `namespace`). Items' own dependencies still
+  name `superzero11/uiset/<item>` in `registry.json` and the site's URLs in `public/r`, so an
+  older CLI that doesn't know the directory still resolves them. Checked in fresh Vite apps with
+  shadcn 4.23.0 and latest: `add @uiset/uiset @uiset/schema-form @uiset/data-grid
+  @uiset/agent-check` brought 22 items from uiset.dev, and the app typechecked and built. The
+  installation docs keep the GitHub and URL forms as other addresses.

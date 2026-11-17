@@ -4,7 +4,7 @@
 
 UISet is in beta, like UI SDK. Fixes go into the latest release only. Because UISet is a
 shadcn registry, its code is copied into your app when you add an item: to get a fix,
-add the item again (`npx shadcn@latest add superzero11/uiset/<item>`) and review the diff.
+add the item again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 
 ## Reporting a vulnerability
 

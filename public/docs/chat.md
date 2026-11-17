@@ -6,8 +6,8 @@ and the list of chats. Every part takes plain props, so your model's stream goes
 own state and the kit draws it. The `chat-app` template puts them together into a page.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/chat superzero11/uiset/chat-response \
-  superzero11/uiset/chat-parts superzero11/uiset/chat-composer superzero11/uiset/chat-sidebar
+npx shadcn@latest add @uiset/chat @uiset/chat-response \
+  @uiset/chat-parts @uiset/chat-composer @uiset/chat-sidebar
 ```
 
 Each of the last four brings `chat` with it. `chat-response` also adds `react-markdown`,
@@ -179,7 +179,7 @@ message box brings back what you sent with `createInputHistory`; "/" and "@" are
 ## The chat-app template
 
 ```bash
-npx shadcn@latest add superzero11/uiset/chat-app
+npx shadcn@latest add @uiset/chat-app
 ```
 
 `<ChatAppTemplate assistant={assistant} />` is the kit as a page. `assistant` is an async

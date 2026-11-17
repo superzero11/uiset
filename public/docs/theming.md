@@ -4,7 +4,7 @@ How UISet looks comes from a skin: CSS variables for color, type, edges, sound a
 Behavior (keys, focus, screen readers, agents) never changes with it.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/uiset
+npx shadcn@latest add @uiset/uiset
 ```
 
 ## The root

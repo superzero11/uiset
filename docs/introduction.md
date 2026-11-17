@@ -5,7 +5,7 @@ open source, installs with the shadcn CLI, and works in React and, through Web C
 in Vue, Svelte, Solid, Angular and plain HTML.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/uiset
+npx shadcn@latest add @uiset/uiset
 ```
 
 ## Why it exists

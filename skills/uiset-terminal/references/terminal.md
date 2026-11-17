@@ -5,7 +5,7 @@ browser. Built on UI SDK's `createInputHistory` (Up and Down) and `createStickTo
 (output follows its end unless you scroll up).
 
 ```bash
-npx shadcn@latest add superzero11/uiset/terminal
+npx shadcn@latest add @uiset/terminal
 ```
 
 ## Use

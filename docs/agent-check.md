@@ -7,7 +7,7 @@ framework UI SDK serves, since the bridge is the same in each. Try it on
 [the Agents page](/agents#agent-check), with and without three mistakes in a form.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/agent-check
+npx shadcn@latest add @uiset/agent-check
 ```
 
 ## In a test

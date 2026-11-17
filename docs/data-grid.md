@@ -5,7 +5,7 @@ place, and actions an agent can call. One item, `data-grid`, gives you `DataGrid
 `DataGridToolbar` and the framework-free pieces under them.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/data-grid
+npx shadcn@latest add @uiset/data-grid
 ```
 
 ## Why it's built this way

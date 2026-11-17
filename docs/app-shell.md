@@ -9,13 +9,13 @@ Drawer, Tooltip, Preferences and shortcuts for the shell, Input for search, `ann
 copy, Scroll area for tables and code, and Tabs for code tabs.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/app-shell superzero11/uiset/breadcrumbs \
-  superzero11/uiset/page-header superzero11/uiset/card superzero11/uiset/badge \
-  superzero11/uiset/stat superzero11/uiset/empty-state superzero11/uiset/skeleton \
-  superzero11/uiset/description-list superzero11/uiset/item-list superzero11/uiset/alert \
-  superzero11/uiset/kbd superzero11/uiset/spinner superzero11/uiset/stepper \
-  superzero11/uiset/search-field superzero11/uiset/copy-button superzero11/uiset/table \
-  superzero11/uiset/avatar-group superzero11/uiset/code-block
+npx shadcn@latest add @uiset/app-shell @uiset/breadcrumbs \
+  @uiset/page-header @uiset/card @uiset/badge \
+  @uiset/stat @uiset/empty-state @uiset/skeleton \
+  @uiset/description-list @uiset/item-list @uiset/alert \
+  @uiset/kbd @uiset/spinner @uiset/stepper \
+  @uiset/search-field @uiset/copy-button @uiset/table \
+  @uiset/avatar-group @uiset/code-block
 ```
 
 Each is its own item, so add only the ones you use. They share `shell/shell.css`, and the

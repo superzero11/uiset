@@ -4,7 +4,7 @@ The parts of a phone app, on UI SDK's gesture behaviors and components. Every ge
 a keyboard path and a screen reader path, and every part works with a mouse too.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/mobile
+npx shadcn@latest add @uiset/mobile
 ```
 
 ## Parts

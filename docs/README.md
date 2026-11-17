@@ -5,7 +5,7 @@
 UISet is themes, components, kits and templates for Vercel's UI SDK. Every item installs with the shadcn CLI and is styled by the skin around it.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/uiset
+npx shadcn@latest add @uiset/uiset
 ```
 
 ## Guides

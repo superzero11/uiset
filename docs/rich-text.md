@@ -6,7 +6,7 @@ and "@" for people. Its value is a small document you can save as Markdown or cl
 and agents read and write it as Markdown through UI SDK's bridge.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/rich-text
+npx shadcn@latest add @uiset/rich-text
 ```
 
 It has no editor library underneath. The toolbar is UI SDK's Toolbar, Toggles, Select and

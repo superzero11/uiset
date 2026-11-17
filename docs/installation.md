@@ -22,7 +22,7 @@ The root brings the tokens, the five skins, sound and haptics, and pins UI SDK's
 (`@ui-sdk/core` and `@ui-sdk/react`) at the exact version UISet is tested with.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/uiset
+npx shadcn@latest add @uiset/uiset
 ```
 
 ### 3. Wrap your app
@@ -46,7 +46,7 @@ pass `keyColor={{ l: 0.5, c: 0.19, h: 268 }}` or make a theme in the
 ### 4. Add what you need
 
 ```bash
-npx shadcn@latest add superzero11/uiset/button superzero11/uiset/field superzero11/uiset/data-grid
+npx shadcn@latest add @uiset/button @uiset/field @uiset/data-grid
 ```
 
 Each item lands in `components/ui/` and brings the items it depends on. Every docs page
@@ -54,10 +54,12 @@ has the command for its item, for pnpm, npm, yarn and bun.
 
 ### Addresses
 
-`superzero11/uiset/<item>` reads the registry from GitHub. Each item is also served from
-the site, if you prefer an address:
+`@uiset` is UISet's namespace in shadcn's registry directory, so the CLI finds
+`@uiset/<item>` at `https://uiset.dev/r/<item>.json` with no setup. Two other addresses
+reach the same items: the GitHub repository, and the site's URL for each.
 
 ```bash
+npx shadcn@latest add superzero11/uiset/data-grid
 npx shadcn@latest add https://uiset.dev/r/data-grid.json
 ```
 

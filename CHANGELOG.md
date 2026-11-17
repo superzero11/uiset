@@ -5,7 +5,7 @@ which. Until UI SDK reaches 1.0, a minor release of UISet (0.2, 0.3) may change 
 those changes are listed under **Changed** with what to do. Patch releases only fix things.
 
 Registry items are source code copied into your app. To take a release, add the items
-again (`npx shadcn@latest add superzero11/uiset/<item>`) and review the diff.
+again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
 ## 0.4.0 (unreleased)
@@ -24,6 +24,10 @@ again (`npx shadcn@latest add superzero11/uiset/<item>`) and review the diff.
   each browser holds them there. Its first run on them scored the templates 50 to 91.
 
 ### Changed
+
+- **Install lines use the `@uiset` namespace**, now that shadcn's registry directory lists it:
+  `npx shadcn@latest add @uiset/<item>`. `superzero11/uiset/<item>` and
+  `https://uiset.dev/r/<item>.json` still work.
 
 What agents see, so a name finds one component. Update agent steps or tests that used the
 old names:

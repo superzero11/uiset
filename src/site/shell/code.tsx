@@ -90,7 +90,7 @@ const useManager = () =>
 function InstallCommand({ items, className, label = "Install" }: { items: string[]; className?: string; label?: string }) {
   const pm = useManager()
   const manager = managers.find((m) => m.id === pm)!
-  const command = `${manager.run} ${items.map((item) => (item.includes("/") ? item : `superzero11/uiset/${item}`)).join(" ")}`
+  const command = `${manager.run} ${items.map((item) => (item.includes("/") ? item : `@uiset/${item}`)).join(" ")}`
   return (
     <div className={["install-command", className].filter(Boolean).join(" ")} role="group" aria-label={label}>
       {/* Named for its command: a page can show several, and a step by name must find one. */}

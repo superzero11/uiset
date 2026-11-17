@@ -8,7 +8,7 @@ be canceled, retried or removed. Fields, selects, checkboxes, date and number in
 SDK's own components; see [the list](./README.md#ui-sdk-components).
 
 ```bash
-npx shadcn@latest add superzero11/uiset/schema-form superzero11/uiset/inline-edit superzero11/uiset/upload
+npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/upload
 ```
 
 ## Parts

@@ -6,7 +6,7 @@ any skin. It takes a few minutes and shows the whole workflow.
 ## 1. Install what the screen uses
 
 ```bash
-npx shadcn@latest add superzero11/uiset/uiset superzero11/uiset/app-shell superzero11/uiset/page-header superzero11/uiset/field superzero11/uiset/select superzero11/uiset/switch superzero11/uiset/button superzero11/uiset/toast
+npx shadcn@latest add @uiset/uiset @uiset/app-shell @uiset/page-header @uiset/field @uiset/select @uiset/switch @uiset/button @uiset/toast
 ```
 
 ## 2. Write the screen
@@ -93,7 +93,7 @@ See [Building with AI agents](./ai.md) for approvals, undo and the Agent Console
 ## 5. Add a kit
 
 ```bash
-npx shadcn@latest add superzero11/uiset/data-grid
+npx shadcn@latest add @uiset/data-grid
 ```
 
 Then follow the [data grid](/docs/kits/data-grid) page. Or skip ahead: the

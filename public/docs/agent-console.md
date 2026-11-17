@@ -74,7 +74,7 @@ real model through `agentTools`.
 ## Set it up
 
 ```bash
-npx shadcn@latest add superzero11/uiset/agent-console
+npx shadcn@latest add @uiset/agent-console
 ```
 
 Create the bridge once, in the browser, before the app renders:

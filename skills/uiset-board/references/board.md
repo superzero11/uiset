@@ -4,7 +4,7 @@ A kanban board on UI SDK's `createTransfer`: cards in columns that people move w
 pointer, the keyboard or an agent, with the same rules and announcements for all three.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/board
+npx shadcn@latest add @uiset/board
 ```
 
 ## Use

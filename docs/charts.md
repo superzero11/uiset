@@ -100,9 +100,9 @@ amber lamp as the crosshair and the sequential ramp.
 ## Use
 
 ```bash
-npx shadcn@latest add superzero11/uiset/line-chart superzero11/uiset/bar-chart \
-  superzero11/uiset/scatter-chart superzero11/uiset/heatmap \
-  superzero11/uiset/segmented-bar superzero11/uiset/sparkline
+npx shadcn@latest add @uiset/line-chart @uiset/bar-chart \
+  @uiset/scatter-chart @uiset/heatmap \
+  @uiset/segmented-bar @uiset/sparkline
 ```
 
 Every chart takes `title` (its name for people and agents), `data`, and accessors.

@@ -5,7 +5,7 @@
 Rules for agents building with UISet:
 
 - Wrap the app (or a part of it) in `<UISet skin="base">` from `@/components/ui/uiset`. Every UISet and UI SDK component inside takes the skin.
-- Install items with `npx shadcn@latest add superzero11/uiset/<item>`; they land in `components/ui/` and import each other relatively.
+- Install items with `npx shadcn@latest add @uiset/<item>`; they land in `components/ui/` and import each other relatively.
 - Don't hand-write keyboard handling, focus traps or ARIA roles that a UI SDK component or behavior covers. Read the installed UI SDK docs at `node_modules/@ui-sdk/react/docs/llms.txt`.
 - Give every control a name (a label, `aria-label`, or `label` prop): UI SDK's agent bridge finds components by it.
 - Skins set CSS variables; style your own parts with `var(--ui-foreground)`, `var(--ui-muted-foreground)`, `var(--ui-border)`, `var(--ui-primary)` and friends, so they follow every skin.

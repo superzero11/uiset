@@ -73,7 +73,7 @@ where UISet starts.
 components folder.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/uiset
+npx shadcn@latest add @uiset/uiset
 ```
 
 **2. Wrap your app.** Every UISet and UI SDK component inside takes the skin. With a shadcn
@@ -91,7 +91,7 @@ export function App() {
 brings only what it uses.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/select superzero11/uiset/data-grid
+npx shadcn@latest add @uiset/select @uiset/data-grid
 ```
 
 The [installation guide](https://uiset.dev/docs/installation) covers fonts, the shadcn
@@ -269,7 +269,7 @@ project board, calendar, pricing and IDE**. Install one, render it, and swap the
 for yours.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/dashboard
+npx shadcn@latest add @uiset/dashboard
 ```
 
 ## React, or anything that renders HTML

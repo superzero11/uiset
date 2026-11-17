@@ -48,7 +48,7 @@ at `/templates`, in the chosen skin, with its install command.
 ## Use
 
 ```bash
-npx shadcn@latest add superzero11/uiset/dashboard
+npx shadcn@latest add @uiset/dashboard
 ```
 
 Each template installs to `components/ui/templates/<name>.tsx` with every item it uses.

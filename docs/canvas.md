@@ -6,7 +6,7 @@ sends focus to the nearest node, and `createConnect` draws wires. People use a p
 the keyboard; agents use the same actions by the names people see.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/canvas
+npx shadcn@latest add @uiset/canvas
 ```
 
 ## Parts

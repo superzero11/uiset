@@ -4,8 +4,8 @@ The parts of a code editor, on UI SDK's Tree, Tabs, Command, Dialog and Textarea
 **IDE page** template that puts them together in resizable panes.
 
 ```bash
-npx shadcn@latest add superzero11/uiset/ide       # the parts
-npx shadcn@latest add superzero11/uiset/ide-app   # the whole page
+npx shadcn@latest add @uiset/ide       # the parts
+npx shadcn@latest add @uiset/ide-app   # the whole page
 ```
 
 ## Parts

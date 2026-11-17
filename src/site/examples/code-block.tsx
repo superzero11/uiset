@@ -10,7 +10,7 @@ export function Save({ saving }: { saving: boolean }) {
 export default function CodeBlockExample() {
   return (
     <div className="stack">
-      <PackageCommand run="shadcn@latest add superzero11/uiset/code-block" />
+      <PackageCommand run="shadcn@latest add @uiset/code-block" />
       <CodeBlock code={code} language="tsx" title="save.tsx" lineNumbers highlight={[4]} />
     </div>
   )

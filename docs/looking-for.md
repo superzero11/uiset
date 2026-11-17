@@ -6,7 +6,7 @@ shadcn/ui with a list of things you had to find elsewhere, start here.
 Everything below installs the same way:
 
 ```bash
-npx shadcn@latest add superzero11/uiset/<item>
+npx shadcn@latest add @uiset/<item>
 ```
 
 ## Asked for most

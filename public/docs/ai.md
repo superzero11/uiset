@@ -49,7 +49,7 @@ UI SDK's own docs, which ship inside its packages at
 ```text
 This project uses UISet (components, kits, templates and themes for Vercel's UI SDK).
 Read https://uiset.dev/llms.txt for what's available, and the docs page for each item you use.
-Install items with: npx shadcn@latest add superzero11/uiset/<item>
+Install items with: npx shadcn@latest add @uiset/<item>
 Wrap the app in <UISet skin="base"> from @/components/ui/uiset.
 Don't hand-write keyboard handling or ARIA that a UI SDK component covers, and give every control a name.
 ```

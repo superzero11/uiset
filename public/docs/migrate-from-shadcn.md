@@ -11,7 +11,7 @@ screen reader and agent behavior come built in, and the API follows UI SDK's.
 2. **Add the root** and wrap the app. Your theme variables are picked up as they are:
 
    ```bash
-   npx shadcn@latest add superzero11/uiset/uiset
+   npx shadcn@latest add @uiset/uiset
    ```
 
    ```tsx
