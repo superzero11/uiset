@@ -18,6 +18,7 @@ together, not a rewrite of them:
 | One tab stop, arrows, Home/End, Page keys    | `createGridFocus`                  |
 | Select a block, rows or columns; copy it     | `createCellRange`, `textToCells`   |
 | Edit in place: Enter, F2, typing, Escape     | `createInlineEdit`                 |
+| Choose from a column's `options`             | `Combobox`                         |
 | Render 10,000 rows, reveal one off screen    | `createVirtualizer`                |
 | Column menu, View menu, filters, grouping    | `Menu`, `Popover`, `Select`        |
 | Drag a column edge                           | `bindDrag`                         |
@@ -67,7 +68,9 @@ const columns: DataGridColumn<Order>[] = [
   `locale`: `"number"` follows the locale's grouping and accepts a currency sign
   (`$1,200.50`) but refuses words (`12 units`); `"date"` reads "Nov 20", "2026-11-20" or
   the locale's order and stores that calendar day; `"boolean"` flips with Space.
-  `options` limits an edit to a list and suggests it.
+  `options` limits an edit to a list. Its editor is UI SDK's Combobox in the cell: the
+  list opens under the cell in the skin's own style, typing narrows it, and only an
+  option can be saved. Pasted and agent edits are checked against the list too.
 - `onCellEdit` gets the parsed value. Return `false` to keep the editor open. Without
   it, nothing is editable.
 - `sort`, `query`, `filters`, `groupBy`, `selected`, `columnState` and `density` can
@@ -108,6 +111,7 @@ a `DataGrid`: `DataGridSearch`, `DataGridFilters`, `DataGridGroupBy`, `DataGridV
 | Alt+Left, Alt+Right            | header        | Narrower, wider (Option on a Mac)            |
 | Alt+Shift+Left, Alt+Shift+Right | header       | Move the column                              |
 | Enter, F2, or start typing     | editable cell | Edit; Enter saves, Escape cancels, Tab saves |
+| Up, Down, or keep typing       | a list cell's editor | Move through the options, or narrow them; Enter or Tab saves the highlighted one |
 | Space                          | yes/no cell   | Flip it                                      |
 | Space                          | first column  | Check the row                                |
 | Enter                          | group row     | Open or close the group                      |

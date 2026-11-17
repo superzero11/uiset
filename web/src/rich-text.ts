@@ -21,7 +21,7 @@ import { applyMarkdown, fromMarkdown, toHTML, toMarkdown } from "@/registry/uise
 import { createRichTextView, renderDocument, type RichTextMessages, type RichTextView } from "@/registry/uiset/ui/rich-text/view"
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/shell/shell.css"
-import { attr, h, uid, upgradeProperties } from "./dom"
+import { attr, defineElement, ElementBase, Evented, h, isOn, keepInputInside, reportInput, uid, upgradeProperties } from "./dom"
 import "./rich-text.css"
 
 type Person = { value: string; label: string }
@@ -50,7 +50,15 @@ const keepSelection = (event: Event) => event.preventDefault()
  * Events: `valuechange` with `{ value, doc }` as the text changes (not for caret moves),
  * `submit` on Mod+Enter outside a to-do.
  */
-class UISetRichText extends HTMLElement {
+/** What `<uiset-rich-text>` fires. */
+type UISetRichTextEvents = {
+  /** An edit (not a caret move): `value` is Markdown, `doc` the document. */
+  valuechange: CustomEvent<{ value: string; doc: Doc }>
+  /** Mod+Enter outside a list. */
+  submit: CustomEvent<null>
+}
+
+class UISetRichText extends Evented<UISetRichTextEvents>() {
   static observedAttributes = ["label", "placeholder", "readonly", "disabled", "max-length", "name", "format", "toolbar", "value"]
   #view?: RichTextView
   #state: EditorState = createState()
@@ -130,11 +138,15 @@ class UISetRichText extends HTMLElement {
     this.syncTriggers()
   }
 
-  private get label() {
+  /** Names the editing surface. An attribute and a property. */
+  get label(): string {
     return this.getAttribute("label") ?? "Text"
   }
+  set label(value: string | null) {
+    attr(this, "label", value)
+  }
   private get locked() {
-    return this.hasAttribute("readonly") || (this.hasAttribute("disabled") && this.getAttribute("disabled") !== "false")
+    return isOn(this, "readonly") || isOn(this, "disabled")
   }
 
   connectedCallback() {
@@ -199,6 +211,7 @@ class UISetRichText extends HTMLElement {
     const input = h("input", { type: "hidden" }) as HTMLInputElement
     const toolbar = this.getAttribute("toolbar") === "false" ? null : this.buildToolbar()
     const root = h("div", { class: "rich-text" }, toolbar?.el ?? null, menu, count, input)
+    keepInputInside(root)
     this.replaceChildren(root)
     this.#dom = { root, area, menu, list, count, input, toolbar: toolbar?.el ?? null, blockType: toolbar?.blockType ?? null, marks: toolbar?.marks ?? new Map(), lists: toolbar?.lists ?? new Map(), link: toolbar?.link ?? null, undo: toolbar?.undo ?? null, redo: toolbar?.redo ?? null }
 
@@ -220,7 +233,9 @@ class UISetRichText extends HTMLElement {
       onChange: (next, reason) => {
         this.#state = next
         this.sync()
-        if (reason !== "selection") this.dispatchEvent(new CustomEvent("valuechange", { detail: { value: toMarkdown(next.doc), doc: next.doc } }))
+        if (reason === "selection") return
+        this.dispatchEvent(new CustomEvent("valuechange", { detail: { value: toMarkdown(next.doc), doc: next.doc } }))
+        reportInput(this, false)
       },
     })
     this.#view = view
@@ -440,8 +455,8 @@ class UISetRichText extends HTMLElement {
     const view = this.#view
     if (!dom || !view) return
     const state = this.#state
-    const disabled = this.hasAttribute("disabled") && this.getAttribute("disabled") !== "false"
-    const readOnly = this.hasAttribute("readonly")
+    const disabled = isOn(this, "disabled")
+    const readOnly = isOn(this, "readonly")
     view.setReadOnly(this.locked)
     attr(dom.root, "data-disabled", disabled)
     attr(dom.root, "data-readonly", readOnly)
@@ -481,7 +496,7 @@ class UISetRichText extends HTMLElement {
 }
 
 /** <uiset-rich-text-content value="## Markdown">, or its `doc` property: saved text, read-only, in the editor's styles. */
-class UISetRichTextContent extends HTMLElement {
+class UISetRichTextContent extends ElementBase {
   static observedAttributes = ["value"]
   #doc: Doc | null = null
 
@@ -513,9 +528,11 @@ function defineRichText() {
   createParts(richTextPrimitive, {
     root: { tag: "uiset-rich-text-area", api: ["setValue", "insert", "clear"] },
   })
-  customElements.define("uiset-rich-text", UISetRichText)
-  customElements.define("uiset-rich-text-content", UISetRichTextContent)
+  defineElement("uiset-rich-text", UISetRichText)
+  defineElement("uiset-rich-text-content", UISetRichTextContent)
 }
 
 export { defineRichText }
 export type { Person as RichTextPerson, UploadImage as RichTextUploadImage }
+export { UISetRichText, UISetRichTextContent }
+export type { UISetRichTextEvents }

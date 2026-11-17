@@ -41,6 +41,12 @@ const groups: [string, ExampleMeta[]][] = [
       },
       { slug: "textarea", title: "Textarea", parts: "Textarea", items: ["textarea"] },
       {
+        slug: "inline-edit",
+        title: "Inline edit",
+        parts: "InlineEdit (createInlineEdit)",
+        items: ["inline-edit"],
+      },
+      {
         slug: "number-input",
         title: "Number input",
         parts: "NumberInput, NumberInputGroup, NumberInputControl",
@@ -100,6 +106,12 @@ const groups: [string, ExampleMeta[]][] = [
         title: "File input",
         parts: "FileInput, FileInputDropzone, FileInputList, FileInputItem",
         items: ["file-input"],
+      },
+      {
+        slug: "upload",
+        title: "Upload",
+        parts: "Upload, useUploadQueue (FileInput, Progress, Button, announce)",
+        items: ["upload"],
       },
     ],
   ],
@@ -302,6 +314,12 @@ const groups: [string, ExampleMeta[]][] = [
         items: ["avatar"],
       },
       {
+        slug: "avatar-group",
+        title: "Avatar group",
+        parts: "AvatarGroup (Avatar)",
+        items: ["avatar-group"],
+      },
+      {
         slug: "progress",
         title: "Progress",
         parts: "Progress, ProgressTrack, ProgressIndicator",
@@ -391,7 +409,14 @@ const groups: [string, ExampleMeta[]][] = [
   [
     "Data display",
     [
-      { slug: "badge", title: "Badge", parts: "Badge", items: ["badge"] },
+      {
+        slug: "table",
+        title: "Table",
+        parts: "Table, TableHeader, TableBody, TableRow, TableHead, TableCell (ScrollArea)",
+        items: ["table"],
+        wide: true,
+      },
+      { slug: "badge", title: "Badge", parts: "Badge, CountBadge", items: ["badge"] },
       { slug: "stat", title: "Stat", parts: "Stat", items: ["stat"] },
       {
         slug: "empty-state",
@@ -425,6 +450,12 @@ const groups: [string, ExampleMeta[]][] = [
         items: ["kbd"],
       },
       { slug: "spinner", title: "Spinner", parts: "Spinner", items: ["spinner"] },
+      {
+        slug: "code-block",
+        title: "Code block",
+        parts: "CodeBlock, CodeTabs, PackageCommand (Tabs, ScrollArea, Preferences)",
+        items: ["code-block"],
+      },
       {
         slug: "copy-button",
         title: "Copy button",

@@ -17,7 +17,10 @@ Rules for agents building with UISet:
 - [Installation](https://uiset.dev/docs/installation.md): Add UISet with the shadcn CLI, load each skin's fonts, or use the Web Components build
 - [Quick start](https://uiset.dev/docs/quick-start.md): A working settings screen in a few minutes
 - [Building with AI agents](https://uiset.dev/docs/ai.md): The skills and llms.txt for coding agents, and UI SDK's agent bridge for agents that use your app
+- [Looking for a component?](https://uiset.dev/docs/looking-for.md): Where the components people ask for most are in UISet: calendar, time picker, multi-select, dropzone, table and more
 - [Web Components](https://uiset.dev/docs/web-components.md): Every kit and template as custom elements, for plain HTML, Vue, Svelte and Solid
+- [Vue](https://uiset.dev/docs/vue.md): UISet in a Vue 3 app, through the Web Components build
+- [Svelte](https://uiset.dev/docs/svelte.md): UISet in a Svelte 5 app, through the Web Components build
 - [Templates](https://uiset.dev/docs/templates.md): Whole pages built only from UISet items
 - [Theming](https://uiset.dev/docs/theming.md): Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder
 - [Coming from shadcn/ui](https://uiset.dev/docs/migrate-from-shadcn.md): What maps to what, and how to move a shadcn/ui app over
@@ -27,7 +30,8 @@ Rules for agents building with UISet:
 - [Phosphor skin](https://uiset.dev/docs/phosphor.md): The Phosphor skin's design and tokens
 - [Ink skin](https://uiset.dev/docs/ink.md): The Ink skin's design and tokens
 - [Root](https://uiset.dev/docs/theming.md): `uiset`
-- [App frame and data display](https://uiset.dev/docs/app-shell.md): `app-shell`, `breadcrumbs`, `page-header`, `card`, `badge`, `stat`, `empty-state`, `skeleton`, `description-list`, `item-list`, `alert`, `kbd`, `spinner`, `stepper`, `search-field`, `copy-button`
+- [App frame and data display](https://uiset.dev/docs/app-shell.md): `app-shell`, `breadcrumbs`, `page-header`, `card`, `badge`, `stat`, `empty-state`, `skeleton`, `description-list`, `item-list`, `alert`, `kbd`, `spinner`, `stepper`, `search-field`, `copy-button`, `table`, `avatar-group`, `code-block`
+- [Forms](https://uiset.dev/docs/forms.md): `inline-edit`, `upload`
 - [Rich text](https://uiset.dev/docs/rich-text.md): `rich-text`
 - [Chat](https://uiset.dev/docs/chat.md): `chat`, `chat-response`, `chat-parts`, `chat-composer`, `chat-sidebar`
 - [Data grid](https://uiset.dev/docs/data-grid.md): `data-grid`

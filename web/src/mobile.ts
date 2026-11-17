@@ -4,27 +4,41 @@
 // classes (docs/web-components.md has the markup).
 import { announce, bindDrag, bindScrollPicker } from "@ui-sdk/core"
 import { rubberBand } from "@ui-sdk/core/gesture"
-import { createParts } from "@ui-sdk/web"
+import { createParts, type UiActionDetail, type UiElement } from "@ui-sdk/web"
 import "@ui-sdk/web/button"
 import "@ui-sdk/web/menu"
 import { iconElement, type IconName } from "@/registry/uiset/ui/shell/icon-paths"
 import { swipeList, type SwipeSide } from "@/registry/uiset/ui/mobile/swipe-list"
+import { keepWheelOnValue } from "@/registry/uiset/ui/mobile/wheel"
 import "@/registry/uiset/ui/mobile/mobile.css"
-import { place, upgradeProperties } from "./dom"
+import { defineElement, ElementBase, Evented, holdRender, isOn, keepInputInside, place, reportInput, upgradeProperties } from "./dom"
 import "./mobile.css"
 
 type SwipeAction = { id: string; label: string; icon?: IconName; tone?: "danger" | "accent" | "neutral" }
 type SwipeItem = { id: string; label?: string; content: string | Node; start?: SwipeAction[]; end?: SwipeAction[] }
 type SwipeMessages = { help: string; actionsFor: (row: string) => string }
 
-type SwipeListElement = HTMLElement & {
+/** What `<uiset-swipe-list>` fires: `open` (with `openable`) and `action`, by row id. */
+type UISetSwipeListEvents = {
+  open: CustomEvent<{ value: string }>
+  /** `waitUntil(promise)` keeps the row busy until the work is done. */
+  action: CustomEvent<{ value: string; action: string } & Pick<UiActionDetail, "waitUntil">>
+}
+
+type SwipeListElement = UiElement<UISetSwipeListEvents> & {
   items?: SwipeItem[]
   messages?: Partial<SwipeMessages>
-  api?: { act: (row: string, action: string, focus?: boolean) => void }
+  api?: {
+    /** Runs a row's action, by ids. `focus: false` leaves focus where it is. */
+    act: (row: string, action: string, focus?: boolean) => void
+    /** Runs a row's action by the names people see. Throws when there's no such row or action. */
+    run: (row: string, action: string) => boolean
+    /** Opens a row, as Enter does on an `openable` list. */
+    openRow: (row: string) => boolean
+  }
 }
 
 /** A boolean attribute, as UI SDK reads them: on when present, unless it says "false". */
-const isOn = (el: Element, name: string) => el.hasAttribute(name) && el.getAttribute(name) !== "false"
 
 const words = (el: SwipeListElement): SwipeMessages => ({
   help: isOn(el, "openable")
@@ -76,15 +90,15 @@ function defineMobile() {
           },
         }
       },
-      render: (el) => renderRows(el as SwipeListElement),
+      render: holdRender((el) => renderRows(el as SwipeListElement)),
     },
     row: "uiset-swipe-row",
     content: "uiset-swipe-content",
     actions: "uiset-swipe-actions",
   })
 
-  customElements.define("uiset-wheel", UISetWheel)
-  customElements.define("uiset-pull-refresh", UISetPullRefresh)
+  defineElement("uiset-wheel", UISetWheel)
+  defineElement("uiset-pull-refresh", UISetPullRefresh)
 }
 
 /* ------------------------------------------------------------------- Swipe rows */
@@ -256,13 +270,25 @@ type WheelListbox = HTMLElement & { api: { setValue: (v: unknown) => void }; val
  * the middle is the value, picked as the wheel scrolls (UI SDK's bindScrollPicker). A listbox
  * a framework swaps in is bound in turn.
  */
-class UISetWheel extends HTMLElement {
+class UISetWheel extends ElementBase {
   #stop?: () => void
+  #keep?: () => void
   #watch?: MutationObserver
   #children?: MutationObserver
   #bound: WheelListbox | null = null
+  #pending: unknown = undefined
+
+  /** The listbox's value, so a two-way binding can sit on the wheel. */
+  get value(): unknown {
+    return this.#bound ? this.#bound.value : this.#pending
+  }
+  set value(v: unknown) {
+    if (this.#bound) this.#bound.value = v
+    else this.#pending = v
+  }
 
   connectedCallback() {
+    upgradeProperties(this, ["value"])
     this.#children ??= new MutationObserver(() => void this.bind())
     this.#children.observe(this, { childList: true })
     void this.bind()
@@ -275,8 +301,10 @@ class UISetWheel extends HTMLElement {
 
   #unbind() {
     this.#stop?.()
+    this.#keep?.()
     this.#watch?.disconnect()
     this.#stop = undefined
+    this.#keep = undefined
     this.#bound = null
   }
 
@@ -294,6 +322,21 @@ class UISetWheel extends HTMLElement {
         if (value != null && listbox.value !== value) listbox.api.setValue(value)
       },
     })
+    this.#keep = keepWheelOnValue(listbox)
+    if (this.#pending !== undefined) listbox.value = this.#pending
+    this.#pending = undefined
+    // The listbox's change, once it's in, as the wheel's own `input` and `change`.
+    const report = (event: Event) =>
+      queueMicrotask(() => {
+        if (!event.defaultPrevented && this.#bound === listbox) reportInput(this)
+      })
+    listbox.addEventListener("valuechange", report)
+    keepInputInside(listbox)
+    const stop = this.#stop
+    this.#stop = () => {
+      stop?.()
+      listbox.removeEventListener("valuechange", report)
+    }
     // Focus in the wheel stays on its value: a value set from elsewhere would otherwise leave
     // focus on the old option, and anything that reveals the focused element (a sheet coming
     // to rest) would scroll the wheel back and choose it again.
@@ -316,7 +359,14 @@ type RefreshMessages = { refresh: string; pull: string; release: string; refresh
  * Refreshing until that settles; a rejection is announced and fires `refresherror`. A
  * Refresh button shows on keyboard focus, for everyone who doesn't pull.
  */
-class UISetPullRefresh extends HTMLElement {
+/** What `<uiset-pull-refresh>` fires. */
+type UISetPullRefreshEvents = {
+  /** Pass your fetch to `waitUntil` and it shows Refreshing until that settles. */
+  refresh: CustomEvent<Pick<UiActionDetail, "waitUntil">>
+  refresherror: CustomEvent<{ error: unknown }>
+}
+
+class UISetPullRefresh extends Evented<UISetPullRefreshEvents>() {
   static observedAttributes = ["threshold"]
   #messages: Partial<RefreshMessages> = {}
   #indicator: HTMLElement
@@ -479,4 +529,4 @@ class UISetPullRefresh extends HTMLElement {
 }
 
 export { defineMobile, UISetPullRefresh, UISetWheel }
-export type { RefreshMessages, SwipeAction, SwipeItem, SwipeMessages }
+export type { RefreshMessages, SwipeAction, SwipeItem, SwipeListElement, SwipeMessages, UISetPullRefreshEvents, UISetSwipeListEvents }

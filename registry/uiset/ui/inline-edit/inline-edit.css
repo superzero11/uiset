@@ -1,0 +1,128 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  /* The value and the field share one box, so nothing moves when editing starts. It takes
+     the type around it: put it in a heading and you edit a heading. */
+  .inline-edit {
+    --inline-edit-pad-block: 0.1875rem;
+    --inline-edit-pad-inline: 0.375rem;
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 0;
+    max-width: 100%;
+    vertical-align: middle;
+  }
+
+  /* While editing it takes the row, so there is room to type more than was there. */
+  .inline-edit[data-editing] {
+    display: flex;
+  }
+
+  .inline-edit [data-slot="inline-edit-preview"],
+  .inline-edit [data-slot="inline-edit-input"] {
+    box-sizing: border-box;
+    min-height: 1.75rem;
+    margin: 0;
+    padding: var(--inline-edit-pad-block) var(--inline-edit-pad-inline);
+    border: 1px solid transparent;
+    border-radius: var(--ui-radius);
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+  }
+
+  .inline-edit [data-slot="inline-edit-preview"] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-width: 0;
+    max-width: 100%;
+    background: none;
+    text-align: start;
+    cursor: text;
+
+    & .uiset-icon {
+      color: var(--ui-muted-foreground);
+    }
+
+    &:hover:not([aria-disabled="true"]) {
+      background: var(--ui-muted);
+    }
+
+    &[aria-disabled="true"] {
+      cursor: default;
+
+      & .uiset-icon {
+        display: none;
+      }
+    }
+  }
+
+  .inline-edit-value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .inline-edit[data-empty] .inline-edit-value {
+    color: var(--ui-muted-foreground);
+  }
+
+  .inline-edit [data-slot="inline-edit-input"] {
+    flex: 1;
+    width: 20ch;
+    min-width: 8ch;
+    max-width: 100%;
+    border-color: var(--ui-input);
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+    field-sizing: content;
+
+    &:focus-visible {
+      border-color: var(--ui-ring-border);
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: -1px;
+    }
+
+    &[aria-invalid="true"],
+    &[aria-invalid="true"]:focus-visible {
+      border-color: var(--ui-destructive);
+      outline-color: var(--ui-destructive);
+    }
+  }
+
+  .inline-edit :is([data-slot="inline-edit-save"], [data-slot="inline-edit-cancel"]) {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 1px solid var(--ui-input);
+    border-radius: var(--ui-radius);
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--ui-muted);
+    }
+  }
+
+  .inline-edit [data-slot="inline-edit-error"] {
+    flex-basis: 100%;
+    color: var(--ui-destructive);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  @media (forced-colors: active) {
+    .inline-edit [data-slot="inline-edit-preview"]:hover:not([aria-disabled="true"]) {
+      outline: 1px solid Highlight;
+    }
+  }
+}

@@ -14,7 +14,7 @@ Install any item with `npx shadcn@latest add superzero11/uiset/<item>`. Docs: ht
 - `breadcrumbs`: Where you are, with the current page marked.
 - `page-header`: A page title with description and actions.
 - `card`: A bordered block with header, title, description, content and footer.
-- `badge`: A short status label in five tones, readable in every skin.
+- `badge`: A short status label in five tones, readable in every skin, and a count badge for the corner of an icon or avatar.
 - `stat`: A number with its change, said in words as well as color, and an optional trend sparkline.
 - `empty-state`: What to do when there's nothing here yet.
 - `skeleton`: Loading placeholders, and a Loading region that announces once.
@@ -26,6 +26,14 @@ Install any item with `npx shadcn@latest add superzero11/uiset/<item>`. Docs: ht
 - `stepper`: Steps of a flow with the current one marked and later ones locked.
 - `search-field`: A search box with a clear button and a key that focuses it from anywhere.
 - `copy-button`: Copies a value and says so.
+- `table`: A plain HTML table in a scroll area: sticky headings, a sticky first column, and rows that stack into labelled blocks on narrow screens.
+- `avatar-group`: Avatars stacked in a row, with a count of the ones that don't fit.
+- `code-block`: Code in its language's colors with a file name, line numbers, marked lines and a copy button; tabs for versions of the same code; and one command for npm, pnpm, yarn and bun that remembers the choice.
+
+## Forms (docs/forms.md)
+
+- `inline-edit`: Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons.
+- `upload`: A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use.
 
 ## Rich text (docs/rich-text.md)
 

@@ -1370,7 +1370,7 @@
       "name": "badge",
       "type": "registry:ui",
       "title": "Badge",
-      "description": "A short status label in five tones, readable in every skin.",
+      "description": "A short status label in five tones, readable in every skin, and a count badge for the corner of an icon or avatar.",
       "dependencies": [
         "@ui-sdk/core@0.1.0-beta.5",
         "@ui-sdk/react@0.1.0-beta.5"
@@ -1383,6 +1383,200 @@
           "path": "registry/uiset/ui/badge.tsx",
           "type": "registry:ui",
           "target": "@ui/badge.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "A plain HTML table in a scroll area: sticky headings, a sticky first column, and rows that stack into labelled blocks on narrow screens.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.5",
+        "@ui-sdk/react@0.1.0-beta.5"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/scroll-area"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/table.tsx",
+          "type": "registry:ui",
+          "target": "@ui/table.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/table/table.css",
+          "type": "registry:file",
+          "target": "@ui/table/table.css"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "code-block",
+      "type": "registry:ui",
+      "title": "Code block",
+      "description": "Code in its language's colors with a file name, line numbers, marked lines and a copy button; tabs for versions of the same code; and one command for npm, pnpm, yarn and bun that remembers the choice.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.5",
+        "@ui-sdk/react@0.1.0-beta.5",
+        "shiki@4.6.0"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/copy-button",
+        "superzero11/uiset/scroll-area",
+        "superzero11/uiset/tabs"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/code-block.tsx",
+          "type": "registry:ui",
+          "target": "@ui/code-block.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/code-block/commands.ts",
+          "type": "registry:file",
+          "target": "@ui/code-block/commands.ts"
+        },
+        {
+          "path": "registry/uiset/ui/code-block/code-block.css",
+          "type": "registry:file",
+          "target": "@ui/code-block/code-block.css"
+        },
+        {
+          "path": "registry/uiset/ui/code/highlight.ts",
+          "type": "registry:file",
+          "target": "@ui/code/highlight.ts"
+        },
+        {
+          "path": "registry/uiset/ui/code/code.css",
+          "type": "registry:file",
+          "target": "@ui/code/code.css"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "inline-edit",
+      "type": "registry:ui",
+      "title": "Inline edit",
+      "description": "Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.5",
+        "@ui-sdk/react@0.1.0-beta.5"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/inline-edit.tsx",
+          "type": "registry:ui",
+          "target": "@ui/inline-edit.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/inline-edit/inline-edit.ts",
+          "type": "registry:file",
+          "target": "@ui/inline-edit/inline-edit.ts"
+        },
+        {
+          "path": "registry/uiset/ui/inline-edit/inline-edit.css",
+          "type": "registry:file",
+          "target": "@ui/inline-edit/inline-edit.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icons.tsx",
+          "type": "registry:file",
+          "target": "@ui/shell/icons.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icon-paths.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/icon-paths.ts"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "upload",
+      "type": "registry:ui",
+      "title": "Upload",
+      "description": "A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.5",
+        "@ui-sdk/react@0.1.0-beta.5"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/button",
+        "superzero11/uiset/file-input",
+        "superzero11/uiset/progress"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/upload.tsx",
+          "type": "registry:ui",
+          "target": "@ui/upload.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/upload/queue.ts",
+          "type": "registry:file",
+          "target": "@ui/upload/queue.ts"
+        },
+        {
+          "path": "registry/uiset/ui/upload/upload.css",
+          "type": "registry:file",
+          "target": "@ui/upload/upload.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icons.tsx",
+          "type": "registry:file",
+          "target": "@ui/shell/icons.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icon-paths.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/icon-paths.ts"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "avatar-group",
+      "type": "registry:ui",
+      "title": "Avatar group",
+      "description": "Avatars stacked in a row, with a count of the ones that don't fit.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.5",
+        "@ui-sdk/react@0.1.0-beta.5"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/avatar"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/avatar-group.tsx",
+          "type": "registry:ui",
+          "target": "@ui/avatar-group.tsx"
         },
         {
           "path": "registry/uiset/ui/shell/shell.css",
@@ -1755,6 +1949,7 @@
       "registryDependencies": [
         "superzero11/uiset/uiset",
         "superzero11/uiset/button",
+        "superzero11/uiset/combobox",
         "superzero11/uiset/field",
         "superzero11/uiset/menu",
         "superzero11/uiset/popover",
@@ -2253,6 +2448,11 @@
           "path": "registry/uiset/ui/mobile/swipe-list.ts",
           "type": "registry:file",
           "target": "@ui/mobile/swipe-list.ts"
+        },
+        {
+          "path": "registry/uiset/ui/mobile/wheel.ts",
+          "type": "registry:file",
+          "target": "@ui/mobile/wheel.ts"
         },
         {
           "path": "registry/uiset/ui/mobile/mobile.css",

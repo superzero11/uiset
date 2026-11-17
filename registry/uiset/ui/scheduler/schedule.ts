@@ -79,6 +79,7 @@ const clock = (minutes: number) => {
   return `${((h + 11) % 12) + 1}:${String(m).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`
 }
 
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const schedulePrimitive = definePrimitive({
   name: "schedule",
   options: {

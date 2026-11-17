@@ -16,6 +16,7 @@ type RichTextPrimitiveOptions = {
   onValueChange?: (markdown: string, details: ChangeDetails<RichTextReason>) => void
 }
 
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const richTextPrimitive = definePrimitive({
   name: "rich-text",
   options: {

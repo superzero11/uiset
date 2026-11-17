@@ -8,7 +8,7 @@ import "@ui-sdk/web/drawer"
 import "@ui-sdk/web/tooltip"
 import { iconElement, type IconName } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/shell/shell.css"
-import { attr, h, move } from "./dom"
+import { attr, defineElement, ElementBase, h, move } from "./dom"
 
 const sidebar = createPreference({
   values: ["expanded", "collapsed"],
@@ -24,7 +24,7 @@ const sidebar = createPreference({
  * rest as the page's content, in a <main> (or a <div> with `content="div"`, when the page
  * has its own). Sidebar links (`a.sidebar-link`) get a tooltip while it's collapsed.
  */
-class UISetAppShell extends HTMLElement {
+class UISetAppShell extends ElementBase {
   static observedAttributes = ["label", "narrow-below"]
   #dom?: {
     shell: HTMLElement
@@ -84,7 +84,9 @@ class UISetAppShell extends HTMLElement {
     const brand = parts("brand")
     const nav = parts("sidebar")[0]
     const header = parts("header")
-    const content = [...this.children].filter((child) => !(child as HTMLElement).dataset.part)
+    // Everything else is content, text and comments included: a framework's place markers
+    // are comments, and it finds its way by them when it adds children later.
+    const content = [...this.childNodes].filter((child) => !(child instanceof HTMLElement && child.dataset.part))
     this.#nav = nav
     const toggle = h("button", { type: "button", "data-variant": "ghost", class: "app-sidebar-toggle", "aria-keyshortcuts": ariaKeyshortcuts("mod+b"), onclick: () => this.toggle() }, iconElement("sidebar")) as HTMLButtonElement
     const brandSlot = h("div", { class: "app-brand" }, ...brand)
@@ -113,6 +115,44 @@ class UISetAppShell extends HTMLElement {
     this.tooltips()
     // Links the page adds later get their tooltips too.
     if (nav) new MutationObserver(() => this.tooltips()).observe(nav, { childList: true, subtree: true })
+    // And children that arrive some other way (`append`, `innerHTML +=`) are placed too.
+    new MutationObserver((records) => {
+      for (const record of records) for (const node of record.addedNodes) if (node.parentNode === this && node !== shell) this.adopt(node)
+    }).observe(this, { childList: true })
+  }
+
+  // A child added after the layout is built goes where the first ones went: the brand, the
+  // sidebar, the header or the content. Frameworks add children with these three methods,
+  // and name a sibling that has since moved into the layout.
+  private adopt<T extends Node>(node: T, before: Node | null = null): T {
+    const dom = this.#dom!
+    const part = node instanceof HTMLElement ? node.dataset.part : undefined
+    if (part === "sidebar" && !this.#nav) {
+      this.#nav = node as unknown as HTMLElement
+      this.tooltips()
+      new MutationObserver(() => this.tooltips()).observe(node, { childList: true, subtree: true })
+    } else {
+      const slot = part === "brand" ? dom.brandSlot : part === "header" ? dom.headerSlot : dom.content
+      slot.insertBefore(node, before && before.parentNode === slot ? before : null)
+    }
+    this.layout()
+    return node
+  }
+
+  override appendChild<T extends Node>(node: T): T {
+    if (!this.#dom || (node as Node) === this.#dom.shell) return super.appendChild(node)
+    return this.adopt(node)
+  }
+
+  override insertBefore<T extends Node>(node: T, before: Node | null): T {
+    if (!this.#dom || (node as Node) === this.#dom.shell) return super.insertBefore(node, before)
+    return this.adopt(node, before)
+  }
+
+  override removeChild<T extends Node>(child: T): T {
+    const parent = child.parentNode
+    if (parent && parent !== this && this.contains(child)) return parent.removeChild(child)
+    return super.removeChild(child)
   }
 
   // A collapsed sidebar shows icons; each link's tooltip says its name.
@@ -156,7 +196,7 @@ class UISetAppShell extends HTMLElement {
 }
 
 /** <uiset-page-header title description level="1|2">: the page's heading, with your actions as children. */
-class UISetPageHeader extends HTMLElement {
+class UISetPageHeader extends ElementBase {
   static observedAttributes = ["title", "description", "level"]
   #actions?: HTMLElement
   connectedCallback() {
@@ -188,7 +228,7 @@ class UISetPageHeader extends HTMLElement {
 }
 
 /** <uiset-empty-state title description icon level="2|3|4">: what to do when there's nothing yet; actions as children. */
-class UISetEmptyState extends HTMLElement {
+class UISetEmptyState extends ElementBase {
   static observedAttributes = ["title", "description", "icon", "level"]
   #actions?: HTMLElement
   connectedCallback() {
@@ -219,9 +259,10 @@ class UISetEmptyState extends HTMLElement {
 }
 
 function defineAppShell() {
-  customElements.define("uiset-app-shell", UISetAppShell)
-  customElements.define("uiset-page-header", UISetPageHeader)
-  customElements.define("uiset-empty-state", UISetEmptyState)
+  defineElement("uiset-app-shell", UISetAppShell)
+  defineElement("uiset-page-header", UISetPageHeader)
+  defineElement("uiset-empty-state", UISetEmptyState)
 }
 
 export { defineAppShell }
+export { UISetAppShell, UISetPageHeader, UISetEmptyState }

@@ -8,7 +8,7 @@ import "@ui-sdk/web/button"
 import "@ui-sdk/web/input"
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/shell/shell.css"
-import { attr, h, upgradeProperties } from "./dom"
+import { attr, defineElement, ElementBase, Evented, h, reportInput, upgradeProperties } from "./dom"
 
 /**
  * <uiset-search-field label="Search mail" placeholder="Search…" shortcut="/" value=""> fires
@@ -16,7 +16,10 @@ import { attr, h, upgradeProperties } from "./dom"
  * anywhere ("/" by default; `shortcut=""` for none); plain keys never fire while someone
  * types in another field. The clear button is hidden from agents: the field offers "clear".
  */
-class UISetSearchField extends HTMLElement {
+/** What `<uiset-search-field>` fires: `valuechange` as the text changes. */
+type UISetSearchFieldEvents = { valuechange: CustomEvent<{ value: string }> }
+
+class UISetSearchField extends Evented<UISetSearchFieldEvents>() {
   static observedAttributes = ["label", "placeholder", "shortcut", "name"]
   #dom?: { root: HTMLElement; input: HTMLInputElement; clear: HTMLElement; hint: HTMLElement }
   #unregister?: () => void
@@ -33,12 +36,20 @@ class UISetSearchField extends HTMLElement {
     this.sync()
   }
 
-  private get label() {
+  // Attributes that are properties too, so a framework that sets a member it finds (Vue)
+  // still reaches the attribute.
+  get label(): string {
     return this.getAttribute("label") ?? "Search"
   }
-  private get shortcut() {
+  set label(value: string | null) {
+    attr(this, "label", value)
+  }
+  get shortcut(): string {
     const s = this.getAttribute("shortcut")
     return s === null ? "/" : s
+  }
+  set shortcut(value: string | null) {
+    attr(this, "shortcut", value)
   }
 
   connectedCallback() {
@@ -51,8 +62,9 @@ class UISetSearchField extends HTMLElement {
       const clearButton = h("button", { type: "button", "data-variant": "ghost", class: "search-field-clear", "data-agent-hidden": "" }, iconElement("close"))
       clearButton.addEventListener("click", () => {
         input.value = ""
-        this.sync()
-        this.dispatchEvent(new CustomEvent("valuechange", { detail: { value: "" } }))
+        // As if the text had been deleted by hand: `input` is what two-way bindings listen
+        // for (Vue's v-model), and the listener above turns it into `valuechange`.
+        input.dispatchEvent(new Event("input", { bubbles: true }))
         input.focus()
       })
       const clear = h("ui-button", null, clearButton)
@@ -103,8 +115,8 @@ class UISetSearchField extends HTMLElement {
 }
 
 /** <uiset-copy-button value="npm i @uiset/web" label="Copy" copied-label="Copied">: copies `value`, and says so. */
-class UISetCopyButton extends HTMLElement {
-  static observedAttributes = ["label", "copied-label"]
+class UISetCopyButton extends ElementBase {
+  static observedAttributes = ["label", "copied-label", "full-label"]
   #button?: HTMLButtonElement
   #copied = false
   #timer?: ReturnType<typeof setTimeout>
@@ -123,7 +135,13 @@ class UISetCopyButton extends HTMLElement {
   }
 
   private async copy() {
-    await navigator.clipboard.writeText(this.getAttribute("value") ?? "")
+    try {
+      await navigator.clipboard.writeText(this.getAttribute("value") ?? "")
+    } catch {
+      // The browser refused (no permission, an insecure page): say so rather than nothing.
+      announce(this.getAttribute("failed-label") ?? "Couldn't copy")
+      return
+    }
     this.#copied = true
     announce(this.getAttribute("copied-label") ?? "Copied")
     this.draw()
@@ -136,7 +154,12 @@ class UISetCopyButton extends HTMLElement {
 
   private draw() {
     const label = this.#copied ? (this.getAttribute("copied-label") ?? "Copied") : (this.getAttribute("label") ?? "Copy")
-    this.#button!.replaceChildren(iconElement(this.#copied ? "check" : "copy"), label)
+    // The label in its own element: a labelled button whose only element is an icon is sized
+    // as a square icon button, which would squeeze the visible label out.
+    this.#button!.replaceChildren(iconElement(this.#copied ? "check" : "copy"), h("span", null, label))
+    // A fuller name where several share a page, like "Copy app.tsx". It starts with the
+    // visible label, so people who speak the label still find it.
+    attr(this.#button!, "aria-label", this.#copied ? null : this.getAttribute("full-label"))
   }
 }
 
@@ -148,7 +171,10 @@ type Step = { value: string; label: string; description?: string }
  * `value` and fires `valuechange` with `{ value }`. With `linear` (on unless
  * linear="false"), steps after the current one can't be chosen until it's reached.
  */
-class UISetStepper extends HTMLElement {
+/** What `<uiset-stepper>` fires: `valuechange` when a step is chosen. */
+type UISetStepperEvents = { valuechange: CustomEvent<{ value: string }> }
+
+class UISetStepper extends Evented<UISetStepperEvents>() {
   static observedAttributes = ["label", "value", "linear"]
   #steps: Step[] = []
   #list?: HTMLElement
@@ -160,12 +186,19 @@ class UISetStepper extends HTMLElement {
     this.#steps = v ?? []
     if (this.#list) this.draw()
   }
+  /** The current step's `value`. An attribute and a property. */
+  get value() {
+    return this.getAttribute("value") ?? ""
+  }
+  set value(v: string | null) {
+    attr(this, "value", v)
+  }
 
   connectedCallback() {
     if (!this.#list) {
       this.#list = h("ol")
       this.replaceChildren(h("nav", { class: "stepper" }, this.#list))
-      upgradeProperties(this, ["steps"])
+      upgradeProperties(this, ["steps", "value"])
     }
     this.draw()
   }
@@ -202,6 +235,7 @@ class UISetStepper extends HTMLElement {
         button.addEventListener("click", () => {
           this.setAttribute("value", step.value)
           this.dispatchEvent(new CustomEvent("valuechange", { detail: { value: step.value } }))
+          reportInput(this)
         })
         return h("li", { "data-state": state }, h("ui-button", null, button))
       }),
@@ -211,10 +245,12 @@ class UISetStepper extends HTMLElement {
 }
 
 function defineShellParts() {
-  customElements.define("uiset-search-field", UISetSearchField)
-  customElements.define("uiset-copy-button", UISetCopyButton)
-  customElements.define("uiset-stepper", UISetStepper)
+  defineElement("uiset-search-field", UISetSearchField)
+  defineElement("uiset-copy-button", UISetCopyButton)
+  defineElement("uiset-stepper", UISetStepper)
 }
 
 export { defineShellParts }
 export type { Step as StepperStep }
+export { UISetSearchField, UISetCopyButton, UISetStepper }
+export type { UISetSearchFieldEvents, UISetStepperEvents }

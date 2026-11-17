@@ -112,6 +112,88 @@ test("Enter on an editable cell edits it instead of activating it", async () => 
   }
 })
 
+test("an editor of its own, like a list, saves through choose and hands focus back", async () => {
+  const { view, cell, onCellEdit } = setup()
+  try {
+    cell(1, 0).focus()
+    await view.click(cell(1, 0))
+    // Enter starts with no typed character; a letter starts with that letter.
+    await view.keys("Enter")
+    expect(view.state.editing).toBe("1:0")
+    expect(view.api.typed()).toBeNull()
+    // The same value as before saves nothing, and still ends the edit.
+    expect(view.api.choose("Ada")).toBe(true)
+    expect(onCellEdit).not.toHaveBeenCalled()
+    expect(view.state.editing).toBeNull()
+    expect(document.activeElement).toBe(cell(1, 0))
+
+    await view.keys("g")
+    expect(view.state.editing).toBe("1:0")
+    expect(view.api.typed()).toBe("g")
+    // The editor has focus while it's open, as a list's field does.
+    const field = document.createElement("input")
+    cell(1, 0).append(field)
+    field.focus()
+    expect(view.api.choose("Grace")).toBe(true)
+    expect(onCellEdit).toHaveBeenCalledWith({ row: 1, col: 0 }, "Grace")
+    expect(view.state.editing).toBeNull()
+    expect(document.activeElement).toBe(cell(1, 0))
+    field.remove()
+    // Nothing is being edited now, so there is nothing to choose for.
+    expect(view.api.choose("Linus")).toBe(false)
+    expect(onCellEdit).toHaveBeenCalledTimes(1)
+  } finally {
+    view.unmount()
+  }
+})
+
+test("a refused choice keeps the edit open, and leaving it saves nothing", async () => {
+  const onCellEdit = vi.fn(() => false)
+  const { view, cell } = setup({ onCellEdit })
+  try {
+    cell(1, 0).focus()
+    await view.click(cell(1, 0))
+    await view.keys("F2")
+    expect(view.api.choose("Grace")).toBe(false)
+    expect(view.state.editing).toBe("1:0")
+
+    const other = document.createElement("button")
+    document.body.append(other)
+    other.focus()
+    // A press somewhere else leaves focus where it went; Escape brings it back to the cell.
+    view.api.leaveEdit(false)
+    expect(view.state.editing).toBeNull()
+    expect(document.activeElement).toBe(other)
+    other.remove()
+
+    cell(1, 0).focus()
+    await view.keys("F2")
+    view.api.leaveEdit(true)
+    expect(view.state.editing).toBeNull()
+    expect(document.activeElement).toBe(cell(1, 0))
+    expect(onCellEdit).toHaveBeenCalledTimes(1)
+  } finally {
+    view.unmount()
+  }
+})
+
+test("a press inside a cell's own popup is not the start of a range drag", async () => {
+  const { view, cell } = setup()
+  try {
+    cell(1, 1).focus()
+    await view.click(cell(1, 1))
+    const popup = document.createElement("div")
+    popup.setAttribute("data-grid-control", "")
+    const option = document.createElement("span")
+    popup.append(option)
+    cell(1, 2).append(popup)
+    fireEvent.pointerDown(option, { button: 0 })
+    expect(view.state.active).toEqual({ row: 1, col: 1 })
+  } finally {
+    view.unmount()
+  }
+})
+
 test("keys from a control inside a cell stay with that control", async () => {
   const { view, cell } = setup()
   try {

@@ -1,6 +1,6 @@
 {
   "name": "@uiset/web",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "UISet's skins, kits and elements for Web Components, Vue, Svelte, Solid and plain HTML, on UI SDK's custom elements.",
   "license": "MIT",
   "type": "module",
@@ -24,8 +24,12 @@
     "ai-agents"
   ],
   "files": ["dist"],
+  "types": "./dist/types/web/src/uiset.d.ts",
   "exports": {
-    ".": "./dist/uiset.js",
+    ".": {
+      "types": "./dist/types/web/src/uiset.d.ts",
+      "default": "./dist/uiset.js"
+    },
     "./uiset.css": "./dist/uiset.css"
   },
   "sideEffects": ["./dist/uiset.js", "./dist/uiset.css"],

@@ -6,18 +6,22 @@ import { sparklineColor, sparklinePlot } from "@/registry/uiset/ui/chart/plots/s
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/chart/tokens.css"
 import "@/registry/uiset/ui/chart/chart.css"
-import { h, upgradeProperties } from "./dom"
+import { defineElement, ElementBase, h, upgradeProperties } from "./dom"
 import { toDom } from "./chart"
 
 const svgNS = "http://www.w3.org/2000/svg"
 /** "4, 6, , 8" → [4, 6, null, 8]: an empty place is a gap. */
 const parseValues = (text: string | null) => (text ?? "").split(",").map((part) => (part.trim() === "" ? null : Number(part)))
+type Values = readonly (number | null)[]
+// A framework may hand the attribute's text to the property ("4,6,,8"): read it the same way.
+const asValues = (value: Values | string | null | undefined): Values | null =>
+  typeof value === "string" ? parseValues(value) : (value ?? null)
 
 /**
  * <uiset-sparkline label values variant="line|area|bar" series width height locale>: `values`
  * as an attribute (comma-separated) or a property (an array), and `format` as a property.
  */
-class UISetSparkline extends HTMLElement {
+class UISetSparkline extends ElementBase {
   // `series` (1 to 8) is the chart color; `slot` is HTML's own attribute.
   static observedAttributes = ["label", "values", "variant", "series", "width", "height", "locale"]
   #values: readonly (number | null)[] | null = null
@@ -26,8 +30,8 @@ class UISetSparkline extends HTMLElement {
   get values(): readonly (number | null)[] {
     return this.#values ?? parseValues(this.getAttribute("values"))
   }
-  set values(v: readonly (number | null)[]) {
-    this.#values = v
+  set values(v: readonly (number | null)[] | string) {
+    this.#values = asValues(v)
     this.render()
   }
   get format() {
@@ -71,7 +75,7 @@ class UISetSparkline extends HTMLElement {
  * well as color; `good="false"` marks a rise as bad (like errors). `trend` and `format` can
  * be properties too.
  */
-class UISetStat extends HTMLElement {
+class UISetStat extends ElementBase {
   static observedAttributes = ["label", "value", "change", "direction", "good", "period", "trend", "description", "locale"]
   #trend: readonly (number | null)[] | null = null
   #format?: (value: number) => string
@@ -79,8 +83,8 @@ class UISetStat extends HTMLElement {
   get trend(): readonly (number | null)[] | null {
     return this.#trend ?? (this.hasAttribute("trend") ? parseValues(this.getAttribute("trend")) : null)
   }
-  set trend(v: readonly (number | null)[] | null) {
-    this.#trend = v
+  set trend(v: readonly (number | null)[] | string | null) {
+    this.#trend = asValues(v)
     this.render()
   }
   get format() {
@@ -136,8 +140,9 @@ class UISetStat extends HTMLElement {
 }
 
 function defineStat() {
-  customElements.define("uiset-sparkline", UISetSparkline)
-  customElements.define("uiset-stat", UISetStat)
+  defineElement("uiset-sparkline", UISetSparkline)
+  defineElement("uiset-stat", UISetStat)
 }
 
 export { defineStat }
+export { UISetSparkline, UISetStat }

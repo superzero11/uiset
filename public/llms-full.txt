@@ -21,7 +21,10 @@ npx shadcn@latest add superzero11/uiset/uiset
 - [Installation](./installation.md): Add UISet with the shadcn CLI, load each skin's fonts, or use the Web Components build.
 - [Quick start](./quick-start.md): A working settings screen in a few minutes.
 - [Building with AI agents](./ai.md): The skills and llms.txt for coding agents, and UI SDK's agent bridge for agents that use your app.
+- [Looking for a component?](./looking-for.md): Where the components people ask for most are in UISet: calendar, time picker, multi-select, dropzone, table and more.
 - [Web Components](./web-components.md): Every kit and template as custom elements, for plain HTML, Vue, Svelte and Solid.
+- [Vue](./vue.md): UISet in a Vue 3 app, through the Web Components build.
+- [Svelte](./svelte.md): UISet in a Svelte 5 app, through the Web Components build.
 - [Templates](./templates.md): Whole pages built only from UISet items.
 - [Theming](./theming.md): Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder.
 - [Coming from shadcn/ui](./migrate-from-shadcn.md): What maps to what, and how to move a shadcn/ui app over.
@@ -40,7 +43,7 @@ npx shadcn@latest add superzero11/uiset/uiset
 | `breadcrumbs` | Where you are, with the current page marked. | [App frame and data display](./app-shell.md) |
 | `page-header` | A page title with description and actions. | [App frame and data display](./app-shell.md) |
 | `card` | A bordered block with header, title, description, content and footer. | [App frame and data display](./app-shell.md) |
-| `badge` | A short status label in five tones, readable in every skin. | [App frame and data display](./app-shell.md) |
+| `badge` | A short status label in five tones, readable in every skin, and a count badge for the corner of an icon or avatar. | [App frame and data display](./app-shell.md) |
 | `stat` | A number with its change, said in words as well as color, and an optional trend sparkline. | [App frame and data display](./app-shell.md) |
 | `empty-state` | What to do when there's nothing here yet. | [App frame and data display](./app-shell.md) |
 | `skeleton` | Loading placeholders, and a Loading region that announces once. | [App frame and data display](./app-shell.md) |
@@ -52,6 +55,11 @@ npx shadcn@latest add superzero11/uiset/uiset
 | `stepper` | Steps of a flow with the current one marked and later ones locked. | [App frame and data display](./app-shell.md) |
 | `search-field` | A search box with a clear button and a key that focuses it from anywhere. | [App frame and data display](./app-shell.md) |
 | `copy-button` | Copies a value and says so. | [App frame and data display](./app-shell.md) |
+| `table` | A plain HTML table in a scroll area: sticky headings, a sticky first column, and rows that stack into labelled blocks on narrow screens. | [App frame and data display](./app-shell.md) |
+| `avatar-group` | Avatars stacked in a row, with a count of the ones that don't fit. | [App frame and data display](./app-shell.md) |
+| `code-block` | Code in its language's colors with a file name, line numbers, marked lines and a copy button; tabs for versions of the same code; and one command for npm, pnpm, yarn and bun that remembers the choice. | [App frame and data display](./app-shell.md) |
+| `inline-edit` | Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons. | [Forms](./forms.md) |
+| `upload` | A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use. | [Forms](./forms.md) |
 | `rich-text` | A rich text editor on UI SDK with no editor library: headings, nested and numbered lists, to-dos, quotes, code, links, mentions, dividers and images; a toolbar, Markdown as you type, "/" for blocks and "@" for people (TriggerMenu); safe paste from documents and the web; undo; Markdown and clean HTML out; agents read and write Markdown. | [Rich text](./rich-text.md) |
 | `chat` | A conversation built on UI SDK: thread that follows new messages, messages with avatars, actions and versions, suggestions, plans and a thinking shimmer. | [Chat](./chat.md) |
 | `chat-response` | Streaming markdown that repairs itself mid-stream and never renders raw HTML, with code blocks highlighted by skin colors. | [Chat](./chat.md) |
@@ -191,7 +199,7 @@ the same parts, the same names, the same keyboard and agent support.
 
 | What | How many | What it gives you |
 | ---- | -------- | ----------------- |
-| [Components](/components) | 55, plus 16 app parts | Every UI SDK component, styled; and the app frame and data display parts (sidebar layout, page header, cards, badges, stats, alerts, a stepper) |
+| [Components](/components) | 55, plus 21 app parts | Every UI SDK component, styled; and the app frame, data display and form parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, uploads) |
 | [Kits](/kits) | 12 | Chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal, Studio and the Agent Console |
 | [Templates](/templates) | 10 | Whole pages: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, IDE |
 | [Themes](/themes) | 5 skins | Base, Blueprint, Studio, Phosphor and Ink, plus a [generator](/themes/generator) for your own |
@@ -229,6 +237,7 @@ a clean install into a new app. Expect API changes until UI SDK reaches 1.0; the
 
 - [Installation](./installation.md): set up a project and add your first items.
 - [Quick start](./quick-start.md): a working screen in a few minutes.
+- [Looking for a component?](./looking-for.md): where the ones people ask for most are.
 - [Building with AI agents](./ai.md): give your coding agent the skill and the docs.
 
 
@@ -319,7 +328,15 @@ one stylesheet, with UI SDK as a peer.
 npm install @uiset/web @ui-sdk/web
 ```
 
+pnpm resolves UI SDK's `latest` tag, which is an older beta than the one UISet pins, so name
+the versions there:
+
+```bash
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.5 @ui-sdk/core@0.1.0-beta.5
+```
+
 ```html
+<link rel="stylesheet" href="node_modules/@uiset/web/dist/uiset.css" />
 <script type="module">
   import "@uiset/web"
 </script>
@@ -329,7 +346,9 @@ npm install @uiset/web @ui-sdk/web
 </uiset-root>
 ```
 
-See [Web Components](./web-components.md) for every element.
+With a bundler, import the stylesheet instead: `import "@uiset/web/uiset.css"`. The package
+ships its TypeScript types. See [Web Components](./web-components.md) for every element, and
+the [Vue](./vue.md) and [Svelte](./svelte.md) guides for those frameworks.
 
 ## Check it works
 
@@ -535,25 +554,115 @@ the bridge on UI SDK. We ran the same comparison on UISet's kits; the numbers an
 method are on the [Agents page](/agents#benchmark).
 
 
+<!-- docs/looking-for.md -->
+
+# Looking for a component?
+
+The components people ask for most, and where each one is in UISet. If you came from
+shadcn/ui with a list of things you had to find elsewhere, start here.
+
+Everything below installs the same way:
+
+```bash
+npx shadcn@latest add superzero11/uiset/<item>
+```
+
+## Asked for most
+
+| You're looking for                     | In UISet                                                            | Item                       |
+| -------------------------------------- | ------------------------------------------------------------------- | -------------------------- |
+| A full calendar with events            | Day, week and month views, overlapping events you drag, resource lanes | [`scheduler`](./scheduler.md), and the `calendar-app` page |
+| A time picker                          | A time typed segment by segment; a scroll wheel for phones          | `time-input`, `TimeWheel` in [`mobile`](./mobile.md) |
+| Multi-select                           | Combobox with `multiple`: chips in the field, the list stays open   | `combobox`                 |
+| A date picker with year select, presets and typing | `CalendarYearSelect`, `DatePickerPreset`, and a typed date field | `date-picker`, `date-input` |
+| A date range                           | Calendar and date picker take a range                               | `calendar`, `date-picker`  |
+| A dropzone and file upload             | Drop, paste or choose files; then a queue with progress, cancel and retry | `file-input`, [`upload`](./forms.md#upload) |
+| A data table                           | Sorting, filters, grouping, pinned columns, editing, virtual rows   | [`data-grid`](./data-grid.md) |
+| A plain table with a fixed header      | Sticky headings and first column; rows stack on phones              | [`table`](./app-shell.md#table) |
+| A tag input                            | Text mixed with tokens; or a combobox with chips                    | `token-input`, `combobox`  |
+| A rich text editor                     | Headings, lists, links, images, mentions, Markdown in and out       | [`rich-text`](./rich-text.md) |
+| Charts                                 | Line, bar, scatter, heatmap and more, explored by keyboard, with a table view | [charts](./charts.md) |
+| A stepper or wizard                    | Steps with the current one marked and later ones locked             | `stepper`                  |
+| A kanban board                         | Cards moved by drag or keyboard, column limits, filters             | [`board`](./board.md)      |
+| A timeline                             | Events in order with markers                                        | `timeline`                 |
+| A file tree                            | A tree you expand and select; a file tree with rename and move      | `tree`, [`ide`](./ide.md)  |
+| A spinner and loading states           | A spinner that says what's loading; skeletons                       | `spinner`, `skeleton`      |
+| A sidebar                              | Collapses to icons, becomes a drawer on phones                      | [`app-shell`](./app-shell.md) |
+| A chat interface                       | Messages that stream, reasoning, tool calls and sources, a message box with mentions and attachments | [`chat`](./chat.md) |
+| A code block                           | Syntax colors, copy, line numbers, package-manager tabs             | [`code-block`](./app-shell.md#code) |
+| Inline editing                         | Press a value to edit it in place                                   | [`inline-edit`](./forms.md#inline-edit) |
+| An avatar stack                        | Overlapping avatars with a count of the rest                        | `avatar-group`             |
+| A notification count on an icon        | A count badge on a button or avatar                                 | `CountBadge` in `badge`    |
+
+## Also here
+
+| You're looking for                     | In UISet                                                            | Item                       |
+| -------------------------------------- | ------------------------------------------------------------------- | -------------------------- |
+| A color picker                         | Area, hue and alpha sliders, swatches, hex input                    | `color-picker`             |
+| A rating                               | Stars, whole or half                                                | `rating`                   |
+| Pagination                             | Page links with named previous and next                             | `pagination`               |
+| A carousel                             | Slides with keyboard paging                                         | `carousel`                 |
+| A number input                         | A number field with step buttons                                    | `number-input`             |
+| A one-time code field                  | A slot per character                                                | `otp-input`                |
+| Mentions and slash commands            | Suggestions after @, / or # in any text field                       | `trigger-menu`             |
+| An image cropper                       | Crop, zoom, rotate and flip                                         | `image-cropper`            |
+| A command palette                      | A searchable list of commands                                       | `command`                  |
+| A drawer or bottom sheet               | A sheet from an edge of the screen, with snap points                | `drawer`                   |
+| A dialog on desktop, a sheet on phones | `presentation="auto"` on Dialog and Select                          | `dialog`, `select`         |
+| A confirm dialog you can call          | `await confirm({ title, confirmLabel })` from anywhere, with UI SDK's `OverlayHost` rendered once | `alert-dialog` |
+| Tabs that are links                    | `<TabsTab render={<a href="/activity" />}>`                         | `tabs`                     |
+| Bottom navigation and pull to refresh  | `TabBar` and `PullToRefresh`                                        | [`mobile`](./mobile.md)    |
+| A node editor                          | Nodes, wires, a minimap, undo                                       | [`canvas`](./canvas.md)    |
+| A terminal                             | Commands, history, streaming output                                 | [`terminal`](./terminal.md) |
+| Resizable panels                       | Drag or use the keyboard                                            | `resizable`                |
+
+## Whole pages
+
+Sign in and sign up, a dashboard, settings, an admin records page, an inbox, a chat app, a
+project board, a calendar, pricing and an IDE are [templates](./templates.md): one command
+each, built only from the items above.
+
+## Questions that come up
+
+- **Do I need Tailwind?** No. UISet is plain CSS in cascade layers. Tailwind keeps working
+  beside it: your utilities aren't in UISet's layers, so they win.
+- **Does it work outside React?** Yes. Every kit and template is also a custom element in
+  `@uiset/web`, for [Vue](./vue.md), [Svelte](./svelte.md), Solid, Angular and plain HTML.
+  See [Web Components](./web-components.md).
+- **Can I keep my shadcn theme?** Yes. The base skin reads your shadcn variables. See
+  [Coming from shadcn/ui](./migrate-from-shadcn.md).
+- **It isn't on this page.** [Open an issue](https://github.com/superzero11/uiset/issues)
+  with what you're building. What many people need comes first.
+
+
 <!-- docs/web-components.md -->
 
-# UISet for Web Components (and Vue, Svelte, Solid)
+# UISet for Web Components
 
 UISet's skins, tokens and base styles dress **UI SDK's own custom elements**, the same 55
 components the React registry wraps, because both carry the same `data-slot` attributes.
 So a page in plain HTML, Vue, Svelte or Solid gets UISet's look and themes from one
-stylesheet, and UISet's own primitives register as `<uiset-*>` elements.
+stylesheet, and UISet's own primitives register as `<uiset-*>` elements. [Vue](./vue.md) and
+[Svelte](./svelte.md) have guides of their own, each tested in a real app.
 
 ```bash
-pnpm web:build   # makes web/dist/uiset.js and web/dist/uiset.css
+npm install @uiset/web @ui-sdk/web@0.1.0-beta.5 @ui-sdk/core@0.1.0-beta.5
 ```
 
-The build keeps UI SDK as a peer: install `@ui-sdk/web` and `@ui-sdk/core` (0.1.0-beta.5)
-and import the UI SDK components you use. `uiset.css` already includes UI SDK's `web.css`.
-`uiset.js` is about 117 KB gzipped with every kit and `uiset.css` 39 KB; the chat's
-markdown parser (53 KB) loads only when a chat first draws an answer. The page templates
-aren't in the build: they're pages to copy, each with its own small script. Install `shiki` too for colored code in chats;
-without it, code blocks are plain.
+The package is one module (`@uiset/web`), one stylesheet (`@uiset/web/uiset.css`) and
+their type declarations. In this repo, `pnpm web:build` makes all three in `web/dist/`.
+
+UI SDK is a peer: import the UI SDK components you use from `@ui-sdk/web/<component>`.
+`uiset.css` already includes UI SDK's `web.css`. `uiset.js` is about 126 KB gzipped with
+every kit and `uiset.css` 40 KB; the chat's markdown parser (53 KB) loads only when a chat
+first draws an answer. The page templates aren't in the build: they're pages to copy, each
+with its own small script. Install `shiki` too for colored code in chats; without it, code
+blocks are plain.
+
+The stylesheet styles UISet's root and what's inside it, and nothing else: no rule for
+`body`, no fonts loaded, no page height. Set those in your own styles. The module can be
+imported on a server (it defines its elements only where there's a browser), so a
+server-rendered app doesn't need to guard the import.
 
 ## Plain HTML
 
@@ -579,13 +688,80 @@ without it, code blocks are plain.
 </uiset-root>
 ```
 
-- `<uiset-root>` is the React `<UISet>`: `skin` (`base`, `blueprint`, `studio`), `theme`
+- `<uiset-root>` is the React `<UISet>`: `skin` (`base`, `blueprint`, `studio`, `phosphor`,
+  `ink`), `theme`
   (`light`, `dark`, or leave it out to follow the system), `sound` (present to turn the
   feedback sounds on) and `haptics="off"`. Change the attributes to switch live.
+- A key color is `data-key` on the root with the color's OKLCH lightness, chroma and hue as
+  three variables: `<uiset-root data-key style="--uiset-key-l: 0.55; --uiset-key-c: 0.2;
+  --uiset-key-h: 150">`. It's what React's `keyColor` writes.
 - Variants go on the element that gets `data-slot`, which for a wrapping element like
   `<ui-button>` is the native button inside it: `<button data-variant="outline">`.
 - UISet's primitives fire their callbacks as events on the root element, like UI SDK's:
   `knob.addEventListener("valuechange", (e) => e.detail.value)`.
+
+## Attributes, properties and types
+
+Frameworks don't all write attributes the way HTML does. UISet's elements take what each
+one writes:
+
+- **An attribute can be set as a property.** Where an element has a property with an
+  attribute's name (the grid's `label`, `locale`, `selectable` and `editable`, the search
+  field's `label` and `shortcut`, a chart's `orientation`), setting the property writes the
+  attribute. Vue sets a property whenever it finds one, so `:label="title"` works as it reads.
+- **`"false"` is off.** A presence attribute (`toolbar`, `selectable`, `editable`,
+  `readonly`, `renamable`, the root's `sound`) is on when it's there and off when it's
+  missing or says `"false"`, which is what Vue and Svelte write for a false binding. So
+  `:toolbar="showTools"` and `toolbar={showTools}` follow the boolean.
+- **A list can be text.** The sparkline's `values` and the stat's `trend` take an array, or
+  the attribute's own text (`"4,6,,8"`) handed to the property.
+- **Children can arrive late.** The app shell places children by `data-part` whenever they
+  are added, not only at first, so a framework that mounts children after the element is
+  fine.
+- **A value goes both ways.** Each element whose value a person changes has a live `value`
+  and fires `input` once a change is in, as a text field does, so Vue's `v-model` works on
+  it: the search field, stepper, knob, patch bay, wheel, rich text, code editor, chat
+  composer, chat threads, model picker, file tree and editor tabs. A finished choice fires
+  `change` too (a knob, when it's let go). Setting `value` fires nothing. The knob's
+  `value` stays live, as a slider's does: a turn moves it unless a `valuechange` listener
+  calls `preventDefault()`.
+
+The package ships its types. `document.querySelector` and `createElement` know each
+element by its tag, and the same types are exported by name:
+
+```ts
+import type { UISetDataGrid, UISetLineChart } from "@uiset/web"
+
+const grid = document.querySelector("uiset-data-grid")! // a UISetDataGrid
+grid.rows = customers
+grid.selectable = true
+
+type Month = { month: string; revenue: number }
+const chart = document.querySelector("uiset-line-chart") as UISetLineChart<Month>
+chart.x = (d) => d.month // checked against Month
+```
+
+The grid takes a row type the same way (`UISetDataGrid<Order>`, with
+`UISetDataGridColumn<Order>` for a column); without one, any row's accessors are accepted.
+
+Events are typed as well. `addEventListener` on an element knows that element's own
+events, and the DOM's keep their types:
+
+```ts
+grid.addEventListener("celledit", (e) => save(e.detail.rowId, e.detail.column, e.detail.value))
+knob.addEventListener("valuechange", (e) => e.detail.value) // a number
+```
+
+Each element's events are exported as a map, for a listener a template holds:
+`UISetKnobEvents["valuechange"]`, `UISetDataGridEvents<Order>["celledit"]`,
+`UISetChatComposerEvents["send"]`.
+
+Every element a page works with is typed, with what you set and call on it: the kits
+(`UISetBoard`, `UISetSchedule`, `UISetCanvas`, `UISetTerminal`, `UISetChat`,
+`UISetRichText`, `UISetDataGrid`), the charts, the Studio knob and patch bay, the swipe
+list and the shell parts.
+Inner parts that only hold markup, like `<uiset-knob-indicator>` or a patch bay jack, are
+plain elements. UI SDK's own `<ui-*>` elements are typed by `@ui-sdk/web`.
 
 ## UISet's elements
 
@@ -610,6 +786,9 @@ without it, code blocks are plain.
 | `<uiset-rich-text>`, `<uiset-rich-text-content>`                     | The rich text editor (toolbar, "/" and "@", Markdown in and out), and saved text shown read-only |
 | `<uiset-app-shell>`, `<uiset-page-header>`, `<uiset-empty-state>`   | An app's frame (a sidebar that collapses to icons, a drawer on phones), a page's heading with actions, and what to do when there's nothing yet |
 | `<uiset-search-field>`, `<uiset-copy-button>`, `<uiset-stepper>`      | A search box with Clear and a "/" key, a copy button that says Copied, and the steps of a flow |
+| `<uiset-table>`, `<uiset-avatar-group>`, `<uiset-count-badge>`       | A scroll area around your table (sticky headings and first column, rows that stack), overlapping avatars with a count, and a count on a button's corner |
+| `<uiset-code-block>`, `<uiset-code-tabs>`, `<uiset-package-command>` | Code in its language's colors with a caption, line numbers, marked lines and copy; tabs of versions; one command for npm, pnpm, yarn and bun |
+| `<uiset-inline-edit>`, `<uiset-upload>`                               | A value that turns into a field when pressed, and a drop zone with a queue of uploads |
 
 ## Studio
 
@@ -685,8 +864,9 @@ refresh.addEventListener("refresh", (e) => e.detail.waitUntil(fetchMail()))
 - `<uiset-pull-refresh>` scrolls its children and slides them down as it's pulled. A
   rejected `waitUntil` Promise is announced and fires `refresherror`; `refresh()` runs one
   from code, and a Refresh button shows on keyboard focus. `threshold` and `messages` tune it.
-- `<uiset-wheel>` binds UI SDK's `bindScrollPicker` to the listbox inside it, and keeps
-  focus on the value when it changes from elsewhere (an agent's `setValue`, say):
+- `<uiset-wheel>` binds UI SDK's `bindScrollPicker` to the listbox inside it. A value set
+  from elsewhere (an agent's `setValue`, say) moves focus with it and lands in the band,
+  even while a sheet is still opening. The wheel's `value` is the listbox's:
 
 ```html
 <div class="wheel-group" role="group" aria-label="Alarm time">
@@ -1091,7 +1271,8 @@ chat.addEventListener("retry", () => regenerate())
 - `<uiset-chat-composer>` sends on Enter (Shift+Enter for a new line), shows Stop while
   `running`, brings back what you sent with Up and Down, takes files with `attachments` (its
   value is the accept list), and suggests `commands` after "/" and `mentions` after "@".
-  Its event is `send`, not `submit`, which its own form's native event would share.
+  Its event is `send`, not `submit`, which its own form's native event would share. Its
+  `value` is the text in the box.
 - `<uiset-chat-threads>` takes `threads` (`{ id, title, updatedAt? }`) and `value`.
   Choosing a chat sets `value` and fires `valuechange` (cancelable; not `select`, which a
   text field's native event shares). It also fires `new`, `rename` with `{ value, title }`
@@ -1159,7 +1340,8 @@ notes.addEventListener("valuechange", (e) => {
 
 - `<uiset-app-shell>` lays out its children by `data-part`: `brand` at the top of the
   sidebar, `sidebar` under it, `header` in the header, and the rest in a `<main>` (or a
-  `<div>` with `content="div"`, when the page has its own).
+  `<div>` with `content="div"`, when the page has its own). Children added later, by a
+  framework or by script, go to the same places.
 - Mod+B (or the toggle) collapses the sidebar to icons and back, remembered in the same
   storage as the React AppShell (`uiset-sidebar`), and each link then gets a tooltip.
   Below `narrow-below` (48rem by default) the sidebar moves into a drawer opened from the
@@ -1168,6 +1350,72 @@ notes.addEventListener("valuechange", (e) => {
   actions as children. `<uiset-empty-state title description icon level>` says what to do
   when there's nothing yet, with its actions as children. On both, `title` names the page
   or state; it isn't a tooltip.
+
+## Content and forms
+
+The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
+`inline-edit` and `upload`. `web/content.html` has each of them.
+
+```html
+<uiset-table label="Invoices" stack sticky-header sticky-column max-height="20rem">
+  <table>
+    <thead><tr><th>Invoice</th><th>Customer</th><th data-align="end">Amount</th></tr></thead>
+    <tbody><tr><th scope="row">INV-001</th><td>Acme Corp</td><td data-align="end">$2,500</td></tr></tbody>
+  </table>
+</uiset-table>
+
+<uiset-avatar-group label="Reviewers" max="3">
+  <ui-avatar><ui-avatar-fallback>AL</ui-avatar-fallback></ui-avatar>
+  …
+</uiset-avatar-group>
+
+<uiset-count-badge count="3" label="3 unread">
+  <ui-button><button type="button" data-variant="outline">Inbox</button></ui-button>
+</uiset-count-badge>
+
+<uiset-code-block language="tsx" caption="app.tsx" line-numbers highlight="3"></uiset-code-block>
+<uiset-package-command install="@uiset/web @ui-sdk/web"></uiset-package-command>
+<uiset-code-tabs label="Framework"></uiset-code-tabs>
+
+<uiset-inline-edit label="Project name" value="Atlas" actions></uiset-inline-edit>
+<uiset-upload label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
+```
+
+```ts
+code.code = source // or the text inside the element
+tabs.items = [{ value: "vue", label: "Vue", language: "vue", code: "…" }, …]
+project.validate = (text) => (text.trim() ? null : "Give the project a name.")
+project.addEventListener("valuechange", (e) => rename(e.detail.value)) // preventDefault() refuses
+files.upload = (file, { signal, onProgress }) => send(file, signal, onProgress) // returns a Promise
+files.addEventListener("uploaded", (e) => attach(e.detail.result))
+```
+
+- `<uiset-table>` puts your `<table>` in a scroll area named by `label`. With `stack`, below
+  30rem of its own width each row becomes a block of labelled values: each cell is labelled
+  by its column's heading, and the parts state their table roles, which browsers drop when
+  CSS changes a table's display. A cell's own `data-label` stays. `data-align="end"` aligns a
+  column. Rows added later are labelled too, and a framework can add and remove the table
+  where it put it.
+- `<uiset-avatar-group>` shows `max` avatars, then a count of the rest, named in words ("2
+  more"; `more-label` with `{count}` words it). `total` counts avatars you didn't render.
+- `<uiset-count-badge>` shows `count`, "99+" past `max`, a dot with `dot`, and nothing at 0
+  unless `show-zero`. `label` is what screen readers and agents hear, so say what's counted.
+- `<uiset-code-block>` colors code with shiki, when it's on the page, as the chat does. The
+  caption is `caption` (the language without one); `copy="false"` leaves out the copy
+  button, which is named for the caption ("Copy app.tsx"). `wrap` wraps long lines.
+- `<uiset-package-command>` takes `install` (with `dev`) or `run`. The choice of package
+  manager is one for every command on the page, React's included, and kept for the next
+  visit. `<uiset-code-tabs>` is the same tabs for any `items`; its `value` is the tab showing.
+- `<uiset-inline-edit>` is React's `InlineEdit` on the same primitive: a press, Enter or F2
+  edits, Enter or leaving saves, Escape cancels, and text `validate` refuses stays in the
+  field with the problem. `actions` adds Save and Cancel for touch. Agents call `setValue`,
+  `startEditing` and `cancel` by its label.
+- `<uiset-upload>` is UI SDK's file input with the upload queue: files go up `concurrency`
+  at a time (3), each row shows a preview, its size, status and progress, with Cancel, Retry
+  and Remove, and files that fail `accept`, `max-size` or `max-files` are listed with why.
+  The list is one tab stop: Enter on a row that stopped retries it, Delete removes it. It
+  fires `valuechange`, `itemschange`, `uploaded`, `failed` and `reject`; `labels` and
+  `messages` word it.
 
 ## Page templates
 
@@ -1193,26 +1441,37 @@ generator of events (text, reasoning, tool calls, sources). Swap in your model t
 page turns its events into the chat's message parts, the same shape AI SDK's `useChat`
 holds, so `useChat`'s `messages` and `status` can go into `<uiset-chat>` directly instead.
 
-## Vue
+## Server-rendered HTML
 
-Tell Vue the tags are custom elements, then use them in templates:
+A framework that hydrates expects the HTML it rendered on the server, and UISet's elements
+draw themselves as they're defined. Mark the container the framework hydrates with
+`data-uiset-hydrating`: the elements under it are defined, so the framework sets their data
+as properties, but they wait to draw until the attribute goes. Remove it once hydration is
+done:
+
+```html
+<div id="app" data-uiset-hydrating><!-- the server's HTML --></div>
+```
 
 ```ts
-// vite.config.ts
-vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith("ui-") || tag.startsWith("uiset-") } } })
+import "@uiset/web"
+
+hydrate() // your framework's
+document.getElementById("app")!.removeAttribute("data-uiset-hydrating")
 ```
 
-```vue
-<uiset-root :skin="skin"><uiset-knob default-value="40" @valuechange="onChange">…</uiset-knob></uiset-root>
-```
+`<uiset-root>` doesn't wait, so the skin is there from the start. The module imports on a
+server and defines nothing there.
 
-Or use UI SDK's Vue adapter (`@ui-sdk/vue`) for its components and load only `uiset.css`:
-the same `data-slot` attributes mean the same styles.
+## Vue, Svelte and Solid
 
-## Svelte and Solid
+[Vue](./vue.md) and [Svelte](./svelte.md) each have a guide: setup, passing arrays and
+objects, events, two-way binding, skins, server rendering, and using UI SDK's own Vue and
+Svelte components under UISet's stylesheet. Every code block in them ran in a real app.
 
-Both render custom elements as they are. Listen with `onvaluechange` in Svelte 5, or
-`on:valuechange` in Solid. As with Vue, UI SDK's own adapters work with `uiset.css` too.
+Solid renders custom elements as they are; listen with `on:valuechange`. UI SDK's Solid
+adapter works with `uiset.css` too, since the same `data-slot` attributes mean the same
+styles.
 
 ## React and the web
 
@@ -1234,24 +1493,1322 @@ The three small parts with behavior of their own are elements too:
 
 - `<uiset-search-field>` fires `valuechange` with `{ value }`; `shortcut` ("/" by default,
   `shortcut=""` for none) focuses it from anywhere, through UI SDK's shared shortcuts, and
-  shows as a key hint until something is typed. Clear empties it and keeps focus.
-- `<uiset-copy-button>` copies `value`, announces "Copied" and shows it for a moment.
+  shows as a key hint until something is typed. Clear empties it and keeps focus, and
+  fires `input` on the field's input as typing does, so a two-way binding follows it.
+- `<uiset-copy-button>` copies `value`, announces "Copied" and shows it for a moment, or
+  "Couldn't copy" when the browser refuses. `full-label` is a fuller name where several share
+  a page, like "Copy app.tsx"; start it with the visible label.
 - `<uiset-stepper>` takes `steps` (`{ value, label, description? }`) and `value`; choosing a
   step sets `value` and fires `valuechange`. With `linear` (on unless `linear="false"`),
   later steps wait until the current one is reached.
 
 ## Tests
 
-`tests/e2e/web/` runs against plain HTML with no React on the page: axe in all three skins
+`tests/e2e/web/` runs against plain HTML with no React on the page: axe in every skin
 and both themes, the root's attributes, skins restyling UI SDK's elements, the knob and
 swipe rows by keyboard, the patch bay by keyboard, by script and by an agent, the Studio
-instruments, a UI SDK dialog's focus, and the built files themselves. `mobile.spec.ts`,
+instruments, a UI SDK dialog's focus, and the built files themselves (the module in a
+browser and in Node, the stylesheet's reach, and the type declarations).
+`frameworks.spec.ts` does by hand what Vue and Svelte do to custom elements: attributes set
+as properties, `"false"` for a false binding, lists as text, and children added after an
+element mounts. Two unit tests guard the rest: no element may have a member that hides one
+of its attributes, and every element the build defines must be in the types. `mobile.spec.ts`,
 `board.spec.ts`, `scheduler.spec.ts`, `canvas.spec.ts`, `ide.spec.ts`,
 `agent-console.spec.ts`, `terminal.spec.ts`, `charts.spec.ts`, `data-grid.spec.ts` and
 `chat.spec.ts` cover those kits' pages, and `templates.spec.ts` the page templates (`web/mobile.html`, `web/board.html`,
 `web/schedule.html`, `web/canvas.html`, `web/ide.html`, `web/agent.html`,
 `web/terminal.html`, `web/charts.html`, `web/data-grid.html`, `web/chat.html`) the same way: axe in all six skin and theme pairs,
 keyboard, pointer, events, script and agents.
+
+
+<!-- docs/vue.md -->
+
+# Vue
+
+UISet works in Vue 3 through its Web Components build, `@uiset/web`: one module that
+defines the `<uiset-*>` elements and one stylesheet with every skin. It's built on UI SDK,
+whose own `<ui-*>` elements it dresses. This page covers what is specific to Vue: setup,
+passing data, events, skins, UI SDK's Vue components and server rendering. Every element's
+attributes, properties and events are in [Web Components](./web-components.md).
+
+This page describes `@uiset/web` 0.2.0 or later.
+
+## Install
+
+```bash
+npm install @uiset/web @ui-sdk/web
+```
+
+With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.5`, the exact
+version UISet pins. pnpm takes UI SDK's `latest` tag instead (`0.1.0-beta.3`) and reports
+unmet peers, so name the versions:
+
+```bash
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.5 @ui-sdk/core@0.1.0-beta.5
+```
+
+`shiki` is optional: with it, code in chats is colored; without it the app still builds and
+code blocks are plain.
+
+## Tell Vue the tags are elements
+
+```ts
+// vite.config.ts
+import vue from "@vitejs/plugin-vue"
+import { defineConfig } from "vite"
+
+export default defineConfig({
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.startsWith("ui-") || tag.startsWith("uiset-"),
+        },
+      },
+    }),
+  ],
+})
+```
+
+Without it the elements still render, and Vue warns "Failed to resolve component" for each
+tag in development.
+
+## A first screen
+
+Import the UI SDK elements you use, then UISet's module and stylesheet, before the app
+mounts. `uiset.css` already includes UI SDK's own styles.
+
+```ts
+// src/main.ts
+import { createApp } from "vue"
+import "@ui-sdk/web/button"
+import "@ui-sdk/web/dialog"
+import "@ui-sdk/web/select"
+import "@ui-sdk/web/switch"
+import "@uiset/web"
+import "@uiset/web/uiset.css"
+import App from "./App.vue"
+
+createApp(App).mount("#app")
+```
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue"
+
+const steps = [
+  { value: "account", label: "Account" },
+  { value: "details", label: "Details" },
+  { value: "review", label: "Review" },
+]
+const step = ref("details")
+const emails = ref(false)
+</script>
+
+<template>
+  <uiset-root skin="base">
+    <ui-button><button>Save</button></ui-button>
+    <ui-button><button data-variant="outline">Cancel</button></ui-button>
+
+    <label>
+      <ui-switch @checkedchange="emails = $event.detail.value">
+        <ui-switch-thumb></ui-switch-thumb>
+      </ui-switch>
+      Email me
+    </label>
+
+    <uiset-stepper
+      label="Setup progress"
+      :steps="steps"
+      :value="step"
+      @valuechange="step = $event.detail.value"
+    ></uiset-stepper>
+
+    <uiset-stat
+      label="Revenue"
+      value="$48,200"
+      change="12%"
+      direction="up"
+      period="vs last month"
+    ></uiset-stat>
+
+    <p>Step: {{ step }}. Emails: {{ emails ? "on" : "off" }}.</p>
+  </uiset-root>
+</template>
+```
+
+`<uiset-root>` holds the skin; everything inside takes it.
+
+## Data in
+
+Vue sets a DOM property when the element has one by that name, and an attribute otherwise.
+So text goes in as a plain attribute, and arrays, objects and functions go in with an
+ordinary `:` binding, as long as the elements are defined before Vue renders (the imports
+in `main.ts` above see to that).
+
+```vue
+<script setup lang="ts">
+import type { UISetDataGridEvents } from "@uiset/web"
+import { ref, shallowRef } from "vue"
+import { orders, type Order } from "./data"
+
+const rows = shallowRef<Order[]>(orders)
+const columns = [
+  { id: "customer", header: "Customer", value: (o: Order) => o.customer, editable: true },
+  { id: "plan", header: "Plan", value: (o: Order) => o.plan, options: ["Free", "Pro", "Team"] },
+  { id: "seats", header: "Seats", type: "number", value: (o: Order) => o.seats, editable: true },
+]
+const getRowId = (o: Order) => o.id
+
+const query = ref("")
+const selected = ref<string[]>([])
+
+type CellEdit = UISetDataGridEvents<Order>["celledit"]
+
+function onCellEdit(event: CellEdit) {
+  const { rowId, column, value } = event.detail
+  if (column === "seats" && Number(value) < 1) return event.preventDefault()
+  rows.value = rows.value.map((o) => (o.id === rowId ? { ...o, [column]: value } : o))
+}
+
+function addOrder() {
+  const id = `o${rows.value.length + 1}`
+  rows.value = [...rows.value, { id, customer: "New customer", plan: "Free", seats: 1 }]
+}
+</script>
+
+<template>
+  <uiset-search-field
+    label="Search orders"
+    placeholder="Search orders…"
+    :value="query"
+    @valuechange="query = $event.detail.value"
+  ></uiset-search-field>
+
+  <uiset-data-grid
+    label="Orders"
+    selectable
+    editable
+    height="16rem"
+    :rows="rows"
+    :columns="columns"
+    :getRowId="getRowId"
+    :query="query"
+    :selected="selected"
+    @selectedchange="selected = $event.detail.value"
+    @celledit="onCellEdit"
+  ></uiset-data-grid>
+</template>
+```
+
+Functions are properties too. A chart takes its data and the functions that read it:
+
+```vue
+<script setup lang="ts">
+import { ref, shallowRef } from "vue"
+import { months, type Month } from "./data"
+
+const data = shallowRef<Month[]>(months)
+const x = (d: Month) => d.month
+const series = [
+  { key: "revenue", label: "Revenue", value: (d: Month) => d.revenue },
+  { key: "costs", label: "Costs", value: (d: Month) => d.costs },
+]
+const format = (n: number) => `$${n / 1000}k`
+const pinned = ref<string | null>(null)
+</script>
+
+<template>
+  <uiset-line-chart
+    label="Revenue"
+    description="By month"
+    :data="data"
+    :x="x"
+    :series="series"
+    :format="format"
+    :selected="pinned"
+    @select="pinned = $event.detail.value"
+  ></uiset-line-chart>
+  <uiset-sparkline label="Revenue, five months" :values="data.map((d) => d.revenue)"></uiset-sparkline>
+</template>
+```
+
+Four things to know:
+
+- **Replace arrays, don't change them in place.** An element redraws when its property is
+  set again. `rows.value.push(…)` on a deep `ref` changes your state and leaves the grid
+  as it was; `rows.value = [...rows.value, row]` redraws it. `shallowRef` fits: the
+  element gets your plain array, and only replacing it counts as a change.
+- **If Vue renders before the elements are defined**, it finds no property and writes
+  `rows="[object Object],…"` as an attribute. Define them first; a server-rendered page
+  does that with `data-uiset-hydrating` (see [Server rendering](#server-rendering)).
+- **An attribute that turns something on** (`selectable`, `editable`, `toolbar`, the
+  root's `sound`) is written bare, as above, or bound to a boolean. `false` turns it off:
+
+```vue
+<uiset-data-grid :toolbar="flags.toolbar"></uiset-data-grid>
+```
+
+- **A list can be text or an array.** A sparkline's `values` and a stat's `trend` take
+  either; an empty place in the text is a gap:
+
+```vue
+<uiset-sparkline label="Trend" values="4,6,,8"></uiset-sparkline>
+<uiset-sparkline label="Trend" :values="[4, 6, null, 8]"></uiset-sparkline>
+<uiset-stat label="Revenue" value="$48,200" trend="31,35,33,40,48"></uiset-stat>
+```
+
+The grid's and search field's plain `label`, the boolean bindings and the text lists need
+`@uiset/web` 0.2.0 or later.
+
+## Events out
+
+The elements report changes as DOM events, named in lowercase, with the new value in
+`event.detail`. Listen with `@`:
+
+| Element                | Event            | `$event.detail`                                   |
+| ---------------------- | ---------------- | ------------------------------------------------- |
+| `<ui-switch>`          | `checkedchange`  | `value`: on or off                                |
+| `<ui-select>`          | `valuechange`    | `value`: the chosen item's value                  |
+| `<uiset-stepper>`      | `valuechange`    | `value`: the step                                 |
+| `<uiset-search-field>` | `valuechange`    | `value`: the text                                 |
+| `<uiset-data-grid>`    | `selectedchange` | `value`: the selected row ids                     |
+| `<uiset-data-grid>`    | `celledit`       | `rowId`, `column`, `value`; `preventDefault()` refuses the edit |
+| `<uiset-line-chart>`   | `select`         | `value`: the pinned position's key, or `null`     |
+| `<uiset-patch-bay>`    | `valuechange`    | `value`: the cables, `[{ from, to }]`             |
+| `<uiset-knob>`         | `valuechange`    | `value`: a number                                 |
+
+Setting a property fires no event, like a native input, so writing state back into an
+element never loops. `$event` is untyped in a template; type the handler's parameter with
+the element's event map, as `onCellEdit` does above.
+
+## Two-way binding
+
+`v-model` works on every element with a value a person changes (0.2.0 or later): the
+search field, stepper, knob, patch bay, wheel, rich text, code editor, chat composer, chat
+threads, model picker, file tree and editor tabs. Vue treats a custom element like a text
+input: it sets `value` and reads it back on `input`, and each of these fires `input` once a
+change is in.
+
+```vue
+<uiset-search-field label="Search orders" v-model="query"></uiset-search-field>
+<uiset-stepper label="Setup" :steps="steps" v-model="step"></uiset-stepper>
+
+<span id="level-label">Level</span>
+<uiset-knob aria-labelledby="level-label" v-model="level">
+  <uiset-knob-indicator></uiset-knob-indicator>
+  <uiset-knob-value></uiset-knob-value>
+</uiset-knob>
+
+<uiset-patch-bay aria-label="Patch bay" v-model="cables">
+  <uiset-patch-bay-jack v-for="jack in jacks" :key="jack.port" :value="jack.port">
+    <button :aria-label="jack.name"></button>
+  </uiset-patch-bay-jack>
+</uiset-patch-bay>
+```
+
+- **State set in Vue reaches the element**, and fires nothing, so it never loops.
+- **A refused change stays refused.** A `valuechange` listener that calls
+  `preventDefault()` keeps the value, and no `input` fires.
+- **`v-model.lazy` waits for `change`**: a finished choice, or a knob let go.
+- **It doesn't compile for the server.** Vue's server compiler allows `v-model` on
+  `<input>`, `<textarea>` and `<select>` only. A server-rendered app binds the value and
+  listens, which works on every element:
+
+```vue
+<uiset-knob aria-labelledby="level-label" :value="level" @valuechange="level = $event.detail.value">
+  <uiset-knob-indicator></uiset-knob-indicator>
+  <uiset-knob-value></uiset-knob-value>
+</uiset-knob>
+```
+
+The same pair works for `:checked` and `@checkedchange` on `<ui-switch>`, `:value` and
+`@valuechange` on `<ui-select>`, `:selected` and `@selectedchange` on the grid, and
+`:selected` and `@select` on a chart.
+
+## Children
+
+- **Elements that keep your children**: the root, `<ui-button>` around its button, a
+  patch bay around its jacks. `v-for` and `v-if` work inside them; a jack added from state
+  joins the bay.
+- **Elements that draw themselves** (the grid, charts, the stepper, the search field, the
+  stat): give them no children.
+- **The app shell moves its children** into its sidebar, header and main area. They keep
+  updating there, and `v-if` works inside them and straight under the shell: a child that
+  appears later is placed in the main area after the others, and leaves again (0.2.0 or
+  later).
+
+## The element from script
+
+A template ref is the element, with the properties and methods
+[Web Components](./web-components.md) lists. The package exports a type for each element:
+
+```ts
+import { iconElement, type UISetDataGrid } from "@uiset/web"
+
+const grid = useTemplateRef<UISetDataGrid>("grid")
+const counted = ref(0)
+function count() {
+  counted.value = grid.value?.rows.length ?? -1
+}
+
+const iconHost = useTemplateRef<HTMLElement>("icon")
+onMounted(() => iconHost.value?.append(iconElement("check")))
+```
+
+## TypeScript
+
+- **The package ships its types** (0.2.0 or later): the functions it exports, a type for
+  each element with options of its own (`UISetDataGrid`, `UISetStepper`, `UISetPatchBay`
+  and the rest; charts and the grid take your row type, as in `UISetLineChart<Month>` and
+  `UISetDataGrid<Order>`), and entries in
+  `HTMLElementTagNameMap`, so `document.querySelector("uiset-data-grid")` is typed. UI
+  SDK's elements are typed the same way once you import them.
+- **Templates need nothing by default.** `vue-tsc` accepts the tags with the settings of
+  Vite's `vue-ts` template: an unknown tag is unchecked.
+- **`strictTemplates` needs the tags declared.** It reports each unknown tag, and each
+  `data-` attribute, as an error. The element types describe the elements, not what a
+  template may write on them (attributes, properties and listeners together), so the
+  declaration names the tags and leaves their options unchecked:
+
+```ts
+// src/custom-elements.d.ts
+import type { DefineComponent } from "vue"
+
+// Any attribute, property or listener: the tags are known, their options are not checked.
+type CustomElement = DefineComponent<Record<string, unknown>>
+
+declare module "vue" {
+  interface GlobalComponents {
+    [tag: `ui-${string}`]: CustomElement
+    [tag: `uiset-${string}`]: CustomElement
+  }
+}
+```
+
+```json
+"vueCompilerOptions": { "strictTemplates": true, "dataAttributes": ["data-*"] }
+```
+
+- **Events are typed in script.** `grid.addEventListener("celledit", (e) => …)` knows
+  `e.detail`. A template's `$event` isn't; name a handler's parameter by the element's
+  event map, exported with the elements: `UISetDataGridEvents<Order>["celledit"]`,
+  `UISetKnobEvents["valuechange"]`, as `onCellEdit` does.
+
+## Skins and themes
+
+The root's attributes are ordinary bindings, and changing them restyles everything inside
+at once. See [Theming](./theming.md) for the skins and their variables.
+
+```vue
+<uiset-root :skin="skin" :theme="theme" :sound="sound">
+```
+
+| Attribute | Values                                                                      |
+| --------- | --------------------------------------------------------------------------- |
+| `skin`    | `"base"`, `"blueprint"`, `"studio"`, `"phosphor"` or `"ink"`                |
+| `theme`   | `"light"` or `"dark"`; `null` removes it and the page follows the system    |
+| `sound`   | `true` for interaction sounds, `false` for none (0.2.0 or later)            |
+
+The themed skins have one scheme each (Studio is dark, Ink is light), so, as
+[Theming](./theming.md#skins) says, `theme` is for the base skin.
+
+### The key color
+
+`<uiset-root>` has no key color attribute. Set what the React root sets: `data-key` and
+three variables, the color's OKLCH lightness, chroma and hue.
+
+```vue
+<script setup lang="ts">
+import { computed, ref } from "vue"
+
+const key = ref({ l: 0.55, c: 0.2, h: 150 })
+const keyStyle = computed(() => ({
+  "--uiset-key-l": key.value.l,
+  "--uiset-key-c": key.value.c,
+  "--uiset-key-h": key.value.h,
+}))
+</script>
+
+<template>
+  <uiset-root skin="base" data-key :style="keyStyle">
+    <ui-button><button>Green key</button></ui-button>
+  </uiset-root>
+</template>
+```
+
+### One skin inside another
+
+The nearest root wins, so a root inside a root gives a panel its own skin or theme. It is
+only as tall as what's in it (0.2.0 or later).
+
+```vue
+<uiset-root :skin="skin" :theme="theme">
+  <uiset-root skin="blueprint">
+    <ui-button><button>Blueprint</button></ui-button>
+  </uiset-root>
+
+  <uiset-root skin="base" theme="light">
+    <ui-button><button>Always light</button></ui-button>
+  </uiset-root>
+</uiset-root>
+```
+
+### Fonts
+
+The base skin uses your app's own font: the root and its controls inherit it (0.2.0 or
+later). Each themed skin names its faces and falls back to system fonts. Load the ones you
+use, for example Studio's from Google Fonts in `index.html`:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@400;500;600&display=swap"
+/>
+```
+
+The faces for each skin are listed in [Installation](./installation.md#fonts).
+
+## UI SDK's Vue components with UISet's look
+
+UI SDK also ships native Vue components, `@ui-sdk/vue`. They work with UISet's stylesheet:
+they render the same parts with the same `data-slot` and state attributes, and `uiset.css`
+styles those attributes. Install the version UISet pins:
+
+```bash
+npm install @ui-sdk/vue@0.1.0-beta.5
+```
+
+```vue
+<script setup lang="ts">
+import { Button } from "@ui-sdk/vue/button"
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@ui-sdk/vue/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@ui-sdk/vue/select"
+import { Switch, SwitchThumb } from "@ui-sdk/vue/switch"
+import { ref } from "vue"
+
+const emails = ref(false)
+const role = ref<string | null>(null)
+</script>
+
+<template>
+  <uiset-root skin="studio">
+    <Button data-variant="solid">Save</Button>
+    <Button data-variant="outline">Cancel</Button>
+    <label>
+      <Switch v-model="emails"><SwitchThumb /></Switch>
+      Email me
+    </label>
+    <Select v-model="role" placeholder="Select a role">
+      <SelectLabel>Role</SelectLabel>
+      <SelectTrigger><SelectValue /></SelectTrigger>
+      <SelectContent>
+        <SelectItem value="viewer">Viewer</SelectItem>
+        <SelectItem value="editor">Editor</SelectItem>
+      </SelectContent>
+    </Select>
+    <Dialog>
+      <DialogTrigger>Share</DialogTrigger>
+      <DialogBackdrop />
+      <DialogContent>
+        <DialogTitle>Share link</DialogTitle>
+        <DialogDescription>Anyone with the link can view this.</DialogDescription>
+        <DialogClose>Done</DialogClose>
+      </DialogContent>
+    </Dialog>
+  </uiset-root>
+</template>
+```
+
+What was compared, in the base and Studio skins: the button (solid, outline and with
+keyboard focus), the switch (off and on), the select (label, trigger, value, open list and
+items) and the dialog (trigger, content, title, description, close and backdrop), each
+beside the same control written with the custom elements.
+
+- **The look is the same.** Every computed style on every part matched, apart from what a
+  browser gives a tag before any stylesheet: the native switch is a `<button>`, with a
+  button's text color and alignment, which a switch doesn't draw with. Screenshots of the
+  buttons, the switch, the select's label and trigger, and the open dialog matched.
+- **`v-model` works** on the native components, as UI SDK's Vue docs describe.
+- **Layout can differ.** The elements have a wrapper tag around their parts (`<ui-select>`,
+  `<ui-dialog>`); the native components render the parts alone. Placed straight into a
+  grid, the native dialog trigger became the grid item and the element's did not.
+- **You can skip the module.** With only the stylesheet and a plain element carrying the
+  root's attributes, `data-uiset` and `data-skin`, the native button and switch were styled
+  the same and no custom element was registered. You then have no `<uiset-*>` elements.
+
+```ts
+// The entry of a page that uses the stylesheet only
+import { createApp } from "vue"
+import "@uiset/web/uiset.css"
+import CssOnly from "./CssOnly.vue"
+
+createApp(CssOnly).mount("#app")
+```
+
+```vue
+<div data-uiset :data-skin="skin">
+  <Button data-variant="solid">Save</Button>
+  <label>
+    <Switch v-model="emails"><SwitchThumb /></Switch>
+    Email me
+  </label>
+</div>
+```
+
+Both kinds can share a page: the comparison rendered them in one root. Other components
+were not compared.
+
+## Server rendering
+
+What was tested is Vue's own server renderer (`renderToString`, then `createSSRApp`
+hydrating in the browser, built with Vite's `--ssr` build). Nuxt was not tested.
+
+- **The module imports on a server** (0.2.0 or later). It defines nothing there, so code
+  that runs in both places can import it.
+- **The server sends the tags and their text attributes.** Arrays, objects and functions
+  are left out; Vue sets them as properties as it hydrates.
+- **`v-model` doesn't compile for the server.** Vue's server compiler allows it on
+  `<input>`, `<textarea>` and `<select>` only, so a server-rendered app binds the value and
+  listens, as in [Two-way binding](#two-way-binding).
+
+An element draws itself as soon as it's defined, and Vue expects to hydrate the HTML it
+rendered. So mark the container Vue hydrates with `data-uiset-hydrating` in the server's
+HTML, define the elements before Vue hydrates, and remove the attribute once it has. Under
+it the elements are defined, so Vue finds their properties and sets your arrays and
+functions on them, but they wait to draw until the attribute goes:
+
+```html
+<!-- index.html: the server's HTML goes inside -->
+<div id="app" data-uiset-hydrating><!--app-html--></div>
+```
+
+```ts
+// src/entry-client.ts
+import "./elements" // everything that defines custom elements, @uiset/web included
+import { createSSRApp } from "vue"
+import App from "./App.vue"
+
+createSSRApp(App).mount("#app")
+document.getElementById("app")!.removeAttribute("data-uiset-hydrating")
+```
+
+The templates stay as they are: `:rows="rows"` with no `.prop`. Vue hydrates without a
+mismatch, then the grid, the chart, the stepper and the patch bay draw with your data.
+`<uiset-root>` doesn't wait, so the skin is there from the start, and until the module
+runs a button inside `<ui-button>` looks like the browser's own.
+
+Without the attribute, neither order works: defined before Vue hydrates, the app shell has
+already laid out its children and Vue throws the page's HTML away; defined after, Vue
+writes arrays as attributes (`rows="[object Object],…"`) and the grid stays empty. In Nuxt
+the same shape should apply (the attribute on the app's root element, removed once the app
+has mounted); that is untested.
+
+## Agents
+
+UI SDK's agent bridge reads the page's elements, whatever rendered them. Create it from the
+Web Components entry, and an agent's steps fire the same events your template listens for:
+
+```ts
+import { createAgent } from "@ui-sdk/web/agent"
+
+const agent = createAgent()
+const result = ref("")
+
+async function act() {
+  const done = await agent.act({
+    steps: [
+      { ref: "Email me", action: "setChecked", args: [true] },
+      { ref: "Orders", action: "selectRows", args: [["Grace Hopper"]] },
+    ],
+  })
+  result.value = done.ok ? "ok" : String(done.error)
+}
+```
+
+What each kit offers agents, approvals and the Agent Console are in
+[Web Components](./web-components.md#agent-console) and
+[Building with AI agents](./ai.md).
+
+## What was tested
+
+On 2026-11-16, in a new Vite app from the `vue-ts` template: Vue 3.5.45, Vite 8.3.8,
+`@vitejs/plugin-vue` 6.0.11, `vue-tsc` 3.3.14 and TypeScript 6.0.3, with `@uiset/web`
+0.2.0 from a local build (before it was published), `@ui-sdk/web`, `@ui-sdk/core` and `@ui-sdk/vue`
+0.1.0-beta.5, on Node 24.21 and npm 11.19. The app typechecks (default settings and
+`strictTemplates`) and builds, also in a clean install with no `shiki`. Every code block on
+this page ran in it, and the production build was driven in Chrome 157 with Playwright:
+elements upgrading, properties arriving, events updating state, and skins read from
+computed styles.
+
+On 2026-11-17, against a later local build of 0.2.0 (Vue 3.5.45, Vite 7.3.8,
+`@vitejs/plugin-vue` 6.0.11, `vue-tsc` 3.3.14): `v-model` on the eleven elements that
+gained it (the search field had it already), driven in Chrome and WebKit (each element
+shows the state it's given, a person's change reaches the state, and state set later
+reaches the element); the typed `onCellEdit` block with `vue-tsc`; and the server rendering
+recipe, rendered with `renderToString` and hydrated in Chrome and WebKit with no mismatch.
+
+
+<!-- docs/svelte.md -->
+
+# Svelte
+
+UISet works in Svelte 5 through its Web Components build, `@uiset/web`: one module that
+defines the `<uiset-*>` elements and one stylesheet with every skin. It's built on UI SDK,
+whose own `<ui-*>` elements it dresses. This page covers what is specific to Svelte: setup,
+passing data with runes, events, skins, UI SDK's Svelte components and server rendering.
+Every element's attributes, properties and events are in
+[Web Components](./web-components.md).
+
+This page describes `@uiset/web` 0.2.0 or later.
+
+## Install
+
+```bash
+npm install @uiset/web @ui-sdk/web
+```
+
+With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.5`, the exact
+version UISet pins. pnpm takes UI SDK's `latest` tag instead (`0.1.0-beta.3`) and reports
+unmet peers, so name the versions:
+
+```bash
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.5 @ui-sdk/core@0.1.0-beta.5
+```
+
+`shiki` is optional: with it, code in chats is colored; without it the app still builds and
+code blocks are plain.
+
+Svelte needs no configuration for the tags. Vite's `svelte-ts` template works as it comes.
+
+## A first screen
+
+Import the UI SDK elements you use, then UISet's module and stylesheet, before the app
+mounts. `uiset.css` already includes UI SDK's own styles.
+
+```ts
+// src/main.ts
+import { mount } from "svelte"
+import "@ui-sdk/web/button"
+import "@ui-sdk/web/dialog"
+import "@ui-sdk/web/select"
+import "@ui-sdk/web/switch"
+import "@uiset/web"
+import "@uiset/web/uiset.css"
+import "./app.css"
+import App from "./App.svelte"
+
+const app = mount(App, { target: document.getElementById("app")! })
+
+export default app
+```
+
+```svelte
+<script lang="ts">
+  const steps = [
+    { value: "account", label: "Account" },
+    { value: "details", label: "Details" },
+    { value: "review", label: "Review" },
+  ]
+  let step = $state("details")
+  let emails = $state(false)
+</script>
+
+<uiset-root skin="base">
+  <ui-button><button>Save</button></ui-button>
+  <ui-button><button data-variant="outline">Cancel</button></ui-button>
+
+  <!-- svelte-ignore a11y_label_has_associated_control -->
+  <label>
+    <ui-switch oncheckedchange={(e: CustomEvent<{ value: boolean }>) => (emails = e.detail.value)}>
+      <ui-switch-thumb></ui-switch-thumb>
+    </ui-switch>
+    Email me
+  </label>
+
+  <uiset-stepper
+    label="Setup progress"
+    {steps}
+    value={step}
+    onvaluechange={(e: CustomEvent<{ value: string }>) => (step = e.detail.value)}
+  ></uiset-stepper>
+
+  <uiset-stat label="Revenue" value="$48,200" change="12%" direction="up" period="vs last month"></uiset-stat>
+
+  <p>Step: {step}. Emails: {emails ? "on" : "off"}.</p>
+</uiset-root>
+```
+
+`<uiset-root>` holds the skin; everything inside takes it.
+
+Svelte's accessibility checks don't know the elements. A `<label>` around `<ui-switch>`
+warns that it has no control, though UI SDK names the switch from that label when it
+upgrades; and the `<button>` inside `<ui-select-trigger>` warns that it has no text, though
+`<ui-select-value>` fills it. The `svelte-ignore` comment above quiets the first, and
+`a11y_consider_explicit_label` the second.
+
+## Data in
+
+Write arrays, objects and functions as ordinary attributes in braces. With the elements
+defined before the app mounts (the imports in `main.ts` see to that), Svelte sets them as
+properties, and text such as `label` as attributes.
+
+```svelte
+<script lang="ts">
+  import type { UISetDataGridEvents } from "@uiset/web"
+  import { orders, type Order } from "./data"
+
+  let rows = $state.raw<Order[]>(orders)
+  const columns = [
+    { id: "customer", header: "Customer", value: (o: Order) => o.customer, editable: true },
+    { id: "plan", header: "Plan", value: (o: Order) => o.plan, options: ["Free", "Pro", "Team"] },
+    { id: "seats", header: "Seats", type: "number", value: (o: Order) => o.seats, editable: true },
+  ]
+  const getRowId = (o: Order) => o.id
+
+  let query = $state("")
+  let selected = $state.raw<string[]>([])
+
+  type CellEdit = UISetDataGridEvents<Order>["celledit"]
+
+  function onCellEdit(event: CellEdit) {
+    const { rowId, column, value } = event.detail
+    if (column === "seats" && Number(value) < 1) return event.preventDefault()
+    rows = rows.map((o) => (o.id === rowId ? { ...o, [column]: value } : o))
+  }
+
+  function addOrder() {
+    rows = [...rows, { id: `o${rows.length + 1}`, customer: "New customer", plan: "Free", seats: 1 }]
+  }
+</script>
+
+<uiset-search-field
+  label="Search orders"
+  placeholder="Search orders…"
+  value={query}
+  onvaluechange={(e: CustomEvent<{ value: string }>) => (query = e.detail.value)}
+></uiset-search-field>
+
+<uiset-data-grid
+  label="Orders"
+  selectable
+  editable
+  height="16rem"
+  {rows}
+  {columns}
+  {getRowId}
+  {query}
+  {selected}
+  onselectedchange={(e: CustomEvent<{ value: string[] }>) => (selected = e.detail.value)}
+  oncelledit={onCellEdit}
+></uiset-data-grid>
+```
+
+Functions are properties too. A chart takes its data and the functions that read it, and
+`$derived` feeds a sparkline:
+
+```svelte
+<script lang="ts">
+  import { months, type Month } from "./data"
+
+  let data = $state.raw<Month[]>(months)
+  const x = (d: Month) => d.month
+  const series = [
+    { key: "revenue", label: "Revenue", value: (d: Month) => d.revenue },
+    { key: "costs", label: "Costs", value: (d: Month) => d.costs },
+  ]
+  const format = (n: number) => `$${n / 1000}k`
+  let pinned = $state<string | null>(null)
+  const revenue = $derived(data.map((d) => d.revenue))
+</script>
+
+<uiset-line-chart
+  label="Revenue"
+  description="By month"
+  {data}
+  {x}
+  {series}
+  {format}
+  selected={pinned}
+  onselect={(e: CustomEvent<{ value: string | null }>) => (pinned = e.detail.value)}
+></uiset-line-chart>
+<uiset-sparkline label="Revenue, five months" values={revenue}></uiset-sparkline>
+```
+
+Five things to know:
+
+- **Replace arrays, don't change them in place.** An element redraws when its property is
+  set again. `rows.push(…)` on deep `$state` changes your state and leaves the grid as it
+  was; `rows = [...rows, row]` redraws it. `$state.raw` fits: the element gets your plain
+  array, and only replacing it counts as a change.
+- **Define the elements before Svelte renders them.** On a page that hydrated before the
+  module loaded, arrays still arrived as properties and functions did not: the chart had no
+  `x` and drew nothing.
+- **A value set as a property leaves no attribute.** `<ui-select-item value="studio">` has
+  no `value` attribute in the page, so don't select on it in CSS or tests.
+- **An attribute that turns something on** (`selectable`, `editable`, `toolbar`, the
+  root's `sound`) is written bare, as above, or given a boolean. `false` turns it off
+  (0.2.0 or later):
+
+```svelte
+<uiset-data-grid toolbar={flags.toolbar}></uiset-data-grid>
+```
+
+- **A list can be text or an array** (0.2.0 or later). A sparkline's `values` and a stat's
+  `trend` take either; an empty place in the text is a gap:
+
+```svelte
+<uiset-sparkline label="Trend" values="4,6,,8"></uiset-sparkline>
+<uiset-sparkline label="Trend" values={[4, 6, null, 8]}></uiset-sparkline>
+<uiset-stat label="Revenue" value="$48,200" trend="31,35,33,40,48"></uiset-stat>
+```
+
+## Events out
+
+The elements report changes as DOM events, named in lowercase, with the new value in
+`event.detail`. Listen with `on` and the event's name:
+
+| Element                | Listener           | `event.detail`                                  |
+| ---------------------- | ------------------ | ----------------------------------------------- |
+| `<ui-switch>`          | `oncheckedchange`  | `value`: on or off                              |
+| `<ui-select>`          | `onvaluechange`    | `value`: the chosen item's value                |
+| `<uiset-stepper>`      | `onvaluechange`    | `value`: the step                               |
+| `<uiset-search-field>` | `onvaluechange`    | `value`: the text                               |
+| `<uiset-data-grid>`    | `onselectedchange` | `value`: the selected row ids                   |
+| `<uiset-data-grid>`    | `oncelledit`       | `rowId`, `column`, `value`; `preventDefault()` refuses the edit |
+| `<uiset-line-chart>`   | `onselect`         | `value`: the pinned position's key, or `null`   |
+| `<uiset-patch-bay>`    | `onvaluechange`    | `value`: the cables, `[{ from, to }]`           |
+| `<uiset-knob>`         | `onvaluechange`    | `value`: a number                               |
+
+Setting a property fires no event, like a native input, so writing state back into an
+element never loops.
+
+## Two-way binding
+
+`bind:value` doesn't compile on these elements: Svelte allows it on `<input>`,
+`<textarea>` and `<select>` only. Pass the value and listen for the change:
+
+```svelte
+<script lang="ts">
+  type Cable = { from: string; to: string }
+
+  let jacks = $state.raw([
+    { port: "lfo:out", name: "LFO out" },
+    { port: "env:out", name: "Envelope out" },
+    { port: "cutoff:in", name: "Cutoff in" },
+    { port: "pitch:in", name: "Pitch in" },
+  ])
+  let cables = $state.raw<Cable[]>([{ from: "lfo:out", to: "cutoff:in" }])
+  let level = $state(40)
+</script>
+
+<uiset-patch-bay
+  aria-label="Patch bay"
+  value={cables}
+  onvaluechange={(e: CustomEvent<{ value: Cable[] }>) => (cables = e.detail.value)}
+>
+  {#each jacks as jack (jack.port)}
+    <uiset-patch-bay-jack value={jack.port}>
+      <button aria-label={jack.name}></button>
+    </uiset-patch-bay-jack>
+  {/each}
+</uiset-patch-bay>
+
+<span id="level-label">Level</span>
+<uiset-knob
+  aria-labelledby="level-label"
+  value={level}
+  onvaluechange={(e: CustomEvent<{ value: number }>) => (level = e.detail.value)}
+>
+  <uiset-knob-indicator></uiset-knob-indicator>
+  <uiset-knob-value></uiset-knob-value>
+</uiset-knob>
+```
+
+The same pair works for `checked` and `oncheckedchange` on `<ui-switch>`, `value` and
+`onvaluechange` on `<ui-select>`, `selected` and `onselectedchange` on the grid, and
+`selected` and `onselect` on a chart.
+
+For a real `bind:`, wrap an element in a component with a `$bindable` prop:
+
+```svelte
+<!-- StepperField.svelte -->
+<script lang="ts">
+  type Step = { value: string; label: string; description?: string }
+
+  let { value = $bindable(), steps, label }: { value: string; steps: Step[]; label?: string } = $props()
+</script>
+
+<uiset-stepper {label} {steps} {value} onvaluechange={(e: CustomEvent<{ value: string }>) => (value = e.detail.value)}
+></uiset-stepper>
+```
+
+```svelte
+<StepperField bind:value={wrapped} label="Wrapped" {steps} />
+```
+
+## Children
+
+- **Elements that keep your children**: the root, `<ui-button>` around its button, a patch
+  bay around its jacks. `{#each}` and `{#if}` work inside them; a jack added from state
+  joins the bay.
+- **Elements that draw themselves** (the grid, charts, the stepper, the search field, the
+  stat): give them no children.
+- **The app shell moves its children** into its sidebar, header and main area. They keep
+  updating there, and `{#if}` works inside them and straight under the shell: a child that
+  appears later is placed in the main area after the others, and leaves again (0.2.0 or
+  later).
+
+## The element from script
+
+`bind:this` gives you the element, with the properties and methods
+[Web Components](./web-components.md) lists. The package exports a type for each element:
+
+```svelte
+<script lang="ts">
+  import { iconElement, type UISetDataGrid } from "@uiset/web"
+
+  let grid = $state<UISetDataGrid>()
+  let counted = $state(0)
+  function count() {
+    counted = grid?.rows.length ?? -1
+  }
+
+  function icon(node: HTMLElement) {
+    node.append(iconElement("check"))
+  }
+</script>
+
+<uiset-data-grid bind:this={grid} label="Deep rows" rows={deepRows} {columns} {getRowId}></uiset-data-grid>
+<span id="icon" use:icon></span>
+```
+
+## TypeScript
+
+- **The package ships its types** (0.2.0 or later): the functions it exports, a type for
+  each element with options of its own (`UISetDataGrid`, `UISetStepper`, `UISetPatchBay`
+  and the rest; charts and the grid take your row type, as in `UISetLineChart<Month>` and
+  `UISetDataGrid<Order>`), and entries in
+  `HTMLElementTagNameMap`, so `document.querySelector("uiset-data-grid")` is typed.
+- **Markup needs nothing.** `svelte-check` accepts the tags as they are: an unknown tag
+  takes any attribute.
+- **Events are typed in script.** `grid.addEventListener("celledit", (e) => …)` knows
+  `e.detail`. In markup, name a handler's parameter by the element's event map,
+  exported with the elements: `UISetDataGridEvents<Order>["celledit"]`, as `onCellEdit`
+  does, or `UISetKnobEvents["valuechange"]`.
+- **To have a tag's attributes checked**, declare it in `svelte/elements`. The element's
+  type gives its properties; attributes and events are yours to list, since the type
+  describes the element and not what Svelte writes on it. Its events are then typed where
+  you listen:
+
+```ts
+// src/uiset-elements.d.ts
+import type { UISetStepper, UISetStepperEvents } from "@uiset/web"
+import type { HTMLAttributes } from "svelte/elements"
+
+// Types for the UISet elements this app uses. Undeclared tags stay unchecked.
+declare module "svelte/elements" {
+  interface SvelteHTMLElements {
+    "uiset-stepper": HTMLAttributes<HTMLElement> & {
+      label?: string
+      value?: string
+      linear?: boolean | "false"
+      steps?: UISetStepper["steps"]
+      onvaluechange?: (event: UISetStepperEvents["valuechange"]) => void
+    }
+  }
+}
+```
+
+```svelte
+<uiset-stepper label="Setup progress" {steps} value={step} onvaluechange={(e) => (step = e.detail.value)}
+></uiset-stepper>
+```
+
+## Skins and themes
+
+The root's attributes are ordinary attributes, and changing them restyles everything
+inside at once. See [Theming](./theming.md) for the skins and their variables.
+
+```svelte
+<script lang="ts">
+  let skin = $state("base")
+  let theme = $state<"light" | "dark" | undefined>(undefined)
+  let sound = $state(false)
+</script>
+
+<uiset-root {skin} {theme} {sound}>
+```
+
+| Attribute | Values                                                                        |
+| --------- | ----------------------------------------------------------------------------- |
+| `skin`    | `"base"`, `"blueprint"`, `"studio"`, `"phosphor"` or `"ink"`                  |
+| `theme`   | `"light"` or `"dark"`; `undefined` removes it and the page follows the system |
+| `sound`   | `true` for interaction sounds, `false` for none (0.2.0 or later)              |
+
+The themed skins have one scheme each (Studio is dark, Ink is light), so, as
+[Theming](./theming.md#skins) says, `theme` is for the base skin.
+
+### The key color
+
+`<uiset-root>` has no key color attribute. Set what the React root sets: `data-key` and
+three variables, the color's OKLCH lightness, chroma and hue.
+
+```svelte
+<script lang="ts">
+  let key = $state({ l: 0.55, c: 0.2, h: 150 })
+</script>
+
+<uiset-root
+  skin="base"
+  data-key
+  style:--uiset-key-l={key.l}
+  style:--uiset-key-c={key.c}
+  style:--uiset-key-h={key.h}
+>
+  <ui-button><button>Green key</button></ui-button>
+</uiset-root>
+```
+
+### One skin inside another
+
+The nearest root wins, so a root inside a root gives a panel its own skin or theme. It is
+only as tall as what's in it (0.2.0 or later).
+
+```svelte
+<uiset-root {skin} {theme}>
+  <uiset-root skin="blueprint">
+    <ui-button><button>Blueprint</button></ui-button>
+  </uiset-root>
+
+  <uiset-root skin="base" theme="light">
+    <ui-button><button>Always light</button></ui-button>
+  </uiset-root>
+</uiset-root>
+```
+
+### Fonts
+
+The base skin uses your app's own font: the root and its controls inherit it (0.2.0 or
+later). Each themed skin names its faces and falls back to system fonts. Load the ones you
+use, for example Studio's from Google Fonts in `index.html`:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@400;500;600&display=swap"
+/>
+```
+
+The faces for each skin are listed in [Installation](./installation.md#fonts).
+
+## UI SDK's Svelte components with UISet's look
+
+UI SDK also ships native Svelte components, `@ui-sdk/svelte`. They work with UISet's
+stylesheet: they render the same parts with the same `data-slot` and state attributes, and
+`uiset.css` styles those attributes. Install the version UISet pins:
+
+```bash
+npm install @ui-sdk/svelte@0.1.0-beta.5
+```
+
+```svelte
+<script lang="ts">
+  import { Button } from "@ui-sdk/svelte/button"
+  import {
+    Dialog,
+    DialogBackdrop,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogTitle,
+    DialogTrigger,
+  } from "@ui-sdk/svelte/dialog"
+  import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+  } from "@ui-sdk/svelte/select"
+  import { Switch, SwitchThumb } from "@ui-sdk/svelte/switch"
+
+  let emails = $state(false)
+  let role = $state<string | null>(null)
+</script>
+
+<uiset-root skin="studio">
+  <Button data-variant="solid">Save</Button>
+  <Button data-variant="outline">Cancel</Button>
+  <label>
+    <Switch bind:checked={emails}><SwitchThumb /></Switch>
+    Email me
+  </label>
+  <Select bind:value={role} placeholder="Select a role">
+    <SelectLabel>Role</SelectLabel>
+    <SelectTrigger><SelectValue /></SelectTrigger>
+    <SelectContent>
+      <SelectItem value="viewer">Viewer</SelectItem>
+      <SelectItem value="editor">Editor</SelectItem>
+    </SelectContent>
+  </Select>
+  <Dialog>
+    <DialogTrigger>Share</DialogTrigger>
+    <DialogBackdrop />
+    <DialogContent>
+      <DialogTitle>Share link</DialogTitle>
+      <DialogDescription>Anyone with the link can view this.</DialogDescription>
+      <DialogClose>Done</DialogClose>
+    </DialogContent>
+  </Dialog>
+</uiset-root>
+```
+
+What was compared, in the base and Studio skins: the button (solid, outline and with
+keyboard focus), the switch (off and on), the select (label, trigger, value, open list and
+items) and the dialog (trigger, content, title, description, close and backdrop), each
+beside the same control written with the custom elements.
+
+- **The look is the same.** Every computed style on every part matched, apart from what a
+  browser gives a tag before any stylesheet: the native switch is a `<button>`, with a
+  button's text color and alignment, which a switch doesn't draw with. Screenshots of the
+  buttons, the switch, the select's label and trigger, and the open dialog matched.
+- **`bind:` works** on the native components, as UI SDK's Svelte docs describe.
+- **The markup differs.** The elements have a wrapper tag around their parts
+  (`<ui-select>`, `<ui-dialog>`); the native components render the parts alone, so there
+  is no `[data-slot="select"]` element to style or select.
+- **You can skip the module.** With only the stylesheet and a plain element carrying the
+  root's attributes, `data-uiset` and `data-skin`, the native button and switch were styled
+  the same and no custom element was registered. You then have no `<uiset-*>` elements.
+
+```ts
+// The entry of a page that uses the stylesheet only
+import { mount } from "svelte"
+import "@uiset/web/uiset.css"
+import "./app.css"
+import CssOnly from "./CssOnly.svelte"
+
+export default mount(CssOnly, { target: document.getElementById("app")! })
+```
+
+```svelte
+<div data-uiset data-skin={skin}>
+  <Button data-variant="solid">Save</Button>
+  <label>
+    <Switch bind:checked={emails}><SwitchThumb /></Switch>
+    Email me
+  </label>
+</div>
+```
+
+Both kinds can share a page: the comparison rendered them in one root. Other components
+were not compared.
+
+## Server rendering
+
+What was tested is Svelte's own server renderer (`render` from `svelte/server`, then
+`hydrate` in the browser, built with Vite's `--ssr` build). SvelteKit was not tested.
+
+- **The module imports on a server** (0.2.0 or later). It defines nothing there, so code
+  that runs in both places can import it.
+- **The server writes every value into the HTML as text.** An array becomes
+  `rows="[object Object],…"` and a function becomes its source, as in
+  `getrowid="(o) => o.id"`. The elements don't read those; Svelte sets the real values as
+  properties as it hydrates.
+
+An element draws itself as soon as it's defined, and Svelte expects to hydrate the HTML it
+rendered. So mark the container Svelte hydrates with `data-uiset-hydrating` in the
+server's HTML, define the elements before Svelte hydrates, and remove the attribute once it
+has. Under it the elements are defined, so Svelte sets your arrays and functions on them as
+properties, but they wait to draw until the attribute goes:
+
+```html
+<!-- index.html: the server's HTML goes inside -->
+<div id="app" data-uiset-hydrating><!--app-html--></div>
+```
+
+```ts
+// src/entry-client.ts
+import "./elements" // everything that defines custom elements, @uiset/web included
+import { hydrate } from "svelte"
+import App from "./App.svelte"
+
+hydrate(App, { target: document.getElementById("app")! })
+document.getElementById("app")!.removeAttribute("data-uiset-hydrating")
+```
+
+The markup stays as it is. Svelte hydrates without a warning, then the grid, the chart,
+the stepper and the patch bay draw with your data. `<uiset-root>` doesn't wait, so the skin
+is there from the start, and until the module runs a button inside `<ui-button>` looks like
+the browser's own.
+
+Without the attribute, elements defined before Svelte hydrates have already drawn
+themselves: Svelte reports that it failed to hydrate and renders the page again in the
+browser. In SvelteKit the same shape should apply (the attribute on the app's root
+element, removed once it has hydrated); that is untested.
+
+## Agents
+
+UI SDK's agent bridge reads the page's elements, whatever rendered them. Create it from the
+Web Components entry, and an agent's steps fire the same events your markup listens for:
+
+```ts
+import { createAgent } from "@ui-sdk/web/agent"
+
+const agent = createAgent()
+
+let result = $state("")
+
+async function act() {
+  const done = await agent.act({
+    steps: [
+      { ref: "Email me", action: "setChecked", args: [true] },
+      { ref: "Orders", action: "selectRows", args: [["Grace Hopper"]] },
+    ],
+  })
+  result = done.ok ? "ok" : String(done.error)
+}
+```
+
+What each kit offers agents, approvals and the Agent Console are in
+[Web Components](./web-components.md#agent-console) and
+[Building with AI agents](./ai.md).
+
+## What was tested
+
+On 2026-11-16, in a new Vite app from the `svelte-ts` template (plain Vite, not
+SvelteKit): Svelte 5.57.3, Vite 8.3.8, `@sveltejs/vite-plugin-svelte` 7.3.1, `svelte-check`
+4.7.8 and TypeScript 6.0.3, with `@uiset/web` 0.2.0 from a local build (before it was published),
+`@ui-sdk/web`, `@ui-sdk/core` and `@ui-sdk/svelte` 0.1.0-beta.5, on Node 24.21 and npm
+11.19. The app passes `svelte-check` and builds, also in a clean install with no `shiki`.
+Every code block on this page ran in it, and the production build was driven in Chrome 157
+with Playwright: elements upgrading, properties arriving, events updating state, and skins
+read from computed styles.
+
+On 2026-11-17, against a later local build of 0.2.0 (Svelte 5.57.3, Vite 8.3.8,
+`svelte-check` 4.7.8): the typed `onCellEdit` block and the `svelte/elements` declaration
+with `svelte-check`, and the server rendering recipe, rendered with `render` and hydrated in
+Chrome and WebKit with no warning.
 
 
 <!-- docs/templates.md -->
@@ -1611,13 +3168,14 @@ UISet grows with UI SDK. This page says what's done, what's next, and what we wo
 
 - **The root and five skins**: Base (adopts your shadcn theme, or one key color),
   Blueprint, Studio, Phosphor and Ink, with sound and haptics.
-- **All 55 UI SDK components**, styled, each its own item; and 16 app frame and data
-  display parts.
+- **All 55 UI SDK components**, styled, each its own item; and 21 app frame, data
+  display and form parts, with a table, code blocks, inline edit and uploads among them.
 - **Twelve kits**: chat, rich text, data grid, charts, board, scheduler, canvas, IDE,
   mobile, terminal, Studio and the Agent Console.
 - **Ten page templates**: auth, dashboard, settings, admin, inbox, chat app, project board,
   calendar, pricing and IDE.
-- **Web Components**: every kit and template as custom elements.
+- **Web Components**: every kit and template as custom elements, with guides for
+  [Vue](./vue.md) and [Svelte](./svelte.md).
 - **For coding agents**: skills, llms.txt and Markdown docs.
 - **The theme generator**: one color in, a complete, checked theme out.
 
@@ -1625,8 +3183,8 @@ UISet grows with UI SDK. This page says what's done, what's next, and what we wo
 
 - **More skins.** Cockpit (guarded switches, gauges), Paper (cards, tape, corkboard) and
   Print (brutalist type), each with its own sound.
-- **Framework guides.** Step-by-step setups for Vue, Svelte, Solid and Angular with the Web
-  Components build.
+- **Framework guides.** Step-by-step setups for Angular and Solid with the Web Components
+  build, after the Vue and Svelte ones.
 - **More templates.** Onboarding, an agent-wired settings console, and a docs site.
 - **Listing.** The shadcn registry directory, so items install as `@uiset/<item>`.
 
@@ -1878,10 +3436,11 @@ hairline column rules.
 
 The frame an app's pages sit in, and the small parts most pages show. `AppShell` is a
 sidebar layout that collapses to icons with Mod+B, remembers that, and moves into a drawer
-on narrow screens. Around it are a page header, breadcrumbs, cards, badges, figures, lists,
-alerts, loading states, a stepper, a search field and a copy button. Most are plain HTML in
-UISet's styles; the ones with behavior use UI SDK: Drawer, Tooltip, Preferences and
-shortcuts for the shell, Input for search, and `announce` for copy.
+on narrow screens. Around it are a page header, breadcrumbs, cards, tables, badges, avatar
+groups, figures, lists, alerts, loading states, a stepper, a search field, code blocks and a
+copy button. Most are plain HTML in UISet's styles; the ones with behavior use UI SDK:
+Drawer, Tooltip, Preferences and shortcuts for the shell, Input for search, `announce` for
+copy, Scroll area for tables and code, and Tabs for code tabs.
 
 ```bash
 npx shadcn@latest add superzero11/uiset/app-shell superzero11/uiset/breadcrumbs \
@@ -1889,7 +3448,8 @@ npx shadcn@latest add superzero11/uiset/app-shell superzero11/uiset/breadcrumbs 
   superzero11/uiset/stat superzero11/uiset/empty-state superzero11/uiset/skeleton \
   superzero11/uiset/description-list superzero11/uiset/item-list superzero11/uiset/alert \
   superzero11/uiset/kbd superzero11/uiset/spinner superzero11/uiset/stepper \
-  superzero11/uiset/search-field superzero11/uiset/copy-button
+  superzero11/uiset/search-field superzero11/uiset/copy-button superzero11/uiset/table \
+  superzero11/uiset/avatar-group superzero11/uiset/code-block
 ```
 
 Each is its own item, so add only the ones you use. They share `shell/shell.css`, and the
@@ -1916,6 +3476,10 @@ ones with icons bring `shell/icons.tsx`.
 | `Stepper`                                             | `stepper`          | The steps of a flow, the current one marked, later ones locked |
 | `SearchField`                                         | `search-field`     | A search box with Clear and a key that focuses it from anywhere |
 | `CopyButton`                                          | `copy-button`      | Copies a value, then says Copied                               |
+| `Table` and its header, body, footer, rows, heads, cells and caption | `table` | A plain table that scrolls in its own region, keeps its headings and first column in view, and stacks on narrow screens |
+| `CountBadge`                                          | `badge`            | A count on the corner of an icon button or avatar              |
+| `AvatarGroup`                                         | `avatar-group`     | Avatars overlapping in a row, with a count of the rest         |
+| `CodeBlock`, `CodeTabs`, `PackageCommand`             | `code-block`       | Code in its language's colors with copy; tabs of versions; one command per package manager |
 
 ## Use
 
@@ -2028,6 +3592,86 @@ import { Icon } from "@/components/ui/shell/icons"
 - `CopyButton` takes `value`, `label` ("Copy") and `copiedLabel` ("Copied"). It writes
   `value` to the clipboard, announces `copiedLabel`, and shows it with a check for 1.6
   seconds. If the clipboard refuses, nothing changes on screen.
+- `CountBadge` wraps a button or an avatar and takes `count`, `max` (99: above it the
+  badge reads "99+"), `showZero` and `dot`, a dot with no number. It shows nothing at zero.
+  People see the number; screen readers and agents don't read it, so say the count in the
+  control's own name ("Notifications, 3 unread"). For something with no name to put it in,
+  pass `label` ("5 new messages"), which is read after it.
+- `AvatarGroup` takes `label`, which names the group, and avatars as children. `max` shows
+  that many and then "+2", read as "2 more"; `moreLabel` changes those words. `total` is
+  how many there are in all, when you render only the first few.
+
+### Table
+
+```tsx
+<Table label="Invoices" stack stickyHeader maxHeight="20rem">
+  <TableHeader>
+    <TableRow>
+      <TableHead>Invoice</TableHead>
+      <TableHead>Customer</TableHead>
+      <TableHead align="end">Amount</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    {invoices.map((invoice) => (
+      <TableRow key={invoice.id}>
+        <TableHead scope="row">{invoice.id}</TableHead>
+        <TableCell>{invoice.customer}</TableCell>
+        <TableCell align="end">{invoice.amount}</TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+</Table>
+```
+
+- `Table` is a real `<table>` inside a UI SDK scroll area. `label` is required and names
+  the scrolling region. The region is a tab stop only while something in it scrolls, so
+  keyboard users can scroll it and nobody tabs to a table that fits.
+- `stickyHeader` keeps the headings in view while the body scrolls; give the table a
+  `maxHeight`. `stickyColumn` keeps each row's first cell in view while the rest scrolls
+  sideways, and `minWidth` is the narrowest the table gets before it does.
+- With `stack`, below 30rem of its own width each row becomes a block, with every column's
+  heading beside its value. The headings are copied from the header row; a `TableCell`'s
+  `label` replaces one. The table keeps its roles there, so screen readers still read it
+  as a table.
+- `TableHead` is a column heading, or a row heading with `scope="row"`. It and `TableCell`
+  take `align` (`start`, `center` or `end`). `TableCaption` shows under the table.
+- Sticky cells paint `--table-background` (the page color) over the rows passing under
+  them. Set it on the table when it sits on another surface, like a card.
+- This is a table for reading. For sorting, filters, selection and editing, use the
+  [data grid](./data-grid.md).
+
+### Code
+
+```tsx
+<PackageCommand install="@uiset/web @ui-sdk/web" />
+
+<CodeBlock code={source} language="tsx" title="app.tsx" lineNumbers highlight={[4]} />
+
+<CodeTabs
+  label="Framework"
+  items={[
+    { value: "react", label: "React", language: "tsx", code: reactSource },
+    { value: "web", label: "Web Components", language: "html", code: htmlSource },
+  ]}
+/>
+```
+
+- `CodeBlock` takes `code`, `language` (a shiki language, like `tsx` or `bash`; leave it
+  out for plain text) and `title`, shown above the code with the Copy button. `lineNumbers`
+  numbers the lines and `highlight` marks some, counted from 1. Neither is part of the text
+  that's selected or copied. `wrap` wraps long lines, `maxHeight` makes tall code scroll,
+  and `copy={false}` leaves the button out.
+- Colors come from shiki, loaded the first time a block needs it; the code shows plain
+  until then. Each skin sets the colors, and they hold 4.5:1 in every one.
+- `CodeTabs` takes a `label` for its row of tabs and `items` (`{ value, label, code,
+  language }`), with `value` and `onValueChange` or `defaultValue`. Copy copies the tab
+  that shows.
+- `PackageCommand` takes `install` (packages to add, with `dev` for a dev dependency) or
+  `run` (a package's command), and writes it for npm, pnpm, yarn and bun. The tab someone
+  picks is picked in every `PackageCommand` on the page and saved in `localStorage` under
+  `uiset-package-manager`. `packageCommands()` returns the same four as `CodeTabs` items.
+- Code that runs wide scrolls inside its box, which is then a tab stop.
 
 ## Keys
 
@@ -2037,14 +3681,16 @@ import { Icon } from "@/components/ui/shell/icons"
 | "/" (the `shortcut`)     | anywhere     | Focus the search field, except while typing in another field |
 | Escape                   | drawer       | Close the navigation drawer                                |
 | Tab, Enter, Space        | stepper      | Each step is a button; locked steps are skipped            |
+| Left, Right, Home, End   | code tabs    | Move between the tabs, which shows that tab's code         |
+| Arrows, Page Up, Page Down | a table or code that scrolls | Scroll it, once focus is on it            |
 
 The sidebar toggle and the search field carry `aria-keyshortcuts` for their keys.
 
 ## For agents
 
 Most of these parts are plain HTML, so the bridge doesn't list them: Breadcrumbs,
-PageHeader, Card, Badge, Stat, EmptyState, Skeleton, Loading, DescriptionList, ItemList,
-Kbd and Spinner. The buttons, links and fields you put in them are listed, by their own
+PageHeader, Card, Badge, CountBadge, Stat, EmptyState, Skeleton, Loading, DescriptionList,
+ItemList, Kbd and Spinner. The buttons, links and fields you put in them are listed, by their own
 names. Inside an `Item`, a control carries the row's text ("Ada Lovelace ada@acme.dev
 Owner"), so when two rows each have a Remove button, the bridge's error lists both with
 their rows and the agent picks one by ref.
@@ -2062,6 +3708,12 @@ their rows and the agent picks one by ref.
   after a press.
 - **Alert:** Dismiss is a button named "Dismiss"; with two dismissible alerts on a page, a
   step needs the ref.
+- **Table:** listed as a scroll area named by `label`, with no actions. Its cells aren't
+  listed; buttons and links you put in them are, by their own names.
+- **AvatarGroup:** each avatar is listed by its name, and the count as "2 more".
+- **Code:** `CodeBlock`'s Copy is a button named "Copy" and its title ("Copy app.tsx").
+  `CodeTabs` is a tabs component named by `label`, with `setValue` and its tabs as items,
+  so `PackageCommand` is "Package manager" with npm, pnpm, yarn and bun.
 
 None of these parts asks for confirmation. Put `data-agent-confirm` on destructive
 actions you pass in, as on a Delete in a page header.
@@ -2073,7 +3725,172 @@ actions you pass in, as on a Delete in a page header.
 and `<uiset-stepper>` are in [React and the web](./web-components.md#react-and-the-web)
 (there, `shortcut=""` turns the key off), and `<uiset-stat>` is with
 [Charts](./web-components.md#charts). Badge, alert, card, item and description lists,
-breadcrumbs, skeleton, spinner and kbd are classes in `uiset.css`.
+breadcrumbs, skeleton, spinner and kbd are classes in `uiset.css`. Table, avatar group,
+count badge and code block don't have web versions yet.
+
+
+<!-- docs/forms.md -->
+
+# Forms: inline edit and upload
+
+Two things forms need that UI SDK leaves to you. `InlineEdit` is text you edit where it
+shows, on UI SDK's `createInlineEdit`. `Upload` is a drop zone and a queue of uploads on UI
+SDK's File input: each file shows its progress and can be canceled, retried or removed.
+Fields, selects, checkboxes, date and number inputs are UI SDK's own components; see
+[the list](./README.md#ui-sdk-components). Without React, they are `<uiset-inline-edit>` and
+`<uiset-upload>` in [Web Components](./web-components.md#content-and-forms).
+
+```bash
+npx shadcn@latest add superzero11/uiset/inline-edit superzero11/uiset/upload
+```
+
+## Parts
+
+| Part                                                    | Item          | What it is                                                        |
+| ------------------------------------------------------- | ------------- | ----------------------------------------------------------------- |
+| `InlineEdit`                                            | `inline-edit` | A value that turns into a field when you press it                 |
+| `InlineEditRoot`, `InlineEditPreview`, `InlineEditInput`, `InlineEditSave`, `InlineEditCancel`, `InlineEditError` | `inline-edit` | Its parts, for a layout of your own |
+| `Upload`                                                | `upload`      | A drop zone, a Choose files button and the list of uploads        |
+| `useUploadQueue`, `UploadRow`, `UploadPreview`          | `upload`      | The queue as a hook and one file's row, for a layout of your own  |
+| `createUploadQueue`                                     | `upload`      | The queue with no React in it                                     |
+
+## Inline edit
+
+```tsx
+import { InlineEdit } from "@/components/ui/inline-edit"
+
+const [name, setName] = useState("Atlas")
+
+<h1>
+  <InlineEdit
+    label="Project name"
+    value={name}
+    onValueChange={setName}
+    validate={(text) => (text.trim() ? null : "A project needs a name.")}
+  />
+</h1>
+```
+
+- `label` is required. It names the group, the field, and the value's button ("Edit
+  Project name: Atlas").
+- `value` with `onValueChange(value, details)` controls it, or `defaultValue` starts it.
+  `onValueChange` runs once, when an edit is saved, and not at all when the text didn't
+  change. `details.reason` says how it was saved (`enter-key`, `focus-out`, `imperative`)
+  and `details.source` is `"agent"` when an agent did it.
+- `validate` takes the text and returns what's wrong with it, or nothing. Text that fails
+  stays in the field, which is marked invalid and described by the message; the message is
+  also read out. It clears as soon as the text changes.
+- `placeholder` ("Empty") shows in place of an empty value.
+- `disabled` leaves the value readable and reachable by Tab, but it doesn't open.
+- `actions` adds Save and Cancel buttons beside the field, for touch screens, where
+  there's no Escape key. `editLabel`, `saveLabel` and `cancelLabel` rename the buttons.
+- It takes the type around it, so inside a heading you edit a heading. The value and the
+  field share one box: nothing moves when editing starts. While editing, it takes the
+  width of its row.
+
+The root has `data-editing`, `data-empty`, `data-invalid` and `data-disabled` to style from.
+
+## Upload
+
+`Upload` doesn't know where files go. You give it `upload`, a function that sends one file,
+reports progress and resolves when it's stored. It runs when a file is chosen, dropped or
+pasted.
+
+```tsx
+import { Upload, type Uploader } from "@/components/ui/upload"
+
+const upload: Uploader = (file, { signal, onProgress }) =>
+  new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest()
+    request.open("PUT", `/api/files/${encodeURIComponent(file.name)}`)
+    request.upload.onprogress = (event) => onProgress(event.loaded / event.total)
+    request.onload = () =>
+      request.status < 300
+        ? resolve(JSON.parse(request.responseText))
+        : reject(new Error(`The server said ${request.status}.`))
+    request.onerror = () => reject(new Error("The connection dropped."))
+    request.onabort = () => reject(new DOMException("Canceled", "AbortError"))
+    signal.addEventListener("abort", () => request.abort())
+    request.send(file)
+  })
+
+<Upload
+  label="Attachments"
+  hint="Images or PDF, up to 5 MB each"
+  accept="image/*,.pdf"
+  maxSize={5_000_000}
+  upload={upload}
+  onUploaded={(file, result) => attach(result)}
+/>
+```
+
+- `label` is required. It names the upload and its list of files.
+- `upload(file, { signal, onProgress })` returns a promise. Call `onProgress` with how much
+  has gone up, from 0 to 1. `signal` aborts when the upload is canceled or its file is
+  removed: pass it to `fetch`, or abort your request on it, as above. What the promise
+  resolves with is the file's `result`. When it rejects, the error's message is the reason
+  the row shows ("Failed: The connection dropped."), so write it for the person reading it.
+- `concurrency` (3) is how many files go up at once. The rest wait their turn.
+- `accept`, `maxSize`, `maxFiles`, `validate`, `multiple` (on by default), `disabled` and
+  the rest of [File input's props](https://ui-sdk.dev/docs/components/file-input) pass
+  through. Files that fail those checks aren't uploaded: each is listed under the drop zone
+  with the reason ("huge.pdf is larger than 5 MB.") until the next change.
+- `value` with `onValueChange(files)` controls the files, or `defaultValue` starts with
+  some. Every file in the list is uploaded, so start with files only if they still need to
+  go up.
+- `onUploaded(file, result)` and `onFailed(file, error)` run as each one ends.
+  `onItemsChange(items)` runs on every change, with each file's `status` (`queued`,
+  `uploading`, `done`, `failed`, `canceled`), `progress`, `error` and `result`.
+- `hint` is a line under the prompt. `labels` replaces any of the words shown, and
+  `messages` what screen readers hear as files finish, for another language.
+- An image shows a small preview; other files show an icon.
+- Removing a file stops its upload. Cancel stops it and keeps the row, ready to retry.
+
+Check uploads on your server too: `accept` and `maxSize` are a convenience, not a guard.
+
+### A layout of your own
+
+`useUploadQueue(files, { upload, concurrency, onUploaded, onFailed })` returns `{ queue,
+items }`. `items` is each file's state, and `queue` has `retry(file)` and `cancel(file)`.
+Render UI SDK's File input parts around it, with `UploadRow` for each file or your own row.
+Outside React, `createUploadQueue(() => options)` is the same queue: call `start()`, then
+`sync(files)` whenever the files change, and `subscribe(listener)` to hear about it.
+
+## Keys
+
+| Keys                       | Where                 | Does                                                      |
+| -------------------------- | --------------------- | --------------------------------------------------------- |
+| Enter, Space, F2           | an inline edit's value | Start editing, with the text selected                     |
+| Enter                      | its field             | Save. Focus goes back to the value                        |
+| Escape                     | its field             | Put the text back. Focus goes back to the value           |
+| Tab                        | its field             | Save and move on. With text that can't be saved, stay     |
+| Up, Down, Home, End        | the list of uploads   | Move between files. The list is one tab stop              |
+| Delete, Backspace          | a file                | Remove it, which stops its upload                         |
+| Enter                      | a file that failed or was canceled | Send it again                                |
+
+A click outside an inline edit saves it, as Tab does. Save and Cancel, and each upload's
+Cancel, Retry and Remove buttons, are for pointers and touch: they stay out of the Tab
+order, because the keys above do the same from the field or the row.
+
+## For agents
+
+- **InlineEdit** is listed by its `label`, with `setValue` (saves the text, through
+  `validate`: text that fails changes nothing), `startEditing` and `cancel`. A disabled one
+  has no actions.
+- **Upload** is a file input listed by its `label`, with each row's text as its items
+  ("report.pdf 248 kB Uploaded") and `clear`. An agent can't add files: it has none to
+  give. Each row's Cancel and Retry are buttons named for the file ("Retry report.pdf"),
+  which an agent presses. Each upload's progress bar is listed as "Uploading report.pdf".
+- Removing one file is not something an agent can do yet: UI SDK's bridge doesn't offer the
+  File input's Remove buttons, and its `removeFile` takes a `File`. `clear` removes them
+  all.
+- Neither asks for confirmation.
+
+## Web Components
+
+`<uiset-inline-edit>` and `<uiset-upload>` aren't built yet. The upload queue
+(`upload/queue.ts`) and the inline edit primitive (`inline-edit/inline-edit.ts`) have no
+React in them, so the elements will share them.
 
 
 <!-- docs/rich-text.md -->
@@ -2495,6 +4312,7 @@ together, not a rewrite of them:
 | One tab stop, arrows, Home/End, Page keys    | `createGridFocus`                  |
 | Select a block, rows or columns; copy it     | `createCellRange`, `textToCells`   |
 | Edit in place: Enter, F2, typing, Escape     | `createInlineEdit`                 |
+| Choose from a column's `options`             | `Combobox`                         |
 | Render 10,000 rows, reveal one off screen    | `createVirtualizer`                |
 | Column menu, View menu, filters, grouping    | `Menu`, `Popover`, `Select`        |
 | Drag a column edge                           | `bindDrag`                         |
@@ -2544,7 +4362,9 @@ const columns: DataGridColumn<Order>[] = [
   `locale`: `"number"` follows the locale's grouping and accepts a currency sign
   (`$1,200.50`) but refuses words (`12 units`); `"date"` reads "Nov 20", "2026-11-20" or
   the locale's order and stores that calendar day; `"boolean"` flips with Space.
-  `options` limits an edit to a list and suggests it.
+  `options` limits an edit to a list. Its editor is UI SDK's Combobox in the cell: the
+  list opens under the cell in the skin's own style, typing narrows it, and only an
+  option can be saved. Pasted and agent edits are checked against the list too.
 - `onCellEdit` gets the parsed value. Return `false` to keep the editor open. Without
   it, nothing is editable.
 - `sort`, `query`, `filters`, `groupBy`, `selected`, `columnState` and `density` can
@@ -2585,6 +4405,7 @@ a `DataGrid`: `DataGridSearch`, `DataGridFilters`, `DataGridGroupBy`, `DataGridV
 | Alt+Left, Alt+Right            | header        | Narrower, wider (Option on a Mac)            |
 | Alt+Shift+Left, Alt+Shift+Right | header       | Move the column                              |
 | Enter, F2, or start typing     | editable cell | Edit; Enter saves, Escape cancels, Tab saves |
+| Up, Down, or keep typing       | a list cell's editor | Move through the options, or narrow them; Enter or Tab saves the highlighted one |
 | Space                          | yes/no cell   | Flip it                                      |
 | Space                          | first column  | Check the row                                |
 | Enter                          | group row     | Open or close the group                      |

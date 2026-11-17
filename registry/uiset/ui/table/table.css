@@ -1,0 +1,190 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  .table-frame {
+    /* What sticky cells paint over the rows that pass under them. Set it to the surface
+       the table sits on, like a card's. */
+    --table-background: var(--ui-background);
+    container: uiset-table / inline-size;
+    width: 100%;
+    background: var(--table-background);
+
+    & > [data-slot="scroll-area-viewport"] {
+      max-height: var(--table-max-height, none);
+    }
+
+    & [data-slot="scroll-area-content"] {
+      padding: 0;
+    }
+
+    /* Room for the sideways scrollbar, which would otherwise lie over the last row. */
+    &[data-overflow-x] [data-slot="scroll-area-content"] {
+      padding-block-end: 0.625rem;
+    }
+  }
+
+  /* Separate borders: with collapsed ones, a sticky cell's border scrolls away without it. */
+  .table {
+    width: 100%;
+    min-width: var(--table-min-width, 0);
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--ui-font-size);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.4;
+
+    & :is(th, td) {
+      padding: calc(var(--ui-spacing) * 2.5) calc(var(--ui-spacing) * 3);
+      border-block-end: 1px solid var(--ui-border);
+      text-align: start;
+      vertical-align: middle;
+
+      &[data-align="center"] {
+        text-align: center;
+      }
+
+      &[data-align="end"] {
+        text-align: end;
+      }
+    }
+
+    & thead th {
+      color: var(--ui-muted-foreground);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    & tbody th {
+      font-weight: 600;
+    }
+
+    & tbody:last-child > tr:last-child > :is(th, td),
+    & tfoot > tr:last-child > :is(th, td) {
+      border-block-end: 0;
+    }
+
+    & tfoot :is(th, td) {
+      font-weight: 600;
+    }
+
+    & caption {
+      caption-side: bottom;
+      padding: calc(var(--ui-spacing) * 2.5) calc(var(--ui-spacing) * 3);
+      border-block-start: 1px solid var(--ui-border);
+      color: var(--ui-muted-foreground);
+      font-size: 0.8125rem;
+      text-align: start;
+    }
+  }
+
+  .table-frame[data-sticky-header] .table thead th {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+    background: var(--table-background);
+  }
+
+  .table-frame[data-sticky-column] .table tr > :first-child {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    background: var(--table-background);
+  }
+
+  .table-frame[data-sticky-column][data-sticky-header] .table thead tr > :first-child {
+    z-index: 2;
+  }
+
+  /* An edge on the kept column, once the rest has moved under it. A shadow, because a
+     border here would notch the line under each row. */
+  .table-frame[data-sticky-column][data-overflow-x]:not([data-at-x-start])
+    .table
+    tr
+    > :first-child {
+    box-shadow: 1px 0 0 var(--ui-border);
+
+    &:dir(rtl) {
+      box-shadow: -1px 0 0 var(--ui-border);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .table-frame[data-sticky-column][data-overflow-x]:not([data-at-x-start])
+      .table
+      tr
+      > :first-child {
+      border-inline-end: 1px solid CanvasText;
+    }
+  }
+
+  @container uiset-table (max-width: 30rem) {
+    /* Stacked rows run long: the page scrolls them, not a box inside the page. */
+    .table-frame[data-stack] > [data-slot="scroll-area-viewport"] {
+      max-height: none;
+    }
+
+    .table-frame[data-stack] .table {
+      min-width: 0;
+
+      &,
+      & :is(tbody, tfoot, tr, th, td, caption) {
+        display: block;
+      }
+
+      /* Out of sight, still in the table: screen readers keep the column headings. */
+      & thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      & tr {
+        padding: calc(var(--ui-spacing) * 2) calc(var(--ui-spacing) * 3);
+        border-block-end: 1px solid var(--ui-border);
+      }
+
+      & tbody:last-child > tr:last-child,
+      & tfoot > tr:last-child {
+        border-block-end: 0;
+      }
+
+      & tr > :is(th, td) {
+        position: relative;
+        min-height: 1lh;
+        padding: calc(var(--ui-spacing) * 1) 0;
+        padding-inline-start: 42%;
+        border: 0;
+        background: none;
+        text-align: start;
+        overflow-wrap: anywhere;
+      }
+
+      /* The empty alt text keeps screen readers from saying the heading twice. */
+      & tr > :is(th, td)[data-label]::before {
+        position: absolute;
+        inset-inline-start: 0;
+        width: 38%;
+        color: var(--ui-muted-foreground);
+        font-weight: 500;
+        content: attr(data-label);
+        content: attr(data-label) / "";
+      }
+
+      & tr > :is(th, td):not([data-label]) {
+        padding-inline-start: 0;
+      }
+
+      & tr > :is(th, td):empty {
+        display: none;
+      }
+
+      & caption {
+        border-block-start: 0;
+        border-block-end: 1px solid var(--ui-border);
+      }
+    }
+  }
+}

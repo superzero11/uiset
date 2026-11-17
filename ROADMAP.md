@@ -88,7 +88,7 @@ Theme generator (key color → tokens), a `SKILL.md` per kit, `llms.txt` for the
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | **Foundation**                                | `<UISet>` root, tokens, skins (base, blueprint, studio, phosphor, ink), dark mode, RTL, forced colors, sound, haptics                                                                                                                                                                       | done; Phosphor and Ink added 2026-11-15                                                                                       |
 | **Base components: all 55 UI SDK components** | Each as its own styled, installable item                                                                                                                                                                                                                                                    | **done 2026-11-15**: 55 of 55, on /components in every skin; axe-clean in 3 skins × 2 themes (one tracked upstream exception) |
-| **What apps need that UI SDK doesn't ship**   | App shell and layout (sidebar layout, header, page, card, breadcrumbs), data display (badge, stat, empty state, skeleton, description list, list), stepper/wizard, alert/banner, search field, **charts** (line, bar, area, donut, sparkline, keyboard-explorable), rich text editor, icons | **done 2026-11-15**, the rich text editor included (React and Web Components)                                                    |
+| **What apps need that UI SDK doesn't ship**   | App shell and layout (sidebar layout, header, page, card, breadcrumbs), data display (badge, stat, empty state, skeleton, description list, list), stepper/wizard, alert/banner, search field, **charts** (line, bar, area, donut, sparkline, keyboard-explorable), rich text editor, icons | **done 2026-11-15**, the rich text editor included (React and Web Components); 2026-11-16: table, avatar group, count badge, code block, inline edit and upload added (React; web versions next) |
 | **Domain kits**                               | Studio ✓, Agent Console ✓, Chat ✓, Data Grid ✓, Charts ✓, Board ✓ (kanban), Scheduler ✓ (calendar events), Canvas ✓ (node editor), IDE ✓ (file tree, tabs, panes), Mobile ✓ (gestures, sheets), Terminal ✓                                                                                         | **11 of 11, 2026-11-15**                                                                                                      |
 | **Templates (whole pages/apps)**              | Auth (sign in/up/reset), dashboard, settings, chat app, admin CRUD with data grid, inbox, project board, pricing/marketing landing                                                                                                                                                          | **10 done 2026-11-15**: project board and calendar-app added (React and web)                                                  |
 | **Frameworks**                                | React now. UI SDK also serves Vue, Svelte, Solid and Web Components; our primitives and CSS are framework-free, so a Web Components build is the cheapest way to reach the rest                                                                                                             | **Started 2026-11-15**: `uiset.css` skins UI SDK's 55 web components (axe-clean, 3 skins × 2 themes), `<uiset-root>`; every kit complete as elements (2026-11-15): Studio, Mobile, Board, Scheduler, Canvas, IDE, Agent Console, Terminal, Charts with sparkline and stat, Data Grid, Chat, App Shell; every page template as a web page (2026-11-15). Search field, copy button and stepper ported 2026-11-15; rich text editor as `<uiset-rich-text>`                                                                                                                    |
@@ -179,6 +179,23 @@ Checked on 0.1.0-beta.5 (2026-11-16, repros in a worktree): all still present ex
     the editor puts the caret at the start and a late `selectionchange` reports it. UISet's
     rich text editor re-applies its own selection on focus; a `finalFocus` that restores the
     previous selection would help every contenteditable.
+24. **An agent can't remove one file from a File input.** The bridge lists the file input
+    with its files as items, but offers no way to remove one: `removeFile` takes a `File`,
+    which a step can't pass, and the Remove buttons aren't pressable by name ("file-input
+    has nothing to press now"). `clear` works. Found building `upload`, whose Cancel and
+    Retry are UISet buttons for that reason. Not filed yet.
+25. **`bindScrollPicker` skips a selection that arrives while a scroll is settling.** In
+    WebKit, a wheel in a sheet that has just opened has a scroll still settling; a value set
+    then (an agent's `setValue`) is selected, focused and never glided to, so the wheel shows
+    the old option, and the sheet's reveal-on-rest scroll then picks a third one as it
+    passes. UISet's `keepWheelOnValue` (`registry/uiset/ui/mobile/wheel.ts`) scrolls the
+    value back into the band when a scroll ends, or soon after a new value, and the
+    selected option isn't in it. Not filed yet.
+26. **A web drop zone's trigger gets no space above it.** UI SDK's `web.css` gives the
+    trigger's wrapper (`:has(> [data-slot="file-input-trigger"])`) a top margin, but
+    `<ui-file-input-trigger>` is `display: contents`, so the margin never shows; React's
+    trigger is the button itself and gets it. UISet spaces the button in `web/src/web.css`.
+    Not filed yet.
 
 ## 4. Architecture
 
@@ -288,6 +305,12 @@ Then one kit or skin every 3–4 days, driven by install metrics.
 | Website rebuilt for launch (owner's audit, 2026-11-15)                                              | done    | One header and footer, logo, home on the thesis, IA by Components / Kits / Templates / Themes / Agents, docs site (every item; component pages with live example, code, UI SDK's API and accessibility, live agent snapshot), copy on every command, ⌘K search, SEO/GEO/AEO (prerendered pages, meta, JSON-LD, sitemap, robots, llms.txt, og.png); design/site-plan.md |
 | Agent benchmark on UISet's kits                                                                      | done    | 2026-11-15: 3 tasks × browser tools vs bridge × 3 runs, Claude Sonnet 5.5 through Claude Code, all 18 finished; bridge −40% tool calls, −79% text read, −40% time (medians); bench/README.md, /agents#benchmark |
 | Theme generator                                                                                      | done    | 2026-11-15: /themes/generator; one key color to every token for light and dark, 32 checks per scheme with nearest-lightness fixes, exports a UISet skin, shadcn/ui variables and W3C design tokens, share link; 27 unit + 9 e2e |
+| First batch from the 2026-11-16 research: `table`, `avatar-group`, `CountBadge`, `code-block`, `inline-edit`, `upload` | done | 2026-11-16: 113 items; each checked by eye in 5 skins × 2 themes and at phone width; 33 unit and 17 browser tests; 35/35 mutations caught after two assertions were added; docs in app-shell.md and the new forms.md. 2026-11-17: the Web Components versions (`web/content.html`, `tests/e2e/web/content.spec.ts`, decision log) |
+| "Looking for a component?" docs page, home page lines                                                | done    | 2026-11-16: docs/looking-for.md maps the most-requested shadcn/ui components to UISet items; the home page says plain CSS, no Tailwind, and links the page |
+| Vue and Svelte guides                                                                                | done    | 2026-11-16: docs/vue.md and docs/svelte.md, every code block run in a new Vite app of each (typecheck, build, and the production build driven in Chrome); UI SDK's native Vue and Svelte components take UISet's skin from `uiset.css` alone (button, switch, select, dialog compared property by property). Writing them found 12 problems in `@uiset/web` 0.1.1, listed in the decision log; fixed the same day in 0.1.2 (row below), and the guides re-run on that build |
+| `@uiset/web` 0.2.0: works as Vue and Svelte write it, ships types                                    | done, not published | 2026-11-16: bound attributes reach every element, `"false"` is off, lists as text, Clear fires `input`, late app shell children, a stylesheet with no demo rules, a module that imports in Node, and types for every element a page works with (the grid and charts take a row type). 27/27 mutations caught; Chrome, WebKit and Firefox; both guide apps rerun on the final build. 2026-11-17: typed events, `v-model` on twelve elements, and clean hydration under `data-uiset-hydrating` (decision log). The owner publishes |
+| Listed on LioRael/awesome-ui-sdk                                                                     | done    | 2026-11-16: the owner got UISet onto the new list of UI SDK libraries |
+| Data grid: a list column's editor in the skin                                                        | done    | 2026-11-16: UI SDK's Combobox in the cell replaces the browser's datalist, React and web; the editor's focus ring stays inside its cell |
 
 ## 10. Decision log
 
@@ -964,3 +987,223 @@ Then one kit or skin every 3–4 days, driven by install metrics.
   in `studio/cables.ts` divides the scale back out (the element's screen size over its layout
   size); the React patch bay, its drag point and the web element all use it. An e2e test for
   each scales the rack, forces a re-measure and checks the ends on screen. `@uiset/web` 0.1.2.
+- 2026-11-16 — **What to build next, from research.** Demand (shadcn-ui/ui and
+  vercel-labs/ui issues and discussions, Hacker News) set against supply (940 registry
+  entries): 2% of the official directory names keyboard or screen reader support, 1% has
+  sound, none ships Web Components or lets an agent operate the UI. So build where demand is
+  proven and those are missing. Write-up and ranked backlog in `launch/` (not in git). The
+  first batch is the small, most-asked components and the docs that say what already exists.
+- 2026-11-16 — **Table.** A real `<table>` inside UI SDK's Scroll area, so the scrolling
+  region is a tab stop only while it scrolls, and `data-at-x-start` draws the kept column's
+  edge. Borders are separate, not collapsed (a sticky cell's collapsed border scrolls away).
+  Stacking is a container query on the table's own width; a table that stacks states every
+  role itself, because browsers have dropped table roles when CSS changes `display`, and its
+  headings stay in the tree, clipped. Each column's heading is copied onto its cells for the
+  stacked layout to print, with empty alt text so screen readers don't read it twice.
+- 2026-11-16 — **Code block.** The scroller is a named group, not a region: a docs page of
+  code blocks shouldn't be a page of landmarks. Each newline sits between the line elements,
+  not inside one: a marked line is an inline block, and with the newline inside it the next
+  line ran off to its right (seen by eye, line 5 missing). A marked line takes the page color,
+  not a tint of the accent: token colors are checked against the block's color and the
+  page's, and Blueprint's tint failed 4.5:1. The package manager is a UI SDK preference, so
+  every command on a page follows one choice.
+- 2026-11-16 — **Inline edit.** A primitive on `createInlineEdit`. The value is a button, so a
+  press, Enter or Space edits; F2 too. Tab is left to the browser (focus moves on, and
+  leaving saves) because the helper's own Tab keeps focus for a grid to place; text that
+  can't be saved keeps focus in the field. The value's button is gone while the field shows,
+  so the new one takes focus as it arrives after Enter, Escape, Save or Cancel. Save and
+  Cancel cancel both `pointerdown` and `mousedown`, so a press there isn't first read as
+  leaving the field, which saves (Safari doesn't focus a clicked button).
+- 2026-11-16 — **Upload.** UI SDK's File input holds the files; a framework-free queue
+  (`upload/queue.ts`) holds each one's status and runs the app's `upload` a few at a time.
+  An upload canceled before it began is never started: React's Strict Mode stops and starts
+  the queue in one tick, and the first version started both, so the example's "fails once"
+  file never failed. Cancel and Retry are UISet buttons out of the Tab order, like UI SDK's
+  Remove; Enter on a row that stopped retries it. The root is a group named by `label`, so
+  agents find "Attachments" rather than "Choose files".
+- 2026-11-16 — **Data grid: the editor's ring was outside its cell** (owner's report). The
+  editor asked for an inset ring (`outline-offset: -2px`) with a plain class selector, and the
+  skin's default ring for any focused part, added later with `:focus-visible`, outranked it:
+  the ring sat four pixels outside the cell, over its neighbours. The editor now states its
+  ring where it has focus. The other inset rings (chart points, terminal, IDE, tab bar,
+  sidebar, scroll areas, the grid's own active cell) were measured in the browser and are
+  right.
+- 2026-11-16 — **Data grid: a list column's editor is UI SDK's Combobox** (owner's request:
+  the browser's datalist "goes out of sync with the UI"). A datalist's arrow and list are
+  the browser's and take no skin. The grid keeps `createInlineEdit` for text, numbers and
+  dates; for a column with `options` the cell renders a Combobox instead, open, with the
+  current option highlighted. The primitive gained three small things so an editor of its
+  own can finish an edit: `typed()` (the character that started it, set before the edit
+  starts because the web element draws as the state changes), `choose(text)` (saves through
+  `onCellEdit`, ends the edit, puts focus back on the cell; the same value saves nothing)
+  and `leaveEdit(refocus)`. Escape refocuses the cell; a press elsewhere doesn't. Tab saves
+  the highlighted option, as it saves text in the other editors. The popup sits inside the
+  cell, which takes no pointer while editing, so the list asks for it back, and a press in
+  it is marked `data-grid-control` so it isn't read as the start of a range drag. On the
+  web the same `<ui-combobox>` is built in the cell; selecting the text or applying the
+  typed character waits a tick, since the combobox fills its input as its parts connect.
+  Tests: 3 unit, a keyboard-and-pointer test and an axe pass with the list open in each
+  build, in Chrome and WebKit; 12/12 mutations caught after two tests were strengthened.
+- 2026-11-16 — **Vue and Svelte guides, and what writing them found in `@uiset/web` 0.1.1.**
+  Each guide was written against a new Vite app and every code block in it ran there. UI
+  SDK's native Vue and Svelte components take UISet's look from `uiset.css` alone, so the
+  guides offer both routes. To fix in `@uiset/web`, none done yet: (1) Vue can't set
+  attributes that share a name with a read-only member (`<uiset-data-grid>` `label`,
+  `locale`, `selectable`, and `editable`, which throws; `<uiset-search-field>` `label` and
+  `shortcut`; `<uiset-rich-text>` `label`; `<uiset-agent-activity>` `source`), so the Vue
+  guide binds them with `.attr`; (2) `values="4,6,,8"` on a sparkline and `trend` on a stat
+  break when a framework sets them as properties; (3) no type declarations; (4) `uiset.css`
+  carries the demo pages' rules: an unlayered `body` rule, `uiset-root { min-block-size:
+  100dvh }`, Instrument Sans on `uiset-root`, and 36 `.web-*` classes; (5) importing the
+  module in Node throws "HTMLElement is not defined"; (6) `toolbar="false"` still shows the
+  toolbar, while the stepper's `linear="false"` turns it off; (7) the search field's Clear
+  fires `valuechange` but no `input`, so Vue's `v-model` misses it; (8) a direct child added
+  to `<uiset-app-shell>` after it mounts never appears; (9) hydrating after the elements are
+  defined mismatches in both frameworks. Docs fixed now: the pnpm install line (pnpm takes UI
+  SDK's `latest` tag, an older beta), the web page's list of skins, and where the guides are.
+- 2026-11-16 — **`@uiset/web` 0.1.2: the problems the guides found, fixed.** Owner: "Yes,
+  fix them". (1) Each attribute that shared a name with a read-only member or method is now
+  a property that writes its attribute; a unit test reads every element class and fails if
+  a member hides an attribute again. (2) One `isOn` in `dom.ts` reads every presence
+  attribute, so `"false"` is off everywhere, the root's `sound` and `haptics` included.
+  (3) `values` and `trend` take the attribute's text as a property. (4) The search field's
+  Clear dispatches `input` on its input, and `valuechange` follows from the one listener.
+  (5) The app shell adopts children added after it mounts (its own `appendChild`,
+  `insertBefore` and `removeChild`, and an observer for the rest). (6) `web.css` is only
+  what the elements need; the demo pages' layout, `body` rule and web font moved to
+  `demo.css`, which only they load. (7) Element classes extend `ElementBase`
+  (`HTMLElement` where there is one), so the module imports in Node and defines nothing
+  there. (8) Types: `scripts/web-types.mjs` emits declarations after the build, rewrites
+  the `@/` paths and checks the result as a consumer would, with `skipLibCheck` off. UI SDK
+  primitives can't be written into a declaration (their inferred types name UI SDK
+  internals), so the ten primitives are marked `@internal` and left out, and the kits made
+  from them are typed by what a page sets and calls: `UISetBoard`, `UISetSchedule`,
+  `UISetCanvas`, `UISetTerminal`, `UISetSwipeList`, `UISetPatchBay`, `UISetKnob` and the
+  five charts. Their script APIs are written out, and `tests/unit/web-types.test.ts`
+  makes the typecheck fail if one drifts from its primitive; it also fails if the build
+  defines an element the tag map doesn't name. Not changed, by choice: the key color stays
+  `data-key` with three variables (no root attribute), and hydrating markup after the
+  elements are defined still mismatches, so the guides keep their import order. Checks:
+  typecheck; 427 unit tests; the web build with its declaration self-check (`skipLibCheck` off, lib ES2022);
+  the whole browser suite in Chrome and WebKit, React and web (1,469 passed, 6 skipped, 1
+  failed, below); the web tests in Firefox in Docker (322 passed, 7 skipped: 315 in the
+  run, and 7 rerun green after one loose assertion was fixed and six were traced to a host
+  test run and a source edit made while Firefox was running); the static site (92 pages).
+  Both guide apps were reinstalled from the final tarball and rerun: Vue `vue-tsc`,
+  `strictTemplates` and a type probe pass, 224 browser checks pass; Svelte `svelte-check`
+  passes, 205 browser checks pass. 27/27 mutations caught. Still open in `@uiset/web`:
+  events are untyped, and `v-model` works on the search field only (the guides show the
+  bind-and-listen pair for the rest).
+- 2026-11-16 — **A WebKit-only intermittent failure in the React Mobile kit, not fixed.**
+  "a value an agent sets on a wheel stays, while the sheet is still settling" failed once
+  in the full run, 1 of 8 alone, and 5 of 10 with ten copies in parallel. The Mobile kit is
+  unchanged since the last commit (one comment in `swipe-list.ts`), and the same test passed
+  in the batch 1 run. It is the timing in upstream note 21 (WebKit rests a sheet a few
+  hundred ms late), so the workaround in `WheelPicker` may not always win. Needs its own
+  look.
+- 2026-11-16 — **Canvas: `addNode` renders before it returns.** The Firefox run failed
+  "agents add, wire, move and select nodes by name": the step after `addNode` looked the new
+  node up in the options of the last render, and React hadn't rendered yet ("No node Log").
+  Chrome and WebKit happen to render in time. `onAdd` now sets the nodes inside `flushSync`.
+  A unit test adds a node through the controller and looks for it in the same tick; without
+  the fix it fails.
+- 2026-11-16 — **A Firefox crash that is the test tooling's, not the upload's.** In
+  Playwright's Firefox (in Docker), `expect(section).toContainText(...)` on the upload example
+  followed by an axe scan of that section crashes the page: 4 runs of 4, against 0 of 12
+  when the test waits another way, and 0 of 4 when a different section is scanned. The
+  phone-width tests wait with a DOM query and scan one section per page load. Nothing a
+  person does reaches it.
+- 2026-11-16 — **Checks for this batch.** Typecheck; 422 unit tests; the web build; the whole
+  browser suite in Chrome and WebKit, React and web (1,425 passed, 6 skipped; one WebKit
+  canvas drag test failed under the parallel run and passed 3 of 3 alone); Firefox in Docker
+  (695 passed, 16 skipped, 5 failed: two were the tooling crash above and one the canvas
+  bug, all three fixed and rerun green in Firefox; a page-heading focus test and a chat
+  streaming test passed alone); a fresh-app install, typecheck and build of all 113 items.
+- 2026-11-17 — **The WebKit wheel failure, found and fixed.** Owner asked about the open
+  items. Logging scroll, focus and selection on the hour wheel showed the cause: the
+  selection the agent makes arrives while a scroll on the wheel (from the sheet opening) is
+  still settling, and `bindScrollPicker` doesn't glide to it (upstream note 25). The wheel
+  kept showing 8 with 3 selected; when the sheet came to rest, Drawer revealed the focused
+  option with a smooth `scrollBy`, and the picker chose each option it passed, ending on 5
+  (or 2, or 12). The agent highlight's `scrollIntoView` wasn't it: with that turned off, it
+  still failed. `keepWheelOnValue` (shared by React's `WheelPicker` and `<uiset-wheel>`)
+  checks when a scroll ends, and 120 ms after a new value, whether the selected option is
+  in the band, and if not scrolls it there at once, which the picker reads as the same
+  value. Probe: 8 of 12 runs failed before, 0 of 16 after. The test: 48 of 48 (React and
+  web, 24 each, three workers); with the helper turned off, the React test fails again.
+- 2026-11-17 — **`@uiset/web` events are typed.** Elements extend `Evented<Events>()`, a
+  base typed as UI SDK's `UiElement<Events>` (the grid, generic over its row type, declares
+  its listeners in a merged interface instead: a class can't use its own type parameter in
+  its base). The kits made from primitives intersect `UiElement<…Events>` into their types.
+  Each element's map is exported (`UISetKnobEvents`, `UISetDataGridEvents<Row>`, …). Tests:
+  type checks in `tests/unit/web-types.test.ts`, and a unit test that every event a module
+  dispatches is in its map; 4 mutations caught.
+- 2026-11-17 — **`v-model` on every element with a value.** Vue's `v-model` on a custom
+  element sets `value` and reads it on `input`. Eleven more elements now keep that: the
+  stepper and chat threads gained a live `value`, the composer's is its text, the wheel's
+  is its listbox's, and each fires `input` once a change is in (`change` too for a finished
+  choice; the knob's on `valuecommit`). Found on the way: the browser reads lifecycle
+  callbacks once, at `define`, so the knob and patch bay are wired in createParts' root
+  `render` hook, which runs again when a property is set, so the wiring happens once per
+  element; UI SDK's `<ui-select>` and `<ui-listbox>` fire their own `input` and `change`,
+  which bubbled out of the model picker and wheel as a second report, so those stop at the
+  part; and the knob's `value` was a controlled option, so a page that set it froze the
+  knob. Its value now follows a turn unless `valuechange` is refused (CHANGELOG, Changed).
+  Checked in a real Vue 3.5 app (29 checks, Chrome and WebKit) and in
+  `frameworks.spec.ts`, which does what `v-model` does by hand; 8 mutations caught. Vue's
+  server compiler rejects `v-model` on custom elements, so the guide says to use the pair
+  there.
+- 2026-11-17 — **Hydrating server-rendered HTML: `data-uiset-hydrating`.** Tested with Vue's
+  `renderToString` and Svelte's `render`, hydrated in Chrome and WebKit. Module loaded
+  before hydration: in Vue, the app shell had already laid out its children and Vue threw
+  the page away ("Hydration node mismatch"); Svelte reported "Failed to hydrate" and
+  rendered again. After: Vue wrote arrays as attributes and the grid, stepper and patch bay
+  stayed empty. Now `defineElement` holds an element's first `connectedCallback`, and
+  `holdRender` a createParts root's `render`, while an ancestor has `data-uiset-hydrating`;
+  removing it draws them in the order they connected. With the module loaded before
+  hydration and the attribute removed after, both frameworks hydrate with no warning and
+  every element draws with its data. `<uiset-root>` isn't held, so the skin applies at once.
+  A test in `frameworks.spec.ts` checks the held tree is the server's and that it draws on
+  release; 2 mutations caught.
+- 2026-11-17 — **Batch 1 as Web Components.** `<uiset-table>` (your `<table>` in a scroll
+  area; stacked roles and labels; a framework can still add and remove the table, as with the
+  app shell), `<uiset-avatar-group>`, `<uiset-count-badge>`, `<uiset-code-block>`,
+  `<uiset-code-tabs>`, `<uiset-package-command>` (`web/src/content.ts`), `<uiset-inline-edit>`
+  on the shared primitive (`web/src/inline-edit.ts`) and `<uiset-upload>` on UI SDK's file
+  input with the shared queue (`web/src/upload.ts`). The package-manager preference moved to
+  `code-block/commands.ts`, so React and web share one choice. Found on the way: UISet's
+  icon-button rule (`[aria-label]:has(> svg:only-child)`) squeezed a labelled copy button's
+  text, so the web copy button wraps its label in a span as React's does; UI SDK's web tabs
+  need a button in each tab; UI SDK's drop zone spaces the trigger's `display: contents`
+  wrapper, so the space never shows (UISet spaces the button in `web.css`); taking UI SDK's
+  remove part out of an upload row while its item was binding left the item unbound (no
+  role, no tab stop), so Remove stays and is hidden by an unlayered rule; and a part's own
+  `display` beats `hidden`, so parts show by presence (`showIn`). Compared by eye with the
+  React examples, and looked at in five skins at phone width. Tests: axe in every skin ×
+  theme with the inline edit's error and an upload showing, and each element's behavior by
+  keyboard, pointer and agent, in Chrome and WebKit; 10/10 mutations caught. `@uiset/web` is
+  126 KB gzipped (118 before) and its CSS 40 KB.
+- 2026-11-17 — **`<uiset-upload>` keeps what's set before it upgrades.** `upload` and
+  `messages` were plain class fields, which replace a property a framework set before the
+  element was defined, and a `value` set before the element built was dropped. Now accessors
+  over private fields, with the files held until it builds. A test sets both on an element in
+  a template's content (not upgraded) and adopts it; 2 mutations caught.
+- 2026-11-17 — **Another Playwright-Firefox page crash, the test's.** The Content page's axe
+  tests crashed Firefox's page in all six skin × theme runs. Isolated in Docker: a role query
+  (`getByRole("region", { name })`) in `beforeEach`, then a scan, crashed 3 runs of 3; a DOM
+  query in its place, 0 of 3. Without that wait, the edit, the upload, the skin and the WCAG
+  2.1/2.2 rules each scanned fine. The test waits with a DOM query.
+- 2026-11-17 — **Checks for the open items.** Typecheck; 428 unit tests; the web build with
+  its declaration self-check (63 files); the whole browser suite in Chrome and WebKit, React
+  and web (1,508 passed, 7 skipped, 1 failed: a WebKit rich-text axe test whose editor didn't
+  show its heading in 5 s under the full run, 5 of 5 alone; the WebKit wheel test passed),
+  and the files changed after it rerun (35 passed, 1 skipped); Firefox in Docker for the web
+  tests and the React Mobile and new-parts specs (384 passed, 9 skipped, after the crash
+  above); the static site (92 pages); a fresh-app install, typecheck and build of all 113 items; Vue 3.5 and Svelte 5 apps on the final tarball (29
+  `v-model` checks; server rendering hydrated with no warning in both). 27 mutations caught
+  in all.
+- 2026-11-17 — **Released as 0.2.0.** The unreleased section held new items and two changed
+  behaviors (the grid's option editor, the knob's live `value`), which the changelog's policy
+  makes a minor release; the owner approved 0.2.0. Everything written as 0.1.2 above is in it.
+  The owner publishes `@uiset/web` to npm.
+

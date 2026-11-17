@@ -142,6 +142,26 @@ test("the tab bar switches screens; wheels in a sheet set a time by keys and by 
   await expect(page.locator(".mobile-alarm-time", { hasText: "8:45 AM" })).toBeVisible()
 })
 
+test("v-model on a wheel: its value is the listbox's, and a turn fires input once it's in", async ({ page }) => {
+  await page.getByRole("button", { name: "Alarms" }).click()
+  await page.getByRole("button", { name: "New alarm" }).click()
+  const sheet = page.getByRole("dialog", { name: "New alarm" })
+  const hour = sheet.getByRole("listbox", { name: "Alarm time, hour" })
+  await expect(hour.getByRole("option", { name: "7", exact: true })).toHaveAttribute("aria-selected", "true")
+  await hour.locator("xpath=ancestor::uiset-wheel[1]").evaluate((wheel) => {
+    const heard: unknown[] = []
+    wheel.addEventListener("input", () => heard.push((wheel as HTMLElement & { value: unknown }).value))
+    ;(window as unknown as { heard: unknown[] }).heard = heard
+  })
+  await hour.getByRole("option", { name: "7", exact: true }).focus()
+  await page.keyboard.press("ArrowDown")
+  await expect.poll(() => page.evaluate(() => (window as unknown as { heard: unknown[] }).heard)).toEqual(["8"])
+  // State written in reaches the listbox, and fires nothing.
+  await hour.locator("xpath=ancestor::uiset-wheel[1]").evaluate((wheel) => ((wheel as HTMLElement & { value: unknown }).value = "3"))
+  await expect(hour.getByRole("option", { name: "3", exact: true })).toHaveAttribute("aria-selected", "true")
+  expect(await page.evaluate(() => (window as unknown as { heard: unknown[] }).heard)).toEqual(["8"])
+})
+
 test("a value an agent sets on a wheel stays while the sheet is still opening", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" })
   await page.getByRole("button", { name: "Alarms" }).click()

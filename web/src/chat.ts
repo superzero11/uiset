@@ -27,7 +27,7 @@ import { tokenize } from "@/registry/uiset/ui/code/highlight"
 import "@/registry/uiset/ui/chat/chat.css"
 import "@/registry/uiset/ui/code/code.css"
 import "./chat.css"
-import { attr, h, place, upgradeProperties } from "./dom"
+import { attr, defineElement, ElementBase, Evented, h, isOn, keepInputInside, place, reportInput, upgradeProperties } from "./dom"
 import { safeUrl, sameOriginImages } from "./urls"
 
 type ToolState =
@@ -234,7 +234,19 @@ type MessageView = {
  * `{ value: approved, id, part }` for a tool call waiting on the person. `allowImage(url)`
  * decides which images in answers load (same-origin, data: and blob: by default).
  */
-class UISetChat extends HTMLElement {
+/** What `<uiset-chat>` fires, each naming the message by its `id`. */
+type UISetChatEvents = {
+  /** Retry on the last response, or on the error: `value` is the response's id, if any. */
+  retry: CustomEvent<{ value: string | null }>
+  suggestion: CustomEvent<{ value: string }>
+  /** Allow or Deny on a tool call that needs approval. */
+  approve: CustomEvent<{ value: boolean; id: string; part: number }>
+  feedbackchange: CustomEvent<{ value: Feedback | null; id: string }>
+  /** Edit on a user's message, with `editable`. */
+  edit: CustomEvent<{ value: string }>
+}
+
+class UISetChat extends Evented<UISetChatEvents>() {
   static observedAttributes = ["label", "empty-title", "editable"]
   #messages: ChatMessage[] = []
   #status = "ready"
@@ -457,7 +469,7 @@ class UISetChat extends HTMLElement {
     place(view.content, nodes, () => true)
 
     // The actions are their own: a new answer or a feedback choice redraws only them.
-    const actionSig = signature([live, last, this.#feedback[message.id] ?? null, textOf(message), message.role, this.hasAttribute("editable")])
+    const actionSig = signature([live, last, this.#feedback[message.id] ?? null, textOf(message), message.role, isOn(this, "editable")])
     if (view.actions?.sig !== actionSig) {
       const focusKey = (document.activeElement as HTMLElement | null)?.closest?.("[data-focus-key]")?.getAttribute("data-focus-key")
       const hadFocus = !!view.actions?.node?.contains(document.activeElement)
@@ -665,13 +677,13 @@ class UISetChat extends HTMLElement {
         // The group already shows the choice; the actions aren't drawn again for it.
         this.#feedback = next
         const view = this.#views.get(message.id)
-        if (view?.actions) view.actions.sig = signature([false, last, value, textOf(message), message.role, this.hasAttribute("editable")])
+        if (view?.actions) view.actions.sig = signature([false, last, value, textOf(message), message.role, isOn(this, "editable")])
         this.emit("feedbackchange", { value, id: message.id })
       })
       toolbar.append(group)
       return toolbar
     }
-    if (message.role === "user" && this.hasAttribute("editable")) {
+    if (message.role === "user" && isOn(this, "editable")) {
       button("Edit message", icons.edit, () => this.emit("edit", { value: message.id }))
       return toolbar
     }
@@ -691,7 +703,15 @@ type ComposerItem = { value: string; label: string; description?: string }
  * input's accept list, or empty). Up and Down bring back what you sent. Its children go in
  * the toolbar beside Send, like <uiset-chat-model-picker> and <uiset-chat-usage>.
  */
-class UISetChatComposer extends HTMLElement {
+/** What `<uiset-chat-composer>` fires. */
+type UISetChatComposerEvents = {
+  /** `files` is a FileList, as AI SDK's `sendMessage({ files })` takes. */
+  send: CustomEvent<{ text: string; files: FileList }>
+  stop: CustomEvent<null>
+}
+
+class UISetChatComposer extends Evented<UISetChatComposerEvents>() {
+  #draft = ""
   static observedAttributes = ["running", "label", "placeholder", "attachments"]
   #commands: ComposerItem[] = []
   #mentions: ComposerItem[] = []
@@ -727,7 +747,11 @@ class UISetChatComposer extends HTMLElement {
   }
 
   connectedCallback() {
-    if (!this.#dom) this.build()
+    upgradeProperties(this, ["value"])
+    if (!this.#dom) {
+      this.build()
+      if (this.#draft) this.#dom!.field.value = this.#draft
+    }
     this.sync()
   }
 
@@ -748,6 +772,21 @@ class UISetChatComposer extends HTMLElement {
     this.#dom?.field.focus(options)
   }
 
+  /** The text in the message box. Setting it fires nothing, like a text field's. */
+  get value() {
+    return this.#dom?.field.value ?? this.#draft
+  }
+  set value(v: string) {
+    const text = String(v ?? "")
+    if (!this.#dom) {
+      this.#draft = text
+      return
+    }
+    if (this.#dom.field.value === text) return
+    this.#dom.field.value = text
+    this.sync()
+  }
+
   private write(value: string) {
     const field = this.#dom?.field
     if (!field) return
@@ -758,7 +797,7 @@ class UISetChatComposer extends HTMLElement {
   private submit() {
     const dom = this.#dom!
     const text = dom.field.value.trim()
-    if ((!text && !this.#files.length) || this.hasAttribute("running")) return
+    if ((!text && !this.#files.length) || isOn(this, "running")) return
     if (text) this.#sent = [...this.#sent, text]
     this.#history.reset()
     // A FileList, as AI SDK's sendMessage({ files }) takes.
@@ -822,7 +861,7 @@ class UISetChatComposer extends HTMLElement {
       this.submit()
     })
     let fileInput: (HTMLElement & { value?: File[] }) | undefined
-    if (this.hasAttribute("attachments")) {
+    if (isOn(this, "attachments")) {
       const files = h("ui-file-input-list", { class: "chat-attachments", "aria-label": "Attachments" }, h("template"))
       // The list's template: each file's name, size and a Remove button, named for its file.
       ;(files.querySelector("template") as HTMLTemplateElement).innerHTML =
@@ -851,7 +890,7 @@ class UISetChatComposer extends HTMLElement {
     const dom = this.#dom!
     dom.field.setAttribute("aria-label", this.getAttribute("label") ?? "Message")
     dom.field.placeholder = this.getAttribute("placeholder") ?? "Message…"
-    const running = this.hasAttribute("running")
+    const running = isOn(this, "running")
     const stopHadFocus = dom.stop.contains(document.activeElement)
     ;(dom.stop.parentElement as HTMLElement).style.display = running ? "" : "none"
     ;(dom.send.parentElement as HTMLElement).style.display = running ? "none" : ""
@@ -880,7 +919,10 @@ type MeterElement = HTMLElement & { format?: (value: number) => string }
  * <uiset-chat-model-picker label="Model" value="balanced"> chooses one of `models`, each
  * with its description under its name. Choosing fires `valuechange` with `{ value }`.
  */
-class UISetChatModelPicker extends HTMLElement {
+/** What `<uiset-chat-model-picker>` fires: `valuechange` with the model's id. */
+type UISetChatModelPickerEvents = { valuechange: CustomEvent<{ value: string }> }
+
+class UISetChatModelPicker extends Evented<UISetChatModelPickerEvents>() {
   static observedAttributes = ["label", "value"]
   #models: Model[] = []
   #dom?: { select: SelectElement; label: HTMLElement; list: HTMLElement }
@@ -922,7 +964,9 @@ class UISetChatModelPicker extends HTMLElement {
         if (!value || value === this.getAttribute("value")) return
         this.setAttribute("value", value)
         this.dispatchEvent(new CustomEvent("valuechange", { detail: { value } }))
+        reportInput(this)
       })
+      keepInputInside(select)
       this.replaceChildren(select)
       this.#dom = { select, label, list }
     }
@@ -960,7 +1004,7 @@ class UISetChatModelPicker extends HTMLElement {
 const compact = new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 })
 
 /** <uiset-chat-usage used="1200" limit="200000" label="Context used" unit="tokens">: how full the context is. */
-class UISetChatUsage extends HTMLElement {
+class UISetChatUsage extends ElementBase {
   static observedAttributes = ["used", "limit", "label", "unit"]
   #dom?: { meter: MeterElement; text: HTMLElement }
 
@@ -1010,7 +1054,16 @@ function ago(date: Date) {
  * shares). Also `new`, `rename` with `{ value: id, title }` and `delete` with an id (after
  * the person confirms). Add `renamable` and `deletable` for those, and `newable` for New chat.
  */
-class UISetChatThreads extends HTMLElement {
+/** What `<uiset-chat-threads>` fires, each with a thread's id. */
+type UISetChatThreadsEvents = {
+  /** A chat chosen; `preventDefault()` keeps the current one. */
+  valuechange: CustomEvent<{ value: string }>
+  new: CustomEvent<Record<string, never>>
+  rename: CustomEvent<{ value: string; title: string }>
+  delete: CustomEvent<{ value: string }>
+}
+
+class UISetChatThreads extends Evented<UISetChatThreadsEvents>() {
   static observedAttributes = ["label", "value", "renamable", "deletable", "newable"]
   #threads: Thread[] = []
   #editing: string | null = null
@@ -1020,7 +1073,15 @@ class UISetChatThreads extends HTMLElement {
 
   constructor() {
     super()
-    upgradeProperties(this, ["threads"])
+    upgradeProperties(this, ["threads", "value"])
+  }
+
+  /** The open chat's id. An attribute and a property. */
+  get value() {
+    return this.getAttribute("value") ?? ""
+  }
+  set value(v: string | null) {
+    attr(this, "value", v)
   }
 
   get threads() {
@@ -1060,12 +1121,12 @@ class UISetChatThreads extends HTMLElement {
     const dom = this.#dom!
     const value = this.getAttribute("value")
     dom.nav.setAttribute("aria-label", this.getAttribute("label") ?? "Chats")
-    dom.newSlot.hidden = !this.hasAttribute("newable")
+    dom.newSlot.hidden = !isOn(this, "newable")
     dom.empty.hidden = this.#threads.length > 0
     // Chats are kept by id: the one that's focused, or being renamed, stays as it was.
-    const menus = this.hasAttribute("renamable") || this.hasAttribute("deletable")
+    const menus = isOn(this, "renamable") || isOn(this, "deletable")
     const items = this.#threads.map((thread) => {
-      const sig = signature([thread.title, thread.updatedAt?.toISOString(), thread.id === value, this.#editing === thread.id, menus, this.hasAttribute("renamable"), this.hasAttribute("deletable")])
+      const sig = signature([thread.title, thread.updatedAt?.toISOString(), thread.id === value, this.#editing === thread.id, menus, isOn(this, "renamable"), isOn(this, "deletable")])
       const known = this.#items.get(thread.id)
       if (known && known.sig === sig) return known.li
       const li = this.drawItem(thread, value)
@@ -1122,10 +1183,12 @@ class UISetChatThreads extends HTMLElement {
     )
     link.addEventListener("click", () => {
       const change = new CustomEvent("valuechange", { detail: { value: thread.id }, cancelable: true })
-      if (this.dispatchEvent(change)) this.setAttribute("value", thread.id)
+      if (!this.dispatchEvent(change)) return
+      this.setAttribute("value", thread.id)
+      reportInput(this)
     })
     li.append(h("ui-button", null, link))
-    if (this.hasAttribute("renamable") || this.hasAttribute("deletable")) {
+    if (isOn(this, "renamable") || isOn(this, "deletable")) {
       const menu = h(
         "ui-menu",
         null,
@@ -1133,8 +1196,8 @@ class UISetChatThreads extends HTMLElement {
         h(
           "ui-menu-content",
           null,
-          this.hasAttribute("renamable") ? h("ui-menu-item", { value: "rename" }, "Rename") : null,
-          this.hasAttribute("deletable") ? h("ui-menu-item", { value: "delete", destructive: true }, "Delete") : null,
+          isOn(this, "renamable") ? h("ui-menu-item", { value: "rename" }, "Rename") : null,
+          isOn(this, "deletable") ? h("ui-menu-item", { value: "delete", destructive: true }, "Delete") : null,
         ),
       )
       menu.addEventListener("action", (event) => {
@@ -1179,12 +1242,13 @@ class UISetChatThreads extends HTMLElement {
 }
 
 function defineChat() {
-  customElements.define("uiset-chat", UISetChat)
-  customElements.define("uiset-chat-composer", UISetChatComposer)
-  customElements.define("uiset-chat-threads", UISetChatThreads)
-  customElements.define("uiset-chat-model-picker", UISetChatModelPicker)
-  customElements.define("uiset-chat-usage", UISetChatUsage)
+  defineElement("uiset-chat", UISetChat)
+  defineElement("uiset-chat-composer", UISetChatComposer)
+  defineElement("uiset-chat-threads", UISetChatThreads)
+  defineElement("uiset-chat-model-picker", UISetChatModelPicker)
+  defineElement("uiset-chat-usage", UISetChatUsage)
 }
 
 export { defineChat, UISetChat, UISetChatComposer, UISetChatModelPicker, UISetChatThreads, UISetChatUsage }
 export type { ChatMessage, ChatPart, ComposerItem, Feedback, Model, Thread }
+export type { UISetChatEvents, UISetChatComposerEvents, UISetChatModelPickerEvents, UISetChatThreadsEvents }

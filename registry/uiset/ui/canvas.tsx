@@ -3,6 +3,7 @@
 import { ariaKeyshortcuts, createUndoStack, type Viewport } from "@ui-sdk/core"
 import { usePart, usePrimitive, type PartProps } from "@ui-sdk/react/primitive"
 import { Fragment, useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react"
+import { flushSync } from "react-dom"
 import { Button } from "./button"
 import { Field, FieldLabel, Input } from "./field"
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "./menu"
@@ -209,7 +210,10 @@ function Canvas({
       ? (kind, at, title) => {
           const node = onAddNode(kind, at, title)
           if (!node) return undefined
-          setNodes([...allNodes, node], { reason: "imperative", type: "add" })
+          // Rendered before this returns: whoever asked for the node, an agent's next step
+          // say, can use it by name at once. A render scheduled for later has lost that
+          // race in Firefox ("No node …").
+          flushSync(() => setNodes([...allNodes, node], { reason: "imperative", type: "add" }))
           return node.id
         }
       : undefined,

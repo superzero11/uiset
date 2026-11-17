@@ -6,13 +6,14 @@ UISet grows with UI SDK. This page says what's done, what's next, and what we wo
 
 - **The root and five skins**: Base (adopts your shadcn theme, or one key color),
   Blueprint, Studio, Phosphor and Ink, with sound and haptics.
-- **All 55 UI SDK components**, styled, each its own item; and 16 app frame and data
-  display parts.
+- **All 55 UI SDK components**, styled, each its own item; and 21 app frame, data
+  display and form parts, with a table, code blocks, inline edit and uploads among them.
 - **Twelve kits**: chat, rich text, data grid, charts, board, scheduler, canvas, IDE,
   mobile, terminal, Studio and the Agent Console.
 - **Ten page templates**: auth, dashboard, settings, admin, inbox, chat app, project board,
   calendar, pricing and IDE.
-- **Web Components**: every kit and template as custom elements.
+- **Web Components**: every kit and template as custom elements, with guides for
+  [Vue](./vue.md) and [Svelte](./svelte.md).
 - **For coding agents**: skills, llms.txt and Markdown docs.
 - **The theme generator**: one color in, a complete, checked theme out.
 
@@ -20,8 +21,8 @@ UISet grows with UI SDK. This page says what's done, what's next, and what we wo
 
 - **More skins.** Cockpit (guarded switches, gauges), Paper (cards, tape, corkboard) and
   Print (brutalist type), each with its own sound.
-- **Framework guides.** Step-by-step setups for Vue, Svelte, Solid and Angular with the Web
-  Components build.
+- **Framework guides.** Step-by-step setups for Angular and Solid with the Web Components
+  build, after the Vue and Svelte ones.
 - **More templates.** Onboarding, an agent-wired settings console, and a docs site.
 - **Listing.** The shadcn registry directory, so items install as `@uiset/<item>`.
 

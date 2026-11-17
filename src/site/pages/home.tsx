@@ -29,6 +29,10 @@ const faq = [
     a: "No. Every kit and template also ships as Web Components, which work in Vue, Svelte, Solid, Angular and plain HTML. The React and web versions share the same styles and behavior.",
   },
   {
+    q: "Do I need Tailwind?",
+    a: "No. UISet is plain CSS in cascade layers, with no Tailwind dependency. Tailwind keeps working beside it: your utilities aren’t in UISet’s layers, so they win.",
+  },
+  {
     q: "Can AI agents use what I build with it?",
     a: "Yes. Every control is named for UI SDK’s agent bridge, so an agent reads the page and works the controls directly instead of reading screenshots. Risky actions can wait for a person’s approval in the Agent Console. The Agents page has our benchmark.",
   },
@@ -51,7 +55,7 @@ const faq = [
 ]
 
 const offerings = [
-  { href: "/components", name: "Components", count: `${facts.sdkComponents} + ${facts.appParts}`, what: "Every UI SDK component, styled, plus the app frame and data display parts: sidebar layout, page header, cards, badges, stats, alerts." },
+  { href: "/components", name: "Components", count: `${facts.sdkComponents} + ${facts.appParts}`, what: "Every UI SDK component, styled, plus the app frame, data display and form parts: sidebar layout, page header, cards, tables, badges, stats, alerts, code blocks, uploads." },
   { href: "/kits", name: "Kits", count: String(facts.kits.length), what: "The big pieces apps need and UI SDK leaves to you: chat, rich text, a data grid, charts, a board, a scheduler, a canvas, an IDE, a terminal." },
   { href: "/templates", name: "Templates", count: String(facts.templates), what: "Whole pages to start from: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, IDE." },
   { href: "/themes", name: "Themes", count: String(facts.skins), what: "Five skins you can switch live and nest, and a generator that turns one color into a complete, checked theme." },
@@ -82,7 +86,7 @@ const checks = [
 
 const roadmap = [
   ["More skins", "Cockpit (guarded switches and gauges), Paper (cards and tape) and Print (brutalist type), each with its own sound."],
-  ["Framework guides", "Step-by-step setups for Vue, Svelte, Solid and Angular with the Web Components build."],
+  ["Framework guides", "Step-by-step setups for Angular and Solid with the Web Components build, after the Vue and Svelte ones."],
   ["More templates", "Onboarding, a settings console wired for agents, and a docs site."],
   ["Following UI SDK", "UISet tracks UI SDK’s releases, and reports the issues it finds upstream, until UI SDK 1.0."],
 ]
@@ -146,7 +150,7 @@ function HomePage() {
           <h1 id="hero-title">Build the whole interface on UI&nbsp;SDK.</h1>
           <p className="hero-lede">
             UISet is the components, kits, templates and themes for Vercel&rsquo;s UI SDK. UI SDK handles keyboard, focus, screen readers and agents; UISet adds how it looks, the big
-            components real apps need, and whole pages. Install any piece with the shadcn CLI.
+            components real apps need, and whole pages. Install any piece with the shadcn CLI. It&rsquo;s plain CSS, so it needs no Tailwind and works beside it.
           </p>
           <div className="hero-actions">
             <a className="button-link" data-variant="solid" href="/docs">
@@ -241,6 +245,9 @@ function HomePage() {
             </li>
           ))}
         </ul>
+        <p className="band-more">
+          Looking for a full calendar, a time picker, multi-select or a dropzone? <a href="/docs/looking-for">Find where each one is</a>.
+        </p>
       </section>
 
       {/* 4. Kits, live */}
@@ -369,7 +376,10 @@ function HomePage() {
       <section className="band" aria-labelledby="frameworks-title">
         <div className="band-intro">
           <h2 id="frameworks-title">React, or anything that renders HTML</h2>
-          <p>Every kit and template also ships as Web Components with the same styles and behavior, for Vue, Svelte, Solid, Angular and plain HTML.</p>
+          <p>
+            Every kit and template also ships as Web Components with the same styles and behavior, for Vue, Svelte, Solid, Angular and plain HTML. There are guides for <a href="/docs/vue">Vue</a> and{" "}
+            <a href="/docs/svelte">Svelte</a>.
+          </p>
         </div>
         <Tabs defaultValue="react" className="framework-tabs">
           <TabsList aria-label="Framework">

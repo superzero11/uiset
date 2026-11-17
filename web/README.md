@@ -27,8 +27,14 @@ npm install @uiset/web @ui-sdk/web@0.1.0-beta.5 @ui-sdk/core@0.1.0-beta.5
 ```
 
 With a bundler, import the stylesheet as `@uiset/web/uiset.css`. It already includes UI
-SDK's `web.css`. Import the UI SDK elements you use from `@ui-sdk/web/<component>`. Add
-`shiki` for colored code blocks in chats; without it they're plain.
+SDK's `web.css`, and styles nothing outside `<uiset-root>`. Import the UI SDK elements you
+use from `@ui-sdk/web/<component>`. Add `shiki` for colored code blocks in chats; without
+it they're plain.
+
+TypeScript types ship with the package: `document.querySelector("uiset-data-grid")` is a
+`UISetDataGrid`. The module can be imported on a server; it defines its elements only in a
+browser. Bindings from Vue and Svelte work as written, including `false` for a presence
+attribute.
 
 - [Web Components docs](https://uiset.dev/docs/web-components): every kit, attributes and events
 - [All of UISet](https://uiset.dev): the React registry, the theme generator and the docs

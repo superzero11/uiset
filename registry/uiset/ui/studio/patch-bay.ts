@@ -29,6 +29,7 @@ function describe(cables: Cable[], key: string, labels: Record<string, string>) 
   return peers.length ? `Patched to ${peers.join(", ")}` : "Not patched"
 }
 
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const patchBay = definePrimitive({
   name: "patch-bay",
   options: {

@@ -4,8 +4,8 @@
 // focus, Shift-drag box selection, wires by pointer or with C and arrows, undo with
 // `history`, and agent actions. <uiset-canvas-toolbar> and <uiset-canvas-inspector> are
 // the React CanvasToolbar and CanvasInspector, joined to a canvas by its id.
-import { ariaKeyshortcuts, createUndoStack } from "@ui-sdk/core"
-import { createParts, wrappedButton } from "@ui-sdk/web"
+import { ariaKeyshortcuts, createUndoStack, type Viewport } from "@ui-sdk/core"
+import { createParts, wrappedButton, type UiChangeEvent, type UiElement } from "@ui-sdk/web"
 import "@ui-sdk/web/button"
 import "@ui-sdk/web/field"
 import "@ui-sdk/web/input"
@@ -16,7 +16,7 @@ import { describeWires, nodeRect, parsePort, portKey, type CanvasNodeShape, type
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/chart/tokens.css"
 import "@/registry/uiset/ui/canvas/canvas.css"
-import { attr, h, place, uid, upgradeProperties } from "./dom"
+import { attr, defineElement, ElementBase, h, holdRender, isOn, place, uid, upgradeProperties } from "./dom"
 import { returnFocus } from "@/registry/uiset/ui/uiset/focus"
 
 type CanvasNode = CanvasNodeShape & {
@@ -43,11 +43,30 @@ type CanvasApi = {
   focusNode: (id: string) => void
   disconnect: (edge: string, to?: string) => boolean
   nodeElement: (id: string) => HTMLElement | undefined
-  centerOn: (point: Point) => void
+  moveNode: (node: string, x: number, y: number) => boolean
+  /** Wires two nodes by id or title; name the ports when a node has several. */
+  connect: (from: string, to: string, fromPort?: string, toPort?: string) => boolean
+  select: (...nodes: string[]) => boolean
+  /** Opens a node, as Enter does. Throws when the canvas isn't `openable`. */
+  openNode: (node: string) => boolean
+  centerOn: (point: Point) => boolean
   view: () => { left: number; right: number; top: number; bottom: number }
 }
 
-type CanvasElement = HTMLElement & {
+/** What `<uiset-canvas>` fires. `preventDefault()` on a change event refuses it. */
+type UISetCanvasEvents = {
+  /** A move, add, remove or edit: `value` is every node, `type` says which. */
+  nodeschange: CustomEvent<{ value: CanvasNode[] } & CanvasChange>
+  edgeschange: CustomEvent<{ value: CanvasEdge[]; reason: string }>
+  /** With `history`, whenever undo or redo becomes possible or not. */
+  historychange: CustomEvent<{ canUndo: boolean; canRedo: boolean }>
+  selectedchange: UiChangeEvent<string[]>
+  viewportchange: UiChangeEvent<Viewport>
+  /** Enter or a double-click on a node, with `openable`. */
+  open: CustomEvent<{ value: string }>
+}
+
+type CanvasElement = UiElement<UISetCanvasEvents> & {
   nodes?: CanvasNode[]
   edges?: CanvasEdge[]
   kinds?: CanvasNodeKind[]
@@ -79,7 +98,6 @@ type CanvasInstance = {
 }
 
 const series = (color?: number) => `var(--chart-${Math.min(8, Math.max(1, Math.round(color ?? 1)))})`
-const isOn = (el: Element, name: string) => el.hasAttribute(name) && el.getAttribute(name) !== "false"
 /** On unless the attribute says "false", like React's `controls` and `minimap` defaults. */
 const notOff = (el: Element, name: string) => el.getAttribute(name) !== "false"
 const svgNS = "http://www.w3.org/2000/svg"
@@ -474,7 +492,7 @@ function canvasFor(el: HTMLElement, then: (canvas: CanvasElement) => void) {
  * reachable, so focus never drops when one turns off. Add lists the canvas's `kinds`;
  * Undo and Redo show when the canvas has `history`.
  */
-class UISetCanvasToolbar extends HTMLElement {
+class UISetCanvasToolbar extends ElementBase {
   static observedAttributes = ["label"]
   #canvas?: CanvasElement
   #toolbar?: HTMLElement
@@ -563,7 +581,7 @@ class UISetCanvasToolbar extends HTMLElement {
       const count = canvas.api?.selectedNodes().length ?? 0
       attr(parts.remove, "disabled", count === 0)
       parts.removeButton.lastChild!.textContent = count > 1 ? `Remove ${count} nodes` : "Remove node"
-      const history = canvas.hasAttribute("history")
+      const history = isOn(canvas, "history")
       for (const el of [parts.separator, parts.undo, parts.redo]) el.style.display = history ? "" : "none"
       attr(parts.undo, "disabled", !canvas.canUndo)
       attr(parts.redo, "disabled", !canvas.canRedo)
@@ -578,7 +596,7 @@ class UISetCanvasToolbar extends HTMLElement {
  * Rename form, your fields (`renderFields(node)`), and its wires, each with Disconnect.
  * Fields start over for each node.
  */
-class UISetCanvasInspector extends HTMLElement {
+class UISetCanvasInspector extends ElementBase {
   static observedAttributes = ["empty", "renamable"]
   #canvas?: CanvasElement
   #renderFields?: (node: CanvasNode) => Node | null | undefined
@@ -649,7 +667,7 @@ class UISetCanvasInspector extends HTMLElement {
     // A new node gets its own fields; the same node keeps what's typed in them.
     if (this.#shown !== node.id) {
       this.#shown = node.id
-      parts.body.replaceChildren(...(this.hasAttribute("renamable") ? [this.renameForm(node)] : []), ...[this.#renderFields?.(node)].filter((n): n is Node => !!n))
+      parts.body.replaceChildren(...(isOn(this, "renamable") ? [this.renameForm(node)] : []), ...[this.#renderFields?.(node)].filter((n): n is Node => !!n))
     }
     this.drawWires(node)
   }
@@ -742,7 +760,7 @@ function defineCanvas() {
           ...(isOn(el, "history") ? { onUndo: () => view.undo(), onRedo: () => view.redo() } : {}),
         }
       },
-      render: (el, instance) => viewOf(el as CanvasElement).attach(instance as unknown as CanvasInstance),
+      render: holdRender((el, instance) => viewOf(el as CanvasElement).attach(instance as unknown as CanvasInstance)),
     },
     grid: "uiset-canvas-grid",
     world: "uiset-canvas-world",
@@ -761,9 +779,10 @@ function defineCanvas() {
     canRedo: { get(this: CanvasElement) { return viewOf(this).canRedo } },
     updateNode: { value(this: CanvasElement, id: string, patch: Partial<CanvasNode>) { return viewOf(this).update(id, patch) } },
   })
-  customElements.define("uiset-canvas-toolbar", UISetCanvasToolbar)
-  customElements.define("uiset-canvas-inspector", UISetCanvasInspector)
+  defineElement("uiset-canvas-toolbar", UISetCanvasToolbar)
+  defineElement("uiset-canvas-inspector", UISetCanvasInspector)
 }
 
 export { defineCanvas }
-export type { CanvasChange, CanvasElement, CanvasNode }
+export type { CanvasApi, CanvasChange, CanvasEdge, CanvasElement, CanvasNode, CanvasNodeKind, UISetCanvasEvents }
+export { UISetCanvasToolbar, UISetCanvasInspector }

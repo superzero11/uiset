@@ -5,16 +5,35 @@
 // calendar. The toolbar and the event dialog are the page's own (UI SDK's buttons, segmented
 // control and dialog), as docs/web-components.md shows.
 import { pageLocale, stackSpans, type Span } from "@ui-sdk/core"
-import { createParts, wrappedButton } from "@ui-sdk/web"
+import { createParts, wrappedButton, type UiDetailedChangeEvent, type UiElement } from "@ui-sdk/web"
 import "@ui-sdk/web/calendar"
-import { clock, schedulePrimitive, type ScheduleEvent } from "@/registry/uiset/ui/scheduler/schedule"
+import { clock, schedulePrimitive, type ScheduleChange, type ScheduleControllerApi, type ScheduleEvent } from "@/registry/uiset/ui/scheduler/schedule"
 import "@/registry/uiset/ui/chart/tokens.css"
 import "@/registry/uiset/ui/scheduler/scheduler.css"
-import { attr, h, place, uid, upgradeProperties } from "./dom"
+import { attr, defineElement, ElementBase, Evented, h, holdRender, isOn, place, uid, upgradeProperties } from "./dom"
 
 type ScheduleTrack = { id: string; label: string; short?: string }
 
-type ScheduleElement = HTMLElement & {
+/** What `schedule.api` does from code. Times are "HH:MM". Each throws, saying why, when it can't. */
+type ScheduleApi = ScheduleControllerApi & {
+  /** Opens an event's details, as Enter does. */
+  openEvent(event: string): boolean
+  /** Adds an event and returns its id. */
+  addEvent(track: string, start: string, end: string, title: string): string
+  moveEvent(event: string, track: string, start: string): boolean
+  resizeEvent(event: string, end: string): boolean
+  removeEvent(event: string): boolean
+}
+
+/** What `<uiset-schedule>` fires. `preventDefault()` on `eventschange` refuses the change. */
+type UISetScheduleEvents = {
+  /** A draw, move, resize or delete: `value` is every event; `id` and `action` say which. */
+  eventschange: UiDetailedChangeEvent<ScheduleEvent[], ScheduleChange>
+  /** Enter or a click on an event, with `openable`. */
+  open: CustomEvent<{ value: string }>
+}
+
+type ScheduleElement = UiElement<UISetScheduleEvents> & {
   tracks?: ScheduleTrack[]
   events?: ScheduleEvent[]
   /** Events that can't change, like ones from another calendar. */
@@ -27,6 +46,7 @@ type ScheduleElement = HTMLElement & {
   renderEvent?: (event: ScheduleEvent) => Node
   /** Now, for the current-time line on today's track. */
   now?: Date
+  api?: ScheduleApi
 }
 
 type ScheduleInstance = {
@@ -36,7 +56,6 @@ type ScheduleInstance = {
 }
 
 /** A boolean attribute, as UI SDK reads them: on when present, unless it says "false". */
-const isOn = (el: Element, name: string) => el.hasAttribute(name) && el.getAttribute(name) !== "false"
 
 // A function's identity, so a new renderEvent or timeLabel draws events again.
 const fnIds = new WeakMap<object, number>()
@@ -226,7 +245,13 @@ class ScheduleView {
  * first events (`events`); choosing a day fires `daychoose` with its ISO date, and the month
  * buttons fire `monthchange`. Day names carry their events for screen readers.
  */
-class UISetScheduleMonth extends HTMLElement {
+/** What `<uiset-schedule-month>` fires, each with an ISO date or month. */
+type UISetScheduleMonthEvents = {
+  daychoose: CustomEvent<{ value: string }>
+  monthchange: CustomEvent<{ value: string }>
+}
+
+class UISetScheduleMonth extends Evented<UISetScheduleMonthEvents>() {
   static observedAttributes = ["month", "today", "label", "limit", "locale", "week-starts-on"]
   #list: ScheduleEvent[] = []
   #timeLabel?: (minutes: number) => string
@@ -373,18 +398,18 @@ function defineSchedule() {
           ...(isOn(el, "openable") ? {} : { onOpen: undefined }),
         }
       },
-      render: (el, instance) => {
+      render: holdRender((el, instance) => {
         const s = el as ScheduleElement
         let view = views.get(s)
         if (!view) views.set(s, (view = new ScheduleView(s)))
         return view.attach(instance as unknown as ScheduleInstance)
-      },
+      }),
     },
     track: "uiset-schedule-track",
     event: { tag: "uiset-schedule-event", target: wrappedButton, display: "contents" },
   })
-  customElements.define("uiset-schedule-month", UISetScheduleMonth)
+  defineElement("uiset-schedule-month", UISetScheduleMonth)
 }
 
 export { defineSchedule, UISetScheduleMonth }
-export type { ScheduleElement, ScheduleTrack }
+export type { ScheduleApi, ScheduleElement, ScheduleTrack, UISetScheduleEvents, UISetScheduleMonthEvents }

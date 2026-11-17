@@ -28,6 +28,15 @@ import {
 } from "react"
 import { Button } from "./button"
 import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  createComboboxController,
+} from "./combobox"
+import {
   display,
   download,
   editTextOf,
@@ -213,6 +222,95 @@ function GridEditor({
         </span>
       )}
     </>
+  )
+}
+
+/**
+ * The editor for a column with `options`: UI SDK's Combobox in the cell. Typing narrows the
+ * list, the arrows move through it, and Enter or a press chooses, which saves.
+ */
+function GridOptionEditor({
+  label,
+  options,
+  value,
+  typed,
+  error,
+  onChoose,
+  onLeave,
+  onClose,
+}: {
+  label: string
+  options: readonly string[]
+  value: string
+  typed: string | null
+  error: string | null
+  onChoose: (value: string) => boolean
+  onLeave: (refocus: boolean) => void
+  onClose: () => void
+}) {
+  const errorId = useId()
+  const highlighted = useRef<string | null>(null)
+  const [controller] = useState(() => createComboboxController<string>())
+  useEffect(() => onClose, [onClose])
+  // An edit started by typing begins as if that character had been typed here: it narrows
+  // the list, and the first match is ready for Enter.
+  useLayoutEffect(() => {
+    if (typed !== null) controller.setQuery(typed, { reason: "input-change" })
+  }, [controller, typed])
+  return (
+    <Combobox
+      controller={controller}
+      defaultValue={options.includes(value) ? value : null}
+      defaultOpen
+      autoHighlight="always"
+      onHighlight={(item) => {
+        highlighted.current = item
+      }}
+      onValueChange={(next) => {
+        if (typeof next === "string") onChoose(next)
+      }}
+      onOpenChange={(open, details) => {
+        if (open) return
+        // Escape gives the cell its focus back. A press or focus somewhere else keeps it there.
+        if (details.reason === "escape-key") onLeave(true)
+        else if (details.reason === "outside-press" || details.reason === "focus-out") onLeave(false)
+      }}
+    >
+      <ComboboxInput
+        className="data-grid-editor"
+        aria-label={label}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
+        autoFocus
+        // An edit started by typing keeps what was typed; otherwise the old value is
+        // selected, so typing replaces it.
+        onFocus={(event) => {
+          if (typed === null) event.currentTarget.select()
+        }}
+        // Tab saves the highlighted option, as it saves text in the other editors, and
+        // focus stays with the cell.
+        onKeyDown={(event) => {
+          if (event.key !== "Tab") return
+          event.preventDefault()
+          if (highlighted.current === null || !onChoose(highlighted.current)) onLeave(true)
+        }}
+      />
+      <ComboboxContent className="data-grid-options" data-grid-control="" align="start" sideOffset={2}>
+        <ComboboxEmpty>No match</ComboboxEmpty>
+        <ComboboxList>
+          {options.map((option) => (
+            <ComboboxItem key={option} value={option}>
+              {option}
+            </ComboboxItem>
+          ))}
+        </ComboboxList>
+      </ComboboxContent>
+      {error && (
+        <span id={errorId} className="data-grid-error">
+          {error}
+        </span>
+      )}
+    </Combobox>
   )
 }
 
@@ -962,11 +1060,21 @@ function DataGrid<Row>({
               {...stickyAttrs(column.id)}
             >
               {({ editing }) =>
-                editing ? (
+                editing && column.options ? (
+                  <GridOptionEditor
+                    label={column.header}
+                    options={column.options}
+                    value={editTextOf(column, item.row)}
+                    typed={handle.api?.typed() ?? null}
+                    error={editError?.cell === cellId ? editError.message : null}
+                    onChoose={(value) => handle.api?.choose(value) ?? false}
+                    onLeave={(refocus) => handle.api?.leaveEdit(refocus)}
+                    onClose={closeEditor}
+                  />
+                ) : editing ? (
                   <GridEditor
                     className="data-grid-editor"
                     aria-label={column.header}
-                    list={column.options ? `${helpId}-${column.id}` : undefined}
                     error={editError?.cell === cellId ? editError.message : null}
                     onClose={closeEditor}
                     {...(column.type === "number" ? inputHints("decimal") : {})}
@@ -1076,15 +1184,6 @@ function DataGrid<Row>({
           menu, Alt (Option on a Mac) with Left or Right resizes the column, and adding Shift
           moves it.
         </p>
-        {visible
-          .filter((column) => column.options)
-          .map((column) => (
-            <datalist key={column.id} id={`${helpId}-${column.id}`}>
-              {column.options!.map((option) => (
-                <option key={option} value={option} />
-              ))}
-            </datalist>
-          ))}
         <Menu
           controller={menu}
           onOpenChange={(open, details) => {

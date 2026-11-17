@@ -19,8 +19,30 @@ import { defineRichText } from "./rich-text"
 import { defineSchedule } from "./schedule"
 import { defineStat } from "./stat"
 import { defineStudio } from "./studio"
+import { defineContent } from "./content"
+import { defineInlineEdit } from "./inline-edit"
+import { defineUpload } from "./upload"
 import { defineTerminal } from "./terminal"
 import "./web.css"
+import type { UISetAgentConsole, UISetAgentStep, UISetAgentApprovals, UISetAgentActivity, UISetAgentSnapshot } from "./agent-console"
+import type { UISetAppShell, UISetPageHeader, UISetEmptyState } from "./app-shell"
+import type { BoardElement } from "./board"
+import type { CanvasElement, UISetCanvasToolbar, UISetCanvasInspector } from "./canvas"
+import type { UISetBarChart, UISetHeatmap, UISetLineChart, UISetScatterChart, UISetSegmentedBar } from "./chart"
+import type { UISetChat, UISetChatComposer, UISetChatThreads, UISetChatModelPicker, UISetChatUsage } from "./chat"
+import type { UISetDataGrid } from "./data-grid"
+import type { UISetFileTree, UISetEditorTabs, UISetCodeEditor, UISetCommandPalette, UISetProblems, UISetStatusBar } from "./ide"
+import type { SwipeListElement, UISetWheel, UISetPullRefresh } from "./mobile"
+import type { UISetRichText, UISetRichTextContent } from "./rich-text"
+import type { ScheduleElement, UISetScheduleMonth } from "./schedule"
+import type { UISetSearchField, UISetCopyButton, UISetStepper } from "./shell-parts"
+import type { UISetSparkline, UISetStat } from "./stat"
+import type { KnobElement, PatchBayElement } from "./studio"
+import type { UISetAvatarGroup, UISetCodeBlock, UISetCodeTabs, UISetCountBadge, UISetPackageCommand, UISetTable } from "./content"
+import type { InlineEditElement } from "./inline-edit"
+import type { UISetUpload } from "./upload"
+import type { TerminalElement } from "./terminal"
+import { ElementBase } from "./dom"
 
 const skins = ["base", "blueprint", "studio", "phosphor", "ink"] as const
 
@@ -28,7 +50,7 @@ const skins = ["base", "blueprint", "studio", "phosphor", "ink"] as const
  * The root every UISet page wraps itself in, like React's <UISet>:
  * <uiset-root skin="studio" theme="dark" sound> … </uiset-root>
  */
-class UISetRoot extends HTMLElement {
+class UISetRoot extends ElementBase {
   static observedAttributes = ["skin", "theme", "sound", "haptics"]
   connectedCallback() {
     this.sync()
@@ -43,8 +65,10 @@ class UISetRoot extends HTMLElement {
     this.setAttribute("data-skin", this.getAttribute("skin") || "base")
     if (theme === "light" || theme === "dark") this.setAttribute("data-theme", theme)
     else this.removeAttribute("data-theme")
-    this.setAttribute("data-sound", sound !== null && sound !== "off" ? "on" : "off")
-    this.setAttribute("data-haptics", this.getAttribute("haptics") === "off" ? "off" : "on")
+    // "false" is what a framework writes for a false binding: off, like "off".
+    const haptics = this.getAttribute("haptics")
+    this.setAttribute("data-sound", sound !== null && sound !== "off" && sound !== "false" ? "on" : "off")
+    this.setAttribute("data-haptics", haptics === "off" || haptics === "false" ? "off" : "on")
   }
 }
 
@@ -69,10 +93,156 @@ function define() {
   defineAppShell()
   defineShellParts()
   defineRichText()
+  defineContent()
+  defineInlineEdit()
+  defineUpload()
 }
 
 define()
 
+// So `document.querySelector("uiset-data-grid")` and `createElement` know each element's
+// properties. The kits made from UI SDK primitives are here as what a page sets and calls on
+// them. Parts that only hold markup (the knob's, a jack, a row) are plain elements.
+declare global {
+  interface HTMLElementTagNameMap {
+    "uiset-root": UISetRoot
+    "uiset-agent-activity": UISetAgentActivity
+    "uiset-agent-approvals": UISetAgentApprovals
+    "uiset-agent-console": UISetAgentConsole
+    "uiset-agent-snapshot": UISetAgentSnapshot
+    "uiset-agent-step": UISetAgentStep
+    "uiset-app-shell": UISetAppShell
+    "uiset-avatar-group": UISetAvatarGroup
+    "uiset-bar-chart": UISetBarChart
+    "uiset-board": UISetBoard
+    "uiset-canvas": UISetCanvas
+    "uiset-canvas-inspector": UISetCanvasInspector
+    "uiset-canvas-toolbar": UISetCanvasToolbar
+    "uiset-chat": UISetChat
+    "uiset-chat-composer": UISetChatComposer
+    "uiset-chat-model-picker": UISetChatModelPicker
+    "uiset-chat-threads": UISetChatThreads
+    "uiset-chat-usage": UISetChatUsage
+    "uiset-code-block": UISetCodeBlock
+    "uiset-code-editor": UISetCodeEditor
+    "uiset-code-tabs": UISetCodeTabs
+    "uiset-command-palette": UISetCommandPalette
+    "uiset-copy-button": UISetCopyButton
+    "uiset-count-badge": UISetCountBadge
+    "uiset-data-grid": UISetDataGrid
+    "uiset-editor-tabs": UISetEditorTabs
+    "uiset-empty-state": UISetEmptyState
+    "uiset-file-tree": UISetFileTree
+    "uiset-heatmap": UISetHeatmap
+    "uiset-inline-edit": UISetInlineEdit
+    "uiset-knob": UISetKnob
+    "uiset-line-chart": UISetLineChart
+    "uiset-package-command": UISetPackageCommand
+    "uiset-page-header": UISetPageHeader
+    "uiset-patch-bay": UISetPatchBay
+    "uiset-problems": UISetProblems
+    "uiset-pull-refresh": UISetPullRefresh
+    "uiset-rich-text": UISetRichText
+    "uiset-rich-text-content": UISetRichTextContent
+    "uiset-scatter-chart": UISetScatterChart
+    "uiset-schedule": UISetSchedule
+    "uiset-schedule-month": UISetScheduleMonth
+    "uiset-search-field": UISetSearchField
+    "uiset-segmented-bar": UISetSegmentedBar
+    "uiset-sparkline": UISetSparkline
+    "uiset-stat": UISetStat
+    "uiset-status-bar": UISetStatusBar
+    "uiset-stepper": UISetStepper
+    "uiset-swipe-list": UISetSwipeList
+    "uiset-table": UISetTable
+    "uiset-terminal": UISetTerminal
+    "uiset-upload": UISetUpload
+    "uiset-wheel": UISetWheel
+  }
+}
+
+export type { WebColumn as UISetDataGridColumn } from "./data-grid"
+// Each element's own events, for typing a listener a framework template holds:
+// `(event: UISetKnobEvents["valuechange"]) => …`.
+export type { UISetBoardEvents } from "./board"
+export type { UISetCodeTabsEvents } from "./content"
+export type { UISetInlineEditEvents } from "./inline-edit"
+export type { UISetUploadEvents, UploadLabels as UISetUploadLabels } from "./upload"
+export type { UISetCanvasEvents } from "./canvas"
+export type { UISetChartEvents } from "./chart"
+export type { UISetChatEvents, UISetChatComposerEvents, UISetChatModelPickerEvents, UISetChatThreadsEvents } from "./chat"
+export type { UISetDataGridEvents } from "./data-grid"
+export type { UISetCodeEditorEvents, UISetCommandPaletteEvents, UISetEditorTabsEvents, UISetFileTreeEvents, UISetProblemsEvents } from "./ide"
+export type { UISetPullRefreshEvents, UISetSwipeListEvents } from "./mobile"
+export type { UISetRichTextEvents } from "./rich-text"
+export type { UISetScheduleEvents, UISetScheduleMonthEvents } from "./schedule"
+export type { UISetSearchFieldEvents, UISetStepperEvents } from "./shell-parts"
+export type { UISetKnobEvents, UISetPatchBayEvents } from "./studio"
+
+// The names the kits made from primitives go by, beside the classes.
+type UISetBoard = BoardElement
+type UISetCanvas = CanvasElement
+type UISetKnob = KnobElement
+type UISetPatchBay = PatchBayElement
+type UISetSchedule = ScheduleElement
+type UISetSwipeList = SwipeListElement
+type UISetTerminal = TerminalElement
+type UISetInlineEdit = InlineEditElement
+
+export type {
+  UISetAvatarGroup,
+  UISetCodeBlock,
+  UISetCodeTabs,
+  UISetCountBadge,
+  UISetInlineEdit,
+  UISetPackageCommand,
+  UISetTable,
+  UISetUpload,
+  UISetBarChart,
+  UISetBoard,
+  UISetCanvas,
+  UISetHeatmap,
+  UISetKnob,
+  UISetLineChart,
+  UISetPatchBay,
+  UISetScatterChart,
+  UISetSchedule,
+  UISetSegmentedBar,
+  UISetSwipeList,
+  UISetTerminal,
+  UISetAgentConsole,
+  UISetAgentStep,
+  UISetAgentApprovals,
+  UISetAgentActivity,
+  UISetAgentSnapshot,
+  UISetAppShell,
+  UISetPageHeader,
+  UISetEmptyState,
+  UISetCanvasToolbar,
+  UISetCanvasInspector,
+  UISetChat,
+  UISetChatComposer,
+  UISetChatThreads,
+  UISetChatModelPicker,
+  UISetChatUsage,
+  UISetDataGrid,
+  UISetFileTree,
+  UISetEditorTabs,
+  UISetCodeEditor,
+  UISetCommandPalette,
+  UISetProblems,
+  UISetStatusBar,
+  UISetWheel,
+  UISetPullRefresh,
+  UISetRichText,
+  UISetRichTextContent,
+  UISetScheduleMonth,
+  UISetSearchField,
+  UISetCopyButton,
+  UISetStepper,
+  UISetSparkline,
+  UISetStat,
+}
 export { iconElement, iconPaths } from "@/registry/uiset/ui/shell/icon-paths"
 export type { IconName } from "@/registry/uiset/ui/shell/icon-paths"
 export { skins, UISetRoot }

@@ -107,6 +107,7 @@ type CanvasOptions = {
 
 const edgeId = (from: string, to: string) => `${from}->${to}`
 
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const canvasPrimitive = definePrimitive({
   name: "canvas",
   options: {

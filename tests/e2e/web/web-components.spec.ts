@@ -98,7 +98,7 @@ test("the patch bay patches by keyboard, draws the cable and reports it", async 
 // The same as the React patch bay: inside a scaled container the cable still ends on its jacks.
 test("a cable meets its jacks inside a scaled container", async ({ page }) => {
   const bay = page.locator("uiset-patch-bay")
-  await bay.evaluate((el) => {
+  await bay.evaluate((el: HTMLElement) => {
     const frame = el.parentElement!
     frame.style.transformOrigin = "0 0"
     frame.style.transform = "scale(0.7)"

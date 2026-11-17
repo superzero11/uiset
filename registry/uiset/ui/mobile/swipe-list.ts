@@ -45,6 +45,7 @@ const insideControl = (target: Element, row: Element | undefined) => {
   return !!control && control !== row && !!row?.contains(control)
 }
 
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const swipeList = definePrimitive({
   name: "swipe-list",
   options: {

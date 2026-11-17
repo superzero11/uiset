@@ -75,6 +75,7 @@ type BoardOptions = {
   controller?: BoardController
 }
 
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const boardPrimitive = definePrimitive({
   name: "board",
   options: {

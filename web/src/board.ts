@@ -3,15 +3,15 @@
 // details, search and person filters are the page's own (UI SDK's dialog and fields): the
 // board fires `open` and takes `hidden`.
 import type { TransferLists } from "@ui-sdk/core"
-import { createParts } from "@ui-sdk/web"
+import { createParts, type UiActionDetail, type UiDetailedChangeEvent, type UiElement } from "@ui-sdk/web"
 import "@ui-sdk/web/avatar"
 import "@ui-sdk/web/button"
 import "@ui-sdk/web/field"
 import "@ui-sdk/web/input"
-import { boardPrimitive, keepDragPreviewInside, type BoardColumnSpec } from "@/registry/uiset/ui/board/board"
+import { boardPrimitive, keepDragPreviewInside, type BoardColumnSpec, type BoardControllerApi, type BoardLanesDetails } from "@/registry/uiset/ui/board/board"
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/board/board.css"
-import { attr, h, place, uid } from "./dom"
+import { attr, h, holdRender, isOn, place, uid } from "./dom"
 
 type BoardCardData = {
   id: string
@@ -26,9 +26,27 @@ type BoardCardData = {
 
 type BoardMessages = { help: string; empty: string; full: string; filtered?: string }
 
-type BoardElement = HTMLElement & {
+/** What `board.api` does from code. Each throws, saying why, when it can't. */
+type BoardApi = BoardControllerApi & {
+  /** Opens a card's details, as Enter does. */
+  openCard(card: string): boolean
+}
+
+/** What `<uiset-board>` fires. A change event's `preventDefault()` refuses the change. */
+type UISetBoardEvents = {
+  /** A card moved: `value` is every lane; `key`, `from`, `to` and `index` say which and where. */
+  laneschange: UiDetailedChangeEvent<TransferLists, BoardLanesDetails>
+  /** Enter or a click on a card, with `openable`. */
+  open: CustomEvent<{ value: string }>
+  /** "Add a card" submitted, with `addable`: `value` is the column. */
+  add: CustomEvent<{ value: string; title: string } & Pick<UiActionDetail, "waitUntil">>
+}
+
+type BoardElement = UiElement<UISetBoardEvents> & {
   columns?: BoardColumnSpec[]
   cards?: Record<string, BoardCardData>
+  /** Which cards are in which column, in order. Reading gives a copy; set it to change the board. */
+  lanes?: Record<string, string[]>
   messages?: Partial<BoardMessages>
   /** What screen readers hear after a card's title. Defaults to its priority, due date, person and labels. */
   describeCard?: (card: BoardCardData) => string
@@ -38,7 +56,7 @@ type BoardElement = HTMLElement & {
   today?: string
   /** Cards a search or filter hides: they keep their places, focus skips them, moves wait. */
   hiddenCards?: string[]
-  api?: { addCard: (column: string, title: string) => string | true; focusCard: (key: string) => void }
+  api?: BoardApi
 }
 
 type BoardInstance = {
@@ -101,7 +119,6 @@ function face(card: BoardCardData, today?: string) {
 }
 
 /** A boolean attribute, as UI SDK reads them: on when present, unless it says "false". */
-const isOn = (el: Element, name: string) => el.hasAttribute(name) && el.getAttribute(name) !== "false"
 
 // A function's identity, so a new renderCard or describeCard draws cards again.
 const fnIds = new WeakMap<object, number>()
@@ -145,12 +162,12 @@ function defineBoard() {
             ),
         }
       },
-      render: (el, instance) => {
+      render: holdRender((el, instance) => {
         const board = el as BoardElement
         let view = views.get(board)
         if (!view) views.set(board, (view = new BoardView(board)))
         return view.attach(instance as unknown as BoardInstance)
-      },
+      }),
     },
     column: "uiset-board-column",
     // The card's behavior sits on an inner element: the drag preview is a copy of that, not
@@ -367,4 +384,4 @@ class BoardView {
 }
 
 export { defineBoard }
-export type { BoardCardData, BoardElement, BoardMessages }
+export type { BoardApi, BoardCardData, BoardElement, BoardMessages, UISetBoardEvents }

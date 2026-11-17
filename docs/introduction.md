@@ -28,7 +28,7 @@ the same parts, the same names, the same keyboard and agent support.
 
 | What | How many | What it gives you |
 | ---- | -------- | ----------------- |
-| [Components](/components) | 55, plus 16 app parts | Every UI SDK component, styled; and the app frame and data display parts (sidebar layout, page header, cards, badges, stats, alerts, a stepper) |
+| [Components](/components) | 55, plus 21 app parts | Every UI SDK component, styled; and the app frame, data display and form parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, uploads) |
 | [Kits](/kits) | 12 | Chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal, Studio and the Agent Console |
 | [Templates](/templates) | 10 | Whole pages: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, IDE |
 | [Themes](/themes) | 5 skins | Base, Blueprint, Studio, Phosphor and Ink, plus a [generator](/themes/generator) for your own |
@@ -66,4 +66,5 @@ a clean install into a new app. Expect API changes until UI SDK reaches 1.0; the
 
 - [Installation](./installation.md): set up a project and add your first items.
 - [Quick start](./quick-start.md): a working screen in a few minutes.
+- [Looking for a component?](./looking-for.md): where the ones people ask for most are.
 - [Building with AI agents](./ai.md): give your coding agent the skill and the docs.

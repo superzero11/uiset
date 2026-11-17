@@ -1,0 +1,99 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  .upload {
+    max-width: 30rem;
+  }
+
+  .upload-dropzone .upload-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .upload-rejected {
+    display: grid;
+    gap: 0.125rem;
+    margin: 0;
+    padding: 0;
+    color: var(--ui-destructive);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    list-style: none;
+  }
+
+  .upload-list [data-slot="file-input-item"] {
+    padding-block: calc(var(--ui-spacing) * 2);
+  }
+
+  /* UI SDK cuts an item's first child to one line; a failure's reason may need two. */
+  .upload-list [data-slot="file-input-item"] > .upload-row {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 0;
+    overflow: visible;
+    white-space: normal;
+  }
+
+  .upload-preview {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    overflow: hidden;
+    border-radius: calc(var(--ui-radius) * 0.75);
+    background: var(--ui-muted);
+    color: var(--ui-muted-foreground);
+
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .upload-text {
+    display: grid;
+    flex: 1;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+
+  .upload-name {
+    overflow: hidden;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .upload-status {
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  /* The words say what happened; the color only repeats it. */
+  .upload-row[data-status="failed"] .upload-state {
+    color: var(--ui-destructive);
+  }
+
+  .upload-row[data-status="done"] .upload-state {
+    color: var(--tone-success);
+  }
+
+  .upload-progress {
+    margin-block-start: 0.25rem;
+  }
+
+  .upload-list .upload-action {
+    flex: none;
+    width: 2rem;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0;
+  }
+}

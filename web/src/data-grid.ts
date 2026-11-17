@@ -7,6 +7,7 @@
 import { announce, bindDrag, createVirtualizer, inputHints, isRTL, type GridCell, type Virtualizer } from "@ui-sdk/core"
 import { createParts } from "@ui-sdk/web"
 import "@ui-sdk/web/button"
+import "@ui-sdk/web/combobox"
 import "@ui-sdk/web/field"
 import "@ui-sdk/web/input"
 import "@ui-sdk/web/menu"
@@ -31,16 +32,21 @@ import { filterRows, groupRows, nextSort, sortRows, toCsv, type CellValue, type 
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/shell/shell.css"
 import "@/registry/uiset/ui/data-grid/data-grid.css"
-import { attr, h, place, uid, upgradeProperties } from "./dom"
+import { asFlag, attr, defineElement, ElementBase, h, isOn, place, uid, upgradeProperties } from "./dom"
 
 type Row = unknown
-type WebColumn = GridColumnSpec<Row> & {
+type WebColumn<Datum = Row> = GridColumnSpec<Datum> & {
   /** Custom content: a Node or text. Copying, filtering and sorting still use `value` and `text`. */
-  render?: (row: Row) => Node | string
+  render?: (row: Datum) => Node | string
 }
 
 type GridInstance = { get: () => { editing: string | null }; subscribe: (run: () => void) => () => void; api: GridApi }
-type GridApi = { grid: { focus: (cell: GridCell, options?: object) => void; active: () => GridCell | null } }
+type GridApi = {
+  grid: { focus: (cell: GridCell, options?: object) => void; active: () => GridCell | null }
+  typed: () => string | null
+  choose: (text: string) => boolean
+  leaveEdit: (refocus: boolean) => void
+}
 type TableElement = HTMLElement & { api?: GridApi }
 
 const stateNames = ["selected", "sort", "query", "filters", "groupBy", "columnState", "density"] as const
@@ -54,7 +60,38 @@ type StateName = (typeof stateNames)[number]
  * (densitychange). `celledit` asks before an edit is saved: preventDefault() refuses it.
  * `rowaction` is Enter on a cell that isn't edited in place.
  */
-class UISetDataGrid extends HTMLElement {
+// `Datum` is a page's row, for the three properties that take rows: name it
+// (`UISetDataGrid<Order>`) to have columns and `getRowId` checked against it. Inside, a row
+// is unknown.
+/**
+ * What `<uiset-data-grid>` fires; `Datum` is your row type. A person's or agent's change
+ * fires its `…change` event first, and `preventDefault()` refuses it.
+ */
+type UISetDataGridEvents<Datum = any> = {
+  selectedchange: CustomEvent<{ value: readonly string[] }>
+  sortchange: CustomEvent<{ value: readonly SortRule[] }>
+  querychange: CustomEvent<{ value: string }>
+  filterschange: CustomEvent<{ value: Record<string, string> }>
+  groupbychange: CustomEvent<{ value: string | null }>
+  columnstatechange: CustomEvent<{ value: DataGridColumnState | null }>
+  densitychange: CustomEvent<{ value: DataGridDensity }>
+  /** An edit, parsed: write it to your data, or `preventDefault()` and the editor stays open. */
+  celledit: CustomEvent<{ row: Datum; rowId: string; column: string; value: CellValue; text: string }>
+  /** Enter or a click on a row. */
+  rowaction: CustomEvent<{ value: string; row: Datum }>
+}
+
+// A generic class can't take its listeners from its base, so the grid's are declared here.
+interface UISetDataGrid<Datum = any> {
+  addEventListener<K extends keyof UISetDataGridEvents<Datum>>(type: K, listener: (this: this, event: UISetDataGridEvents<Datum>[K]) => unknown, options?: boolean | AddEventListenerOptions): void
+  addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: this, event: HTMLElementEventMap[K]) => unknown, options?: boolean | AddEventListenerOptions): void
+  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void
+  removeEventListener<K extends keyof UISetDataGridEvents<Datum>>(type: K, listener: (this: this, event: UISetDataGridEvents<Datum>[K]) => unknown, options?: boolean | EventListenerOptions): void
+  removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: this, event: HTMLElementEventMap[K]) => unknown, options?: boolean | EventListenerOptions): void
+  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void
+}
+
+class UISetDataGrid<Datum = any> extends ElementBase {
   static observedAttributes = ["label", "locale", "selectable", "height", "empty", "persist", "toolbar", "filename", "density", "editable"]
 
   // Public properties are accessors over private fields, so a value a page set before the
@@ -114,7 +151,6 @@ class UISetDataGrid extends HTMLElement {
     body: HTMLElement
     empty: HTMLElement
     help: HTMLElement
-    lists: HTMLElement
     footer: HTMLElement
   }
 
@@ -137,25 +173,25 @@ class UISetDataGrid extends HTMLElement {
     upgradeProperties(this, ["rows", "columns", "getRowId", ...stateNames])
   }
 
-  get rows(): readonly Row[] {
-    return this.#rows
+  get rows(): readonly Datum[] {
+    return this.#rows as readonly Datum[]
   }
-  set rows(value: readonly Row[]) {
+  set rows(value: readonly Datum[]) {
     this.#rows = value ?? []
     this.schedule()
   }
-  get columns(): readonly WebColumn[] {
-    return this.#columns
+  get columns(): readonly WebColumn<Datum>[] {
+    return this.#columns as unknown as readonly WebColumn<Datum>[]
   }
-  set columns(value: readonly WebColumn[]) {
-    this.#columns = value ?? []
+  set columns(value: readonly WebColumn<Datum>[]) {
+    this.#columns = (value ?? []) as unknown as readonly WebColumn[]
     this.schedule()
   }
-  get getRowId(): (row: Row) => string {
-    return this.#getRowId
+  get getRowId(): (row: Datum) => string {
+    return this.#getRowId as (row: Datum) => string
   }
-  set getRowId(value: (row: Row) => string) {
-    this.#getRowId = value ?? ((row) => String((row as { id?: unknown }).id))
+  set getRowId(value: (row: Datum) => string) {
+    this.#getRowId = (value as ((row: Row) => string) | null) ?? ((row) => String((row as { id?: unknown }).id))
     this.schedule()
   }
 
@@ -203,14 +239,31 @@ class UISetDataGrid extends HTMLElement {
     this.set("density", v, false)
   }
 
-  private get label() {
+  // Attributes that are properties too. A framework that finds a member by an attribute's
+  // name sets it as a property (Vue does), so each one writes its attribute.
+  get label(): string {
     return this.getAttribute("label") ?? ""
   }
-  private get locale() {
+  set label(value: string | null) {
+    attr(this, "label", value)
+  }
+  get locale(): string | undefined {
     return this.getAttribute("locale") ?? undefined
   }
-  private get selectable() {
-    return this.hasAttribute("selectable")
+  set locale(value: string | null | undefined) {
+    attr(this, "locale", value)
+  }
+  get selectable(): boolean {
+    return isOn(this, "selectable")
+  }
+  set selectable(value: boolean) {
+    attr(this, "selectable", asFlag(value))
+  }
+  get editable(): boolean {
+    return isOn(this, "editable")
+  }
+  set editable(value: boolean) {
+    attr(this, "editable", asFlag(value))
   }
   private get rowHeight() {
     return ROW_HEIGHTS[this.state.density]
@@ -237,10 +290,10 @@ class UISetDataGrid extends HTMLElement {
 
   private defaultColumnState(): DataGridColumnState {
     return {
-      order: this.columns.map((c) => c.id),
+      order: this.#columns.map((c) => c.id),
       widths: {},
-      hidden: this.columns.filter((c) => c.hidden).map((c) => c.id),
-      pinned: this.columns.filter((c) => c.pinned).map((c) => c.id),
+      hidden: this.#columns.filter((c) => c.hidden).map((c) => c.id),
+      pinned: this.#columns.filter((c) => c.pinned).map((c) => c.id),
     }
   }
 
@@ -358,7 +411,7 @@ class UISetDataGrid extends HTMLElement {
   }
   private primaryText(row: Row) {
     const first = this.view.visible[0]
-    return first ? display(first, row) : this.getRowId(row)
+    return first ? display(first, row) : this.#getRowId(row)
   }
 
   /* --------------------------------------------------------------- actions */
@@ -392,7 +445,7 @@ class UISetDataGrid extends HTMLElement {
 
   private sortColumn(column: WebColumn, additive: boolean) {
     const next = nextSort(this.state.sort, column.id, additive)
-    if (this.set("sort", next)) announce(sortMessage(next, this.columns))
+    if (this.set("sort", next)) announce(sortMessage(next, this.#columns))
   }
 
   /** Saves an edit, if `celledit` doesn't refuse it. `cell` marks one typed into the grid. */
@@ -408,16 +461,12 @@ class UISetDataGrid extends HTMLElement {
     }
     const event = new CustomEvent("celledit", {
       cancelable: true,
-      detail: { row, rowId: this.getRowId(row), column: column.id, value: parsed.value as CellValue, text },
+      detail: { row, rowId: this.#getRowId(row), column: column.id, value: parsed.value as CellValue, text },
     })
     const accepted = this.dispatchEvent(event)
     if (accepted && cell) this.editError = null
     this.schedule()
     return accepted
-  }
-
-  private editable() {
-    return this.hasAttribute("editable")
   }
 
   private resizeColumn(column: WebColumn, width: number) {
@@ -476,7 +525,7 @@ class UISetDataGrid extends HTMLElement {
   /** Downloads what the grid shows (or the selected rows) as CSV. */
   exportCsv(filename = this.getAttribute("filename") ?? "export") {
     const { sorted, selectedShown, selectedSet, visible } = this.view
-    const chosen = selectedShown ? sorted.filter((row) => selectedSet.has(this.getRowId(row))) : sorted
+    const chosen = selectedShown ? sorted.filter((row) => selectedSet.has(this.#getRowId(row))) : sorted
     download(filename, toCsv(chosen, visible))
     announce(`Exported ${this.count(chosen.length)} rows`)
   }
@@ -493,12 +542,12 @@ class UISetDataGrid extends HTMLElement {
     const label = this.label
     const columnNames = () => visible.map((c) => c.header).join(", ")
     const findColumn = (name: string) => {
-      const column = byId.get(name) ?? this.columns.find((c) => c.header.toLowerCase() === String(name).toLowerCase())
+      const column = byId.get(name) ?? this.#columns.find((c) => c.header.toLowerCase() === String(name).toLowerCase())
       if (!column) throw new Error(`No column "${name}" in ${label}. Its columns: ${columnNames()}.`)
       return column
     }
     const findRow = (name: string) => {
-      const row = this.rows.find((r) => this.getRowId(r) === name) ?? this.rows.find((r) => this.primaryText(r).toLowerCase() === String(name).toLowerCase())
+      const row = this.#rows.find((r) => this.#getRowId(r) === name) ?? this.#rows.find((r) => this.primaryText(r).toLowerCase() === String(name).toLowerCase())
       if (row === undefined) throw new Error(`No row "${name}" in ${label}.`)
       return row
     }
@@ -524,13 +573,13 @@ class UISetDataGrid extends HTMLElement {
       selectRows: (names) => {
         if (!this.selectable) refuse(`Rows in ${label} can't be selected.`)
         if (!Array.isArray(names)) refuse("selectRows takes a list of row names.")
-        return applied(this.set("selected", names.map((name) => this.getRowId(findRow(name)))))
+        return applied(this.set("selected", names.map((name) => this.#getRowId(findRow(name)))))
       },
       clearSelection: () => applied(this.set("selected", [])),
       editCell: (rowName, columnName, text) => {
         const row = findRow(rowName)
         const column = findColumn(columnName)
-        if (!column.editable || !this.editable()) refuse(`${column.header} can't be edited.`)
+        if (!column.editable || !this.editable) refuse(`${column.header} can't be edited.`)
         const parsed = parse(column, String(text ?? ""), this.locale)
         if ("error" in parsed) refuse(parsed.error)
         if (!this.commit(row, column, String(text))) refuse(`${label} didn't accept that ${column.header}.`)
@@ -578,7 +627,7 @@ class UISetDataGrid extends HTMLElement {
       editable: (cell: GridCell) => {
         const item = itemAt(cell.row)
         const column = columnAt(cell.col)
-        return item?.kind === "row" && !!column?.editable && column.type !== "boolean" && this.editable()
+        return item?.kind === "row" && !!column?.editable && column.type !== "boolean" && this.editable
       },
       onCellEdit: (cell: GridCell, text: string) => {
         const item = itemAt(cell.row)
@@ -597,7 +646,7 @@ class UISetDataGrid extends HTMLElement {
         if (item.kind === "group") return this.toggleGroup(item.key)
         if (this.selectable && cell.col === 0) return this.toggleRow(item.id)
         const column = columnAt(cell.col)
-        if (column?.type === "boolean" && column.editable && this.editable()) {
+        if (column?.type === "boolean" && column.editable && this.editable) {
           this.commit(item.row, column, column.value(item.row) ? "no" : "yes")
           return
         }
@@ -626,7 +675,7 @@ class UISetDataGrid extends HTMLElement {
           cells.forEach((text, j) => {
             const item = itemAt(start.row + i)
             const column = columnAt(start.col + j)
-            if (item?.kind !== "row" || !column?.editable || !this.editable()) return
+            if (item?.kind !== "row" || !column?.editable || !this.editable) return
             if (this.commit(item.row, column, text)) done++
             else refused++
           }),
@@ -639,14 +688,14 @@ class UISetDataGrid extends HTMLElement {
       },
       items: () =>
         sorted.map((row) => {
-          const entry: Record<string, string> = { id: this.getRowId(row) }
+          const entry: Record<string, string> = { id: this.#getRowId(row) }
           for (const column of visible) entry[column.header] = display(column, row)
           return entry
         }),
       view: {
         rows: sorted.length,
-        of: this.rows.length,
-        sort: this.state.sort.length ? sortMessage(this.state.sort, this.columns) : "none",
+        of: this.#rows.length,
+        sort: this.state.sort.length ? sortMessage(this.state.sort, this.#columns) : "none",
         filter: this.state.query,
         ...(Object.keys(this.state.filters).length ? { columnFilters: this.state.filters } : {}),
         groupBy: groupColumn?.header ?? "none",
@@ -693,12 +742,11 @@ class UISetDataGrid extends HTMLElement {
       { id: uid("grid-help"), hidden: true },
       "Arrow keys move between cells. Enter sorts a column or edits a cell, Escape cancels. Shift with arrows selects cells. On a column header, Shift+F10 opens the column menu, Alt (Option on a Mac) with Left or Right resizes the column, and adding Shift moves it.",
     )
-    const lists = h("div", { hidden: true })
     const footer = h("div", { class: "data-grid-footer" })
-    this.replaceChildren(toolbar, scroller, help, lists, footer)
-    this.dom = { toolbar, scroller, table, head, body, empty, help, lists, footer }
+    this.replaceChildren(toolbar, scroller, help, footer)
+    this.dom = { toolbar, scroller, table, head, body, empty, help, footer }
     // The tools exist from the start, so your selection actions are on the page for your script.
-    if (this.hasAttribute("toolbar")) this.tools = this.buildTools()
+    if (isOn(this, "toolbar")) this.tools = this.buildTools()
     this.virtual.connect(scroller)
     this.virtual.subscribe(() => this.renderBody())
     // The filter announces its count once typing pauses.
@@ -726,14 +774,7 @@ class UISetDataGrid extends HTMLElement {
     this.renderHeader(offset)
     dom.empty.textContent = this.getAttribute("empty") ?? "No rows to show"
     dom.empty.style.display = items.length ? "none" : ""
-    const listsKey = JSON.stringify(visible.filter((c) => c.options).map((c) => [c.id, c.options]))
-    if (dom.lists.dataset.key !== listsKey) {
-      dom.lists.dataset.key = listsKey
-      dom.lists.replaceChildren(
-        ...visible.filter((c) => c.options).map((c) => h("datalist", { id: `${dom.help.id}-${c.id}` }, ...c.options!.map((o) => h("option", { value: o })))),
-      )
-    }
-    const total = this.rows.length
+    const total = this.#rows.length
     const footer = [
       sorted.length === total ? `${this.count(total)} ${total === 1 ? "row" : "rows"}` : `${this.count(sorted.length)} of ${this.count(total)} rows`,
       ...(this.selectable && this.state.selected.length > 0 ? [`${this.count(this.state.selected.length)} selected`] : []),
@@ -1010,7 +1051,7 @@ class UISetDataGrid extends HTMLElement {
     const flip = this.dom ? isRTL(this.dom.scroller) : false
     if (action === "ascending" || action === "descending") {
       const next: SortRule[] = [{ column: column.id, direction: action }]
-      if (this.set("sort", next)) announce(sortMessage(next, this.columns))
+      if (this.set("sort", next)) announce(sortMessage(next, this.#columns))
     } else if (action === "unsort") {
       if (this.set("sort", this.state.sort.filter((r) => r.column !== column.id))) announce("Sorting cleared")
     } else if (action === "group") this.set("groupBy", column.id)
@@ -1146,13 +1187,16 @@ class UISetDataGrid extends HTMLElement {
           attr(cell, "aria-colspan", null)
           attr(cell, "aria-expanded", null)
           attr(cell, "data-align", column.align ?? (column.type === "number" ? "end" : undefined))
-          attr(cell, "data-editable", !!column.editable && this.editable())
+          attr(cell, "data-editable", !!column.editable && this.editable)
           this.sticky(cell, column.id)
           if (editing === cellId) {
             // The editor is UI SDK's inline edit: it keeps its text while it's open.
             this.cellMemo.delete(cell)
             this.cellSig.delete(cell)
-            if (!cell.querySelector("uiset-data-grid-editor")) cell.replaceChildren(this.editor(column))
+            if (!cell.querySelector("uiset-data-grid-editor, .data-grid-option-editor")) {
+              if (column.options) this.openOptions(cell, column, item.row)
+              else cell.replaceChildren(this.editor(column))
+            }
             const error = cell.querySelector<HTMLElement>(".data-grid-error")
             const input = cell.querySelector("input")!
             const message = this.editError?.cell === cellId ? this.editError.message : null
@@ -1193,11 +1237,72 @@ class UISetDataGrid extends HTMLElement {
     const input = h("input", {
       class: "data-grid-editor",
       "aria-label": column.header,
-      list: column.options ? `${this.dom!.help.id}-${column.id}` : undefined,
       "aria-describedby": errorId,
       ...(column.type === "number" ? inputHints("decimal") : {}),
     })
     return h("uiset-data-grid-editor", null, input, h("span", { id: errorId, class: "data-grid-error", hidden: true }))
+  }
+
+  /**
+   * The editor for a column with `options`: UI SDK's combobox in the cell. Typing narrows the
+   * list, the arrows move through it, and Enter or a press chooses, which saves.
+   */
+  private openOptions(cell: HTMLElement, column: WebColumn, row: Row) {
+    const api = this.instance!.api
+    const errorId = uid("grid-error")
+    const value = editTextOf(column, row)
+    const typed = api.typed()
+    const input = h("input", { class: "data-grid-editor", "aria-label": column.header, "aria-describedby": errorId }) as HTMLInputElement
+    const combobox = h(
+      "ui-combobox",
+      {
+        class: "data-grid-option-editor",
+        "default-open": "",
+        "auto-highlight": "always",
+        "default-value": column.options!.includes(value) ? value : undefined,
+      },
+      h("ui-combobox-input", null, input),
+      h(
+        "ui-combobox-content",
+        { class: "data-grid-options", "data-grid-control": "", align: "start", "side-offset": "2", hidden: "" },
+        h("ui-combobox-empty", null, "No match"),
+        h("ui-combobox-list", null, ...column.options!.map((option) => h("ui-combobox-item", { value: option }, option))),
+      ),
+      h("span", { id: errorId, class: "data-grid-error", hidden: true }),
+    ) as HTMLElement & { api: { setQuery: (query: string, options?: { reason: string }) => boolean } }
+    type Change<T> = CustomEvent<{ value: T; reason?: string }>
+    let highlighted: string | null = null
+    combobox.addEventListener("highlight", (event) => {
+      highlighted = (event as Change<string | null>).detail.value
+    })
+    combobox.addEventListener("valuechange", (event) => {
+      const chosen = (event as Change<unknown>).detail.value
+      if (typeof chosen === "string") api.choose(chosen)
+    })
+    combobox.addEventListener("openchange", (event) => {
+      const { value: open, reason } = (event as Change<boolean>).detail
+      if (open) return
+      // Escape gives the cell its focus back. A press or focus somewhere else keeps it there.
+      if (reason === "escape-key") api.leaveEdit(true)
+      else if (reason === "outside-press" || reason === "focus-out") api.leaveEdit(false)
+    })
+    // Tab saves the highlighted option, as it saves text in the other editors, and focus
+    // stays with the cell.
+    input.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab") return
+      event.preventDefault()
+      if (highlighted === null || !api.choose(highlighted)) api.leaveEdit(true)
+    })
+    cell.replaceChildren(combobox)
+    input.focus({ preventScroll: true })
+    // An edit started by typing begins as if that character had been typed here. Otherwise
+    // the old value is selected, so typing replaces it. A tick later: the combobox fills its
+    // input as its parts connect, which would undo either.
+    queueMicrotask(() => {
+      if (!combobox.isConnected) return
+      if (typed !== null) combobox.api.setQuery(typed, { reason: "input-change" })
+      else input.select()
+    })
   }
 
   /* --------------------------------------------------------------- toolbar */
@@ -1208,7 +1313,7 @@ class UISetDataGrid extends HTMLElement {
 
   private renderToolbar() {
     const dom = this.dom!
-    const on = this.hasAttribute("toolbar")
+    const on = isOn(this, "toolbar")
     dom.toolbar.style.display = on ? "" : "none"
     if (!on) return
     attr(dom.toolbar, "aria-label", `${this.label} tools`)
@@ -1471,8 +1576,8 @@ function defineDataGrid() {
     cell: "uiset-data-grid-cell",
     editor: { tag: "uiset-data-grid-editor", target: (el) => el.querySelector("input"), display: "contents" },
   })
-  customElements.define("uiset-data-grid", UISetDataGrid)
+  defineElement("uiset-data-grid", UISetDataGrid)
 }
 
 export { defineDataGrid, UISetDataGrid }
-export type { WebColumn }
+export type { UISetDataGridEvents, WebColumn }

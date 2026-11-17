@@ -8,9 +8,9 @@ import { createParts } from "@ui-sdk/web"
 import "@ui-sdk/web/button"
 import "@ui-sdk/web/input"
 import { plain, Screen, urlPattern, type Run, type ScreenLine } from "@/registry/uiset/ui/terminal/ansi"
-import { createTerminalSession, english, terminalPrimitive, type TerminalCommand, type TerminalIO, type TerminalMessages, type TerminalResult } from "@/registry/uiset/ui/terminal/session"
+import { createTerminalSession, english, terminalPrimitive, type TerminalCommand, type TerminalControllerApi, type TerminalIO, type TerminalMessages, type TerminalResult } from "@/registry/uiset/ui/terminal/session"
 import "@/registry/uiset/ui/terminal/terminal.css"
-import { attr, h, uid } from "./dom"
+import { attr, h, holdRender, uid } from "./dom"
 
 type TerminalElement = HTMLElement & {
   commands?: Record<string, TerminalCommand>
@@ -19,6 +19,8 @@ type TerminalElement = HTMLElement & {
   messages?: Partial<TerminalMessages>
   /** Commands Up brings back before any are typed. */
   history?: string[]
+  /** Run a line, clear the screen, or write output from outside, like a socket. */
+  api?: TerminalControllerApi
 }
 
 type TerminalInstance = { get: () => object; subscribe: (run: () => void) => () => void }
@@ -300,7 +302,7 @@ function defineTerminal() {
           output: () => view.output(),
         }
       },
-      render: (el, instance) => viewOf(el as TerminalElement).attach(instance as unknown as TerminalInstance),
+      render: holdRender((el, instance) => viewOf(el as TerminalElement).attach(instance as unknown as TerminalInstance)),
     },
   })
   // The prompt takes focus when the terminal is focused from code.

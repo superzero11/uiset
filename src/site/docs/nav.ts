@@ -24,15 +24,19 @@ const guides: DocPage[] = [
   { path: "/docs", title: "Introduction", file: "introduction.md", description: "What UISet is, how it relates to UI SDK and shadcn/ui, and what's in it." },
   { path: "/docs/installation", title: "Installation", file: "installation.md", description: "Add UISet with the shadcn CLI or by hand, load each skin's fonts, or use the Web Components build." },
   { path: "/docs/quick-start", title: "Quick start", file: "quick-start.md", description: "Build a settings screen with a form, a toast and a data grid in a few minutes." },
+  { path: "/docs/looking-for", title: "Looking for a component?", file: "looking-for.md", description: "Where the components people ask for most are in UISet: a full calendar, time picker, multi-select, dropzone, table, code block and more." },
   { path: "/docs/theming", title: "Theming", file: "theming.md", description: "Skins, the key color, dark mode, nesting, CSS variables, sound and haptics, and writing your own skin." },
   { path: "/docs/ai", title: "Building with AI agents", file: "ai.md", description: "The UISet skills and llms.txt for coding agents, and UI SDK's agent bridge for agents that use your app." },
   { path: "/docs/web-components", title: "Web Components", file: "web-components.md", description: "Every kit and template as custom elements, for Vue, Svelte, Solid, Angular and plain HTML." },
+  { path: "/docs/vue", title: "Vue", file: "vue.md", description: "UISet in a Vue 3 app: setup, passing data, events, two-way binding, skins, UI SDK's Vue components and server rendering." },
+  { path: "/docs/svelte", title: "Svelte", file: "svelte.md", description: "UISet in a Svelte 5 app: setup, passing data with runes, events, skins, UI SDK's Svelte components and server rendering." },
   { path: "/docs/migrate", title: "Coming from shadcn/ui", file: "migrate-from-shadcn.md", description: "What maps to what, the API differences, and how to move a shadcn/ui app over one component at a time." },
   { path: "/docs/roadmap", title: "Roadmap", file: "roadmap.md", description: "What's shipped, what's next, and how UISet follows UI SDK to 1.0." },
 ].map((p) => ({ ...p, section: "Get started" }))
 
 const kits: DocPage[] = [
   { slug: "app-shell", title: "App frame and data display", file: "app-shell.md", item: "app-shell" },
+  { slug: "forms", title: "Forms: inline edit and upload", file: "forms.md", item: "upload" },
   { slug: "chat", title: "Chat", file: "chat.md", item: "chat" },
   { slug: "rich-text", title: "Rich text", file: "rich-text.md", item: "rich-text" },
   { slug: "data-grid", title: "Data grid", file: "data-grid.md", item: "data-grid" },

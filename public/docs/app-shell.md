@@ -2,10 +2,11 @@
 
 The frame an app's pages sit in, and the small parts most pages show. `AppShell` is a
 sidebar layout that collapses to icons with Mod+B, remembers that, and moves into a drawer
-on narrow screens. Around it are a page header, breadcrumbs, cards, badges, figures, lists,
-alerts, loading states, a stepper, a search field and a copy button. Most are plain HTML in
-UISet's styles; the ones with behavior use UI SDK: Drawer, Tooltip, Preferences and
-shortcuts for the shell, Input for search, and `announce` for copy.
+on narrow screens. Around it are a page header, breadcrumbs, cards, tables, badges, avatar
+groups, figures, lists, alerts, loading states, a stepper, a search field, code blocks and a
+copy button. Most are plain HTML in UISet's styles; the ones with behavior use UI SDK:
+Drawer, Tooltip, Preferences and shortcuts for the shell, Input for search, `announce` for
+copy, Scroll area for tables and code, and Tabs for code tabs.
 
 ```bash
 npx shadcn@latest add superzero11/uiset/app-shell superzero11/uiset/breadcrumbs \
@@ -13,7 +14,8 @@ npx shadcn@latest add superzero11/uiset/app-shell superzero11/uiset/breadcrumbs 
   superzero11/uiset/stat superzero11/uiset/empty-state superzero11/uiset/skeleton \
   superzero11/uiset/description-list superzero11/uiset/item-list superzero11/uiset/alert \
   superzero11/uiset/kbd superzero11/uiset/spinner superzero11/uiset/stepper \
-  superzero11/uiset/search-field superzero11/uiset/copy-button
+  superzero11/uiset/search-field superzero11/uiset/copy-button superzero11/uiset/table \
+  superzero11/uiset/avatar-group superzero11/uiset/code-block
 ```
 
 Each is its own item, so add only the ones you use. They share `shell/shell.css`, and the
@@ -40,6 +42,10 @@ ones with icons bring `shell/icons.tsx`.
 | `Stepper`                                             | `stepper`          | The steps of a flow, the current one marked, later ones locked |
 | `SearchField`                                         | `search-field`     | A search box with Clear and a key that focuses it from anywhere |
 | `CopyButton`                                          | `copy-button`      | Copies a value, then says Copied                               |
+| `Table` and its header, body, footer, rows, heads, cells and caption | `table` | A plain table that scrolls in its own region, keeps its headings and first column in view, and stacks on narrow screens |
+| `CountBadge`                                          | `badge`            | A count on the corner of an icon button or avatar              |
+| `AvatarGroup`                                         | `avatar-group`     | Avatars overlapping in a row, with a count of the rest         |
+| `CodeBlock`, `CodeTabs`, `PackageCommand`             | `code-block`       | Code in its language's colors with copy; tabs of versions; one command per package manager |
 
 ## Use
 
@@ -152,6 +158,86 @@ import { Icon } from "@/components/ui/shell/icons"
 - `CopyButton` takes `value`, `label` ("Copy") and `copiedLabel` ("Copied"). It writes
   `value` to the clipboard, announces `copiedLabel`, and shows it with a check for 1.6
   seconds. If the clipboard refuses, nothing changes on screen.
+- `CountBadge` wraps a button or an avatar and takes `count`, `max` (99: above it the
+  badge reads "99+"), `showZero` and `dot`, a dot with no number. It shows nothing at zero.
+  People see the number; screen readers and agents don't read it, so say the count in the
+  control's own name ("Notifications, 3 unread"). For something with no name to put it in,
+  pass `label` ("5 new messages"), which is read after it.
+- `AvatarGroup` takes `label`, which names the group, and avatars as children. `max` shows
+  that many and then "+2", read as "2 more"; `moreLabel` changes those words. `total` is
+  how many there are in all, when you render only the first few.
+
+### Table
+
+```tsx
+<Table label="Invoices" stack stickyHeader maxHeight="20rem">
+  <TableHeader>
+    <TableRow>
+      <TableHead>Invoice</TableHead>
+      <TableHead>Customer</TableHead>
+      <TableHead align="end">Amount</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    {invoices.map((invoice) => (
+      <TableRow key={invoice.id}>
+        <TableHead scope="row">{invoice.id}</TableHead>
+        <TableCell>{invoice.customer}</TableCell>
+        <TableCell align="end">{invoice.amount}</TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+</Table>
+```
+
+- `Table` is a real `<table>` inside a UI SDK scroll area. `label` is required and names
+  the scrolling region. The region is a tab stop only while something in it scrolls, so
+  keyboard users can scroll it and nobody tabs to a table that fits.
+- `stickyHeader` keeps the headings in view while the body scrolls; give the table a
+  `maxHeight`. `stickyColumn` keeps each row's first cell in view while the rest scrolls
+  sideways, and `minWidth` is the narrowest the table gets before it does.
+- With `stack`, below 30rem of its own width each row becomes a block, with every column's
+  heading beside its value. The headings are copied from the header row; a `TableCell`'s
+  `label` replaces one. The table keeps its roles there, so screen readers still read it
+  as a table.
+- `TableHead` is a column heading, or a row heading with `scope="row"`. It and `TableCell`
+  take `align` (`start`, `center` or `end`). `TableCaption` shows under the table.
+- Sticky cells paint `--table-background` (the page color) over the rows passing under
+  them. Set it on the table when it sits on another surface, like a card.
+- This is a table for reading. For sorting, filters, selection and editing, use the
+  [data grid](./data-grid.md).
+
+### Code
+
+```tsx
+<PackageCommand install="@uiset/web @ui-sdk/web" />
+
+<CodeBlock code={source} language="tsx" title="app.tsx" lineNumbers highlight={[4]} />
+
+<CodeTabs
+  label="Framework"
+  items={[
+    { value: "react", label: "React", language: "tsx", code: reactSource },
+    { value: "web", label: "Web Components", language: "html", code: htmlSource },
+  ]}
+/>
+```
+
+- `CodeBlock` takes `code`, `language` (a shiki language, like `tsx` or `bash`; leave it
+  out for plain text) and `title`, shown above the code with the Copy button. `lineNumbers`
+  numbers the lines and `highlight` marks some, counted from 1. Neither is part of the text
+  that's selected or copied. `wrap` wraps long lines, `maxHeight` makes tall code scroll,
+  and `copy={false}` leaves the button out.
+- Colors come from shiki, loaded the first time a block needs it; the code shows plain
+  until then. Each skin sets the colors, and they hold 4.5:1 in every one.
+- `CodeTabs` takes a `label` for its row of tabs and `items` (`{ value, label, code,
+  language }`), with `value` and `onValueChange` or `defaultValue`. Copy copies the tab
+  that shows.
+- `PackageCommand` takes `install` (packages to add, with `dev` for a dev dependency) or
+  `run` (a package's command), and writes it for npm, pnpm, yarn and bun. The tab someone
+  picks is picked in every `PackageCommand` on the page and saved in `localStorage` under
+  `uiset-package-manager`. `packageCommands()` returns the same four as `CodeTabs` items.
+- Code that runs wide scrolls inside its box, which is then a tab stop.
 
 ## Keys
 
@@ -161,14 +247,16 @@ import { Icon } from "@/components/ui/shell/icons"
 | "/" (the `shortcut`)     | anywhere     | Focus the search field, except while typing in another field |
 | Escape                   | drawer       | Close the navigation drawer                                |
 | Tab, Enter, Space        | stepper      | Each step is a button; locked steps are skipped            |
+| Left, Right, Home, End   | code tabs    | Move between the tabs, which shows that tab's code         |
+| Arrows, Page Up, Page Down | a table or code that scrolls | Scroll it, once focus is on it            |
 
 The sidebar toggle and the search field carry `aria-keyshortcuts` for their keys.
 
 ## For agents
 
 Most of these parts are plain HTML, so the bridge doesn't list them: Breadcrumbs,
-PageHeader, Card, Badge, Stat, EmptyState, Skeleton, Loading, DescriptionList, ItemList,
-Kbd and Spinner. The buttons, links and fields you put in them are listed, by their own
+PageHeader, Card, Badge, CountBadge, Stat, EmptyState, Skeleton, Loading, DescriptionList,
+ItemList, Kbd and Spinner. The buttons, links and fields you put in them are listed, by their own
 names. Inside an `Item`, a control carries the row's text ("Ada Lovelace ada@acme.dev
 Owner"), so when two rows each have a Remove button, the bridge's error lists both with
 their rows and the agent picks one by ref.
@@ -186,6 +274,12 @@ their rows and the agent picks one by ref.
   after a press.
 - **Alert:** Dismiss is a button named "Dismiss"; with two dismissible alerts on a page, a
   step needs the ref.
+- **Table:** listed as a scroll area named by `label`, with no actions. Its cells aren't
+  listed; buttons and links you put in them are, by their own names.
+- **AvatarGroup:** each avatar is listed by its name, and the count as "2 more".
+- **Code:** `CodeBlock`'s Copy is a button named "Copy" and its title ("Copy app.tsx").
+  `CodeTabs` is a tabs component named by `label`, with `setValue` and its tabs as items,
+  so `PackageCommand` is "Package manager" with npm, pnpm, yarn and bun.
 
 None of these parts asks for confirmation. Put `data-agent-confirm` on destructive
 actions you pass in, as on a Delete in a page header.
@@ -197,4 +291,5 @@ actions you pass in, as on a Delete in a page header.
 and `<uiset-stepper>` are in [React and the web](./web-components.md#react-and-the-web)
 (there, `shortcut=""` turns the key off), and `<uiset-stat>` is with
 [Charts](./web-components.md#charts). Badge, alert, card, item and description lists,
-breadcrumbs, skeleton, spinner and kbd are classes in `uiset.css`.
+breadcrumbs, skeleton, spinner and kbd are classes in `uiset.css`. Table, avatar group,
+count badge and code block don't have web versions yet.

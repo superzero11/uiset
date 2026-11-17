@@ -61,6 +61,7 @@ const asItems = (rows: unknown[], valueKey?: string) =>
     return { value: valueKey && valueKey in record ? String(record[valueKey]) : head || String(index), label }
   })
 
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const chartPoints = definePrimitive({
   name: "chart",
   options: {

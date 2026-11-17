@@ -14,7 +14,10 @@ npx shadcn@latest add superzero11/uiset/uiset
 - [Installation](./installation.md): Add UISet with the shadcn CLI, load each skin's fonts, or use the Web Components build.
 - [Quick start](./quick-start.md): A working settings screen in a few minutes.
 - [Building with AI agents](./ai.md): The skills and llms.txt for coding agents, and UI SDK's agent bridge for agents that use your app.
+- [Looking for a component?](./looking-for.md): Where the components people ask for most are in UISet: calendar, time picker, multi-select, dropzone, table and more.
 - [Web Components](./web-components.md): Every kit and template as custom elements, for plain HTML, Vue, Svelte and Solid.
+- [Vue](./vue.md): UISet in a Vue 3 app, through the Web Components build.
+- [Svelte](./svelte.md): UISet in a Svelte 5 app, through the Web Components build.
 - [Templates](./templates.md): Whole pages built only from UISet items.
 - [Theming](./theming.md): Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder.
 - [Coming from shadcn/ui](./migrate-from-shadcn.md): What maps to what, and how to move a shadcn/ui app over.
@@ -33,7 +36,7 @@ npx shadcn@latest add superzero11/uiset/uiset
 | `breadcrumbs` | Where you are, with the current page marked. | [App frame and data display](./app-shell.md) |
 | `page-header` | A page title with description and actions. | [App frame and data display](./app-shell.md) |
 | `card` | A bordered block with header, title, description, content and footer. | [App frame and data display](./app-shell.md) |
-| `badge` | A short status label in five tones, readable in every skin. | [App frame and data display](./app-shell.md) |
+| `badge` | A short status label in five tones, readable in every skin, and a count badge for the corner of an icon or avatar. | [App frame and data display](./app-shell.md) |
 | `stat` | A number with its change, said in words as well as color, and an optional trend sparkline. | [App frame and data display](./app-shell.md) |
 | `empty-state` | What to do when there's nothing here yet. | [App frame and data display](./app-shell.md) |
 | `skeleton` | Loading placeholders, and a Loading region that announces once. | [App frame and data display](./app-shell.md) |
@@ -45,6 +48,11 @@ npx shadcn@latest add superzero11/uiset/uiset
 | `stepper` | Steps of a flow with the current one marked and later ones locked. | [App frame and data display](./app-shell.md) |
 | `search-field` | A search box with a clear button and a key that focuses it from anywhere. | [App frame and data display](./app-shell.md) |
 | `copy-button` | Copies a value and says so. | [App frame and data display](./app-shell.md) |
+| `table` | A plain HTML table in a scroll area: sticky headings, a sticky first column, and rows that stack into labelled blocks on narrow screens. | [App frame and data display](./app-shell.md) |
+| `avatar-group` | Avatars stacked in a row, with a count of the ones that don't fit. | [App frame and data display](./app-shell.md) |
+| `code-block` | Code in its language's colors with a file name, line numbers, marked lines and a copy button; tabs for versions of the same code; and one command for npm, pnpm, yarn and bun that remembers the choice. | [App frame and data display](./app-shell.md) |
+| `inline-edit` | Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons. | [Forms](./forms.md) |
+| `upload` | A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use. | [Forms](./forms.md) |
 | `rich-text` | A rich text editor on UI SDK with no editor library: headings, nested and numbered lists, to-dos, quotes, code, links, mentions, dividers and images; a toolbar, Markdown as you type, "/" for blocks and "@" for people (TriggerMenu); safe paste from documents and the web; undo; Markdown and clean HTML out; agents read and write Markdown. | [Rich text](./rich-text.md) |
 | `chat` | A conversation built on UI SDK: thread that follows new messages, messages with avatars, actions and versions, suggestions, plans and a thinking shimmer. | [Chat](./chat.md) |
 | `chat-response` | Streaming markdown that repairs itself mid-stream and never renders raw HTML, with code blocks highlighted by skin colors. | [Chat](./chat.md) |

@@ -8,15 +8,15 @@ import "@ui-sdk/web/segmented-control"
 import { chartPoints, type ChartCommands, type ChartSelectChange, type ChartSelectDetails } from "@/registry/uiset/ui/chart/points"
 import type { ChartFrameData, ChartGeometry, ChartPlotContext, ChartPoint } from "@/registry/uiset/ui/chart/plot"
 import { seriesColor } from "@/registry/uiset/ui/chart/plot"
-import { barFrame, barHeight, barPlot } from "@/registry/uiset/ui/chart/plots/bar"
-import { heatmapFrame, heatmapHeight, heatmapPlot } from "@/registry/uiset/ui/chart/plots/heatmap"
-import { lineFrame, linePlot } from "@/registry/uiset/ui/chart/plots/line"
-import { scatterFrame, scatterPlot } from "@/registry/uiset/ui/chart/plots/scatter"
-import { segmentedBarFrame, segmentedBarHeight, segmentedBarPlot } from "@/registry/uiset/ui/chart/plots/segmented-bar"
+import { barFrame, barHeight, barPlot, type BarOptions } from "@/registry/uiset/ui/chart/plots/bar"
+import { heatmapFrame, heatmapHeight, heatmapPlot, type HeatmapOptions } from "@/registry/uiset/ui/chart/plots/heatmap"
+import { lineFrame, linePlot, type LineOptions } from "@/registry/uiset/ui/chart/plots/line"
+import { scatterFrame, scatterPlot, type ScatterOptions } from "@/registry/uiset/ui/chart/plots/scatter"
+import { segmentedBarFrame, segmentedBarHeight, segmentedBarPlot, type SegmentedBarOptions } from "@/registry/uiset/ui/chart/plots/segmented-bar"
 import { domName, type VChild } from "@/registry/uiset/ui/chart/vnode"
 import "@/registry/uiset/ui/chart/tokens.css"
 import "@/registry/uiset/ui/chart/chart.css"
-import { attr, h, place, uid, upgradeProperties } from "./dom"
+import { attr, defineElement, Evented, h, place, uid, upgradeProperties } from "./dom"
 
 const svgNS = "http://www.w3.org/2000/svg"
 
@@ -84,7 +84,10 @@ const frameAttributes = ["label", "description", "height"]
  * properties, and the rest as attributes or properties. `selected` is live; `select` fires
  * when a person or agent pins a position, and calling preventDefault() refuses the pin.
  */
-class UISetChart<Options extends object> extends HTMLElement {
+/** What every chart fires: `select` when a position is pinned, or let go (`value: null`). */
+type UISetChartEvents = { select: CustomEvent<{ value: string | null } & ChartSelectChange> }
+
+class UISetChart<Options extends object> extends Evented<UISetChartEvents>() {
   static kind: ChartKind<never>
   private options: Record<string, unknown> = {}
   private queued = false
@@ -513,7 +516,7 @@ function defineChart<Options extends object>(tag: string, kind: ChartKind<Option
       },
     })
   }
-  customElements.define(tag, Chart)
+  defineElement(tag, Chart)
   return Chart
 }
 
@@ -566,4 +569,23 @@ function defineCharts() {
   })
 }
 
+/**
+ * A chart element to TypeScript: its options as properties (null until set), and the title,
+ * description and height every chart takes.
+ */
+type ChartElement<Options extends object> = UISetChart<Options> & { [Name in keyof Options]?: Options[Name] | null } & {
+  label: string | null
+  description: string | null
+  height: number | null
+}
+// A datum is whatever the page's data holds: say what it is (`UISetLineChart<Month>`) to
+// have `x` and each series' `value` checked against it.
+type UISetLineChart<Datum = any> = ChartElement<LineOptions<Datum>>
+type UISetBarChart<Datum = any> = ChartElement<BarOptions<Datum>>
+/** `label` is the chart's title here, so the point-name accessor is `pointLabel`. */
+type UISetScatterChart<Datum = any> = ChartElement<Omit<ScatterOptions<Datum>, "label"> & { pointLabel: ScatterOptions<Datum>["label"] }>
+type UISetHeatmap<Datum = any> = ChartElement<HeatmapOptions<Datum>>
+type UISetSegmentedBar = ChartElement<SegmentedBarOptions>
+
 export { defineCharts, toDom, UISetChart }
+export type { UISetBarChart, UISetChartEvents, UISetHeatmap, UISetLineChart, UISetScatterChart, UISetSegmentedBar }

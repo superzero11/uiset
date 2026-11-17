@@ -1,18 +1,51 @@
 // Studio for Web Components: the knob and patch bay as UISet elements. Faders, level
 // meters and step sequencers are UI SDK's own slider, meter and toggle group with UISet's
 // classes (docs/web-components.md has the markup), as the React versions are.
-import { createParts, wrappedButton } from "@ui-sdk/web"
-import { knob } from "@/registry/uiset/ui/studio/knob"
-import { patchBay, type Cable } from "@/registry/uiset/ui/studio/patch-bay"
+import type { CommitDetails } from "@ui-sdk/core"
+import { createParts, wrappedButton, type UiChangeEvent, type UiDetailedChangeEvent, type UiElement } from "@ui-sdk/web"
+import { knob, type KnobOptions, type KnobReason } from "@/registry/uiset/ui/studio/knob"
+import { patchBay, type Cable, type PatchReason } from "@/registry/uiset/ui/studio/patch-bay"
 import { cablePath, localPoint } from "@/registry/uiset/ui/studio/cables"
+import { holdRender, reportPartInput } from "./dom"
 import "@/registry/uiset/ui/studio/knob.css"
 import "@/registry/uiset/ui/studio/patch-bay.css"
 import "@/registry/uiset/ui/studio/instruments.css"
 
 const svgNS = "http://www.w3.org/2000/svg"
 
+/**
+ * <uiset-knob> to TypeScript: the knob's options as properties. `value` is what you set; left
+ * alone the knob keeps its own, which `valuechange` reports.
+ */
+/** What `<uiset-knob>` fires: `valuechange` as it turns, `valuecommit` when it's let go. */
+type UISetKnobEvents = {
+  valuechange: UiChangeEvent<number, KnobReason>
+  valuecommit: UiDetailedChangeEvent<number, CommitDetails<KnobReason>>
+}
+
+type KnobElement = UiElement<UISetKnobEvents> & Omit<KnobOptions, "onValueChange" | "onValueCommit">
+
+/** <uiset-patch-bay> to TypeScript: its cables as `value`, and plugging from code. */
+/** What `<uiset-patch-bay>` fires: `valuechange` with every cable, when a person or agent patches. */
+type UISetPatchBayEvents = { valuechange: UiChangeEvent<Cable[], PatchReason> }
+
+type PatchBayElement = UiElement<UISetPatchBayEvents> & {
+  /** The cables. Setting it fires no event. */
+  value: Cable[]
+  /** Port names for agents and descriptions; from the jacks' `aria-label`s unless you set it. */
+  labels?: Record<string, string>
+  /** Plug and unplug by port value or by name. Each throws, saying why, when it can't. */
+  api?: { plug: (from: string, to: string) => boolean; unplug: (from: string, to: string) => boolean; clear: () => boolean }
+}
+
 function defineStudio() {
-  createParts(knob, { root: "uiset-knob", indicator: "uiset-knob-indicator", value: "uiset-knob-value" })
+  createParts(knob, {
+    // Its `value` stays live, as a slider's does: a turn moves it unless refused. v-model:
+    // `input` as it turns, `change` when it's let go.
+    root: { tag: "uiset-knob", render: (el) => reportPartInput(el, "valuechange", "valuecommit", { follow: true }) },
+    indicator: "uiset-knob-indicator",
+    value: "uiset-knob-value",
+  })
   // The readout follows the knob's spoken value, so it needs no script of yours.
   customElements.whenDefined("uiset-knob").then(() => {
     const follow = (value: Element) => {
@@ -43,11 +76,13 @@ function defineStudio() {
       },
       api: ["plug", "unplug", "clear"],
       // The cables are drawn here, from the bay's state: the cables and the one being drawn.
-      render: (el, instance) => {
+      render: holdRender((el, instance) => {
         const stopNames = nameJacks(el)
         const stopCables = drawCables(el, instance as unknown as PatchInstance)
+        // v-model: `input` and `change` once a cable is in or out.
+        reportPartInput(el, "valuechange")
         return () => (stopNames(), stopCables())
-      },
+      }),
     },
     jack: { tag: "uiset-patch-bay-jack", target: wrappedButton, display: "contents" },
   })
@@ -140,3 +175,4 @@ function drawCables(el: HTMLElement, instance: PatchInstance) {
 }
 
 export { defineStudio }
+export type { Cable, KnobElement, PatchBayElement, UISetKnobEvents, UISetPatchBayEvents }

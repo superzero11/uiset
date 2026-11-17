@@ -400,6 +400,73 @@
     }
   }
 
+  .count-badge {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+  }
+
+  /* The solid button's colors: every skin already holds 4.5:1 between them. */
+  .count-badge-count {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    translate: 40% -40%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 1.125rem;
+    height: 1.125rem;
+    padding-inline: 0.3125rem;
+    border-radius: min(999px, calc(var(--ui-radius) * 999));
+    background: var(--uiset-solid-bg);
+    color: var(--uiset-solid-fg);
+    box-shadow: 0 0 0 2px var(--ui-background);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+
+    &:dir(rtl) {
+      translate: -40% -40%;
+    }
+
+    &[data-dot] {
+      min-width: 0.625rem;
+      width: 0.625rem;
+      height: 0.625rem;
+      padding: 0;
+      translate: 20% -20%;
+
+      &:dir(rtl) {
+        translate: -20% -20%;
+      }
+    }
+  }
+
+  /* Each avatar overlaps the one before it, with a ring of the page color between them. */
+  .avatar-group {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+
+    & > * {
+      box-shadow: 0 0 0 2px var(--ui-background);
+    }
+
+    /* A small overlap: more would cover the next avatar's initials. */
+    & > * + * {
+      margin-inline-start: calc(var(--ui-spacing) * -1);
+    }
+  }
+
+  .avatar-group-more {
+    font-variant-numeric: tabular-nums;
+  }
+
   /* Content sits at the top, so figures in a row line up whether or not one has a trend. */
   .stat {
     display: grid;
@@ -832,6 +899,17 @@
     .alert,
     .kbd {
       border-color: CanvasText;
+    }
+
+    /* Shadows don't draw here, so the rings become real edges. */
+    .avatar-group > *,
+    .count-badge-count {
+      outline: 1px solid CanvasText;
+    }
+
+    .count-badge-count {
+      background: Canvas;
+      color: CanvasText;
     }
 
     .sidebar-link[aria-current="page"] {

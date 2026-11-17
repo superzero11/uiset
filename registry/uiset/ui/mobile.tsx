@@ -28,6 +28,7 @@ import { Listbox, ListboxItem } from "./listbox"
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "./menu"
 import { Icon, type IconName } from "./shell/icons"
 import { swipeList, type SwipeSide } from "./mobile/swipe-list"
+import { keepWheelOnValue } from "./mobile/wheel"
 import "./shell/shell.css"
 import "./mobile/mobile.css"
 
@@ -251,7 +252,14 @@ function WheelPicker({
     if (option && option.value !== value) onValueChange(option.value)
   })
   // The picker puts the value in the band before the first paint, and glides to a new one.
-  useLayoutEffect(() => bindScrollPicker(list.current!, { onSelect: (index) => select(index) }), [])
+  useLayoutEffect(() => {
+    const stop = bindScrollPicker(list.current!, { onSelect: (index) => select(index) })
+    const keep = keepWheelOnValue(list.current!)
+    return () => {
+      stop()
+      keep()
+    }
+  }, [])
   // Focus in the wheel stays on its value. A value set from elsewhere (a parent, an agent)
   // would otherwise leave focus on the old option, and anything that reveals the focused
   // element, like a sheet settling, would scroll the wheel back and choose it again.

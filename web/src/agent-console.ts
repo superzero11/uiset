@@ -12,7 +12,7 @@ import { describeEntry, type createHistory } from "@ui-sdk/web/history"
 import type { createApprovals } from "@/registry/uiset/ui/agent/approvals"
 import { highlightElement } from "@/registry/uiset/ui/agent/highlight"
 import "@/registry/uiset/ui/agent/console.css"
-import { h, uid, upgradeProperties } from "./dom"
+import { attr, defineElement, ElementBase, h, uid, upgradeProperties } from "./dom"
 
 type History = ReturnType<typeof createHistory>
 type Approvals = ReturnType<typeof createApprovals>
@@ -27,7 +27,7 @@ const button = (text: string, attrs: Record<string, unknown>, run: () => void) =
  * agent's status (idle, working, or waiting for you) and your content under it. It's
  * hidden from agents, so they never act on their own console.
  */
-class UISetAgentConsole extends HTMLElement {
+class UISetAgentConsole extends ElementBase {
   static observedAttributes = ["title", "status"]
   #header?: { title: HTMLElement; status: HTMLElement }
 
@@ -64,7 +64,7 @@ class UISetAgentConsole extends HTMLElement {
 }
 
 /** <uiset-agent-step status="running">Rename the project</uiset-agent-step>: one step, with its state in words. */
-class UISetAgentStep extends HTMLElement {
+class UISetAgentStep extends ElementBase {
   static observedAttributes = ["status"]
   #parts?: { text: HTMLElement; status: HTMLElement }
 
@@ -92,7 +92,7 @@ class UISetAgentStep extends HTMLElement {
  * words, Allow and Don't allow. Agents usually ask after opening a modal, whose backdrop
  * covers the page; the cards go to the top layer above it, and stay usable while it's open.
  */
-class UISetAgentApprovals extends HTMLElement {
+class UISetAgentApprovals extends ElementBase {
   #approvals?: Approvals
   #stop?: () => void
   #parts?: { live: HTMLElement; waiting: HTMLElement; layer: HTMLElement }
@@ -174,7 +174,7 @@ class UISetAgentApprovals extends HTMLElement {
  * recorded for an agent, newest first: Show highlights the control, and Undo agent changes
  * puts back what the agent changed, leaving what people changed.
  */
-class UISetAgentActivity extends HTMLElement {
+class UISetAgentActivity extends ElementBase {
   static observedAttributes = ["source"]
   #history?: History
   #stop?: () => void
@@ -199,8 +199,12 @@ class UISetAgentActivity extends HTMLElement {
     this.render()
   }
 
-  private get source() {
+  /** Whose changes this lists. An attribute and a property. */
+  get source(): string {
     return this.getAttribute("source") ?? "agent"
+  }
+  set source(value: string | null) {
+    attr(this, "source", value)
   }
 
   private async undo() {
@@ -239,7 +243,7 @@ class UISetAgentActivity extends HTMLElement {
 }
 
 /** <uiset-agent-snapshot within="#settings"> is a table of what `agent` can see: each control, its kind, state and actions. */
-class UISetAgentSnapshot extends HTMLElement {
+class UISetAgentSnapshot extends ElementBase {
   static observedAttributes = ["within"]
   #agent?: Agent
   #stop?: () => void
@@ -298,11 +302,12 @@ class UISetAgentSnapshot extends HTMLElement {
 }
 
 function defineAgentConsole() {
-  customElements.define("uiset-agent-console", UISetAgentConsole)
-  customElements.define("uiset-agent-step", UISetAgentStep)
-  customElements.define("uiset-agent-approvals", UISetAgentApprovals)
-  customElements.define("uiset-agent-activity", UISetAgentActivity)
-  customElements.define("uiset-agent-snapshot", UISetAgentSnapshot)
+  defineElement("uiset-agent-console", UISetAgentConsole)
+  defineElement("uiset-agent-step", UISetAgentStep)
+  defineElement("uiset-agent-approvals", UISetAgentApprovals)
+  defineElement("uiset-agent-activity", UISetAgentActivity)
+  defineElement("uiset-agent-snapshot", UISetAgentSnapshot)
 }
 
 export { defineAgentConsole }
+export { UISetAgentConsole, UISetAgentStep, UISetAgentApprovals, UISetAgentActivity, UISetAgentSnapshot }

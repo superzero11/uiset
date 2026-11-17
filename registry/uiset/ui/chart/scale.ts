@@ -125,7 +125,7 @@ type ChartValue = number | null | undefined
  * A value formatter: yours, or plain numbers in `locale`. Pass a locale when rendering on
  * a server, so server and browser print the same digits.
  */
-function numberFormat(locale?: string, format?: (value: number) => string) {
+function numberFormat(locale?: string, format?: (value: number) => string): (value: number) => string {
   return format ?? new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format
 }
 

@@ -60,6 +60,17 @@ for (const scheme of ["light", "dark"] as const) {
       .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
       .analyze()
     expect(editing.violations.map((v) => `${v.id}: ${v.nodes.length} node(s)`)).toEqual([])
+
+    // And with a list column's options open.
+    await page.keyboard.press("Escape")
+    await moveTo(page, 2, 5)
+    await page.keyboard.press("Enter")
+    await expect(grid(page).getByRole("option").first()).toBeVisible()
+    const choosing = await new AxeBuilder({ page })
+      .include("#data")
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+      .analyze()
+    expect(choosing.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(" | ")}`)).toEqual([])
   })
 }
 
@@ -121,20 +132,153 @@ test("Enter edits a cell, bad numbers stay open with a message, Escape cancels",
   await expect(cellAt(page, 2, 6)).toHaveText("$1,234.50")
 })
 
-test("typing on a cell starts a replacement, and a list column refuses other values", async ({
+test("typing on a list cell starts a replacement: the list narrows, and only an option can be saved", async ({
   page,
 }) => {
   await moveTo(page, 2, 4)
+  const before = (await cellAt(page, 2, 4).textContent())!
   await page.keyboard.type("Mars")
-  // A column with options suggests them, so its editor is a combobox.
+  // A column with options is edited in a combobox, whose list is the skin's own.
   const editor = grid(page).getByRole("combobox", { name: "Region" })
   await expect(editor).toHaveValue("Mars")
+  await expect(grid(page).getByText("No match")).toBeVisible()
+  await expect(grid(page).getByRole("option")).toHaveCount(0)
+  // Nothing matches, so Enter has nothing to save: the editor stays, and the cell is as it was.
   await page.keyboard.press("Enter")
-  await expect(editor).toHaveAttribute("aria-invalid", "true")
+  await expect(editor).toBeFocused()
   await page.keyboard.press("ControlOrMeta+A")
-  await page.keyboard.type("europe")
+  await page.keyboard.type("eur")
+  await expect(grid(page).getByRole("option")).toHaveText(["Europe"])
+  await expect(grid(page).locator('[role="option"][data-highlighted]')).toHaveText("Europe")
   await page.keyboard.press("Enter")
   await expect(cellAt(page, 2, 4)).toHaveText("Europe")
+  await expect.poll(() => active(page)).toMatchObject({ row: 2, col: 4, tag: "DIV" })
+  expect(before).toBeTruthy()
+
+  // A letter on the cell opens the list already narrowed by it.
+  await page.keyboard.type("a")
+  await expect(editor).toHaveValue("a")
+  for (const text of await grid(page).getByRole("option").allTextContents()) expect(text.toLowerCase()).toContain("a")
+  await page.keyboard.press("Escape")
+  await expect(cellAt(page, 2, 4)).toHaveText("Europe")
+})
+
+test("a list column is edited from the skin's own list: arrows, Enter, Escape, Tab and a press", async ({ page }) => {
+  await moveTo(page, 2, 5)
+  const cell = cellAt(page, 2, 5)
+  const before = (await cell.textContent())!
+  const box = (await cell.boundingBox())!
+  await page.keyboard.press("Enter")
+  const editor = grid(page).getByRole("combobox", { name: "Status" })
+  await expect(editor).toBeFocused()
+  await expect(editor).toHaveValue(before)
+  // The old value is selected, so typing replaces it.
+  expect(await editor.evaluate((el: HTMLInputElement) => el.selectionEnd! - el.selectionStart!)).toBe(before.length)
+  const options = grid(page).getByRole("option")
+  await expect(options.first()).toBeVisible()
+  expect(await options.count()).toBeGreaterThan(1)
+  const highlighted = grid(page).locator('[role="option"][data-highlighted]')
+  // The current value is selected and highlighted, so the arrows move from it.
+  await expect(grid(page).getByRole("option", { name: before, exact: true })).toHaveAttribute("aria-selected", "true")
+  await expect(highlighted).toHaveText(before)
+  // The list belongs to its cell: it starts at the cell's edge, just under it, at least as wide.
+  // (Polled: the popup takes its cell's width as it is placed, a frame after it shows.)
+  const placed = () => grid(page).locator(".data-grid-options").boundingBox()
+  await expect.poll(async () => (await placed())!.width).toBeGreaterThanOrEqual(box.width - 1)
+  const list = (await placed())!
+  expect(Math.abs(list.x - box.x)).toBeLessThanOrEqual(1)
+  expect(list.y - (box.y + box.height)).toBeGreaterThanOrEqual(0)
+  expect(list.y - (box.y + box.height)).toBeLessThanOrEqual(6)
+  // And it is the skin's popup, in the page, not the browser's own list.
+  expect(await grid(page).locator(".data-grid-options").evaluate((el) => getComputedStyle(el).borderTopWidth)).not.toBe("0px")
+  await expect(editor).not.toHaveAttribute("list")
+
+  // Escape saves nothing and gives the cell its focus back.
+  await page.keyboard.press("ArrowDown")
+  await page.keyboard.press("Escape")
+  await expect(editor).toBeHidden()
+  await expect(cell).toHaveText(before)
+  await expect.poll(() => active(page)).toMatchObject({ row: 2, col: 5, tag: expect.not.stringMatching("INPUT") })
+
+  // An arrow and Enter saves the highlighted option.
+  await page.keyboard.press("Enter")
+  await page.keyboard.press("ArrowDown")
+  const second = (await highlighted.textContent())!
+  expect(second).not.toBe(before)
+  await page.keyboard.press("Enter")
+  await expect(cell).toHaveText(second)
+  await expect.poll(() => active(page)).toMatchObject({ row: 2, col: 5, tag: expect.not.stringMatching("INPUT") })
+
+  // Tab saves it too, and focus stays with the cell.
+  await page.keyboard.press("F2")
+  await page.keyboard.press("ArrowDown")
+  const third = (await highlighted.textContent())!
+  await page.keyboard.press("Tab")
+  await expect(cell).toHaveText(third)
+  await expect.poll(() => active(page)).toMatchObject({ row: 2, col: 5 })
+
+  // A press on an option saves it.
+  await page.keyboard.press("Enter")
+  await grid(page).getByRole("option", { name: before, exact: true }).click()
+  await expect(cell).toHaveText(before)
+  await expect(editor).toBeHidden()
+
+  // A press somewhere else saves nothing, and focus goes where the press was.
+  await moveTo(page, 2, 5)
+  await page.keyboard.press("Enter")
+  await page.keyboard.press("ArrowDown")
+  await cellAt(page, 4, 3).click()
+  await expect(editor).toBeHidden()
+  await expect(cell).toHaveText(before)
+  await expect.poll(() => active(page)).toMatchObject({ row: 4, col: 3 })
+})
+
+// What an open editor draws: where its focus ring ends, whether it covers its cell exactly,
+// and whether the skin's chevron shows.
+const drawn = (page: Page) =>
+  grid(page)
+    .locator(".data-grid-editor")
+    .evaluate((el) => {
+      const cell = el.closest<HTMLElement>(".data-grid-cell")!
+      const style = getComputedStyle(el)
+      const a = el.getBoundingClientRect()
+      const b = cell.getBoundingClientRect()
+      const chevron = getComputedStyle(cell, "::before")
+      return {
+        // How far the ring reaches past the editor's own box. Past it is over the next cells.
+        ringOutside: parseFloat(style.outlineOffset) + parseFloat(style.outlineWidth),
+        ring: parseFloat(style.outlineWidth),
+        fills: Math.abs(a.left - b.left) < 0.5 && Math.abs(a.top - b.top) < 0.5 && Math.abs(a.width - b.width) < 0.5,
+        // Bottom edge: the row's line belongs to the cell, so the editor may cover that one pixel.
+        below: a.bottom - b.bottom,
+        chevron: chevron.content !== "none" && chevron.maskImage !== "none",
+        chevronMiddle: chevron.content === "none" ? null : Math.abs(parseFloat(chevron.top) - parseFloat(chevron.bottom)),
+        room: parseFloat(style.paddingInlineEnd),
+      }
+    })
+
+test("an editor's ring stays inside its cell, and a list editor shows the skin's chevron", async ({ page }) => {
+  // 6 Amount is a plain editor; 4 Region has a list of options.
+  for (const [col, list] of [
+    [6, false],
+    [4, true],
+  ] as const) {
+    await moveTo(page, 2, col)
+    await page.keyboard.press("Enter")
+    await expect(grid(page).locator(".data-grid-editor")).toBeFocused()
+    const editor = await drawn(page)
+    expect(editor.ring, `column ${col}`).toBeGreaterThanOrEqual(2)
+    expect(editor.ringOutside, `column ${col}`).toBeLessThanOrEqual(0)
+    expect(editor.fills, `column ${col}`).toBe(true)
+    expect(editor.below, `column ${col}`).toBeLessThanOrEqual(1)
+    expect(editor.chevron, `column ${col}`).toBe(list)
+    if (list) {
+      // Centered in the cell's height, with room kept for it beside the text.
+      expect(editor.chevronMiddle).toBeLessThan(1)
+      expect(editor.room).toBeGreaterThanOrEqual(26)
+    }
+    await page.keyboard.press("Escape")
+  }
 })
 
 test("Space flips a yes-or-no cell and checks a row", async ({ page }) => {

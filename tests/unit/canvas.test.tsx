@@ -2,7 +2,7 @@ import { act, fireEvent, render, renderHook, screen } from "@testing-library/rea
 import { createAgent } from "@ui-sdk/react/agent"
 import { useState } from "react"
 import { expect, test, vi } from "vitest"
-import { Canvas, useCanvasHistory, type CanvasEdge, type CanvasNode } from "@/registry/uiset/ui/canvas"
+import { Canvas, createCanvasController, useCanvasHistory, type CanvasEdge, type CanvasNode } from "@/registry/uiset/ui/canvas"
 import { boundsOf, nodeHeight, nodeRect, parsePort, portKey, portPoint, wireMiddle, wirePath } from "@/registry/uiset/ui/canvas/geometry"
 
 const shape = { inputs: [{ id: "in", label: "In" }], outputs: [{ id: "out", label: "Out" }] }
@@ -137,6 +137,34 @@ test("agents add a node of a known kind, at a point", async () => {
   result = await agentRun("addNode", "Step", "Fetch", 40, 300)
   expect(result.ok, result.error?.message).toBe(true)
   expect(screen.getByRole("option", { name: "Fetch Step" }).style.left).toBe("40px")
+})
+
+test("an added node is on the canvas before the call that added it returns", async () => {
+  const controller = createCanvasController()
+  function Flow() {
+    const [all, setAll] = useState(nodes)
+    return (
+      <Canvas
+        label="Flow"
+        nodes={all}
+        onNodesChange={setAll}
+        kinds={[{ id: "step", label: "Step" }]}
+        onAddNode={(kind, at, title) => ({ id: "n", kind, title: title ?? "New step", ...at, ...shape })}
+        controller={controller}
+        minimap={false}
+      />
+    )
+  }
+  render(<Flow />)
+  await tick()
+  // An agent's next step, or code after the call, can use the node by name at once: a render
+  // left for later lost that race in Firefox ("No node …").
+  let there = false
+  act(() => {
+    controller.addNode("step", "Fetch")
+    there = !!screen.queryByRole("option", { name: "Fetch Step" })
+  })
+  expect(there).toBe(true)
 })
 
 test("history: removing a node takes its wires, and one undo brings both back", () => {

@@ -463,6 +463,56 @@
     }
   }
 
+  /* The skin's focus ring sits outside a control, and a text field's just inside its edge.
+     Outside a cell is over its neighbours, so the editor keeps its own ring while it has
+     focus too. */
+  .data-grid-cell[data-editing] .data-grid-editor:focus-visible {
+    border: 0;
+    outline: 2px solid var(--ui-ring-border);
+    outline-offset: -2px;
+
+    &[aria-invalid] {
+      outline-color: var(--tone-danger, var(--ui-destructive));
+    }
+  }
+
+  /* An editor with a list to choose from shows the skin's chevron at its end. */
+  .data-grid-editor[role="combobox"] {
+    padding-inline-end: 1.875rem;
+  }
+
+  .data-grid-cell[data-editing]:has(.data-grid-editor[role="combobox"])::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0.625rem;
+    z-index: 1;
+    inline-size: 1rem;
+    block-size: 1rem;
+    margin-block: auto;
+    background: var(--ui-muted-foreground);
+    mask: var(--ui-icon-chevron) center / contain no-repeat;
+    pointer-events: none;
+  }
+
+  /* The list of options: the skin's own popup, at least as wide as its cell. The cell takes
+     no pointer while it is edited, so the list asks for it back. */
+  .data-grid-options {
+    min-inline-size: max(var(--anchor-width), 8rem);
+    max-block-size: min(var(--available-height), 18rem);
+    overflow-y: auto;
+    line-height: var(--ui-line-height, 1.5);
+    white-space: normal;
+    text-align: start;
+    pointer-events: auto;
+    cursor: default;
+  }
+
+  /* On the web the editor is an element of its own: no box, so the field still fills the cell. */
+  .data-grid-option-editor {
+    display: contents;
+  }
+
   .data-grid-error {
     position: absolute;
     inset-inline-start: 0;

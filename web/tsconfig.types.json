@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": false,
+    "rootDir": "..",
+    "outDir": "dist/types",
+    "stripInternal": true
+  },
+  "include": [
+    "src/uiset.ts"
+  ]
+}

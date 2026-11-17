@@ -8,13 +8,117 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add superzero11/uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
-## 0.1.2 (unreleased)
+## 0.2.0 (2026-11-17)
+
+On UI SDK `0.1.0-beta.5`. A minor release: two things work differently, each under
+**Changed** with what to do.
+
+### Added
+
+Five items, from what people ask shadcn/ui and UI SDK for most, in React and as Web
+Components.
+
+- **`table`**: a plain HTML table in a UI SDK scroll area. Sticky headings, a sticky first
+  column, and rows that stack into labelled blocks below 30rem of the table's own width.
+- **`avatar-group`**, and **`CountBadge`** in `badge`: avatars overlapping in a row with a
+  count of the rest, and a count on the corner of an icon button or avatar.
+- **`code-block`**: `CodeBlock` (colors, file name, line numbers, marked lines, copy),
+  `CodeTabs`, and `PackageCommand`, one command for npm, pnpm, yarn and bun that remembers
+  the choice.
+- **`inline-edit`**: text you edit where it shows, on UI SDK's `createInlineEdit`, with
+  validation and optional Save and Cancel buttons.
+- **`upload`**: a drop zone and a queue of uploads on UI SDK's File input: previews,
+  progress, cancel, retry and remove, a few at a time, to whatever storage you use.
+- **Docs**: [Looking for a component?](./docs/looking-for.md) maps the most-requested
+  components to UISet items, and [Forms](./docs/forms.md) covers inline edit and upload.
+- **Guides for [Vue](./docs/vue.md) and [Svelte](./docs/svelte.md)**: setup, passing data,
+  events, two-way binding, skins, server rendering, and UI SDK's own Vue and Svelte
+  components under UISet's stylesheet. Every code block ran in a new app of each.
+- Two icons, `upload` and `retry`.
+- **The same five for Web Components**: `<uiset-table>`, `<uiset-avatar-group>`,
+  `<uiset-count-badge>`, `<uiset-code-block>` with `<uiset-code-tabs>` and
+  `<uiset-package-command>`, `<uiset-inline-edit>` and `<uiset-upload>`, sharing React's CSS,
+  the inline edit primitive, the upload queue and the package-manager choice. See
+  [Web Components](./docs/web-components.md#content-and-forms).
+- **`@uiset/web` ships TypeScript types.** `document.querySelector("uiset-data-grid")` and
+  `createElement` know each element by its tag, and the types are exported by name
+  (`UISetDataGrid<Row>`, `UISetBoard`, `UISetLineChart<Datum>`, …): every element a page
+  works with, including the kits' script APIs. The grid and the charts take your row type.
+- **`@uiset/web` events are typed.** `addEventListener` on an element knows its own events
+  (`grid.addEventListener("celledit", (e) => e.detail.row)`), and each element's events are
+  exported as a map for a template's listener: `UISetKnobEvents["valuechange"]`,
+  `UISetDataGridEvents<Order>["celledit"]`.
+- **`v-model` on every `@uiset/web` element with a value.** The stepper, knob, patch bay,
+  wheel, rich text, code editor, chat composer, chat threads, model picker, file tree and
+  editor tabs now have a live `value` and fire `input` once a change is in (and `change` for
+  a finished choice), as the search field already did. Vue's server compiler doesn't allow
+  `v-model` on custom elements; the guides show the value-and-event pair for that case.
+- **Server-rendered HTML hydrates cleanly.** Under an ancestor with `data-uiset-hydrating`,
+  `@uiset/web`'s elements are defined but wait to draw until the attribute is removed, so
+  Vue and Svelte hydrate the HTML they rendered and set your data as properties. Remove the
+  attribute once hydration is done. Before this, the app shell's layout broke Vue's
+  hydration of the whole page, and loading the module after hydration left the grid and
+  stepper empty. The [Vue](./docs/vue.md#server-rendering) and
+  [Svelte](./docs/svelte.md#server-rendering) guides have the recipe.
+
+### Changed
+
+- **Data grid: a column's `options` open in the skin's own list.** The editor for a column
+  with `options` was a text field with the browser's list, which no skin can style. It is
+  now UI SDK's Combobox in the cell: the list opens under the cell, typing narrows it, the
+  arrows move through it, and Enter, Tab or a press saves the highlighted option. Text
+  that matches no option can no longer be typed in and refused; the list says "No match".
+  Pasted and agent edits are still checked against the list. The `data-grid` item now
+  depends on `combobox`: add it again to take the change. React and `@uiset/web`.
+- **`<uiset-knob>`'s `value` stays live.** Once a page set `value`, the knob held it: a
+  person's turn fired `valuechange` but didn't move the knob until the page set `value`
+  again. Now a turn moves it, as a slider's does, and `preventDefault()` on `valuechange`
+  refuses it. A page that set `value` on every `valuechange` needs no change.
 
 ### Fixed
 
+`@uiset/web`, from writing the Vue and Svelte guides against real apps:
+
+- **Bound attributes reach the element.** An attribute that shared its name with a
+  read-only member or a method (the grid's `label`, `locale`, `selectable` and `editable`,
+  the search field's `label` and `shortcut`, the editor's `label`, the activity's `source`)
+  couldn't be set from a Vue template, which sets a property when it finds one. Each is now
+  a property that writes its attribute.
+- **`"false"` turns a presence attribute off.** Vue and Svelte write `toolbar="false"` for a
+  false binding, and the toolbar stayed. `"false"` is now off everywhere: the grid's
+  `toolbar`, `selectable` and `editable`, the chat's flags, the editor's `readonly`, the
+  canvas's `history` and `renamable`, and the root's `sound` and `haptics`.
+- **A sparkline's `values` and a stat's `trend` take the attribute's text as a property**
+  (`"4,6,,8"`), as well as an array.
+- **The search field's Clear fires `input`**, so `v-model` and other two-way bindings follow
+  it. `valuechange` still fires once.
+- **The app shell places children added after it mounts**, by the same `data-part` rules.
+- **`uiset.css` no longer carries the demo pages' rules.** It set a font, a margin and a
+  minimum height on `body` and loaded a web font. The stylesheet now reaches only UISet's
+  root and what's inside it.
+- **`<uiset-copy-button>` says when copying fails.** A refused clipboard failed silently; it
+  now announces "Couldn't copy", as React's does. It also takes `full-label`, a fuller name
+  like "Copy app.tsx" where several share a page.
+- **The module can be imported where there's no browser.** Importing `@uiset/web` in Node
+  threw `HTMLElement is not defined`, so server-rendered apps had to guard the import.
+
+React and both:
+
+- **Data grid: the editor's ring stays inside its cell.** While a cell was being edited its
+  focus ring was drawn four pixels outside it, over the pinned column's edge and the rows
+  above and below. React and `@uiset/web`.
+- **Canvas: a node an agent adds can be used at once.** `addNode` returned before React had
+  drawn the node, so an agent's next step ("connect Draft answer to Log") could fail with
+  "No node". Seen in Firefox. The node is now rendered before the call returns.
 - **Patch bay inside a scaled container.** Cables are now measured in the patch bay's own
   pixels, so they stay on their jacks, and a cable being dragged stays under the pointer, when
   something above it scales it (a zoomed canvas, a CSS transform). React and `@uiset/web`.
+- **Mobile: a wheel keeps a value set while its sheet is still opening.** In WebKit, an
+  agent's `setValue` on a wheel in a sheet that had just opened was sometimes lost: the
+  wheel stayed on the old option, and the sheet coming to rest then scrolled it to a third
+  one. UI SDK's scroll picker skips a selection that arrives while a scroll is settling; the
+  wheel now puts its value back in the band when that happens (`mobile/wheel.ts`). React
+  and `@uiset/web`.
 
 ## 0.1.1 (2026-11-16)
 

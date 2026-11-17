@@ -47,6 +47,7 @@ function textOf(value: number, format: KnobFormat, locale: string | undefined) {
   return formatNumber(value, locale ?? "en-US", format ?? { maximumFractionDigits: 2 })
 }
 
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const knob = definePrimitive({
   name: "knob",
   options: {

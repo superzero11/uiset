@@ -57,6 +57,7 @@ const createTerminalController = () => createController<TerminalControllerApi>()
 type TerminalController = ReturnType<typeof createTerminalController>
 
 // Agents run commands and read output through the same paths as the person.
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const terminalPrimitive = definePrimitive({
   name: "terminal",
   options: {

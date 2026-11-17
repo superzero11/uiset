@@ -5,11 +5,11 @@ const facts = {
   /** UI SDK's own components, each a UISet item. */
   sdkComponents: 55,
   /** UISet's app frame and data display parts (app shell, page header, badge, stat…). */
-  appParts: 16,
+  appParts: 21,
   kits: ["Chat", "Rich text", "Data grid", "Charts", "Board", "Scheduler", "Canvas", "IDE", "Mobile", "Terminal", "Studio", "Agent Console"],
   templates: 10,
   skins: 5,
-  registryItems: 108,
+  registryItems: 113,
 } as const
 
 export { facts }

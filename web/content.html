@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600&family=Saira+Semi+Condensed:wght@400;500;600&family=Instrument+Sans:wdth,wght@75..100,400..700&family=Spline+Sans+Mono:wght@400;500;600&family=Literata:opsz,wght@7..72,400..700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+    <link rel="stylesheet" href="/src/demo.css" />
+    <title>UISet content and forms, no React</title>
+    <script type="module">
+      import "@ui-sdk/web/button"
+      import "./src/uiset.ts"
+      import "./src/content-demo.ts"
+    </script>
+  </head>
+  <body>
+    <uiset-root skin="base" id="root">
+      <main class="web-content-page">
+        <h1>Content and forms</h1>
+
+        <section aria-labelledby="table-heading">
+          <h2 id="table-heading">Table</h2>
+          <uiset-table id="invoices" label="Invoices" stack sticky-header sticky-column max-height="16rem">
+            <table>
+              <caption>Invoices this quarter</caption>
+              <thead>
+                <tr><th>Invoice</th><th>Customer</th><th>Status</th><th data-align="end">Amount</th></tr>
+              </thead>
+              <tbody></tbody>
+              <tfoot>
+                <tr><th scope="row" colspan="3">Total</th><td data-align="end" data-label="Total">$12,450.00</td></tr>
+              </tfoot>
+            </table>
+          </uiset-table>
+        </section>
+
+        <section aria-labelledby="people-heading">
+          <h2 id="people-heading">Avatars and counts</h2>
+          <div class="web-content-row">
+          <uiset-avatar-group id="reviewers" label="Reviewers" max="3">
+            <ui-avatar><ui-avatar-fallback><span aria-hidden="true">AL</span><span class="uiset-visually-hidden">Ada Lovelace</span></ui-avatar-fallback></ui-avatar>
+            <ui-avatar><ui-avatar-fallback><span aria-hidden="true">GH</span><span class="uiset-visually-hidden">Grace Hopper</span></ui-avatar-fallback></ui-avatar>
+            <ui-avatar><ui-avatar-fallback><span aria-hidden="true">MH</span><span class="uiset-visually-hidden">Margaret Hamilton</span></ui-avatar-fallback></ui-avatar>
+            <ui-avatar><ui-avatar-fallback><span aria-hidden="true">KJ</span><span class="uiset-visually-hidden">Katherine Johnson</span></ui-avatar-fallback></ui-avatar>
+            <ui-avatar><ui-avatar-fallback><span aria-hidden="true">RF</span><span class="uiset-visually-hidden">Radia Perlman</span></ui-avatar-fallback></ui-avatar>
+          </uiset-avatar-group>
+          <uiset-count-badge id="inbox" count="3" label="3 unread">
+            <ui-button><button type="button" data-variant="outline">Inbox</button></ui-button>
+          </uiset-count-badge>
+          <uiset-count-badge count="120" label="120 notifications">
+            <ui-button><button type="button" data-variant="outline">Alerts</button></ui-button>
+          </uiset-count-badge>
+          <uiset-count-badge count="1" dot label="New messages">
+            <ui-button><button type="button" data-variant="ghost">Messages</button></ui-button>
+          </uiset-count-badge>
+          </div>
+        </section>
+
+        <section aria-labelledby="code-heading">
+          <h2 id="code-heading">Code</h2>
+          <uiset-code-block id="snippet" language="tsx" caption="app.tsx" line-numbers highlight="3"></uiset-code-block>
+          <uiset-package-command id="install" install="@uiset/web @ui-sdk/web"></uiset-package-command>
+          <uiset-code-tabs id="frameworks" label="Framework"></uiset-code-tabs>
+        </section>
+
+        <section aria-labelledby="forms-heading">
+          <h2 id="forms-heading">Inline edit and upload</h2>
+          <uiset-inline-edit id="project" label="Project name" value="Atlas" actions></uiset-inline-edit>
+          <uiset-upload id="files" label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
+        </section>
+      </main>
+    </uiset-root>
+  </body>
+</html>

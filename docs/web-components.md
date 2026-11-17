@@ -1,20 +1,29 @@
-# UISet for Web Components (and Vue, Svelte, Solid)
+# UISet for Web Components
 
 UISet's skins, tokens and base styles dress **UI SDK's own custom elements**, the same 55
 components the React registry wraps, because both carry the same `data-slot` attributes.
 So a page in plain HTML, Vue, Svelte or Solid gets UISet's look and themes from one
-stylesheet, and UISet's own primitives register as `<uiset-*>` elements.
+stylesheet, and UISet's own primitives register as `<uiset-*>` elements. [Vue](./vue.md) and
+[Svelte](./svelte.md) have guides of their own, each tested in a real app.
 
 ```bash
-pnpm web:build   # makes web/dist/uiset.js and web/dist/uiset.css
+npm install @uiset/web @ui-sdk/web@0.1.0-beta.5 @ui-sdk/core@0.1.0-beta.5
 ```
 
-The build keeps UI SDK as a peer: install `@ui-sdk/web` and `@ui-sdk/core` (0.1.0-beta.5)
-and import the UI SDK components you use. `uiset.css` already includes UI SDK's `web.css`.
-`uiset.js` is about 117 KB gzipped with every kit and `uiset.css` 39 KB; the chat's
-markdown parser (53 KB) loads only when a chat first draws an answer. The page templates
-aren't in the build: they're pages to copy, each with its own small script. Install `shiki` too for colored code in chats;
-without it, code blocks are plain.
+The package is one module (`@uiset/web`), one stylesheet (`@uiset/web/uiset.css`) and
+their type declarations. In this repo, `pnpm web:build` makes all three in `web/dist/`.
+
+UI SDK is a peer: import the UI SDK components you use from `@ui-sdk/web/<component>`.
+`uiset.css` already includes UI SDK's `web.css`. `uiset.js` is about 126 KB gzipped with
+every kit and `uiset.css` 40 KB; the chat's markdown parser (53 KB) loads only when a chat
+first draws an answer. The page templates aren't in the build: they're pages to copy, each
+with its own small script. Install `shiki` too for colored code in chats; without it, code
+blocks are plain.
+
+The stylesheet styles UISet's root and what's inside it, and nothing else: no rule for
+`body`, no fonts loaded, no page height. Set those in your own styles. The module can be
+imported on a server (it defines its elements only where there's a browser), so a
+server-rendered app doesn't need to guard the import.
 
 ## Plain HTML
 
@@ -40,13 +49,80 @@ without it, code blocks are plain.
 </uiset-root>
 ```
 
-- `<uiset-root>` is the React `<UISet>`: `skin` (`base`, `blueprint`, `studio`), `theme`
+- `<uiset-root>` is the React `<UISet>`: `skin` (`base`, `blueprint`, `studio`, `phosphor`,
+  `ink`), `theme`
   (`light`, `dark`, or leave it out to follow the system), `sound` (present to turn the
   feedback sounds on) and `haptics="off"`. Change the attributes to switch live.
+- A key color is `data-key` on the root with the color's OKLCH lightness, chroma and hue as
+  three variables: `<uiset-root data-key style="--uiset-key-l: 0.55; --uiset-key-c: 0.2;
+  --uiset-key-h: 150">`. It's what React's `keyColor` writes.
 - Variants go on the element that gets `data-slot`, which for a wrapping element like
   `<ui-button>` is the native button inside it: `<button data-variant="outline">`.
 - UISet's primitives fire their callbacks as events on the root element, like UI SDK's:
   `knob.addEventListener("valuechange", (e) => e.detail.value)`.
+
+## Attributes, properties and types
+
+Frameworks don't all write attributes the way HTML does. UISet's elements take what each
+one writes:
+
+- **An attribute can be set as a property.** Where an element has a property with an
+  attribute's name (the grid's `label`, `locale`, `selectable` and `editable`, the search
+  field's `label` and `shortcut`, a chart's `orientation`), setting the property writes the
+  attribute. Vue sets a property whenever it finds one, so `:label="title"` works as it reads.
+- **`"false"` is off.** A presence attribute (`toolbar`, `selectable`, `editable`,
+  `readonly`, `renamable`, the root's `sound`) is on when it's there and off when it's
+  missing or says `"false"`, which is what Vue and Svelte write for a false binding. So
+  `:toolbar="showTools"` and `toolbar={showTools}` follow the boolean.
+- **A list can be text.** The sparkline's `values` and the stat's `trend` take an array, or
+  the attribute's own text (`"4,6,,8"`) handed to the property.
+- **Children can arrive late.** The app shell places children by `data-part` whenever they
+  are added, not only at first, so a framework that mounts children after the element is
+  fine.
+- **A value goes both ways.** Each element whose value a person changes has a live `value`
+  and fires `input` once a change is in, as a text field does, so Vue's `v-model` works on
+  it: the search field, stepper, knob, patch bay, wheel, rich text, code editor, chat
+  composer, chat threads, model picker, file tree and editor tabs. A finished choice fires
+  `change` too (a knob, when it's let go). Setting `value` fires nothing. The knob's
+  `value` stays live, as a slider's does: a turn moves it unless a `valuechange` listener
+  calls `preventDefault()`.
+
+The package ships its types. `document.querySelector` and `createElement` know each
+element by its tag, and the same types are exported by name:
+
+```ts
+import type { UISetDataGrid, UISetLineChart } from "@uiset/web"
+
+const grid = document.querySelector("uiset-data-grid")! // a UISetDataGrid
+grid.rows = customers
+grid.selectable = true
+
+type Month = { month: string; revenue: number }
+const chart = document.querySelector("uiset-line-chart") as UISetLineChart<Month>
+chart.x = (d) => d.month // checked against Month
+```
+
+The grid takes a row type the same way (`UISetDataGrid<Order>`, with
+`UISetDataGridColumn<Order>` for a column); without one, any row's accessors are accepted.
+
+Events are typed as well. `addEventListener` on an element knows that element's own
+events, and the DOM's keep their types:
+
+```ts
+grid.addEventListener("celledit", (e) => save(e.detail.rowId, e.detail.column, e.detail.value))
+knob.addEventListener("valuechange", (e) => e.detail.value) // a number
+```
+
+Each element's events are exported as a map, for a listener a template holds:
+`UISetKnobEvents["valuechange"]`, `UISetDataGridEvents<Order>["celledit"]`,
+`UISetChatComposerEvents["send"]`.
+
+Every element a page works with is typed, with what you set and call on it: the kits
+(`UISetBoard`, `UISetSchedule`, `UISetCanvas`, `UISetTerminal`, `UISetChat`,
+`UISetRichText`, `UISetDataGrid`), the charts, the Studio knob and patch bay, the swipe
+list and the shell parts.
+Inner parts that only hold markup, like `<uiset-knob-indicator>` or a patch bay jack, are
+plain elements. UI SDK's own `<ui-*>` elements are typed by `@ui-sdk/web`.
 
 ## UISet's elements
 
@@ -71,6 +147,9 @@ without it, code blocks are plain.
 | `<uiset-rich-text>`, `<uiset-rich-text-content>`                     | The rich text editor (toolbar, "/" and "@", Markdown in and out), and saved text shown read-only |
 | `<uiset-app-shell>`, `<uiset-page-header>`, `<uiset-empty-state>`   | An app's frame (a sidebar that collapses to icons, a drawer on phones), a page's heading with actions, and what to do when there's nothing yet |
 | `<uiset-search-field>`, `<uiset-copy-button>`, `<uiset-stepper>`      | A search box with Clear and a "/" key, a copy button that says Copied, and the steps of a flow |
+| `<uiset-table>`, `<uiset-avatar-group>`, `<uiset-count-badge>`       | A scroll area around your table (sticky headings and first column, rows that stack), overlapping avatars with a count, and a count on a button's corner |
+| `<uiset-code-block>`, `<uiset-code-tabs>`, `<uiset-package-command>` | Code in its language's colors with a caption, line numbers, marked lines and copy; tabs of versions; one command for npm, pnpm, yarn and bun |
+| `<uiset-inline-edit>`, `<uiset-upload>`                               | A value that turns into a field when pressed, and a drop zone with a queue of uploads |
 
 ## Studio
 
@@ -146,8 +225,9 @@ refresh.addEventListener("refresh", (e) => e.detail.waitUntil(fetchMail()))
 - `<uiset-pull-refresh>` scrolls its children and slides them down as it's pulled. A
   rejected `waitUntil` Promise is announced and fires `refresherror`; `refresh()` runs one
   from code, and a Refresh button shows on keyboard focus. `threshold` and `messages` tune it.
-- `<uiset-wheel>` binds UI SDK's `bindScrollPicker` to the listbox inside it, and keeps
-  focus on the value when it changes from elsewhere (an agent's `setValue`, say):
+- `<uiset-wheel>` binds UI SDK's `bindScrollPicker` to the listbox inside it. A value set
+  from elsewhere (an agent's `setValue`, say) moves focus with it and lands in the band,
+  even while a sheet is still opening. The wheel's `value` is the listbox's:
 
 ```html
 <div class="wheel-group" role="group" aria-label="Alarm time">
@@ -552,7 +632,8 @@ chat.addEventListener("retry", () => regenerate())
 - `<uiset-chat-composer>` sends on Enter (Shift+Enter for a new line), shows Stop while
   `running`, brings back what you sent with Up and Down, takes files with `attachments` (its
   value is the accept list), and suggests `commands` after "/" and `mentions` after "@".
-  Its event is `send`, not `submit`, which its own form's native event would share.
+  Its event is `send`, not `submit`, which its own form's native event would share. Its
+  `value` is the text in the box.
 - `<uiset-chat-threads>` takes `threads` (`{ id, title, updatedAt? }`) and `value`.
   Choosing a chat sets `value` and fires `valuechange` (cancelable; not `select`, which a
   text field's native event shares). It also fires `new`, `rename` with `{ value, title }`
@@ -620,7 +701,8 @@ notes.addEventListener("valuechange", (e) => {
 
 - `<uiset-app-shell>` lays out its children by `data-part`: `brand` at the top of the
   sidebar, `sidebar` under it, `header` in the header, and the rest in a `<main>` (or a
-  `<div>` with `content="div"`, when the page has its own).
+  `<div>` with `content="div"`, when the page has its own). Children added later, by a
+  framework or by script, go to the same places.
 - Mod+B (or the toggle) collapses the sidebar to icons and back, remembered in the same
   storage as the React AppShell (`uiset-sidebar`), and each link then gets a tooltip.
   Below `narrow-below` (48rem by default) the sidebar moves into a drawer opened from the
@@ -629,6 +711,72 @@ notes.addEventListener("valuechange", (e) => {
   actions as children. `<uiset-empty-state title description icon level>` says what to do
   when there's nothing yet, with its actions as children. On both, `title` names the page
   or state; it isn't a tooltip.
+
+## Content and forms
+
+The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
+`inline-edit` and `upload`. `web/content.html` has each of them.
+
+```html
+<uiset-table label="Invoices" stack sticky-header sticky-column max-height="20rem">
+  <table>
+    <thead><tr><th>Invoice</th><th>Customer</th><th data-align="end">Amount</th></tr></thead>
+    <tbody><tr><th scope="row">INV-001</th><td>Acme Corp</td><td data-align="end">$2,500</td></tr></tbody>
+  </table>
+</uiset-table>
+
+<uiset-avatar-group label="Reviewers" max="3">
+  <ui-avatar><ui-avatar-fallback>AL</ui-avatar-fallback></ui-avatar>
+  …
+</uiset-avatar-group>
+
+<uiset-count-badge count="3" label="3 unread">
+  <ui-button><button type="button" data-variant="outline">Inbox</button></ui-button>
+</uiset-count-badge>
+
+<uiset-code-block language="tsx" caption="app.tsx" line-numbers highlight="3"></uiset-code-block>
+<uiset-package-command install="@uiset/web @ui-sdk/web"></uiset-package-command>
+<uiset-code-tabs label="Framework"></uiset-code-tabs>
+
+<uiset-inline-edit label="Project name" value="Atlas" actions></uiset-inline-edit>
+<uiset-upload label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
+```
+
+```ts
+code.code = source // or the text inside the element
+tabs.items = [{ value: "vue", label: "Vue", language: "vue", code: "…" }, …]
+project.validate = (text) => (text.trim() ? null : "Give the project a name.")
+project.addEventListener("valuechange", (e) => rename(e.detail.value)) // preventDefault() refuses
+files.upload = (file, { signal, onProgress }) => send(file, signal, onProgress) // returns a Promise
+files.addEventListener("uploaded", (e) => attach(e.detail.result))
+```
+
+- `<uiset-table>` puts your `<table>` in a scroll area named by `label`. With `stack`, below
+  30rem of its own width each row becomes a block of labelled values: each cell is labelled
+  by its column's heading, and the parts state their table roles, which browsers drop when
+  CSS changes a table's display. A cell's own `data-label` stays. `data-align="end"` aligns a
+  column. Rows added later are labelled too, and a framework can add and remove the table
+  where it put it.
+- `<uiset-avatar-group>` shows `max` avatars, then a count of the rest, named in words ("2
+  more"; `more-label` with `{count}` words it). `total` counts avatars you didn't render.
+- `<uiset-count-badge>` shows `count`, "99+" past `max`, a dot with `dot`, and nothing at 0
+  unless `show-zero`. `label` is what screen readers and agents hear, so say what's counted.
+- `<uiset-code-block>` colors code with shiki, when it's on the page, as the chat does. The
+  caption is `caption` (the language without one); `copy="false"` leaves out the copy
+  button, which is named for the caption ("Copy app.tsx"). `wrap` wraps long lines.
+- `<uiset-package-command>` takes `install` (with `dev`) or `run`. The choice of package
+  manager is one for every command on the page, React's included, and kept for the next
+  visit. `<uiset-code-tabs>` is the same tabs for any `items`; its `value` is the tab showing.
+- `<uiset-inline-edit>` is React's `InlineEdit` on the same primitive: a press, Enter or F2
+  edits, Enter or leaving saves, Escape cancels, and text `validate` refuses stays in the
+  field with the problem. `actions` adds Save and Cancel for touch. Agents call `setValue`,
+  `startEditing` and `cancel` by its label.
+- `<uiset-upload>` is UI SDK's file input with the upload queue: files go up `concurrency`
+  at a time (3), each row shows a preview, its size, status and progress, with Cancel, Retry
+  and Remove, and files that fail `accept`, `max-size` or `max-files` are listed with why.
+  The list is one tab stop: Enter on a row that stopped retries it, Delete removes it. It
+  fires `valuechange`, `itemschange`, `uploaded`, `failed` and `reject`; `labels` and
+  `messages` word it.
 
 ## Page templates
 
@@ -654,26 +802,37 @@ generator of events (text, reasoning, tool calls, sources). Swap in your model t
 page turns its events into the chat's message parts, the same shape AI SDK's `useChat`
 holds, so `useChat`'s `messages` and `status` can go into `<uiset-chat>` directly instead.
 
-## Vue
+## Server-rendered HTML
 
-Tell Vue the tags are custom elements, then use them in templates:
+A framework that hydrates expects the HTML it rendered on the server, and UISet's elements
+draw themselves as they're defined. Mark the container the framework hydrates with
+`data-uiset-hydrating`: the elements under it are defined, so the framework sets their data
+as properties, but they wait to draw until the attribute goes. Remove it once hydration is
+done:
+
+```html
+<div id="app" data-uiset-hydrating><!-- the server's HTML --></div>
+```
 
 ```ts
-// vite.config.ts
-vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith("ui-") || tag.startsWith("uiset-") } } })
+import "@uiset/web"
+
+hydrate() // your framework's
+document.getElementById("app")!.removeAttribute("data-uiset-hydrating")
 ```
 
-```vue
-<uiset-root :skin="skin"><uiset-knob default-value="40" @valuechange="onChange">…</uiset-knob></uiset-root>
-```
+`<uiset-root>` doesn't wait, so the skin is there from the start. The module imports on a
+server and defines nothing there.
 
-Or use UI SDK's Vue adapter (`@ui-sdk/vue`) for its components and load only `uiset.css`:
-the same `data-slot` attributes mean the same styles.
+## Vue, Svelte and Solid
 
-## Svelte and Solid
+[Vue](./vue.md) and [Svelte](./svelte.md) each have a guide: setup, passing arrays and
+objects, events, two-way binding, skins, server rendering, and using UI SDK's own Vue and
+Svelte components under UISet's stylesheet. Every code block in them ran in a real app.
 
-Both render custom elements as they are. Listen with `onvaluechange` in Svelte 5, or
-`on:valuechange` in Solid. As with Vue, UI SDK's own adapters work with `uiset.css` too.
+Solid renders custom elements as they are; listen with `on:valuechange`. UI SDK's Solid
+adapter works with `uiset.css` too, since the same `data-slot` attributes mean the same
+styles.
 
 ## React and the web
 
@@ -695,18 +854,26 @@ The three small parts with behavior of their own are elements too:
 
 - `<uiset-search-field>` fires `valuechange` with `{ value }`; `shortcut` ("/" by default,
   `shortcut=""` for none) focuses it from anywhere, through UI SDK's shared shortcuts, and
-  shows as a key hint until something is typed. Clear empties it and keeps focus.
-- `<uiset-copy-button>` copies `value`, announces "Copied" and shows it for a moment.
+  shows as a key hint until something is typed. Clear empties it and keeps focus, and
+  fires `input` on the field's input as typing does, so a two-way binding follows it.
+- `<uiset-copy-button>` copies `value`, announces "Copied" and shows it for a moment, or
+  "Couldn't copy" when the browser refuses. `full-label` is a fuller name where several share
+  a page, like "Copy app.tsx"; start it with the visible label.
 - `<uiset-stepper>` takes `steps` (`{ value, label, description? }`) and `value`; choosing a
   step sets `value` and fires `valuechange`. With `linear` (on unless `linear="false"`),
   later steps wait until the current one is reached.
 
 ## Tests
 
-`tests/e2e/web/` runs against plain HTML with no React on the page: axe in all three skins
+`tests/e2e/web/` runs against plain HTML with no React on the page: axe in every skin
 and both themes, the root's attributes, skins restyling UI SDK's elements, the knob and
 swipe rows by keyboard, the patch bay by keyboard, by script and by an agent, the Studio
-instruments, a UI SDK dialog's focus, and the built files themselves. `mobile.spec.ts`,
+instruments, a UI SDK dialog's focus, and the built files themselves (the module in a
+browser and in Node, the stylesheet's reach, and the type declarations).
+`frameworks.spec.ts` does by hand what Vue and Svelte do to custom elements: attributes set
+as properties, `"false"` for a false binding, lists as text, and children added after an
+element mounts. Two unit tests guard the rest: no element may have a member that hides one
+of its attributes, and every element the build defines must be in the types. `mobile.spec.ts`,
 `board.spec.ts`, `scheduler.spec.ts`, `canvas.spec.ts`, `ide.spec.ts`,
 `agent-console.spec.ts`, `terminal.spec.ts`, `charts.spec.ts`, `data-grid.spec.ts` and
 `chat.spec.ts` cover those kits' pages, and `templates.spec.ts` the page templates (`web/mobile.html`, `web/board.html`,

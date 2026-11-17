@@ -22,12 +22,11 @@ import { indent, lineCol, moveLines, newline, offsetOf, outdent, type Edit, type
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/code/code.css"
 import "@/registry/uiset/ui/ide/ide.css"
-import { attr, h, place, uid, upgradeProperties } from "./dom"
+import { attr, defineElement, ElementBase, Evented, h, isOn, place, reportInput, uid, upgradeProperties } from "./dom"
 import { returnFocus } from "@/registry/uiset/ui/uiset/focus"
 
 const baseName = (path: string) => path.split("/").pop() ?? path
 const dirName = (path: string) => path.split("/").slice(0, -1).join("/")
-const isOn = (el: Element, name: string) => el.hasAttribute(name) && el.getAttribute(name) !== "false"
 
 /* ------------------------------------------------------------------ File tree */
 
@@ -56,7 +55,19 @@ type NameDialog = { mode: "file" | "folder" | "rename" | "move"; path: string }
  * `valuechange` as the selection moves, and `create`, `rename`, `move` and `delete`: the
  * page changes `paths` (or calls `event.detail.refuse(message)` to say why not).
  */
-class UISetFileTree extends HTMLElement {
+/** What `<uiset-file-tree>` fires. A rename, move or create can `refuse("why")`. */
+type UISetFileTreeEvents = {
+  valuechange: CustomEvent<{ value: string | null; reason?: string }>
+  /** Enter or a click on a file, or an agent choosing one. */
+  open: CustomEvent<{ value: string }>
+  rename: CustomEvent<{ value: string; from: string; refuse: (message: string) => void }>
+  /** `value` is the folder it moves to. */
+  move: CustomEvent<{ value: string; from: string; refuse: (message: string) => void }>
+  create: CustomEvent<{ value: string; kind: "file" | "folder"; refuse: (message: string) => void }>
+  delete: CustomEvent<{ value: string }>
+}
+
+class UISetFileTree extends Evented<UISetFileTreeEvents>() {
   static observedAttributes = ["label", "heading-level", "creatable", "renamable", "movable", "deletable", "default-expanded"]
   #paths: string[] = []
   #status: Record<string, FileStatus> = {}
@@ -166,6 +177,7 @@ class UISetFileTree extends HTMLElement {
       const { value, reason } = (event as CustomEvent<{ value: string | null; reason?: string }>).detail
       this.#value = value
       this.dispatchEvent(new CustomEvent("valuechange", { detail: { value, reason } }))
+      reportInput(this)
       // An agent's choice of a file opens it, as Enter or a click would for a person.
       if (reason === "imperative" && typeof value === "string" && this.model().files.has(value)) this.dispatchEvent(new CustomEvent("open", { detail: { value } }))
     })
@@ -415,6 +427,7 @@ class UISetFileTree extends HTMLElement {
   private select(path: string | null) {
     this.#value = path
     this.dispatchEvent(new CustomEvent("valuechange", { detail: { value: path, reason: "imperative" } }))
+    reportInput(this)
     this.schedule()
   }
 
@@ -455,7 +468,13 @@ function nextTab(paths: string[], path: string) {
  * caret, scroll and undo. Delete on a tab, a middle click or its × fires `close`; once the
  * file leaves `files`, focus goes to the tab that took over, or the empty pane.
  */
-class UISetEditorTabs extends HTMLElement {
+/** What `<uiset-editor-tabs>` fires, each with a file's path. */
+type UISetEditorTabsEvents = {
+  valuechange: CustomEvent<{ value: string }>
+  close: CustomEvent<{ value: string }>
+}
+
+class UISetEditorTabs extends Evented<UISetEditorTabsEvents>() {
   static observedAttributes = ["label", "empty"]
   #files: EditorFile[] = []
   #value: string | null = null
@@ -497,6 +516,7 @@ class UISetEditorTabs extends HTMLElement {
         const value = String((event as CustomEvent<{ value: unknown }>).detail.value)
         this.#value = value
         this.dispatchEvent(new CustomEvent("valuechange", { detail: { value } }))
+        reportInput(this)
       })
       const empty = h("div", { class: "ide-editor-empty", tabindex: "-1" })
       this.#dom = { tabs, list, empty }
@@ -604,7 +624,13 @@ const glyph = { error: "●", warning: "▲", info: "■" } as const
  * keeps the indent; F8 walks `problems`. `value` is live and `valuechange` reports typing;
  * `cursorchange` reports the caret; `goTo(line, col)` moves it.
  */
-class UISetCodeEditor extends HTMLElement {
+/** What `<uiset-code-editor>` fires: the text as it's typed, and where the caret is. */
+type UISetCodeEditorEvents = {
+  valuechange: CustomEvent<{ value: string }>
+  cursorchange: CustomEvent<{ line: number; col: number }>
+}
+
+class UISetCodeEditor extends Evented<UISetCodeEditorEvents>() {
   static observedAttributes = ["label", "path", "language", "readonly", "tab-size"]
   #initial: string | null = null
   #problems: Problem[] = []
@@ -697,7 +723,7 @@ class UISetCodeEditor extends HTMLElement {
     this.#history = createUndoStack({ text: initial, start: 0, end: 0 }, { limit: 500, groupDelay: 800 })
     const field = h("ui-textarea", { class: "ide-code-field" }, input)
     // Typing, and an agent's setValue on the textarea, which fires input too.
-    input.addEventListener("input", () => this.changed())
+    input.addEventListener("input", () => this.changed(true))
     input.addEventListener("keydown", (event) => this.keyDown(event))
     // Undo and Redo from the Edit menu or a gesture take the same steps.
     input.addEventListener("beforeinput", (event) => {
@@ -740,7 +766,8 @@ class UISetCodeEditor extends HTMLElement {
     this.showCaret()
   }
 
-  private changed() {
+  /** `typed`: the textarea's own `input` is on its way up; otherwise the editor fires one. */
+  private changed(typed = false) {
     const input = this.#dom!.input
     if (input.value === this.#reported) return
     this.#reported = input.value
@@ -748,6 +775,7 @@ class UISetCodeEditor extends HTMLElement {
     if (!this.#applying) this.remember("typing")
     this.redraw()
     this.dispatchEvent(new CustomEvent("valuechange", { detail: { value: input.value } }))
+    if (!typed) reportInput(this, false)
   }
 
   private remember(group: string) {
@@ -767,6 +795,7 @@ class UISetCodeEditor extends HTMLElement {
     this.#reported = snapshot.text
     this.redraw()
     this.dispatchEvent(new CustomEvent("valuechange", { detail: { value: snapshot.text } }))
+    reportInput(this, false)
     this.track()
     this.showCaret()
   }
@@ -967,7 +996,14 @@ type CommandElement = HTMLElement & { items?: unknown[]; query?: string; filter?
  * dialog. ⌘P / Ctrl+P opens files, ⌘⇧P / Ctrl+Shift+P commands. It fires `openfile`,
  * `command` and `gotoline`.
  */
-class UISetCommandPalette extends HTMLElement {
+/** What `<uiset-command-palette>` fires for the item chosen. */
+type UISetCommandPaletteEvents = {
+  openfile: CustomEvent<{ value: string }>
+  command: CustomEvent<{ value: string }>
+  gotoline: CustomEvent<{ value: number }>
+}
+
+class UISetCommandPalette extends Evented<UISetCommandPaletteEvents>() {
   static observedAttributes = ["lines"]
   #files: string[] = []
   #recent: string[] = []
@@ -1142,7 +1178,10 @@ const severityName = { error: "Error", warning: "Warning", info: "Note" } as con
 const severityIcon = { error: "danger", warning: "warning", info: "info" } as const
 
 /** <uiset-problems empty="…"> lists `problems`, worst first; choosing one fires `choose`. */
-class UISetProblems extends HTMLElement {
+/** What `<uiset-problems>` fires when a problem is chosen. */
+type UISetProblemsEvents = { choose: CustomEvent<{ value: Problem }> }
+
+class UISetProblems extends Evented<UISetProblemsEvents>() {
   static observedAttributes = ["empty"]
   #problems: Problem[] = []
   get problems() {
@@ -1197,7 +1236,7 @@ class UISetProblems extends HTMLElement {
 }
 
 /** <uiset-status-bar label="Status"> is the strip along the bottom; its items are your text and buttons. */
-class UISetStatusBar extends HTMLElement {
+class UISetStatusBar extends ElementBase {
   static observedAttributes = ["label"]
   connectedCallback() {
     this.classList.add("ide-status")
@@ -1210,13 +1249,15 @@ class UISetStatusBar extends HTMLElement {
 }
 
 function defineIde() {
-  customElements.define("uiset-file-tree", UISetFileTree)
-  customElements.define("uiset-editor-tabs", UISetEditorTabs)
-  customElements.define("uiset-code-editor", UISetCodeEditor)
-  customElements.define("uiset-command-palette", UISetCommandPalette)
-  customElements.define("uiset-problems", UISetProblems)
-  customElements.define("uiset-status-bar", UISetStatusBar)
+  defineElement("uiset-file-tree", UISetFileTree)
+  defineElement("uiset-editor-tabs", UISetEditorTabs)
+  defineElement("uiset-code-editor", UISetCodeEditor)
+  defineElement("uiset-command-palette", UISetCommandPalette)
+  defineElement("uiset-problems", UISetProblems)
+  defineElement("uiset-status-bar", UISetStatusBar)
 }
 
 export { defineIde, nextTab }
 export type { EditorFile, FileStatus, PaletteCommand, Problem }
+export { UISetFileTree, UISetEditorTabs, UISetCodeEditor, UISetCommandPalette, UISetProblems, UISetStatusBar }
+export type { UISetFileTreeEvents, UISetEditorTabsEvents, UISetCodeEditorEvents, UISetCommandPaletteEvents, UISetProblemsEvents }

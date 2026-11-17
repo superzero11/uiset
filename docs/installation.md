@@ -83,7 +83,15 @@ one stylesheet, with UI SDK as a peer.
 npm install @uiset/web @ui-sdk/web
 ```
 
+pnpm resolves UI SDK's `latest` tag, which is an older beta than the one UISet pins, so name
+the versions there:
+
+```bash
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.5 @ui-sdk/core@0.1.0-beta.5
+```
+
 ```html
+<link rel="stylesheet" href="node_modules/@uiset/web/dist/uiset.css" />
 <script type="module">
   import "@uiset/web"
 </script>
@@ -93,7 +101,9 @@ npm install @uiset/web @ui-sdk/web
 </uiset-root>
 ```
 
-See [Web Components](./web-components.md) for every element.
+With a bundler, import the stylesheet instead: `import "@uiset/web/uiset.css"`. The package
+ships its TypeScript types. See [Web Components](./web-components.md) for every element, and
+the [Vue](./vue.md) and [Svelte](./svelte.md) guides for those frameworks.
 
 ## Check it works
 

@@ -83,7 +83,7 @@ const fromInside = (event: Event, el: HTMLElement | undefined) => !!el && event.
 // Presses on controls inside a cell, like an editor or a column's resize handle, aren't range drags.
 const onControl = (event: Event) =>
   !!(event.target as Element).closest?.(
-    "input:not([type=checkbox]), select, textarea, [data-grid-handle]",
+    "input:not([type=checkbox]), select, textarea, [data-grid-handle], [data-grid-control]",
   )
 // A row checkbox is the cell's own control: a press there makes its cell active, but isn't a
 // range drag either, which would capture the pointer and take the checkbox's click.
@@ -95,6 +95,7 @@ const startsEdit = (event: KeyboardEvent) =>
   !event.altKey &&
   (event.key === "Enter" || event.key === "F2" || (event.key.length === 1 && event.key !== " "))
 
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const dataGrid = definePrimitive({
   name: "data-grid",
   options: {
@@ -122,6 +123,8 @@ const dataGrid = definePrimitive({
     active: null as GridCell | null,
     range: null as CellRange | null,
     editing: null as string | null,
+    // The character that started an edit, for an editor that isn't the bound input.
+    typed: null as string | null,
   }),
   sync: (options) => ({
     rowCount: options.rowCount,
@@ -200,7 +203,11 @@ const dataGrid = definePrimitive({
           event.preventDefault()
           return
         }
-        if (startsEdit(event)) dropStale(cell)
+        if (startsEdit(event)) {
+          dropStale(cell)
+          // Before the edit starts: a renderer that draws as the state changes reads it then.
+          context.store.set({ typed: event.key.length === 1 ? event.key : null })
+        }
         if (edit.keydown(event, idOf(cell))) return
         const modified = event.ctrlKey || event.metaKey || event.altKey
         const activates =
@@ -222,7 +229,31 @@ const dataGrid = definePrimitive({
       dblclick(event: MouseEvent, cell: GridCell) {
         if (onControl(event) || onCheckbox(event)) return
         dropStale(cell)
+        context.store.set({ typed: null })
         edit.dblclick(event, idOf(cell))
+      },
+      /** The character that started this edit, or null when Enter, F2 or a double click did. */
+      typed: () => context.store.get().typed,
+      /**
+       * Saves a value for the cell being edited, from an editor of its own, like a list of
+       * options, then puts focus back on the cell. The same value as before saves nothing.
+       */
+      choose(text: string) {
+        const id = context.store.get().editing
+        if (!id) return false
+        const cell = cellOf(id)
+        const before = opts().editText?.(cell) ?? opts().cellText?.(cell) ?? ""
+        if (text !== before && !(opts().onCellEdit?.(cell, text) ?? false)) return false
+        edit.cancel()
+        grid.focus(cell, { reason: "imperative" })
+        return true
+      },
+      /** Ends such an edit without saving. Escape puts focus back on the cell; a press elsewhere doesn't. */
+      leaveEdit(refocus: boolean) {
+        const id = context.store.get().editing
+        if (!id) return
+        edit.cancel()
+        if (refocus) grid.focus(cellOf(id), { reason: "imperative" })
       },
       copy(event: ClipboardEvent) {
         const state = context.store.get()
