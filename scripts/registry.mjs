@@ -615,11 +615,24 @@ const templates = [
   ],
 }))
 
+// Tools that aren't components: framework-free, so they install the same for every app.
+const tools = [
+  {
+    name: "agent-check",
+    type: "registry:lib",
+    title: "Agent readiness check",
+    description:
+      "Checks whether an agent can use a page through its UI SDK agent bridge: every component named, each name finding one component, and every control a person can reach one the agent sees, with a score. In a test (expectAgentReady), on a page in Playwright, or from the command line.",
+    devDependencies: ["@playwright/test"],
+    files: ["agent-check/check.ts", "agent-check/playwright.ts", "agent-check/cli.ts"].map(support),
+  },
+]
+
 const registry = {
   $schema: "https://ui.shadcn.com/schema/registry.json",
   name: config.namespace.replace(/^@/, ""),
   homepage: config.homepage,
-  items: [root, ...components, ...templates].map((item) => ({
+  items: [root, ...components, ...templates, ...tools].map((item) => ({
     author: `${config.author} <${config.repository}>`,
     ...item,
   })),

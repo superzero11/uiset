@@ -33,6 +33,7 @@ const groups = [
   { title: "Terminal", names: ["terminal"], doc: "terminal.md" },
   { title: "Studio", names: ["knob", "patch-bay", "fader", "level-meter", "step-sequencer"], doc: "studio-kit.md" },
   { title: "Agent Console", names: ["agent-console"], doc: "agent-console.md" },
+  { title: "Agent readiness", names: ["agent-check"], doc: "agent-check.md", tool: true },
 ]
 
 const items = new Map(registry.items.map((item) => [item.name, item]))
@@ -157,7 +158,27 @@ for (const group of kitSkills) {
   const name = `uiset-${slug}`
   const items = group.names.map((n) => `\`${n}\``).join(", ")
   const what = describe(byName(group.names[0])) ?? ""
-  const description = `Builds with UISet's ${group.title} on Vercel's UI SDK (items ${group.names.join(", ")}): installing it with the shadcn CLI, its parts and props, keyboard behavior, and the actions agents get. ${what} Use when a task needs ${group.title.toLowerCase()} in a project that uses UISet or UI SDK.`
+  // A tool (no components) gets its own words: there's nothing to wrap, style or tab through.
+  const description = group.tool
+    ? `UISet's ${group.title} for Vercel's UI SDK (item ${group.names.join(", ")}): installing it with the shadcn CLI, and using it in a test, in Playwright or from the command line. ${what} Use when a task asks whether agents can use a UI SDK app's pages, or to keep them agent-ready.`
+    : `Builds with UISet's ${group.title} on Vercel's UI SDK (items ${group.names.join(", ")}): installing it with the shadcn CLI, its parts and props, keyboard behavior, and the actions agents get. ${what} Use when a task needs ${group.title.toLowerCase()} in a project that uses UISet or UI SDK.`
+  const steps = group.tool
+    ? [
+        `Read \`references/${group.doc}\` before writing code: it has the checks, what each problem means and how to fix it, and the test, Playwright and command-line uses. Then:`,
+        "",
+        "- Use the bridge the app already creates (`createAgent`), one per test file, after the components render.",
+        "- Fix a problem at its source, with the fix the report names: a label, a name with a word of its own, the UI SDK part for a plain control. Use `ignore` only for one you've decided to keep, and say why.",
+        "- Run it on every page an agent should use, and keep the score at 100 in CI.",
+      ]
+    : [
+        `Read \`references/${group.doc}\` before writing code: it has the parts, a full example, the props that matter, the keys and what agents can do. Then:`,
+        "",
+        "- Wrap the app in `<UISet>` from `@/components/ui/uiset` once (see the `uiset` skill for skins and theming).",
+        "- Use the kit's parts and props as documented; don't add keyboard handling or ARIA they already provide.",
+        "- Give it a specific `label` (or `aria-label`): it's the name people and agents use.",
+        "- Style your own markup around it with the skin's CSS variables (`--ui-foreground`, `--ui-muted-foreground`, `--ui-border`, `--ui-primary`), not fixed colors.",
+        "- Check your work: tab through it, run axe, and look at it in light and dark.",
+      ]
   mkdirSync(`skills/${name}/references`, { recursive: true })
   copyFileSync(`docs/${group.doc}`, `skills/${name}/references/${group.doc}`)
   writeFileSync(
@@ -174,13 +195,7 @@ for (const group of kitSkills) {
       "",
       `Items: ${items}. Install with \`npx shadcn@latest add ${owner}/uiset/<item>\`; they land in \`components/ui/\`.`,
       "",
-      `Read \`references/${group.doc}\` before writing code: it has the parts, a full example, the props that matter, the keys and what agents can do. Then:`,
-      "",
-      "- Wrap the app in `<UISet>` from `@/components/ui/uiset` once (see the `uiset` skill for skins and theming).",
-      "- Use the kit's parts and props as documented; don't add keyboard handling or ARIA they already provide.",
-      "- Give it a specific `label` (or `aria-label`): it's the name people and agents use.",
-      "- Style your own markup around it with the skin's CSS variables (`--ui-foreground`, `--ui-muted-foreground`, `--ui-border`, `--ui-primary`), not fixed colors.",
-      "- Check your work: tab through it, run axe, and look at it in light and dark.",
+      ...steps,
       "",
     ].join("\n"),
   )

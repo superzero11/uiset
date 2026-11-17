@@ -76,6 +76,10 @@ hand `agentTools` to your own model. UI SDK's
 - **The Agent Console.** The human side of the bridge: approvals in your app, a list of
   every change with undo, and highlights where the agent acted. See
   [Agent Console](/docs/kits/agent-console).
+- **A check for your own pages.** `agent-check` scores a page by how many of its controls an
+  agent can find by name, and lists the rest: unnamed, names that find several controls, and
+  controls agents can't see. In a test, in Playwright or from the command line. See
+  [Agent readiness check](/docs/agent-check).
 
 ### The benchmark
 

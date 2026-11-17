@@ -9,7 +9,7 @@ const facts = {
   kits: ["Chat", "Rich text", "Data grid", "Charts", "Board", "Scheduler", "Canvas", "IDE", "Mobile", "Terminal", "Studio", "Agent Console"],
   templates: 10,
   skins: 5,
-  registryItems: 114,
+  registryItems: 115,
 } as const
 
 export { facts }

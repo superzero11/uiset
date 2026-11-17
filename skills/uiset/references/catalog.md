@@ -98,6 +98,10 @@ Install any item with `npx shadcn@latest add superzero11/uiset/<item>`. Docs: ht
 
 - `agent-console`: The human side of the UI SDK agent bridge: approvals in your app, an activity feed with undo, highlights where the agent changed something, a thread and a prompt.
 
+## Agent readiness (docs/agent-check.md)
+
+- `agent-check`: Checks whether an agent can use a page through its UI SDK agent bridge: every component named, each name finding one component, and every control a person can reach one the agent sees, with a score. In a test (expectAgentReady), on a page in Playwright, or from the command line.
+
 ## UI SDK components (API and keys: UI SDK's docs)
 
 - `button`: A button in solid, outline and ghost variants.

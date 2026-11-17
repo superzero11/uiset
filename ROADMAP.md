@@ -266,9 +266,11 @@ checks, then a release, a deploy, and npm by the owner.
 **Waiting on others.**
 - `@uiset/web` 0.3.0 is on npm (the owner published it 2026-11-17; `latest`, 75 files,
   checksum matching the checked build, a fresh install imports `defineForm` and
-  `formTool`). Next,
-  (with the owner's go-ahead) ask awesome-ui-sdk to list the Web Components.
-- shadcn-ui/ui#12725: once merged, the `@uiset` namespace steps (launch memory and section 7).
+  `formTool`). The owner asked awesome-ui-sdk to list the Web Components:
+  LioRael/awesome-ui-sdk#1, open.
+- `@uiset` is in shadcn's registry directory (merged in shadcn-ui/ui#12677, which closed our
+  #12725), and `npx shadcn@latest view @uiset/<item>` works. Waiting on the owner's go-ahead:
+  install lines to `@uiset/<item>`, and the namespace on registry.directory.
 - UI SDK's next beta: rerun everything on it and drop workarounds whose issues are fixed
   (#622 is closed upstream: the wheel's focus move; then #780–#782 as they land).
 
@@ -277,7 +279,8 @@ checks, then a release, a deploy, and npm by the owner.
    so an agent fills it by field name, with validation and approval (ideas #4). M.
    **Done 2026-11-17** (`schema-form` in React, `<uiset-schema-form>` for Web Components).
 2. Agent-readiness check: a test helper and CLI that flag unnamed and ambiguous controls,
-   with a score per page (ideas #7). S–M.
+   with a score per page (ideas #7). S–M. **Done 2026-11-17** (`agent-check`). Next: make
+   UISet's own pages score 100 on it (its first run is in the decision log).
 
 **Batch 2: data apps**, next: the most-asked pieces still missing.
 3. Filter builder and saved views for the data grid (ideas #2): typed operators, a filter
@@ -1326,3 +1329,27 @@ checks, then a release, a deploy, and npm by the owner.
   Asked whether to publish 0.2.0 from its commit or release 0.3.0, the owner chose 0.3.0
   now. npm goes from 0.1.1 to 0.3.0; the changelog says 0.3.0 carries 0.2.0's changes, and
   the Vue and Svelte guides now say "0.3.0 or later" for what npm users first get there.
+- 2026-11-17 — **`agent-check`, the agent-readiness check.** A registry item with no
+  framework in it: `checkAgentReadiness(agent)` takes any UI SDK bridge and asks the bridge
+  itself, so it reads a page as an agent does. Errors: `unnamed` (a listed component with no
+  name), `ambiguous` (a name `query` resolves to more than one component a step would take;
+  a list found by one of its items doesn't count, and components with no actions, like
+  avatars, may share a name), and `unseen` (a control Tab reaches with no `data-slot`, which
+  UI SDK puts on every element it binds; a component's own inner parts, out of the Tab order
+  inside it, are skipped). Warnings: `unconfirmed` (a label starting with Delete, Pay, Deploy
+  and the like, with no `data-agent-confirm`) and `overflow` (past the snapshot's 100). The
+  score is the share of controls an agent can find by name. `expectAgentReady` for tests,
+  `checkPage` for Playwright, and `cli.ts` for URLs. Found while building: a query stops at
+  100 too, and returns a different 100 than the snapshot; and the bridge counts components
+  earlier tests removed in `more`, even on a new bridge. The page check reaches the bridge as
+  the browser's agent would, by keeping the tools the app registers with WebMCP
+  (`registerTools`), or through a named global; functions it runs in the page are
+  self-contained. `cli.ts` types `process` itself, since an app checks its components with the
+  browser's types (the install test caught it). Its first run on UISet's own pages: the
+  templates score 50 to 91 and the gallery 66. Real problems it found: chart legend toggles
+  and the calendar app's upcoming events are plain buttons agents can't see; closed tooltips
+  and menus take their trigger's name (#604); a grid named "Customers" beside its "Search
+  customers" field; an unnamed dialog; the site's "Template" tabs beside each "Copy the
+  command to install the … template" button. Tests: 8 unit (every rule, past 100, `ignore`,
+  `root`) with 14 mutations caught, and 2 e2e (WebMCP tools on the React site, a named global
+  on a web page) with 5 mutations caught; the fresh-app install of 115 items.

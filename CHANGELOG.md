@@ -8,6 +8,19 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add superzero11/uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
+## 0.4.0 (unreleased)
+
+### Added
+
+- **`agent-check`**: whether an agent can use a page. It asks the page's UI SDK agent bridge,
+  in any framework, and scores the page by the share of controls an agent can find by name.
+  It reports components with no name, names that find more than one component (a step by
+  that name fails), and controls a person can reach that agents can't see, with destructive
+  buttons lacking `data-agent-confirm` and pages past 100 components as warnings.
+  `expectAgentReady` for tests, `checkPage` for Playwright (through the tools a page
+  registers with WebMCP, or a global), and a command that checks pages by URL. See
+  [Agent readiness check](./docs/agent-check.md).
+
 ## 0.3.0 (2026-11-17)
 
 On UI SDK `0.1.0-beta.5`. The first `@uiset/web` on npm since 0.1.1: 0.2.0 wasn't published

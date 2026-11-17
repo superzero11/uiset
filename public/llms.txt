@@ -44,6 +44,7 @@ Rules for agents building with UISet:
 - [Terminal](https://uiset.dev/docs/terminal.md): `terminal`
 - [Studio](https://uiset.dev/docs/studio-kit.md): `knob`, `patch-bay`, `fader`, `level-meter`, `step-sequencer`
 - [Agent Console](https://uiset.dev/docs/agent-console.md): `agent-console`
+- [Agent readiness](https://uiset.dev/docs/agent-check.md): `agent-check`
 
 ## UI SDK components
 

@@ -27,6 +27,7 @@ const guides: DocPage[] = [
   { path: "/docs/looking-for", title: "Looking for a component?", file: "looking-for.md", description: "Where the components people ask for most are in UISet: a full calendar, time picker, multi-select, dropzone, table, code block and more." },
   { path: "/docs/theming", title: "Theming", file: "theming.md", description: "Skins, the key color, dark mode, nesting, CSS variables, sound and haptics, and writing your own skin." },
   { path: "/docs/ai", title: "Building with AI agents", file: "ai.md", description: "The UISet skills and llms.txt for coding agents, and UI SDK's agent bridge for agents that use your app." },
+  { path: "/docs/agent-check", title: "Agent readiness check", file: "agent-check.md", description: "Check whether an agent can use a page: every control named, each name finding one control, none it can't see, with a score. In a test, in Playwright, or from the command line." },
   { path: "/docs/web-components", title: "Web Components", file: "web-components.md", description: "Every kit and template as custom elements, for Vue, Svelte, Solid, Angular and plain HTML." },
   { path: "/docs/vue", title: "Vue", file: "vue.md", description: "UISet in a Vue 3 app: setup, passing data, events, two-way binding, skins, UI SDK's Vue components and server rendering." },
   { path: "/docs/svelte", title: "Svelte", file: "svelte.md", description: "UISet in a Svelte 5 app: setup, passing data with runes, events, skins, UI SDK's Svelte components and server rendering." },

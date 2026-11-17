@@ -3610,6 +3610,33 @@
           "target": "@ui/shell/shell.css"
         }
       ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "agent-check",
+      "type": "registry:lib",
+      "title": "Agent readiness check",
+      "description": "Checks whether an agent can use a page through its UI SDK agent bridge: every component named, each name finding one component, and every control a person can reach one the agent sees, with a score. In a test (expectAgentReady), on a page in Playwright, or from the command line.",
+      "devDependencies": [
+        "@playwright/test"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/agent-check/check.ts",
+          "type": "registry:file",
+          "target": "@ui/agent-check/check.ts"
+        },
+        {
+          "path": "registry/uiset/ui/agent-check/playwright.ts",
+          "type": "registry:file",
+          "target": "@ui/agent-check/playwright.ts"
+        },
+        {
+          "path": "registry/uiset/ui/agent-check/cli.ts",
+          "type": "registry:file",
+          "target": "@ui/agent-check/cli.ts"
+        }
+      ]
     }
   ]
 }
