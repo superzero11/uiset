@@ -10,6 +10,7 @@ import {
   ChatTasks,
   ChatThread,
 } from "@/registry/uiset/ui/chat"
+import { expectAgentReady } from "@/registry/uiset/ui/agent-check/check"
 import { ChatComposer, ChatUsage } from "@/registry/uiset/ui/chat-composer"
 import { ChatReasoning, ChatSources, ChatTool } from "@/registry/uiset/ui/chat-parts"
 import { ChatCodeBlock, ChatResponse } from "@/registry/uiset/ui/chat-response"
@@ -237,6 +238,36 @@ test("each message's actions are named with its first words, from its text or fr
     'Good response: "Done."',
     'Bad response: "Done."',
   ])
+})
+
+// With two replies and a composer named "Message", each reply's toolbar and feedback group
+// need names of their own too, or a step by one finds the other (or the composer).
+test("a conversation with several replies passes the agent check, composer included", async () => {
+  render(
+    <>
+      <ChatThread label="Conversation">
+        <ChatMessage from="user" actions={<ChatMessageActions onEdit={() => {}} />}>
+          How do I cancel a fetch?
+        </ChatMessage>
+        <ChatMessage from="assistant" actions={<ChatMessageActions text="Use an AbortController." onFeedbackChange={() => {}} />}>
+          Use an AbortController.
+        </ChatMessage>
+        <ChatMessage from="assistant" actions={<ChatMessageActions text="Pass its signal to fetch." onRetry={() => {}} onFeedbackChange={() => {}} />}>
+          Pass its signal to fetch.
+        </ChatMessage>
+      </ChatThread>
+      <ChatComposer label="Message" onSubmit={() => {}} />
+    </>,
+  )
+  await tick()
+  expect(screen.getAllByRole("toolbar").map((toolbar) => toolbar.getAttribute("aria-label"))).toEqual([
+    'Actions: "How do I cancel a…"',
+    'Actions: "Use an AbortController."',
+    'Actions: "Pass its signal to fetch."',
+  ])
+  expect(screen.getAllByRole("group").map((group) => group.getAttribute("aria-label"))).toContain('Feedback: "Use an AbortController."')
+  const report = await expectAgentReady(createAgent())
+  expect(report.score).toBe(100)
 })
 
 test("versions step back and forward and stop at the ends", async () => {

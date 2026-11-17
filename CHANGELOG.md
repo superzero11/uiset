@@ -52,6 +52,12 @@ old names:
   `Copy message: "Here's a summary of the…"`, and the same for Retry message, Edit message,
   Good response and Bad response, so each reply's actions have names of their own. A step
   that pressed "Copy message" now names the message.
+- **A chat message's toolbar and feedback group carry its first words too** (React and Web
+  Components): `Actions: "Here's a summary of the…"` and `Feedback: "Here's a summary of
+  the…"`, where every message had "Message actions" and "Feedback on this response". With two
+  replies those names found two components each, and "Message actions" made the composer's
+  name, "Message", find every toolbar: a chat scored 94 on `agent-check` after one reply.
+  `ChatMessageActions`' `label` still names the toolbar when you give it.
 - **Upload's Choose files button carries the upload's label** ("Choose files, Attachments"),
   so two uploads on a page are told apart (React and `<uiset-upload>`).
 - **The app shell's sidebar tooltips, and the inbox's Compose and the calendar's New event

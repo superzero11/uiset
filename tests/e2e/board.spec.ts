@@ -81,7 +81,7 @@ test("deleting a card hands focus to its neighbor", async ({ page }) => {
 })
 
 test("an edit that the filter hides hands focus to a card still shown", async ({ page }) => {
-  await page.getByRole("searchbox", { name: "Search sprint board" }).fill("api")
+  await page.getByRole("searchbox", { name: "Search cards" }).fill("api")
   await card(page, "Rate-limit the public API").focus()
   await page.keyboard.press("Enter")
   const dialog = page.getByRole("dialog", { name: "Rate-limit the public API" })
@@ -113,7 +113,7 @@ test("add a card from a column, and a full column offers none", async ({ page })
 
 test("a search that hides the board's tab stop moves it to a card still shown", async ({ page }) => {
   await card(page, "Onboarding checklist").focus()
-  await page.getByRole("searchbox", { name: "Search sprint board" }).fill("webhooks")
+  await page.getByRole("searchbox", { name: "Search cards" }).fill("webhooks")
   await page.getByRole("combobox", { name: "Cards for" }).focus()
   // Tab passes the earlier columns' Add buttons, then reaches the board's one card stop.
   const stops: string[] = []
@@ -125,7 +125,7 @@ test("a search that hides the board's tab stop moves it to a card still shown", 
 })
 
 test("while a filter is on, a dragged card stays put", async ({ page }) => {
-  await page.getByRole("searchbox", { name: "Search sprint board" }).fill("api")
+  await page.getByRole("searchbox", { name: "Search cards" }).fill("api")
   const from = (await card(page, "Rate-limit the public API").boundingBox())!
   const to = (await column(page, "Done").boundingBox())!
   await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)

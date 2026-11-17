@@ -12,7 +12,7 @@ npx shadcn@latest add @uiset/board
 ```tsx
 const [board] = useState(createBoardController)
 
-<BoardToolbar label="Sprint board" query={query} onQueryChange={setQuery}
+<BoardToolbar label="Cards" query={query} onQueryChange={setQuery}
   people={people} person={person} onPersonChange={setPerson} />
 <Board
   label="Sprint board"
@@ -55,6 +55,9 @@ const [board] = useState(createBoardController)
 - `locked` marks cards that can't move. `messages` replaces the help, empty, full and
   filtered copy; `moveMessage` replaces the move announcements (for other languages).
 - `today` marks overdue cards; pass the real date.
+- `BoardToolbar`'s `label` says what the board holds, like "Cards" or "Issues": it names
+  the search ("Search cards") and the group ("Cards tools"). Give it a word other than the
+  board's own name, or a step by the board's name finds the search too.
 
 ## Touch
 

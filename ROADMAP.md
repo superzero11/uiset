@@ -367,6 +367,7 @@ checks, then a release, a deploy, and npm by the owner.
 | Data grid: a list column's editor in the skin                                                        | done    | 2026-11-16: UI SDK's Combobox in the cell replaces the browser's datalist, React and web; the editor's focus ring stays inside its cell |
 | Tailwind CSS 4 apps work with no setup                                                               | done, web not published | 2026-11-17: in a shadcn/ui app (Tailwind 4), Tailwind's reset stripped UISet's controls and UISet outranked utility classes. UI SDK's web.css now sits in `uiset.base.sdk`, and `uiset/layers.ts` puts `uiset` between Tailwind's `base` and `components` when a page has Tailwind's layers (React root and `<uiset-root>`). Same computed styles as a hand-made fix in a test app, both import orders, popups included; the site's 57 pages and the web demos unchanged (79,128 and 6,856 elements compared); 6 unit and 5 e2e tests (Chrome, WebKit, Firefox), 4/4 mutations caught; the full Chromium and web e2e suites pass apart from a canvas drag test that fails the same way without the change |
 | Agent migration recipe (`docs/agent-migration.md`)                                                   | done | 2026-11-17: a shadcn/ui app moved to UISet by a coding agent, step by step with checks; written from a test migration of a 17-component app. Corrected Installation, Looking for, Coming from shadcn/ui on the way |
+| Chat and board demos score 100 on `agent-check`                                                     | done | 2026-11-17: found filming the agent-check video (chat template 94 after a reply, chat demo 84, board demo 92, all through the bridge). Chat toolbars and feedback groups named per message, React and web; the board demos' search is "Search cards". Agent tests for both demos, the chat template with a reply, and a chat with replies (React unit, web e2e), 4/4 mutations caught |
 
 ## 10. Decision log
 
@@ -1578,3 +1579,15 @@ checks, then a release, a deploy, and npm by the owner.
   opens the inline edit with DOM queries, like its `beforeEach` (Firefox: the whole spec, 17
   passed; Chrome and WebKit: 35 passed, 1 skipped). Worth a Playwright report, with the
   owner's go-ahead, once it reproduces without UISet.
+- 2026-11-17 — **Chat and board names an agent can tell apart.** Filming the agent-check video,
+  every kit and template was checked through the site's agent bridge: the chat template fell to
+  94 after one reply, the site's chat demo scored 84 and its board demo 92 (the e2e walk of
+  every page reads the accessibility tree instead, not the bridge). Chat: each
+  reply's toolbar is now `Actions: "<first words>"` and its feedback group
+  `Feedback: "<first words>"`, React and web, like its buttons. The word "message" stays out:
+  `Message actions: "…"` was tried and the composer's "Message" still found every toolbar (96).
+  Board: `BoardToolbar`'s `label` is what the board holds ("Cards", as the project board
+  template's "Issues" and the web board's "Search cards"), not the board's name, which the
+  search's name then contained; the kit is unchanged and its `label` is documented. Still
+  repeating between replies: a code block's "Wrap lines" and "Previous version". Not touched:
+  uiset.dev's home page scores 85 through the bridge ("Skin", "Sound", "Kit", "Message").

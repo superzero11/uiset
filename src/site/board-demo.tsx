@@ -58,7 +58,7 @@ function BoardDemo() {
   return (
     <div className="board-demo">
       <BoardToolbar
-        label="Sprint board"
+        label="Cards"
         query={query}
         onQueryChange={setQuery}
         people={people}

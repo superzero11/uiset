@@ -410,6 +410,7 @@ function BoardToolbar({
   onPersonChange,
   children,
 }: {
+  /** What the board holds, like "Cards": the search is "Search cards". Not the board's name. */
   label: string
   query: string
   onQueryChange: (query: string) => void

@@ -649,10 +649,11 @@ class UISetChat extends Evented<UISetChatEvents>() {
   }
 
   private actions(message: ChatMessage, last: boolean) {
-    const toolbar = h("ui-toolbar", { class: "chat-actions", "aria-label": "Message actions" })
     // Every message has these actions, so each is named with its message's first words: an
-    // agent can tell which reply it presses. The focus key stays the action's.
+    // agent can tell which reply it presses. The toolbar and the feedback group too, and
+    // without "message", which the composer is named. The focus key stays the action's.
     const named = (action: string) => actionName(action, textOf(message))
+    const toolbar = h("ui-toolbar", { class: "chat-actions", "aria-label": named("Actions") })
     const button = (action: string, path: string, run: () => void) => {
       const el = h("button", { type: "button", "aria-label": named(action), "data-focus-key": action }, icon(path))
       el.addEventListener("click", run)
@@ -669,7 +670,7 @@ class UISetChat extends Evented<UISetChatEvents>() {
       const current = this.#feedback[message.id]
       const group = h(
         "ui-toggle-group",
-        { "aria-label": "Feedback on this response", "default-value": current ?? "" },
+        { "aria-label": named("Feedback"), "default-value": current ?? "" },
         h("ui-toggle", { value: "good" }, h("button", { type: "button", "aria-label": named("Good response"), "data-focus-key": "good" }, icon(icons.up))),
         h("ui-toggle", { value: "bad" }, h("button", { type: "button", "aria-label": named("Bad response"), "data-focus-key": "bad" }, icon(icons.down))),
       )

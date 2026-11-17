@@ -1,5 +1,7 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test, type Page } from "@playwright/test"
+import { formatAgentReadiness } from "@/registry/uiset/ui/agent-check/check"
+import { checkPage, waitForAgent } from "@/registry/uiset/ui/agent-check/playwright"
 
 // Chat as web elements, on a page with no React: messages with parts in, events out. The
 // page's pretend model thinks, calls a tool, streams markdown with code and a table, and
@@ -105,6 +107,25 @@ test("each message's actions are named with its first words", async ({ page }) =
     'Good response: "Done."',
     'Bad response: "Done."',
   ])
+})
+
+// With two replies and a composer named "Message", each reply's toolbar and feedback group
+// need names of their own too, or a step by one finds the other (or the composer).
+test("with several replies on the page, the check still scores 100", async ({ page }) => {
+  await page.locator("uiset-chat").evaluate((el) => {
+    ;(el as unknown as { messages: unknown[] }).messages = [
+      { id: "q", role: "user", parts: [{ type: "text", text: "How do I cancel a fetch?" }] },
+      { id: "a", role: "assistant", parts: [{ type: "text", text: "Use an AbortController." }] },
+      { id: "b", role: "assistant", parts: [{ type: "text", text: "Pass its signal to fetch." }] },
+    ]
+  })
+  const toolbars = log(page).locator(".chat-message[data-from=assistant]").getByRole("toolbar")
+  await expect(toolbars).toHaveCount(2)
+  expect(await toolbars.evaluateAll((all) => all.map((el) => el.getAttribute("aria-label")))).toEqual(['Actions: "Use an AbortController."', 'Actions: "Pass its signal to fetch."'])
+  await expect(log(page).getByRole("group", { name: 'Feedback: "Use an AbortController."' })).toHaveCount(1)
+  await waitForAgent(page, { agent: "agent" })
+  const report = await checkPage(page, { agent: "agent" })
+  expect(report.score, formatAgentReadiness(report, "chat")).toBe(100)
 })
 
 test("while it answers, the composer shows Stop, and Stop ends the answer", async ({ page }) => {

@@ -146,13 +146,14 @@ function ChatMessageActions({
   onEdit,
   feedback,
   onFeedbackChange,
-  label = "Message actions",
+  label,
 }: {
   text?: string
   onRetry?: () => void
   onEdit?: () => void
   feedback?: Feedback
   onFeedbackChange?: (feedback: Feedback) => void
+  /** The toolbar's name. By default, "Actions" and the message's first words. */
   label?: string
 }) {
   const copy = async () => {
@@ -161,7 +162,8 @@ function ChatMessageActions({
     announce("Copied")
   }
   // Every message has these actions, so each is named with its message's first words, from
-  // `text` or else from the message on screen: an agent can tell which reply it presses.
+  // `text` or else from the message on screen: an agent can tell which reply it presses. The
+  // toolbar and the feedback group too, and without "message", which the composer is named.
   const toolbar = useRef<HTMLDivElement>(null)
   const [shown, setShown] = useState("")
   useEffect(() => {
@@ -170,7 +172,7 @@ function ChatMessageActions({
   })
   const named = (action: string) => actionName(action, text ?? shown)
   return (
-    <Toolbar ref={toolbar} aria-label={label} className="chat-actions">
+    <Toolbar ref={toolbar} aria-label={label ?? named("Actions")} className="chat-actions">
       {text !== undefined && (
         <ToolbarButton aria-label={named("Copy message")} onClick={copy}>
           <Icon path={icons.copy} />
@@ -188,7 +190,7 @@ function ChatMessageActions({
       )}
       {onFeedbackChange && (
         <ToggleGroup
-          aria-label="Feedback on this response"
+          aria-label={named("Feedback")}
           value={feedback ? [feedback] : []}
           onValueChange={(value) => onFeedbackChange((value[0] as Feedback) ?? null)}
         >
