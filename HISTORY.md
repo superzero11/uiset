@@ -1597,3 +1597,15 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   check and the ignore's reason each failed a test (the order check only after a swapped-order
   case was added). For contributors: the `plan/` rules only fire when CHANGELOG.md,
   HISTORY.md or the roadmap change, and CONTRIBUTING.md says maintainers write those.
+- 2026-11-18 — **UISet on UI SDK 0.1.0-beta.10** (the owner: work on Agent view and beta.10
+  first). beta.10's seven fixes change no markup: date picker focus and opening on the
+  selected date, an image cropper drag's detail, focus returning to the next control when a
+  dialog's action removes what opened it, `FieldDescription` ids, a controlled Input's form
+  reset, and a value wrapper under StrictMode. Nothing in UISet needed to change; the registry,
+  `@uiset/web`'s peers and the SDK docs pages follow. Checked: lint, typecheck, 533 unit tests,
+  both builds; e2e, the whole React suite in Chrome (469, part of a full run the owner stopped
+  as too slow for the machine) and, in WebKit, the specs beta.10 touches (board, templates,
+  scheduler, schema form, React and web: 118). From now on the full suite runs only when the
+  owner asks; changes run the specs for what they touch. Pagination still trips its dev
+  check (vercel-labs/ui#856). The board demo's own delete-focus handling may now be redundant
+  (beta.10's 211b82a); not changed.

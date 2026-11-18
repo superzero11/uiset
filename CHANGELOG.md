@@ -10,7 +10,7 @@ again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 
 ## 0.4.0 (unreleased)
 
-On UI SDK `0.1.0-beta.9`.
+On UI SDK `0.1.0-beta.10`.
 
 ### Added
 
@@ -37,9 +37,11 @@ On UI SDK `0.1.0-beta.9`.
 
 ### Changed
 
-- **UI SDK `0.1.0-beta.9`.** Every item now pins `@ui-sdk/core`, `@ui-sdk/react` and
-  `@ui-sdk/web` at `0.1.0-beta.9`, and `@uiset/web`'s peers follow. To take it, add your items
-  again and update the `@ui-sdk/*` versions in your package.json. Three things move with it:
+- **UI SDK `0.1.0-beta.10`.** Every item now pins `@ui-sdk/core`, `@ui-sdk/react` and
+  `@ui-sdk/web` at `0.1.0-beta.10`, and `@uiset/web`'s peers follow. To take it, add your items
+  again and update the `@ui-sdk/*` versions in your package.json. beta.10 opens a date picker
+  on its selected date each time, returns focus to the next control when a dialog's action
+  removes what opened it, and gives each field description its own id. From beta.9:
   - The image cropper's handles go beside its selection, not inside it, so screen readers
     reach them: put `ImageCropperHandle` in `ImageCropperViewport`, after
     `ImageCropperSelection`.
