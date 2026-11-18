@@ -19,22 +19,22 @@ import { Specimen } from "../specimen"
 // Newest first. Keep three: the row has room for three before it scrolls.
 const whatsNew = [
   {
+    date: "2026-11-18",
+    title: "On UI SDK beta.9",
+    href: "/docs/installation",
+    what: "Every item pins UI SDK 0.1.0-beta.9: the image cropper’s handles reach screen readers, and agents can remove one file from a file input.",
+  },
+  {
+    date: "2026-11-17",
+    title: "Tailwind CSS 4, no setup",
+    href: "/docs/installation#with-tailwind-css",
+    what: "In a shadcn/ui app, UISet’s controls keep their look under Tailwind’s reset, and your utility classes still win.",
+  },
+  {
     date: "2026-11-17",
     title: "Agent readiness check",
     href: "/agents#agent-check",
     what: "See whether an agent can find every control on a page by name: a score, and what to fix. Run it in tests, from a bookmarklet, or on any public link.",
-  },
-  {
-    date: "2026-11-17",
-    title: "Schema form",
-    href: "/docs/kits/forms",
-    what: "A form drawn from a JSON Schema that registers itself as a tool agents can call. In React and as a Web Component.",
-  },
-  {
-    date: "2026-11-17",
-    title: "Listed in shadcn’s directory",
-    href: "/docs/installation",
-    what: "Install any item by its name, like @uiset/chat, with the shadcn CLI.",
   },
 ]
 

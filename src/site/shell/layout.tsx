@@ -224,6 +224,9 @@ function Footer() {
         <div className="site-bottom-brand">
           <Logo />
           <p>Components, kits, templates and themes for Vercel&rsquo;s UI SDK.</p>
+          <p className="site-bottom-social">
+            <a href="https://x.com/IAMSuperZero11">@IAMSuperZero11 on X</a>
+          </p>
         </div>
         {footerColumns.map((col) => (
           <nav key={col.title} aria-label={col.title} className="site-bottom-col">
