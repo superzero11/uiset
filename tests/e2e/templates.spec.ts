@@ -370,7 +370,7 @@ test("calendar: New event adds one to the week, and deleting it offers Undo", as
 
 test("calendar: the month lists each day's events; choosing a day opens it", async ({ page }) => {
   await open(page, "calendar-app")
-  await frame(page).getByRole("radiogroup", { name: "View" }).getByRole("radio", { name: "Month" }).click()
+  await frame(page).getByRole("radiogroup", { name: "Calendar layout" }).getByRole("radio", { name: "Month" }).click()
   const month = frame(page).getByRole("grid", { name: "Month of events" })
   const day = month.getByRole("gridcell", { name: /November 18/ })
   await expect(day).toHaveAccessibleName(/3 events: Standup at 9:00 AM, 1:1 with Grace at 11:00 AM, Launch rehearsal at 3:00 PM/)

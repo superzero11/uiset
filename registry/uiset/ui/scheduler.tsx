@@ -419,7 +419,7 @@ function SchedulerToolbar({
         </h2>
       </div>
       <div className="scheduler-actions">
-        <SegmentedControl aria-label="View" value={view} onValueChange={(v) => v && onViewChange(v as SchedulerView)}>
+        <SegmentedControl aria-label="Calendar layout" value={view} onValueChange={(v) => v && onViewChange(v as SchedulerView)}>
           {views.map((v) => (
             <SegmentedControlItem key={v} value={v}>
               {names[v]}

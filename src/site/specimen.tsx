@@ -53,7 +53,7 @@ function Specimen() {
         </Field>
 
         <div className="specimen-row">
-          <Label htmlFor="eq">Sound</Label>
+          <Label htmlFor="eq">Tone</Label>
           <SegmentedControl id="eq" name="eq" defaultValue="flat">
             <SegmentedControlItem value="flat">Flat</SegmentedControlItem>
             <SegmentedControlItem value="warm">Warm</SegmentedControlItem>

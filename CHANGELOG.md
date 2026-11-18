@@ -58,6 +58,12 @@ old names:
   replies those names found two components each, and "Message actions" made the composer's
   name, "Message", find every toolbar: a chat scored 94 on `agent-check` after one reply.
   `ChatMessageActions`' `label` still names the toolbar when you give it.
+- **The scheduler's view switch is "Calendar layout", the canvas's fit button "Zoom to fit",
+  and the terminal's prompt "Command line"**, where they were "View", "Fit to view" and
+  "Command" (the canvas and terminal in React and Web Components, the switch in React and the
+  web calendar template). With a data grid's "View" menu on the page, a step by "View" found
+  three components, and "Command" found every button with the word in its name, like "Copy the
+  command to install…". `messages.command` still names the terminal's prompt when you give it.
 - **Upload's Choose files button carries the upload's label** ("Choose files, Attachments"),
   so two uploads on a page are told apart (React and `<uiset-upload>`).
 - **The app shell's sidebar tooltips, and the inbox's Compose and the calendar's New event

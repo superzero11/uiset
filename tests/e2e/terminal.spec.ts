@@ -162,9 +162,9 @@ test.describe("review fixes", () => {
     expect(result.error?.message).toMatch(/one line of plain text/)
   })
 
-  test("the log announces new lines, not redraws; the prompt is named Command", async ({ page }) => {
+  test("the log announces new lines, not redraws; the prompt is named Command line", async ({ page }) => {
     await expect(output(page)).toHaveAttribute("aria-relevant", "additions")
-    await expect(input(page)).toHaveAccessibleName("Command")
+    await expect(input(page)).toHaveAccessibleName("Command line")
     await input(page).fill("cat ")
     await input(page).press("Tab")
     await input(page).press("Tab")

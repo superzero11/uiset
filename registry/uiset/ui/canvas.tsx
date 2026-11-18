@@ -324,7 +324,7 @@ function Canvas({
               <Button variant="ghost" aria-label="Zoom in" onClick={() => handle.api.zoomIn()}>
                 <Icon name="plus" />
               </Button>
-              <Button variant="ghost" aria-label="Fit to view" onClick={() => handle.api.fitView()}>
+              <Button variant="ghost" aria-label="Zoom to fit" onClick={() => handle.api.fitView()}>
                 <Icon name="fit" />
               </Button>
             </div>

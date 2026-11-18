@@ -42,7 +42,7 @@ const english: TerminalMessages = {
   stopped: "Stopped.",
   busy: "A command is still running. Wait for it, or the person can press Ctrl+C.",
   newOutput: "New output below",
-  command: "Command",
+  command: "Command line",
   help: "Up and Down bring back earlier commands. Tab completes. Ctrl+C stops a running command, Ctrl+L clears.",
 }
 

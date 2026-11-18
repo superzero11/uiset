@@ -42,6 +42,10 @@ test("a card moves by keyboard: the board redraws as it's carried, and Undo take
   await expect(card(page, "Keyboard shortcuts sheet")).toBeFocused()
   await undo(page).click()
   await expect(column(page, "Backlog").getByRole("option", { name: "Keyboard shortcuts sheet" })).toBeVisible()
+  // Undo focuses the card two frames later. Headless WebKit's frames are slow enough that,
+  // unawaited, that focus lands during the next move.
+  await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done)))))
+  await expect(column(page, "Backlog").getByRole("option", { name: "Keyboard shortcuts sheet" })).toBeFocused()
   // Escape puts a carried card back where it was.
   await card(page, "Ship the beta").focus()
   await page.keyboard.press("Space")

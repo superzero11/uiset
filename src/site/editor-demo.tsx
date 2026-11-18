@@ -48,7 +48,7 @@ function EditorDemo() {
         className="editor-demo-editor"
       />
       <Tabs defaultValue="preview" className="editor-demo-output">
-        <TabsList aria-label="Output">
+        <TabsList aria-label="Show as">
           <TabsTab value="preview">Preview</TabsTab>
           <TabsTab value="markdown">Markdown</TabsTab>
           <TabsTab value="html">HTML</TabsTab>

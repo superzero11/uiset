@@ -30,7 +30,7 @@ test("an agent can find every control by name", async () => {
     "Device name",
     "Output",
     "Volume",
-    "Sound",
+    "Tone",
     "Night mode",
     "Save changes",
     "Forget device",
@@ -46,7 +46,7 @@ test("an agent can change every setting", async () => {
       { ref: "Device name", action: "setValue", args: ["Studio"] },
       { ref: "Output", action: "setValue", args: ["Headphones"] },
       { ref: "Volume", action: "setValue", args: [80] },
-      { ref: "Sound", action: "setValue", args: ["Warm"] },
+      { ref: "Tone", action: "setValue", args: ["Warm"] },
       { ref: "Night mode", action: "setChecked", args: [true] },
     ],
   })

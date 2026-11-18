@@ -131,7 +131,7 @@ function HeroStage() {
   return (
     <div className="hero-stage">
       <div className="hero-stage-controls">
-        <SkinPicker value={skin} onChange={change} />
+        <SkinPicker value={skin} onChange={change} label="Skin of the live form" />
       </div>
       <UISet skin={skin} theme={theme} sound className="stage-surface hero-surface">
         <Specimen />
@@ -302,7 +302,7 @@ function HomePage() {
           <p>These are the real components, running. Each is keyboard-first, readable by screen readers and agents, and styled by the skin around it.</p>
         </div>
         <Tabs value={kit} onValueChange={(v) => v && setKit(v as string)} className="home-kits">
-          <TabsList aria-label="Kit" className="home-kit-tabs">
+          <TabsList aria-label="Kit demos" className="home-kit-tabs">
             {kitTabs.map((k) => (
               <TabsTab key={k.id} value={k.id}>
                 {k.name}

@@ -368,6 +368,8 @@ checks, then a release, a deploy, and npm by the owner.
 | Tailwind CSS 4 apps work with no setup                                                               | done, web not published | 2026-11-17: in a shadcn/ui app (Tailwind 4), Tailwind's reset stripped UISet's controls and UISet outranked utility classes. UI SDK's web.css now sits in `uiset.base.sdk`, and `uiset/layers.ts` puts `uiset` between Tailwind's `base` and `components` when a page has Tailwind's layers (React root and `<uiset-root>`). Same computed styles as a hand-made fix in a test app, both import orders, popups included; the site's 57 pages and the web demos unchanged (79,128 and 6,856 elements compared); 6 unit and 5 e2e tests (Chrome, WebKit, Firefox), 4/4 mutations caught; the full Chromium and web e2e suites pass apart from a canvas drag test that fails the same way without the change |
 | Agent migration recipe (`docs/agent-migration.md`)                                                   | done | 2026-11-17: a shadcn/ui app moved to UISet by a coding agent, step by step with checks; written from a test migration of a 17-component app. Corrected Installation, Looking for, Coming from shadcn/ui on the way |
 | Chat and board demos score 100 on `agent-check`                                                     | done | 2026-11-17: found filming the agent-check video (chat template 94 after a reply, chat demo 84, board demo 92, all through the bridge). Chat toolbars and feedback groups named per message, React and web; the board demos' search is "Search cards". Agent tests for both demos, the chat template with a reply, and a chat with replies (React unit, web e2e), 4/4 mutations caught |
+| uiset.dev's home page scores 100 on `agent-check`                                                  | done | 2026-11-18: 94 through the bridge with the chat demo open, 80 with the rich text one. Four renames: the hero's skin picker, the hero form's "Tone", the "Kit demos" tabs, the editor demo's "Show as" tabs. An e2e test checks the page with each kit demo open (Chrome, WebKit, Firefox), 2/2 mutations caught |
+| uiset.dev's Kits page scores 100 on `agent-check`                                                  | done | 2026-11-18: 98 through the bridge. The data grid's "View" menu met the scheduler's "View" switch and the canvas's "Fit to view", and the terminal's "Command" every install line's "Copy the command to …". Kit renames, React and web: "Calendar layout", "Zoom to fit", "Command line". An e2e test checks the page (Chrome, WebKit, Firefox), 2/2 mutations caught |
 
 ## 10. Decision log
 
@@ -1636,3 +1638,45 @@ checks, then a release, a deploy, and npm by the owner.
   WebKit, Firefox; mutations caught: no loading as cards come into view, the page not waiting
   for its first examples). All ten specs that open the page: 497 passed in Chrome and WebKit.
   The static build prerenders the page with every example drawn.
+- 2026-11-18 — **uiset.dev's home page scores 100 through the agent bridge** (the owner: "fix
+  the home page score"). It scored 94 with the chat demo open, and other demos added their own
+  clash: one-word names met the same word in another control's name, or in a list item's text,
+  which the bridge reads as a control's row. "Sound" (the hero form) was in the first install
+  step's text, "Skin" (the hero's picker) in the second's, "Kit" (the demo tabs) in every
+  "Install the … kit" command, and the hero form's "Output" named the editor demo's tabs too
+  (80 with that demo open). The step text stays as written: renaming the short names holds
+  whatever the text says next. The hero form's "Sound" is now "Tone", the hero's picker "Skin
+  of the live form" (other pages keep "Skin"), the tabs "Kit demos", and the editor demo's tabs
+  "Show as" ("View as" was tried: the data grid's and the scheduler's "View" found it on
+  /kits). Only "Tone" is visible; it was checked in every skin and theme and at phone width.
+  `agent-ready-pages.spec.ts` checks the page through the bridge with each kit demo open
+  (Chrome, WebKit, Firefox); mutations caught: "Sound" back, the editor's "Output" back. The
+  rest of the site, templates apart, is checked only by the every-page walk, which reads the
+  accessibility tree, not the bridge. Through the bridge, not touched: /kits 98 ("View",
+  "Command"; fixed in the next entry), /agents 88 (its demo form's three planted mistakes, on
+  by default: `agent-check.spec.ts` already holds the page at 100 with them off), /components
+  85 (20 ambiguous names).
+- 2026-11-18 — **uiset.dev's Kits page scores 100 through the agent bridge** (the owner, "Yes,
+  fix them", to fixing /kits and /agents next). /kits scored 98: the data grid's "View" menu,
+  the scheduler's "View" switch and the canvas's "Fit to view" button all answered a step by
+  "View", and the terminal's prompt, "Command", answered as every install line's "Copy the
+  command to install the … kit". Each kit is fine alone; a page that puts them together, like a
+  dashboard, isn't. So the kits' names changed, not the page: the scheduler's switch is
+  "Calendar layout", the canvas's button "Zoom to fit" (beside "Zoom in" and "Zoom out"), the
+  terminal's prompt "Command line" (React and web; the web scheduler's switch is in the
+  calendar template's and the demo page's markup). The grid keeps its visible "View" menu, the
+  one name a person reads. All three are aria-labels: nothing on screen changed.
+  `agent-ready-pages.spec.ts` checks /kits through the bridge (Chrome, WebKit, Firefox);
+  mutations caught: the scheduler's "View" back, the terminal's "Command" back. Tests that used
+  the old names follow them. /agents needed nothing: its 88 is the demo's planted mistakes, and
+  with the switch off the page scores 100, which `agent-check.spec.ts` already checks. Listed
+  under Changed in the changelog, since steps and tests that used the old names need the new
+  ones.
+- 2026-11-18 — **The web board's keyboard test waits out Undo's focus.** It failed 5 times in
+  6 in WebKit on main: Undo focuses the card two frames after the toast closes, and headless
+  WebKit's frames came late enough that the focus landed on the next card's move, so Escape
+  returned focus to the undone card. The test now waits three frames after Undo and checks
+  focus is on the card (30/30 in Chrome and WebKit). The same deferred focus is in the
+  project-board templates and the canvas; nobody acts within two frames, so they stay. On the
+  same day a long local WebKit run stalled with two WebKit processes at about 7 GB each; a run
+  from a fresh start stayed under 340 MB a process.

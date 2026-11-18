@@ -173,7 +173,7 @@ class CanvasView {
       button("Zoom out", "minus", () => this.instance?.api.zoomOut()),
       h("uiset-canvas-zoom", { onclick: () => this.instance?.api.resetZoom() }, h("button", { type: "button", class: "canvas-zoom" })),
       button("Zoom in", "plus", () => this.instance?.api.zoomIn()),
-      button("Fit to view", "fit", () => this.instance?.api.fitView()),
+      button("Zoom to fit", "fit", () => this.instance?.api.fitView()),
     )
     this.mapSvg.append(this.mapView)
     this.minimap = h("div", { class: "canvas-minimap", "aria-hidden": "true", "data-canvas-control": "" }, this.mapSvg)
