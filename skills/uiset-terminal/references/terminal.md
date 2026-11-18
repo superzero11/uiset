@@ -81,10 +81,12 @@ the caret in the prompt unless you were selecting text.
 
 ## For agents
 
-`run(command)` and `clear()`. `run` takes one line of plain text: control characters,
-which could fake what the person sees echoed, are refused. `query({ within: "Shell" })`
-returns the last 50 lines as plain text, keyed by line. Commands can do anything your app
-lets them, so gate `run` with the agent bridge's `allow` callback where that matters.
+`runCommand(command)` and `clear()`. `runCommand` takes one line of plain text: control
+characters, which could fake what the person sees echoed, are refused. `query({ within:
+"Shell" })` returns the last 50 lines as plain text, keyed by line. Commands can do
+anything your app lets them, so gate `runCommand` with the agent bridge's `allow` callback
+where that matters. (Your code calls the same thing as `run`; since UI SDK 0.1.0-beta.8 the
+bridge reads a `run` action's argument as one of the component's items.)
 
 ## Screen readers
 

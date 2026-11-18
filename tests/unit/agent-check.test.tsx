@@ -7,6 +7,8 @@ import { Avatar, AvatarFallback } from "@/registry/uiset/ui/avatar"
 import { Button } from "@/registry/uiset/ui/button"
 import { Field, FieldLabel, Input } from "@/registry/uiset/ui/field"
 import { Radio, RadioGroup } from "@/registry/uiset/ui/radio"
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/registry/uiset/ui/dialog"
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/registry/uiset/ui/menu"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/registry/uiset/ui/tooltip"
 
 const agent = createAgent()
@@ -32,7 +34,8 @@ test("finds unnamed components, names that find several, and controls agents can
       <Avatar>
         <AvatarFallback>AL</AvatarFallback>
       </Avatar>
-      {/* A closed tooltip takes its trigger's name (vercel-labs/ui#604). */}
+      {/* A closed tooltip takes its trigger's name, but a step by it presses the trigger and
+          the snapshot leaves the tooltip out (vercel-labs/ui#604, UI SDK 0.1.0-beta.8). */}
       <Tooltip>
         <TooltipTrigger render={<Button />}>Account</TooltipTrigger>
         <TooltipContent>Your profile and sign out</TooltipContent>
@@ -77,12 +80,9 @@ test("finds unnamed components, names that find several, and controls agents can
 
   const ambiguous = report.problems.filter((problem) => problem.kind === "ambiguous")
   expect(ambiguous.map((problem) => problem.kind === "ambiguous" && [problem.label, problem.components.sort()])).toEqual([
-    ["Account", ["button", "tooltip"]],
     ["Region", ["input", "input"]],
   ])
-  // The tooltip's own fix, and the plain one for two fields.
-  expect(ambiguous[0]!.message).toContain("give a tooltip its own aria-label")
-  expect(ambiguous[1]!.message).toContain('"Revenue by region"')
+  expect(ambiguous[0]!.message).toContain('"Revenue by region"')
 
   const unseen = report.problems.filter((problem) => problem.kind === "unseen").map((problem) => problem.kind === "unseen" && problem.control)
   expect(unseen).toEqual(['button "Export"', 'textarea "Notes"'])
@@ -90,13 +90,44 @@ test("finds unnamed components, names that find several, and controls agents can
   const unconfirmed = report.problems.filter((problem) => problem.kind === "unconfirmed")
   expect(unconfirmed.map((problem) => problem.kind === "unconfirmed" && problem.label)).toEqual(["Delete project"])
 
-  // Listed: avatar, Account button, its tooltip, two fields, two Delete buttons (7); unseen: 2.
-  // Ready: Revenue by region and the two Delete buttons.
-  expect(report).toMatchObject({ controls: 9, ready: 3, score: 33 })
+  // Listed: avatar, Account button, two fields, two Delete buttons (6); unseen: 2.
+  // Ready: Account, Revenue by region and the two Delete buttons.
+  expect(report).toMatchObject({ controls: 8, ready: 4, score: 50 })
   const text = formatAgentReadiness(report, "Settings")
-  expect(text.split("\n")[0]).toBe("Settings: agent readiness 33/100 (3 of 9 controls an agent can find by name)")
+  expect(text.split("\n")[0]).toBe("Settings: agent readiness 50/100 (4 of 8 controls an agent can find by name)")
   expect(text).toContain('error unseen: button "Export" isn\'t a UI SDK component')
-  await expect(expectAgentReady(agent)).rejects.toThrow("agent readiness 33/100")
+  await expect(expectAgentReady(agent)).rejects.toThrow("agent readiness 50/100")
+})
+
+test("a closed menu or dialog named like its trigger still finds two; a tooltip doesn't", async () => {
+  const agent = createAgent()
+  render(
+    <main>
+      <Tooltip>
+        <TooltipTrigger render={<Button />}>Account</TooltipTrigger>
+        <TooltipContent>Your profile and sign out</TooltipContent>
+      </Tooltip>
+      <Menu>
+        <MenuTrigger render={<Button />}>Share</MenuTrigger>
+        <MenuContent>
+          <MenuItem value="link">Copy link</MenuItem>
+        </MenuContent>
+      </Menu>
+      <Dialog>
+        <DialogTrigger render={<Button />}>Rename</DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Rename</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    </main>,
+  )
+  const report = await checkAgentReadiness(agent)
+  const ambiguous = report.problems.filter((problem) => problem.kind === "ambiguous")
+  expect(ambiguous.map((problem) => problem.kind === "ambiguous" && [problem.label, problem.components.sort()])).toEqual([
+    ["Share", ["button", "menu"]],
+    ["Rename", ["button", "dialog"]],
+  ])
+  expect(ambiguous[0]!.message).toContain("takes its trigger's name")
 })
 
 test("accepted problems can be left out, and the score counts them as fine", async () => {

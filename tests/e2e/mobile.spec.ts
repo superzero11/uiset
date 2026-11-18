@@ -212,10 +212,10 @@ test("agents run a row's safe actions and open rows by name; dangerous ones need
     query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]>
   }
   const act = (steps: unknown[]) => page.evaluate((s) => (window as unknown as { agent: Agent }).agent.act({ steps: s }), steps)
-  const archived = await act([{ ref: "Messages", action: "run", args: ["Ada Lovelace", "Archive"] }])
+  const archived = await act([{ ref: "Messages", action: "runAction", args: ["Ada Lovelace", "Archive"] }])
   expect(archived.ok, archived.error?.message).toBe(true)
   await expect(row(page, "Ada Lovelace")).toHaveCount(0)
-  const refused = await act([{ ref: "Messages", action: "run", args: ["Linus", "Delete"] }])
+  const refused = await act([{ ref: "Messages", action: "runAction", args: ["Linus", "Delete"] }])
   expect(refused.ok).toBe(false)
   expect(refused.error?.message).toContain('Needs a person: "Delete: Linus Pauling')
   expect(refused.error?.message).toContain('in "Actions for Linus Pauling')

@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -76,7 +76,7 @@ Renders the week rows. Its children are a function that receives each cell, with
 ### CalendarDay
 
 - `value` (`string`): Its ISO date.
-- `offset?` (`number`): The offset of the grid it's in.
+- `offset?` (`number`): The offset of the grid it's in, read from that grid, so you don't pass it.
 
 ### State
 

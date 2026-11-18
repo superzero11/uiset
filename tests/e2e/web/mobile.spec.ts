@@ -73,10 +73,10 @@ test("each row's actions menu is there for screen readers, named for its row", a
 })
 
 test("agents run safe actions and open rows by name; Delete needs the person", async ({ page }) => {
-  const archived = await act(page, [{ ref: "Messages", action: "run", args: ["Ada Lovelace", "Archive"] }])
+  const archived = await act(page, [{ ref: "Messages", action: "runAction", args: ["Ada Lovelace", "Archive"] }])
   expect(archived.ok, archived.error?.message).toBe(true)
   await expect(row(page, "Ada Lovelace")).toHaveCount(0)
-  const refused = await act(page, [{ ref: "Messages", action: "run", args: ["Linus", "Delete"] }])
+  const refused = await act(page, [{ ref: "Messages", action: "runAction", args: ["Linus", "Delete"] }])
   expect(refused.ok).toBe(false)
   expect(refused.error?.message).toContain('Needs a person: "Delete: Linus Pauling')
   const opened = await act(page, [{ ref: "Messages", action: "openRow", args: ["Grace Hopper"] }])

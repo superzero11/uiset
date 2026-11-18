@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -15,6 +15,7 @@ Props and callbacks are the same as below, as React props.
 - `siblings?` (`number`): How many pages show on each side of the current one.
 - `boundaries?` (`number`): How many pages always show at each end.
 - `getHref?` (`((page: number) => string)`): The URL of a page. With it, parts are links: they navigate, open in a new tab with a modifier key, and work before JavaScript loads. Without it, they're buttons.
+- `disabled?` (`boolean`): Whether every page and step does nothing, like a step at its end. A controller still pages it.
 - `controller?` (`object`): Pages it from anywhere. Create one with `createPaginationController()`.
 - `debug?` (`boolean`): Logs every state change with its reason to the console, in development builds.
 
@@ -42,7 +43,7 @@ What render functions, state-based class names and slots receive, per part.
 `PaginationPrevious`, `PaginationNext`, `PaginationFirst` and `PaginationLast`:
 
 - `page` (`number`): The page it goes to.
-- `disabled` (`boolean`): Whether it's at the end it goes to, so it does nothing.
+- `disabled` (`boolean`): Whether it's at the end it goes to, or the pagination is disabled, so it does nothing.
 
 ### Reasons
 

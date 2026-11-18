@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -10,7 +10,7 @@ Props are the same as below, as React props.
 - `maxFiles?` (`number`): The most files accepted at a time. The first ones that pass the other checks are accepted, and the rest are rejected.
 - `maxSize?` (`number`): The largest size accepted, in bytes.
 - `minSize?` (`number`): The smallest size accepted, in bytes.
-- `validate?` (`((file: File) => string | null | undefined | void)`): A check of your own. Return a reason, like `"duplicate"`, to reject the file, or nothing to accept it.
+- `validate?` (`((file: File, batch: { accepted: readonly File[]; }) => string | null | undefined | void)`): A check of your own. Return a reason, like `"duplicate"`, to reject the file, or nothing to accept it. `accepted` holds the files of the same choice, drop or paste accepted before this one.
 - `value?` (`File[]`): The files, to control the file input.
 - `defaultValue?` (`File[]`): The files at first, when uncontrolled. A form reset returns to them.
 - `onValueChange?` (`((value: File[], details: FileInputValueChangeDetails) => void)`): Runs when files are added or removed, with what changed in the details. `details.cancel()` stops it.

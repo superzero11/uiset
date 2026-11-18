@@ -225,7 +225,11 @@ async function checkAgentReadiness(agent: AgentBridge, options: CheckOptions = {
   const reported = new Set<string>()
   for (const [label, own] of labels) {
     const found = await agent.query({ text: label })
-    const taken = (isEntryList(found) ? found : own).filter((entry) => !entry.offPage && entry.component !== "more" && names(entry, label))
+    // A closed tooltip whose trigger is listed is left out of the snapshot, and a step by the
+    // trigger's name presses the trigger (UI SDK 0.1.0-beta.8), so only a search finds it.
+    const taken = (isEntryList(found) ? found : own).filter(
+      (entry) => !entry.offPage && entry.component !== "more" && !(entry.component === "tooltip" && !byRef.has(entry.ref)) && names(entry, label),
+    )
     const refs = [...new Set([...own.map((entry) => entry.ref), ...taken.map((entry) => entry.ref)])]
     // Every component the name finds counts, with actions or not: a step can't tell them apart.
     if (refs.length < 2) continue

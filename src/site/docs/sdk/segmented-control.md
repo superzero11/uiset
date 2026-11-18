@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -41,6 +41,7 @@ What render functions, state-based class names and slots receive.
 
 - `value` (`string | null`): The checked item's value, which the indicator sits behind.
 - `orientation` (`SegmentedControlOrientation`): Which way the items run.
+- `direction` (`Direction`): Which way the checked item last moved on screen, `"none"` before it first moves.
 
 ### Reasons
 
@@ -109,6 +110,7 @@ Every line below is an automated test.
 
 - The indicator covers the checked item.
 - The indicator follows the checked item.
+- The indicator says which way the checked item moved, and none at first.
 - The indicator covers the checked item in a vertical control.
 - The indicator matches items with fractional widths exactly.
 - A scaled ancestor doesn't move the indicator off fractional items.

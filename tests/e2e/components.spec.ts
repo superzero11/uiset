@@ -20,20 +20,7 @@ for (const skin of skins) {
         .include(".components-surface")
         .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
         .analyze()
-      // Known UI SDK issue: the image cropper's selection is a slider with slider handles
-      // inside it, and a slider's children are presentational. Reported upstream; when it's
-      // fixed this expectation fails, and the exception should go.
-      const upstream = results.violations.filter(
-        (v) =>
-          v.id === "nested-interactive" &&
-          v.nodes.every((n) => n.target.join(" ").includes("image-cropper-selection")),
-      )
-      expect(
-        upstream,
-        "UI SDK fixed the image cropper; remove this exception",
-      ).toHaveLength(1)
       const report = results.violations
-        .filter((v) => !upstream.includes(v))
         .map(
           (v) =>
             `${v.id} (${v.nodes.length}): ${v.nodes

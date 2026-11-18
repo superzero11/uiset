@@ -221,7 +221,7 @@ refresh.addEventListener("refresh", (e) => e.detail.waitUntil(fetchMail()))
   the row now in its place.
 - Everything the React SwipeList does is here: a long swipe runs a side's first action, each
   row has an Actions menu for screen readers, `messages` translates the words, and agents
-  `run(row, action)` and `openRow(row)` by name (a `danger` action needs the person).
+  `runAction(row, action)` and `openRow(row)` by name (a `danger` action needs the person).
 - `<uiset-pull-refresh>` scrolls its children and slides them down as it's pulled. A
   rejected `waitUntil` Promise is announced and fires `refresherror`; `refresh()` runs one
   from code, and a Refresh button shows on keyboard focus. `threshold` and `messages` tune it.
@@ -489,8 +489,8 @@ shell.api.print("from the server\n")         // output from outside, like a sock
   http addresses). The log reads out new lines only, and old lines go only while you're
   following the end, past `scrollback` lines. "New output below" appears when you've
   scrolled up.
-- `shell.api` has `run`, `clear`, `print` and `error`. Agents run commands and read the
-  last lines; while a command runs, they're told to wait.
+- `shell.api` has `run`, `clear`, `print` and `error`. Agents run commands with
+  `runCommand` and read the last lines; while a command runs, they're told to wait.
 
 ## Charts
 

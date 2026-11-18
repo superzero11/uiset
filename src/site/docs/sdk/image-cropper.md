@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -124,6 +124,7 @@ Every line below is an automated test.
 
 - A drag moves the selection over the image and commits once.
 - A handle resizes from its corner, within the image.
+- Each handle sits on its edge or corner of the selection, and follows it.
 - At a ratio, a handle keeps it.
 - Escape during a drag puts the selection back.
 

@@ -12,11 +12,11 @@ importers:
         specifier: 153.0.0
         version: 153.0.0(bare-buffer@3.7.3)
       '@ui-sdk/core':
-        specifier: 0.1.0-beta.5
-        version: 0.1.0-beta.5
+        specifier: 0.1.0-beta.9
+        version: 0.1.0-beta.9
       '@ui-sdk/react':
-        specifier: 0.1.0-beta.5
-        version: 0.1.0-beta.5(@types/react@19.3.0)(@ui-sdk/core@0.1.0-beta.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: 0.1.0-beta.9
+        version: 0.1.0-beta.9(@types/react@19.3.0)(@ui-sdk/core@0.1.0-beta.9)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       playwright-core:
         specifier: 1.65.1
         version: 1.65.1
@@ -73,8 +73,8 @@ importers:
         specifier: 19.3.0
         version: 19.3.0(@types/react@19.3.0)
       '@ui-sdk/web':
-        specifier: 0.1.0-beta.5
-        version: 0.1.0-beta.5(@ui-sdk/core@0.1.0-beta.5)
+        specifier: 0.1.0-beta.9
+        version: 0.1.0-beta.9(@ui-sdk/core@0.1.0-beta.9)
       '@vitejs/plugin-react':
         specifier: 6.3.0
         version: 6.3.0(vite@8.3.8(@types/node@24.19.2))
@@ -656,24 +656,24 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@ui-sdk/core@0.1.0-beta.5':
-    resolution: {integrity: sha512-dmunrxWrZ+vwldKJ6THQNYyyfbLFY6K82hBvIZSnuGwpEQmXKmM0iuANgGXtaqw8unSB2p9E5s3y7zfE9rgP6Q==}
+  '@ui-sdk/core@0.1.0-beta.9':
+    resolution: {integrity: sha512-2gxHeWnJUfYskJOfQ97pr6bxxbxIHKWd7cnfClBKzy+ynwmNOg4np5rhFCsKFwzkOj2s7QxD2s32/jwFR6uMdA==}
 
-  '@ui-sdk/react@0.1.0-beta.5':
-    resolution: {integrity: sha512-Zfvl94ulACX511lQKQDnK7wVjhYUYsR5LLnCZ800NzQ3983TxZasHxXyC+KYNlvppkYfpELPlAbVslsSIGQ9/A==}
+  '@ui-sdk/react@0.1.0-beta.9':
+    resolution: {integrity: sha512-UgFiUlZWaKkBcZIW0usHiQhcyJug11M8NNluSlfs9UyaYjW/Ws18T8zWc3iAz4SSwRla6+41y3aScXh3pUDN0g==}
     peerDependencies:
       '@types/react': '>=19.2.10'
-      '@ui-sdk/core': ^0.1.0-beta.5
+      '@ui-sdk/core': ^0.1.0-beta.9
       react: '>=19'
       react-dom: '>=19'
     peerDependenciesMeta:
       '@types/react':
         optional: true
 
-  '@ui-sdk/web@0.1.0-beta.5':
-    resolution: {integrity: sha512-Ufgux0iewhxAA1bmxTZB0EI3fqZPnV5cJpUKxG79d3peXgQTYnblvUIRnChDVyfmYHL3w55fBeM6J+5yAr6zTg==}
+  '@ui-sdk/web@0.1.0-beta.9':
+    resolution: {integrity: sha512-1C05c5kvx71XWe0o4eTev/wljLASCzrI8q9/YgdsvM061srxSGKpQC9ygEr2JhuuTlgI70Gd/b1RbYkN93oF4w==}
     peerDependencies:
-      '@ui-sdk/core': ^0.1.0-beta.5
+      '@ui-sdk/core': ^0.1.0-beta.9
 
   '@ungap/structured-clone@1.4.0':
     resolution: {integrity: sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ==}
@@ -2737,19 +2737,19 @@ snapshots:
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
 
-  '@ui-sdk/core@0.1.0-beta.5': {}
+  '@ui-sdk/core@0.1.0-beta.9': {}
 
-  '@ui-sdk/react@0.1.0-beta.5(@types/react@19.3.0)(@ui-sdk/core@0.1.0-beta.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@ui-sdk/react@0.1.0-beta.9(@types/react@19.3.0)(@ui-sdk/core@0.1.0-beta.9)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
-      '@ui-sdk/core': 0.1.0-beta.5
+      '@ui-sdk/core': 0.1.0-beta.9
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
     optionalDependencies:
       '@types/react': 19.3.0
 
-  '@ui-sdk/web@0.1.0-beta.5(@ui-sdk/core@0.1.0-beta.5)':
+  '@ui-sdk/web@0.1.0-beta.9(@ui-sdk/core@0.1.0-beta.9)':
     dependencies:
-      '@ui-sdk/core': 0.1.0-beta.5
+      '@ui-sdk/core': 0.1.0-beta.9
 
   '@ungap/structured-clone@1.4.0': {}
 

@@ -25,8 +25,8 @@ type SwipeListOptions = {
    */
   onAction?: (key: string, details: { action: string }) => void
   /**
-   * A row's actions, for agents. One with `confirm` needs the person: `run` refuses it and
-   * points at `via`, the control that asks them.
+   * A row's actions, for agents. One with `confirm` needs the person: `runAction` refuses it
+   * and points at `via`, the control that asks them.
    */
   actionsOf?: (key: string) => { id: string; label: string; confirm?: string; via?: string }[]
   /** Each row as agents read it. */
@@ -91,6 +91,19 @@ const swipeList = definePrimitive({
       if (!row) throw new Error(`No row "${name}". Rows: ${rows.map((r) => r.label).join("; ")}.`)
       return row
     }
+    /** Runs one of a row's actions, by the row's name and the action's. */
+    const run = (row: string, action: string) => {
+      const found = findRow(row)
+      const actions = opts().actionsOf?.(found.value) ?? []
+      const chosen = actions.find((a) => a.id === action || a.label.toLowerCase() === String(action).toLowerCase())
+      if (!chosen) throw new Error(`"${found.label}" has no action "${action}". It has: ${actions.map((a) => a.label).join(", ")}.`)
+      if (chosen.confirm) {
+        const via = chosen.via ? ` Press "${chosen.label}" in "${chosen.via}" instead, which asks them.` : ""
+        throw new Error(`Needs a person: "${chosen.confirm}".${via}`)
+      }
+      opts().onAction?.(found.value, { action: chosen.id })
+      return true
+    }
     return {
       swipe,
       roving,
@@ -110,19 +123,10 @@ const swipeList = definePrimitive({
         swipe.close({ focus })
         opts().onAction?.(key, { action })
       },
-      /** Runs one of a row's actions, by the row's name and the action's. */
-      run(row: string, action: string) {
-        const found = findRow(row)
-        const actions = opts().actionsOf?.(found.value) ?? []
-        const chosen = actions.find((a) => a.id === action || a.label.toLowerCase() === String(action).toLowerCase())
-        if (!chosen) throw new Error(`"${found.label}" has no action "${action}". It has: ${actions.map((a) => a.label).join(", ")}.`)
-        if (chosen.confirm) {
-          const via = chosen.via ? ` Press "${chosen.label}" in "${chosen.via}" instead, which asks them.` : ""
-          throw new Error(`Needs a person: "${chosen.confirm}".${via}`)
-        }
-        opts().onAction?.(found.value, { action: chosen.id })
-        return true
-      },
+      run,
+      // For agents: UI SDK's bridge reads a `run` action's first argument as one of the
+      // component's items (vercel-labs/ui#848).
+      runAction: run,
       /** Opens a row, by its name. */
       openRow(row: string) {
         if (!opts().onOpen) throw new Error("These rows don't open.")
@@ -206,7 +210,7 @@ const swipeList = definePrimitive({
       bind: (el, { api, props }) => api.swipe.bindActions(el, props.row, props.side as SwipeSide),
     }),
   }),
-  agent: { actions: ["run", "openRow"], items: (api) => api.items() },
+  agent: { actions: ["runAction", "openRow"], items: (api) => api.items() },
 })
 
 export { swipeList }

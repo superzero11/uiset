@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -113,6 +113,7 @@ Beyond the pattern's baseline:
 
 - Closing the panel while focus is inside it moves focus to the trigger.
 - OnOpenChangeComplete runs once the animation has finished.
+- An inert its owner writes during the exit stays once the exit ends.
 - Find in page reports its own reason and opens without an animation.
 - A canceled find in page keeps the panel hidden until found.
 - An infinite exit animation still unmounts the panel.

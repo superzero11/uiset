@@ -10,6 +10,8 @@ again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 
 ## 0.4.0 (unreleased)
 
+On UI SDK `0.1.0-beta.9`.
+
 ### Added
 
 - **`agent-check`**: whether an agent can use a page. It asks the page's UI SDK agent bridge,
@@ -35,6 +37,20 @@ again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 
 ### Changed
 
+- **UI SDK `0.1.0-beta.9`.** Every item now pins `@ui-sdk/core`, `@ui-sdk/react` and
+  `@ui-sdk/web` at `0.1.0-beta.9`, and `@uiset/web`'s peers follow. To take it, add your items
+  again and update the `@ui-sdk/*` versions in your package.json. Three things move with it:
+  - The image cropper's handles go beside its selection, not inside it, so screen readers
+    reach them: put `ImageCropperHandle` in `ImageCropperViewport`, after
+    `ImageCropperSelection`.
+  - Agents can remove one file from a file input by its name.
+  - A web drop zone spaces its trigger the way React's does, from UI SDK's own styles; UISet's
+    rule for it is gone.
+- **Agents run the terminal's commands with `runCommand` and a swipe list's row actions with
+  `runAction`**, where they used `run`. Since UI SDK beta.8, the bridge reads a `run` action's
+  first argument as one of the component's items, so `run("ls")` and
+  `run("Ada Lovelace", "Archive")` were refused (vercel-labs/ui#848). Your code still calls
+  `run`, React and Web Components.
 - **Install lines use the `@uiset` namespace**, now that shadcn's registry directory lists it:
   `npx shadcn@latest add @uiset/<item>`. `superzero11/uiset/<item>` and
   `https://uiset.dev/r/<item>.json` still work.
@@ -93,6 +109,9 @@ old names:
   from its picture's alt text or its hidden name.
 - **Templates:** the auth template's "Email me a sign-in link" is "Send me a one-time link",
   and the schema form example's Name field is "Full name".
+- **`agent-check` no longer counts a closed tooltip as sharing its trigger's name.** UI SDK
+  now leaves it out of the snapshot, and a step by that name presses the trigger. A closed
+  menu or dialog named like its trigger still counts: the snapshot lists both.
 - **Focus after Undo or Add node lands at once, not a frame or two later.** The project
   board's Undo (React and Web Components) and the canvas toolbar's Add node (React and Web
   Components) put focus off to a later frame, so a quick key or click could land first and

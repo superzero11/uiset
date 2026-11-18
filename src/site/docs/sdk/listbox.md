@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -10,6 +10,7 @@ Props and callbacks are the same as below, as React props.
 - `deselectable?` (`boolean`): Whether pressing the selected item of a single listbox unselects it, so nothing is selected.
 - `orientation?` (`"horizontal" | "vertical"`): Which arrow keys move between items. Horizontal lists use Left and Right, swapped in right-to-left text.
 - `loop?` (`boolean`): Whether arrow keys wrap from the last item to the first. Shift with an arrow never wraps.
+- `virtualFocus?` (`boolean`): Keeps focus on the list itself, which points at the highlighted option with `aria-activedescendant`, instead of moving focus onto the options.
 - `keepInView?` (`boolean`): Whether the list scrolls the option keys move to into view, and the selected option when it first shows. Turn it off when something else scrolls the list, like `bindScrollPicker`.
 - `items?` (`ListData<T>`): The items as data. Renders them for you, and lets typing find items a virtualized list hasn't rendered.
 - `itemToValue?` (`((value: T) => string)`): The string an item's value submits as and is identified by, for object values. Strings pass through, and objects use their `value` or `id`.
@@ -87,6 +88,8 @@ Every write method takes an optional `{ reason, event }`, passed to `onValueChan
 - `setValue(value, options?)` (`(value: ListboxValue<T, Multiple>, options?: ListboxChangeOptions | undefined) => boolean`): Selects a value, as a user would. A disabled or read-only listbox ignores it. Returns false when the change was canceled or nothing changed.
 - `clear(options?)` (`(options?: ListboxChangeOptions | undefined) => boolean`): Selects nothing: `null`, or an empty list with `multiple`. Returns false when the change was canceled or nothing changed.
 - `selectAll(options?)` (`(options?: ListboxChangeOptions | undefined) => boolean`): Selects every enabled item, with `multiple`. Returns false when the change was canceled or nothing changed.
+- `getHighlighted()` (`() => T | null`): The value of the highlighted option, or null when none is, like while focus is outside the list.
+- `highlight(value)` (`(value: T | null) => boolean`): Highlights the option with this value, scrolled into view, or none with null. While focus is outside the list, the option takes the tab stop instead, so focus lands on it next. Returns false when no enabled option has the value.
 - `focus()` (`() => void`): Moves focus into the list, onto the option that holds its tab stop.
 
 ### Events
@@ -104,7 +107,7 @@ Follows the [WAI-ARIA listbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/
 
 ### Focus
 
-The list is one tab stop. Tab returns to the last focused option, then falls back to the first selected or enabled option. Options receive real DOM focus, so `focus-visible` works directly.
+The list is one tab stop. Tab returns to the last focused option, then falls back to the first selected or enabled option. Options receive real DOM focus, so `focus-visible` works directly. With `virtualFocus`, the list is the tab stop and keeps focus instead.
 
 The root forwards focus into the options, including when you press a Field label or the list’s padding. Escape stays available to an enclosing dialog.
 
@@ -209,6 +212,11 @@ Beyond the pattern:
 **Touch**
 
 - Taps toggle where clicks replace, since touch has no modifier keys.
+
+**Focus on the list**
+
+- With virtualFocus, keys move the highlight while focus stays on the list, which points at it.
+- With virtualFocus, a press chooses an option and keeps focus on the list.
 
 Runs in React, Vue and web components.
 

@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -114,6 +114,7 @@ Every line below is an automated test.
 
 - Starts with its default value, formatted.
 - ArrowUp and ArrowDown step the value.
+- Full-width digits from an input method commit as a number.
 - Shift with an arrow key steps by the large step.
 - Home and End go to the minimum and the maximum.
 - Stepping stops at the bounds.

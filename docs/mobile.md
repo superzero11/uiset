@@ -108,8 +108,8 @@ list pulls. Wheels snap to an option (`scroll-snap-type`).
 
 ## For agents
 
-- **Messages** (the `SwipeList`'s label): `run(row, action)` runs a row's action by names
-  people see, like `run("Ada Lovelace", "Archive")`; `openRow(row)` opens one. Agents read the
+- **Messages** (the `SwipeList`'s label): `runAction(row, action)` runs a row's action by
+  names people see, like `runAction("Ada Lovelace", "Archive")`; `openRow(row)` opens one. Agents read the
   rows with `query`, each with its actions. A `danger` action isn't run this way: the step
   fails with "Needs a person" and points at the row's Actions menu, whose item carries
   `data-agent-confirm`, so pressing it there asks the person.

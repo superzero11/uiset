@@ -107,6 +107,13 @@ Checked on 0.1.0-beta.5 (2026-11-16, repros in a worktree): all still present ex
 #541. UISet's typecheck, unit tests and Chromium e2e also pass on beta.5 unchanged. Drafts:
 `launch/ui-sdk-issues.md` (not in git).
 
+On 0.1.0-beta.9 (2026-11-18, which UISet now pins), betas 6–9 fixed #1, #2, #5, #11, #14, #15,
+#16, #19, #21, #22, #23, #24 and #26, by their release notes. UISet's own fixes for #1 and #26
+are gone. Those for #2, #14, #16, #19, #21 and #22 are next: each is a plain delete or a swap
+for UI SDK's `keepFocus`. #5's search field works and stays as it is. #23's code also restores
+the caret on Tab, so it stays. #24's Cancel keeps a row ready to retry, which UI SDK's remove
+doesn't. The rest aren't in betas 6–9's notes, and #25 is still open. Two new: #27 and #28.
+
 1. **Image cropper nests sliders.** The selection is `role="slider"` with handle sliders
    inside it; slider children are presentational, so screen readers may not reach the
    handles. axe: `nested-interactive`. Tracked by an expecting test in
@@ -200,6 +207,15 @@ Checked on 0.1.0-beta.5 (2026-11-16, repros in a worktree): all still present ex
     `<ui-file-input-trigger>` is `display: contents`, so the margin never shows; React's
     trigger is the button itself and gets it. UISet spaces the button in `web/src/web.css`.
     Filed as vercel-labs/ui#781 (2026-11-17).
+27. **A component's own `run` agent action is refused** unless its first argument is the key
+    of a rendered item: since beta.8 the bridge checks `run` the way it checks Command's,
+    for every component: `"ls" isn't shown in Shell (c1) now.` UISet's terminal and swipe
+    list list `runCommand` and `runAction` for agents instead (`run` stays for code). Filed as
+    vercel-labs/ui#848 (2026-11-18), with a plain `definePrimitive` repro.
+28. **Pagination trips UI SDK's own dev check as it's defined** (beta.9): `the "link" part
+    is a link, which takes focus, so its slot needs focus`. A console warning in a
+    development build; with `__UI_SDK_STRICT__` it throws on import. UISet's unit setup loads
+    Pagination before turning strict mode on. Not filed yet.
 
 ## 4. Architecture
 
@@ -276,13 +292,9 @@ checks, then a release, a deploy, and npm by the owner.
   wants the entry's homepage on the submitted URL's domain. On 2026-11-18, with the owner's
   go-ahead, the retry passed (200, "Submission updated"): the pending entry carries
   `namespace: "@uiset"`, the other fields as first sent. It waits for their review.
-- UI SDK 0.1.0-beta.9 is out (2026-11-18; we pin beta.5). It fixes #607 (beta.9: the image
-  cropper's handles move out of the selection, so `ImageCropperHandle` goes into the
-  viewport and the expecting test in `components.spec.ts` flips), #781 (beta.8: drop the
-  drop zone spacing in `web/src/web.css`) and #782 (beta.8: `removeFile` by name for
-  agents). #780 is still open: `keepWheelOnValue` stays. Betas 6–9 also change Select and
-  Listbox focus (`virtualFocus`), Page Up/Down, Tabs hydration and exit animations: rerun
-  everything in Chrome, WebKit and Firefox when moving, on the owner's word.
+- UISet is on UI SDK 0.1.0-beta.9 (2026-11-18). #780 is still open (`keepWheelOnValue`
+  stays), and vercel-labs/ui#848 (a component's own `run`) waits for an answer. Next: drop the
+  fixes betas 6–9 made unneeded (section 3c).
 
 **Batch 3: agent-first**, first: what no other registry does (owner, 2026-11-17).
 1. Schema form and multi-step form: one schema renders the form and registers an agent tool,
@@ -378,6 +390,7 @@ checks, then a release, a deploy, and npm by the owner.
 | uiset.dev's home page scores 100 on `agent-check`                                                  | done | 2026-11-18: 94 through the bridge with the chat demo open, 80 with the rich text one. Four renames: the hero's skin picker, the hero form's "Tone", the "Kit demos" tabs, the editor demo's "Show as" tabs. An e2e test checks the page with each kit demo open (Chrome, WebKit, Firefox), 2/2 mutations caught |
 | uiset.dev's Kits page scores 100 on `agent-check`                                                  | done | 2026-11-18: 98 through the bridge. The data grid's "View" menu met the scheduler's "View" switch and the canvas's "Fit to view", and the terminal's "Command" every install line's "Copy the command to …". Kit renames, React and web: "Calendar layout", "Zoom to fit", "Command line". An e2e test checks the page (Chrome, WebKit, Firefox), 2/2 mutations caught |
 | Focus after Undo and Add node lands in the same task                                               | done | 2026-11-18: the project board's Undo, the canvas's Add node and Enter to a node's notes put focus off a frame or two, so a quick key could land first and lose its focus. Now the same task as the press, React and web, demos and the canvas example too. 7 tests (Chrome, WebKit, Firefox) that read focus before the next frame; 7/7 mutations caught |
+| UISet on UI SDK 0.1.0-beta.9                                                                       | done, not pushed | 2026-11-18: from beta.5. The image cropper's handles beside the selection; agents call the terminal's `runCommand` and a swipe list's `runAction` (vercel-labs/ui#848); agent-check stops counting a closed tooltip; UISet's drop zone rule gone. Chrome and WebKit 1718 + the 149 after the renames; Firefox 844 (2 load-timing failures pass 6/6 alone); 2 mutations caught |
 
 ## 10. Decision log
 
@@ -1705,3 +1718,26 @@ checks, then a release, a deploy, and npm by the owner.
   putting the old code back fails all 7 in both Chromium and WebKit. Not touched: about 20
   more one- or two-frame focus moves in rich text, the IDE, chat, and the admin, settings
   and calendar templates.
+- 2026-11-18 — **UISet moves to UI SDK 0.1.0-beta.9** (the owner: "start beta.9 after the
+  focus fix is pushed"), from beta.5, skipping 6–8; their 239 changes were read first. What
+  had to change: the image cropper example puts its handles beside the selection (beta.9 moved
+  them out, so screen readers reach them; checked by eye in 5 skins × 2 themes, and the axe
+  test's exception for it is gone); `web/src/web.css` loses its drop zone spacing, which
+  UI SDK's `web.css` now has. Two upstream changes needed more:
+  - Since beta.8 the bridge checks a `run` action's first argument as one of the
+    component's items, for every component, so the terminal's `run("ls")` and the swipe
+    list's `run("Ada Lovelace", "Archive")` were refused in every browser (14 e2e tests).
+    Agents now call `runCommand` and `runAction`; `run` stays on the API for code. Filed as
+    vercel-labs/ui#848 with the owner's go-ahead, from a plain `definePrimitive` repro
+    (renamed, the same step passes; the check is in beta.8's bridge and not beta.7's).
+  - beta.8 leaves a closed tooltip out of the snapshot and presses the trigger for a step by
+    its name, but `query` still finds it, so `agent-check` called "Account" ambiguous. The
+    check now drops a tooltip the snapshot leaves out; a closed menu or dialog named like its
+    trigger still counts, since the snapshot lists both (new unit test; mutation caught).
+  Also: UI SDK's own Pagination trips its dev check on import (3c #28), so the unit setup
+  loads it before strict mode; beta.8's snapshot dropped the tooltip from agent-check's
+  sample page (9 controls to 8). The registry, `@uiset/web`'s peers and the 56 SDK docs pages
+  follow beta.9. Typecheck, 517 unit tests, web build and build:static pass; e2e Chrome and
+  WebKit (React and web) 1718 passed with only the 14 `run` failures, which pass after the
+  renames (149); Firefox, React and web, 844 passed and 26 skipped (Chromium-only), its two
+  failures load timing (6/6 alone). Next: the workarounds betas 6–9 made unneeded (3c).

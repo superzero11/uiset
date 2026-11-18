@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -44,7 +44,8 @@ A trigger outside the popover also takes `controller`.
 - `container?` (`DocumentFragment | Element | null`): Renders the popup into this element instead of in place, like a container inside a shadow root or an iframe. On web components, a CSS selector. Nested popups stay inside their parent.
 - `initialFocus?` (`PopoverInitialFocus`): Where focus goes when the popover opens. Opening on hover never moves focus, and opening with touch focuses the popover itself so no on-screen keyboard appears.
 - `finalFocus?` (`PopupFocusTarget`): Where focus goes when the popover closes while focus is inside it.
-- `keepMounted?` (`boolean`): Whether the popover stays in the page, hidden, while closed. For animation libraries that drive the exit from state.
+- `keepMounted?` (`boolean`): Whether the popover stays in the page, hidden, while closed. Its content keeps its state between opens.
+- `inline?` (`boolean`): Renders the popover where it is in the page instead of above it, inside its parent's layout and stacking, and leaves placing it to your CSS: `side`, `align` and the offsets don't apply.
 
 ### PopoverArrow
 
@@ -172,6 +173,7 @@ Every line below is an automated test.
 - Tab from the last element moves focus to the element after the trigger.
 - Focus leaving the popover closes it.
 - Escape closes the popover and returns focus to the trigger.
+- An ancestor hears Escape already handled.
 - Escape after a click returns focus to the trigger.
 - The close button closes the popover and returns focus to the trigger.
 - With initial focus none, opening leaves focus on the trigger.

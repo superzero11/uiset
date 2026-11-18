@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -21,7 +21,7 @@ Props and callbacks are the same as below, as React props.
 - `itemToValue?` (`((value: T) => string)`): The string an item's value submits as and is identified by, for object values. Strings pass through, and objects use their `value` or `id`.
 - `itemToLabel?` (`((value: T) => string)`): The text a value shows, for values whose item isn't rendered, like async results.
 - `isItemEqualToValue?` (`((itemValue: T, value: T) => boolean)`): Whether an item's value is the selected value, for object values that aren't the same object.
-- `autoHighlight?` (`"always" | boolean`): Whether the first matching item is highlighted while typing, so Enter chooses it. `"always"` also highlights the selected item, or the first, when the list opens, so arrows move from there.
+- `autoHighlight?` (`"always" | "selected" | boolean`): Whether the first matching item is highlighted while typing, so Enter chooses it. `"always"` also highlights the selected item, or the first, when the list opens, so arrows move from there. `"selected"` highlights only the selected item when the list opens, and nothing when none is.
 - `keepQuery?` (`boolean`): With `multiple`, whether the input keeps its text after an item is chosen.
 - `pendingAnnouncement?` (`string`): What screen readers hear once the Create part's `onCreate` has been pending for a second, so a slow action doesn't pass in silence. Set it in the page's language. An empty string says nothing.
 - `allowCustomValue?` (`boolean`): Whether text that matches no item becomes the value, when Enter is pressed with nothing highlighted, or, without `multiple`, when the list closes. The value is the text itself.
@@ -70,7 +70,7 @@ Holds the chips and the input for a multiple selection. Renders a `div`.
 
 ### ComboboxValue
 
-- `maxLabels?` (`number`): With `multiple`, how many labels the `label` in its state shows before the rest are counted, as in "France, Chile and 2 more", joined the way the page's language joins lists.
+- `maxLabels?` (`number`): With `multiple`, how many labels the `label` in its state shows before the rest are counted, as in "France, Chile and 2 more", joined the way the page's language joins lists, or in English with the default `getMoreLabel`.
 - `getMoreLabel?` (`((count: number) => string)`): The words for the labels past `maxLabels`.
 
 ### ComboboxChip
@@ -334,6 +334,8 @@ Every write method takes an optional `{ reason, event }`, passed to the change c
 - `clear(options?)` (`(options?: ComboboxChangeOptions<ComboboxValueChangeReason> | undefined) => boolean`): Selects nothing and empties the input. Returns false when the change was canceled or nothing changed.
 - `getQuery()` (`() => string`): The input's text.
 - `setQuery(query, options?)` (`(query: string, options?: ComboboxChangeOptions<ComboboxQueryChangeReason> | undefined) => boolean`): Changes the input's text, which filters the list. Returns false when the change was canceled or nothing changed.
+- `getHighlighted()` (`() => T | null`): The value of the highlighted item, or null when none is.
+- `highlight(value)` (`(value: T | null) => boolean`): Highlights the item with this value in the open list, scrolled into view, or none with null. Returns false when the list is closed, or no enabled item has the value.
 - `focus()` (`() => void`): Moves focus to the input.
 
 ### Events
@@ -414,6 +416,7 @@ The combobox follows the [WAI-ARIA combobox pattern with list autocomplete](http
 **Default value**
 
 - Shows its label in the input.
+- Typing inside the label keeps the caret where it is.
 
 **Multiple**
 
@@ -456,6 +459,7 @@ Also tested:
 **Enhancements**
 
 - The list is named by the combobox's label.
+- A click on the label focuses the input and leaves the list closed.
 - Filtering matches an item's keywords as well as its label.
 - A create option offers the text, and hides when an item's label matches it exactly.
 - Enter on the create option calls onCreate with the text.

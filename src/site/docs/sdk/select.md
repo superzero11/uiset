@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -24,6 +24,7 @@
 - `isItemEqualToValue?` (`((itemValue: T, value: T) => boolean)`): Whether an item's value is the selected value, for object values that aren't the same object.
 - `onHighlight?` (`((value: T | null, details: ListHighlightDetails) => void)`): Runs when the highlight moves, with the item's index among the visible items, so a virtualized list can scroll to it.
 - `loop?` (`boolean`): Whether arrow keys wrap from the last item to the first.
+- `virtualFocus?` (`boolean`): Keeps focus on the trigger while the list is open, as on a native select: arrow keys, Home, End and typing move the highlight, and the trigger points at the highlighted item with `aria-activedescendant`. A search field in the list still takes focus.
 - `modal?` (`"pointer" | boolean`): `"pointer"`: an outside press only closes the list. `true`: also locks scroll and makes the rest of the page inert. `false`: outside presses reach what they hit.
 - `presentation?` (`PresentationSetting<"popover">`): How the list presents. `"sheet"` slides it up from the bottom of the screen, where it can be swiped away, and `"auto"` does that on small touch screens. Decided each time it opens; the server renders `"popover"` for `"auto"`.
 - `disabled?` (`boolean`): Disables the select like a native one: it can't be focused or changed, and the value isn't submitted.
@@ -51,7 +52,7 @@ A trigger outside the select also takes `controller`.
 ### SelectValue
 
 - `placeholder?` (`string`): What shows while nothing is selected. Overrides the select's `placeholder`.
-- `maxLabels?` (`number`): With `multiple`, how many labels show before the rest are counted, as in "Apple, Banana and 2 more", joined the way the page's language joins lists.
+- `maxLabels?` (`number`): With `multiple`, how many labels show before the rest are counted, as in "Apple, Banana and 2 more", joined the way the page's language joins lists, or in English with the default `getMoreLabel`.
 - `getMoreLabel?` (`((count: number) => string)`): The words for the labels past `maxLabels`.
 
 ### SelectContent
@@ -65,7 +66,7 @@ A trigger outside the select also takes `controller`.
 - `anchor?` (`string | Anchor | null`): Positions the popup against this instead of its trigger: an element, a CSS selector, a point like `{ x, y }`, or anything with `getBoundingClientRect()`. It's read on every check, so it can move. A controller's `open({ anchor })` wins for that open.
 - `container?` (`DocumentFragment | Element | null`): Renders the popup into this element instead of in place, like a container inside a shadow root or an iframe. On web components, a CSS selector. Nested popups stay inside their parent.
 - `alignItemWithTrigger?` (`boolean`): Whether the list overlaps the trigger so the selected item sits on it, like a native select on macOS. Falls back to opening below when there isn't room, and for touch.
-- `keepMounted?` (`boolean`): Whether the list stays in the page, hidden, while closed. For animation libraries that drive the exit from state.
+- `keepMounted?` (`boolean`): Whether the list stays in the page, hidden, while closed. Its content keeps its state between opens.
 
 ### SelectItem
 
@@ -265,6 +266,8 @@ The select follows the [WAI-ARIA select-only combobox pattern](https://www.w3.or
 
 Arrow keys move through the open list; Home and End reach its first and last items. Set `loop={false}` to stop arrow keys at either end. The popup follows the trigger's inherited text direction; use logical CSS properties for spacing in right-to-left layouts.
 
+Set `virtualFocus` to keep focus on the trigger while the list is open, as on a native select: arrow keys, Home, End and typing move the highlight, the trigger points at it with `aria-activedescendant`, and Tab closes the list and moves on. A search field in the list still takes focus.
+
 ### Tested Behavior
 
 Every line below is an automated test.
@@ -292,6 +295,7 @@ Every line below is an automated test.
 - Enter chooses the focused item, closes and returns focus to the trigger.
 - Space chooses the focused item.
 - Escape closes without choosing and returns focus to the trigger.
+- An ancestor hears Escape already handled.
 - The chosen item is selected when the list opens again, and takes focus.
 
 **Typing on the closed trigger**
@@ -329,6 +333,7 @@ Every line below is an automated test.
 **Forms**
 
 - The form submits the value under the select's name.
+- Enter in the form's one text field submits it, with no submit button.
 - A required select blocks submission until a value is chosen.
 - A disabled select can't be opened.
 - A read-only select doesn't change its value.
@@ -351,6 +356,12 @@ Also tested:
 - The content says whether the keyboard or a pointer is in use, for styling the highlight.
 - A form reset returns the select to its default value.
 - Typing on the closed trigger selects items before the list has ever been in the page.
+
+**Focus on the trigger**
+
+- With virtualFocus, keys move the highlight while focus stays on the trigger, which points at it.
+- With virtualFocus, Tab closes the list and moves on from the trigger.
+- With virtualFocus, a click on an item chooses it and keeps focus on the trigger.
 
 Runs in React, Vue and web components.
 

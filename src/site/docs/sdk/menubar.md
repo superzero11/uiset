@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -63,6 +63,7 @@ Every line below is an automated test.
 - Enter opens a menu and focuses its first item.
 - Space opens a menu and focuses its first item.
 - Escape closes the menu and focuses its trigger.
+- Escape in a menu reached with ArrowRight returns focus to its trigger.
 - Tab in an open menu closes it and moves past the menubar.
 - A press opens a menu, and a press on its trigger closes it.
 - While a menu is open, pointing at another trigger opens its menu instead.

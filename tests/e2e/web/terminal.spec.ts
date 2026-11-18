@@ -106,7 +106,7 @@ test("agents run commands and read the output", async ({ page }) => {
   type Act = { ok: boolean; error?: { message: string } }
   const act = (steps: unknown[]) =>
     page.evaluate((s) => (window as unknown as { agent: { act: (x: unknown) => Promise<Act> } }).agent.act({ steps: s }), steps)
-  const result = await act([{ ref: "Shell", action: "run", args: ["echo from an agent"] }])
+  const result = await act([{ ref: "Shell", action: "runCommand", args: ["echo from an agent"] }])
   expect(result.ok, result.error?.message).toBe(true)
   await expect(output(page)).toContainText("from an agent")
   const items = await page.evaluate(async () => {
@@ -177,7 +177,7 @@ test.describe("review fixes", () => {
   test("agents can't fake the echoed line with control characters", async ({ page }) => {
     const result = await page.evaluate(() =>
       (window as unknown as { agent: { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> } }).agent.act({
-        steps: [{ ref: "Shell", action: "run", args: ["echo rm -rf /tmp/x\rls"] }],
+        steps: [{ ref: "Shell", action: "runCommand", args: ["echo rm -rf /tmp/x\rls"] }],
       }),
     )
     expect(result.ok).toBe(false)
@@ -294,10 +294,10 @@ test("the page's welcome and history show; a click on the output focuses the pro
 test("agents wait while a command runs; Ctrl+C lets them in", async ({ page }) => {
   await run(page, "ping example.com")
   await expect(output(page)).toContainText("reply from example.com")
-  const busy = await page.evaluate(() => (window as unknown as { agent: { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> } }).agent.act({ steps: [{ ref: "Shell", action: "run", args: ["ls"] }] }))
+  const busy = await page.evaluate(() => (window as unknown as { agent: { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> } }).agent.act({ steps: [{ ref: "Shell", action: "runCommand", args: ["ls"] }] }))
   expect(busy.ok).toBe(false)
   expect(busy.error?.message).toContain("still running")
   await input(page).press("Control+c")
-  const ok = await page.evaluate(() => (window as unknown as { agent: { act: (x: unknown) => Promise<{ ok: boolean }> } }).agent.act({ steps: [{ ref: "Shell", action: "run", args: ["ls"] }] }))
+  const ok = await page.evaluate(() => (window as unknown as { agent: { act: (x: unknown) => Promise<{ ok: boolean }> } }).agent.act({ steps: [{ ref: "Shell", action: "runCommand", args: ["ls"] }] }))
   expect(ok.ok).toBe(true)
 })

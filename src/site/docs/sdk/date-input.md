@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -131,6 +131,7 @@ Every line below is an automated test.
 - A canceled change keeps the date.
 - The form submits the ISO date and time under their names.
 - Enter submits the form with what was typed.
+- Enter submits a form with no submit button, in a segment or the form's one text field.
 - Resetting the form brings back the default date.
 - A partly filled date can't be submitted.
 - A required empty date can't be submitted.
@@ -139,5 +140,6 @@ Every line below is an automated test.
 - The field's label focuses the first segment.
 - A read-only date takes focus but doesn't change.
 - A disabled date can't be focused.
+- Digits committed through an input method fill the segment.
 
 Runs in React, Vue and web components.

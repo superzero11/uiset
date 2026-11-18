@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -9,7 +9,7 @@ Props and callbacks are the same as below, as React props.
 - `container?` (`DocumentFragment | Element | null`): Renders the popup into this element instead of in place, like a container inside a shadow root or an iframe. On web components, a CSS selector. Nested popups stay inside their parent.
 - `value?` (`string`): The text. Pass it to control it.
 - `defaultValue?` (`string`): The text at first, when uncontrolled. A form reset returns to it.
-- `onValueChange?` (`((value: string, details: ChangeDetails<AutocompleteValueChangeReason>) => void)`): Runs when the text wants to change: typing, choosing a suggestion, a Clear part, a form reset or a controller. `details.cancel()` keeps it as it was.
+- `onValueChange?` (`((value: string, details: AutocompleteValueChangeDetails) => void)`): Runs when the text wants to change: typing, choosing a suggestion, a Clear part, a form reset or a controller. `details.cancel()` keeps it as it was.
 - `open?` (`boolean`): Whether the suggestions are open. Pass it to control them.
 - `defaultOpen?` (`boolean`): Whether the suggestions start open, when uncontrolled.
 - `onOpenChange?` (`((open: boolean, details: ChangeDetails<AutocompleteOpenChangeReason>) => void)`): Runs when the suggestions want to open or close. `details.reason` says why, and `details.cancel()` stops it.
@@ -219,6 +219,8 @@ Create one with `createAutocompleteController()` and pass it as `controller`.
 - `getValue()` (`() => string`): The text.
 - `setValue(value, options?)` (`(value: string, options?: AutocompleteChangeOptions<AutocompleteValueChangeReason> | undefined) => boolean`): Changes the text, which filters the suggestions. Returns false when the change was canceled or nothing changed.
 - `clear(options?)` (`(options?: AutocompleteChangeOptions<AutocompleteValueChangeReason> | undefined) => boolean`): Empties the field. Returns false when the change was canceled or nothing changed.
+- `getHighlighted()` (`() => string | null`): The value of the highlighted suggestion, or null when none is.
+- `highlight(value)` (`(value: string | null) => boolean`): Highlights the suggestion with this value in the open list, scrolled into view, or none with null. Returns false when the suggestions are closed, or no enabled suggestion has the value.
 - `focus()` (`() => void`): Moves focus to the field.
 
 ### Events

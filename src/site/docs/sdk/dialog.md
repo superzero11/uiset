@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -41,7 +41,8 @@ Dims the page behind a modal dialog. Renders a `div`.
 - `container?` (`DocumentFragment | Element | null`): Renders the popup into this element instead of in place, like a container inside a shadow root or an iframe. On web components, a CSS selector. Nested popups stay inside their parent.
 - `initialFocus?` (`DialogInitialFocus`): Where focus goes when the dialog opens. Opening with touch focuses the dialog itself, so no on-screen keyboard appears.
 - `finalFocus?` (`PopupFocusTarget`): Where focus goes when the dialog closes while focus is inside it.
-- `keepMounted?` (`boolean`): Whether the dialog stays in the page, hidden, while closed. For animation libraries that drive the exit from state.
+- `keepMounted?` (`boolean`): Whether the dialog stays in the page, hidden, while closed. Its content keeps its state between opens.
+- `inline?` (`boolean`): Renders the dialog and its backdrop where they are in the page instead of above it, so it can stay inside a frame, like an app preview. Pair it with `modal="trap-focus"` to keep the rest of the page usable. A `container` on the dialog still moves its backdrop, so leave it off.
 
 ### DialogTitle
 
@@ -180,6 +181,7 @@ The trigger is a button that opens a dialog, and the dialog follows the [WAI-ARI
 - Tab moves through the dialog in order.
 - Tab from the last element wraps to the first.
 - Shift+Tab from the first element wraps to the last.
+- … from inside an iframe that is the … element wraps around the dialog.
 - Shift+Tab from the first element wraps to the checked radio of a group outside a form.
 - Tab reaches radios whose group's checked radio is behind the dialog.
 - Tab visits a positive tabindex first, like the browser.
@@ -188,8 +190,12 @@ The trigger is a button that opens a dialog, and the dialog follows the [WAI-ARI
 - With a positive tabindex in the dialog, Tab still moves through a shadow root and slots.
 - With a positive tabindex in the dialog, Tab from a focused element outside the tab order goes to the next stop.
 - Tab from a custom element with a positive tabindex enters its shadow root.
+- Tab from a last control inside a shadow root wraps to the first, and Shift+Tab comes back to it.
+- Tab wraps past a shadow root that Tab skips, under an inert or tabindex -1 host.
+- Tab wraps from the last stop of a shadow root that orders a positive tabindex first.
 - Opening focuses the first field even when a later one has a positive tabindex.
 - Escape closes the dialog and returns focus to the trigger.
+- An ancestor hears Escape already handled.
 - Escape after a click returns focus to the trigger.
 - The close button closes the dialog and returns focus to the trigger.
 - A virtual click from a screen reader moves focus into the dialog.
@@ -200,6 +206,7 @@ The trigger is a button that opens a dialog, and the dialog follows the [WAI-ARI
 
 - Pressing the backdrop closes the dialog.
 - Pressing the backdrop returns focus to the trigger.
+- After pressing the backdrop, Space on the trigger opens it again.
 - Clicking inside the dialog keeps it open.
 - An outside press doesn't reach the page.
 

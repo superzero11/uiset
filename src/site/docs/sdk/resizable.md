@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -131,6 +131,7 @@ Every line below is an automated test.
 - Dragging a vertical group's handle moves it up and down.
 - Dragging past half a collapsible panel's minimum collapses it, and back opens it.
 - A drag stops at the panels' bounds.
+- Escape during a drag puts the panels back where they started.
 - A double-click on a handle collapses its panel, and another restores it.
 - A press just beside the thin handle drags it.
 - A press farther from the handle doesn't drag.
@@ -155,5 +156,9 @@ Every line below is an automated test.
 - An iframe under the pointer doesn't stop a drag.
 - At a limit, the cursor points the only way a handle can go.
 - A saved layout is there on the first paint.
+
+**Touch**
+
+- A touch drag that starts beside the handle, in its touch hit area, resizes without scrolling.
 
 Runs in React, Vue and web components.

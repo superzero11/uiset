@@ -153,14 +153,6 @@ uiset-avatar-group > [data-overflow] {
 }
 
 
-/* UI SDK's drop zone spaces a trigger's wrapper, and the wrapper is display: contents, so the
-   space never shows. It goes on the button, as React's drop zone has it. */
-@layer uiset.base {
-  [data-slot="file-input-dropzone"] > ui-file-input-trigger > [data-slot="file-input-trigger"] {
-    margin-block-start: calc(var(--ui-spacing) * 3);
-  }
-}
-
 /* An upload row's Remove while the file is still going up. UI SDK's remove part stays in the
    row, as its item binds it; unlayered, since a button's own display outranks `hidden`. */
 .upload-row [data-upload-hidden] {

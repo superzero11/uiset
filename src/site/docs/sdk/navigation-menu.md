@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -194,6 +194,7 @@ Every line below is an automated test.
 - Tab past the panel's last link moves on to the next trigger.
 - Shift+Tab from the panel's first link returns to its trigger.
 - Shift+Tab from the item after an open panel goes back into the panel.
+- Tab from the last item past an open panel leaves the navigation and closes it.
 - Escape inside a panel closes it and returns focus to its trigger.
 - Escape on an open trigger closes its panel.
 - Focus leaving the navigation closes the panel.

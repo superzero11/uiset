@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -75,7 +75,7 @@ Clears the value and focuses the input. Renders a `button`.
 - `anchor?` (`string | Anchor | null`): Positions the popup against this instead of its trigger: an element, a CSS selector, a point like `{ x, y }`, or anything with `getBoundingClientRect()`. It's read on every check, so it can move. A controller's `open({ anchor })` wins for that open.
 - `container?` (`DocumentFragment | Element | null`): Renders the popup into this element instead of in place, like a container inside a shadow root or an iframe. On web components, a CSS selector. Nested popups stay inside their parent.
 - `finalFocus?` (`PopupFocusTarget`): Where focus goes when the popup closes while focus is inside it.
-- `keepMounted?` (`boolean`): Whether the popup stays in the page, hidden, while closed. For animation libraries that drive the exit from state.
+- `keepMounted?` (`boolean`): Whether the popup stays in the page, hidden, while closed. Its content keeps its state between opens.
 ### DatePickerPreset
 
 - `value` (`DatePickerValue`): The value it selects: an ISO date, or `[start, end]` in range mode.

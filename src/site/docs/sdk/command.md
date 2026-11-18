@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.5, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.9, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -225,6 +225,7 @@ The first available command is highlighted by default. Set `autoHighlight` to `f
 **Field**
 
 - Is a combobox that controls an always-expanded listbox.
+- The list is named by the field, not by what's typed.
 - The first command is highlighted from the start.
 
 **Filtering**

@@ -17,10 +17,9 @@ export default function ImageCropperExample() {
     <ImageCropper aria-label="Cover photo" src={landscape} aspectRatio={3}>
       <ImageCropperViewport>
         <ImageCropperImage alt="Mountains at sunset" />
-        <ImageCropperSelection>
-          <ImageCropperHandle position="nw" />
-          <ImageCropperHandle position="se" />
-        </ImageCropperSelection>
+        <ImageCropperSelection />
+        <ImageCropperHandle position="nw" />
+        <ImageCropperHandle position="se" />
       </ImageCropperViewport>
     </ImageCropper>
   )

@@ -80,17 +80,21 @@ const terminalPrimitive = definePrimitive({
   }) => ({}),
   api: (context) => {
     const opts = () => context.options()
+    /** Runs one line, as if typed at the prompt. */
+    const run = (command: string) => {
+      const line = String(command ?? "")
+      if (opts().running) throw new Error(opts().busy ?? english.busy)
+      if (!line.trim()) throw new Error("Give a command to run.")
+      // One line of text: control characters could fake what the person sees echoed.
+      if (/[\x00-\x1f\x7f‪-‮⁦-⁩]/.test(line)) throw new Error("Give one line of plain text, without control characters.")
+      opts().onRun?.(line)
+      return true
+    }
     return {
-      /** Runs one line, as if typed at the prompt. */
-      run(command: string) {
-        const line = String(command ?? "")
-        if (opts().running) throw new Error(opts().busy ?? english.busy)
-        if (!line.trim()) throw new Error("Give a command to run.")
-        // One line of text: control characters could fake what the person sees echoed.
-        if (/[\x00-\x1f\x7f‪-‮⁦-⁩]/.test(line)) throw new Error("Give one line of plain text, without control characters.")
-        opts().onRun?.(line)
-        return true
-      },
+      run,
+      // For agents: UI SDK's bridge reads a `run` action's first argument as one of the
+      // component's items (vercel-labs/ui#848).
+      runCommand: run,
       /** Clears the output. */
       clear() {
         opts().onClear?.()
@@ -114,7 +118,7 @@ const terminalPrimitive = definePrimitive({
       attrs: () => ({ "aria-roledescription": "terminal" }),
     }),
   }),
-  agent: { actions: ["run", "clear"], items: (api) => api.items() },
+  agent: { actions: ["runCommand", "clear"], items: (api) => api.items() },
 })
 
 /** Splits a command line into words, keeping quoted words whole. */
