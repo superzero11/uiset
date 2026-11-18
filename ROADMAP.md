@@ -1780,8 +1780,9 @@ checks, then a release, a deploy, and npm by the owner.
   it brings the example into view first now, as it does before the reload (3/3 in each
   browser).
 - 2026-11-18 — **The footer links the owner's X account, and What's new leads with beta.9.**
-  Under the footer's tagline, "@IAMSuperZero11 on X" (https://x.com/IAMSuperZero11; the
-  owner's handle, not the GitHub name). What's new shows, as the owner chose from a reviewed
+  Under the footer's tagline, an X icon linking to https://x.com/IAMSuperZero11 (the owner's
+  handle, not the GitHub name), named "@IAMSuperZero11 on X"; the owner asked for the icon,
+  after a first version showed the handle as text. What's new shows, as the owner chose from a reviewed
   draft: On UI SDK beta.9, Tailwind CSS 4 with no setup, and the agent readiness check
   (Schema form and the shadcn directory listing make room). Checked by eye in four skins and
   at phone width; `whats-new.spec.ts` holds the X link on two pages and the beta.9 entry.

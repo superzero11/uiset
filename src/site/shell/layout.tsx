@@ -41,6 +41,17 @@ const sections = [
 
 const current = (pathname: string, href: string) => (pathname === href || pathname.startsWith(`${href}/`) ? "page" : undefined)
 
+function XIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+      <path
+        fill="currentColor"
+        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+      />
+    </svg>
+  )
+}
+
 function GithubIcon() {
   return (
     <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true" focusable="false">
@@ -224,9 +235,11 @@ function Footer() {
         <div className="site-bottom-brand">
           <Logo />
           <p>Components, kits, templates and themes for Vercel&rsquo;s UI SDK.</p>
-          <p className="site-bottom-social">
-            <a href="https://x.com/IAMSuperZero11">@IAMSuperZero11 on X</a>
-          </p>
+          <div className="site-bottom-social">
+            <a className="site-icon-link" href="https://x.com/IAMSuperZero11" aria-label="@IAMSuperZero11 on X">
+              <XIcon />
+            </a>
+          </div>
         </div>
         {footerColumns.map((col) => (
           <nav key={col.title} aria-label={col.title} className="site-bottom-col">

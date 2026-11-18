@@ -351,19 +351,9 @@ html {
     color: var(--ui-muted-foreground);
   }
 
+  /* The icon's box is wider than the icon: pull it back so the mark lines up with the text. */
   & .site-bottom-social {
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
-
-    & a {
-      color: inherit;
-      text-decoration: none;
-
-      &:hover {
-        color: var(--ui-foreground);
-        text-decoration: underline;
-      }
-    }
+    margin: 0.5rem 0 0 -0.5625rem;
   }
 }
 
