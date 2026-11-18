@@ -114,6 +114,15 @@ are gone, and so (later that day) are those for #2, #14, #19, #21 and #22, and #
 stays. #24's Cancel keeps a row ready to retry, which UI SDK's remove doesn't. The rest aren't
 in betas 6–9's notes, and #25 is still open. New: #27, #28 and #29.
 
+Upstream answers, as of 2026-11-18 (shadcn handled all of them): 15 of UISet's 24 issues are
+fixed, each by a merged pull request (#27's, vercel-labs/ui#850, merged after beta.10 went out,
+so it ships in the next beta). Three were closed as expected: #9 (vercel-labs/ui#612: labels are
+page text, so steps that must land use a ref), #10 (#613: the card lands where its preview
+showed, and Escape puts it back) and #20 (#621: only a script presses that soon). #12 and #13
+(#615, #616) are confirmed and kept open as feature requests; for #12 shadcn suggests
+`viewport.reveal(viewport.rectOf(port))` after `connect.keydown`. #6/#8 (#624) and #25 (#780)
+have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no duplicates).
+
 1. **Image cropper nests sliders.** The selection is `role="slider"` with handle sliders
    inside it; slider children are presentational, so screen readers may not reach the
    handles. axe: `nested-interactive`. Tracked by an expecting test in
@@ -208,19 +217,21 @@ in betas 6–9's notes, and #25 is still open. New: #27, #28 and #29.
     trigger is the button itself and gets it. UISet spaces the button in `web/src/web.css`.
     Filed as vercel-labs/ui#781 (2026-11-17).
 27. **A component's own `run` agent action is refused** unless its first argument is the key
-    of a rendered item: since beta.8 the bridge checks `run` the way it checks Command's,
+    of a rendered item (fixed by vercel-labs/ui#850, after beta.10): since beta.8 the bridge checks `run` the way it checks Command's,
     for every component: `"ls" isn't shown in Shell (c1) now.` UISet's terminal and swipe
     list list `runCommand` and `runAction` for agents instead (`run` stays for code). Filed as
     vercel-labs/ui#848 (2026-11-18), with a plain `definePrimitive` repro.
 28. **Pagination trips UI SDK's own dev check as it's defined** (beta.9): `the "link" part
     is a link, which takes focus, so its slot needs focus`. A console warning in a
     development build; with `__UI_SDK_STRICT__` it throws on import. UISet's unit setup loads
-    Pagination before turning strict mode on. Not filed yet.
+    Pagination before turning strict mode on. Filed as vercel-labs/ui#856 (2026-11-18): the
+    `link` slot lists `roles: ["link"]` without `focus`; beta.8 on.
 29. **The web agent bridge names tabs from their root, not their list.** A `<ui-tabs>` whose
     `<ui-tabs-list>` has `aria-label` is "tabs c1 has no name" to agents; React names it
     from the list. UISet's web code and pages put the list's name on the root too (the IDE's
     open files, code tabs, the settings template, the rich text demo's output, the gallery).
-    Without it five web pages drop below 100 on `agent-check`. Not filed yet.
+    Without it five web pages drop below 100 on `agent-check`. Filed as vercel-labs/ui#857
+    (2026-11-18); the web Tabs docs name the list, as React's do.
 
 ## 4. Architecture
 
@@ -297,9 +308,9 @@ checks, then a release, a deploy, and npm by the owner.
   wants the entry's homepage on the submitted URL's domain. On 2026-11-18, with the owner's
   go-ahead, the retry passed (200, "Submission updated"): the pending entry carries
   `namespace: "@uiset"`, the other fields as first sent. It waits for their review.
-- UISet is on UI SDK 0.1.0-beta.9 (2026-11-18). #780 is still open (`keepWheelOnValue`
-  stays), and vercel-labs/ui#848 (a component's own `run`) waits for an answer. Next: drop the
-  fixes betas 6–9 made unneeded (section 3c).
+- UISet is on UI SDK 0.1.0-beta.9; beta.10 is out (2026-11-18, 09:42 UTC: date picker and
+  dialog focus, `FieldDescription` ids, Input form reset). vercel-labs/ui#848's fix comes in
+  the beta after it. #780, #856 and #857 are open (section 3c).
 
 **Batch 3: agent-first**, first: what no other registry does (owner, 2026-11-17).
 1. Schema form and multi-step form: one schema renders the form and registers an agent tool,
