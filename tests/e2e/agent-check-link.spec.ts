@@ -178,7 +178,7 @@ test.describe("the /check page", () => {
 
   for (const theme of ["light", "dark"] as const) {
     test(`passes axe in ${theme}, with a report and with an error`, async ({ page, browserName }) => {
-      test.fixme(browserName === "firefox", "Playwright's Firefox crashes (signal 11) while automation inspects the readiness report; normal use doesn't (ROADMAP decision log, 2026-11-15)")
+      test.fixme(browserName === "firefox", "Playwright's Firefox crashes (signal 11) while automation inspects the readiness report; normal use doesn't (HISTORY.md decision log, 2026-11-15)")
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       const asked = await answer(page, report)
       await page.goto("/check?url=example.com")

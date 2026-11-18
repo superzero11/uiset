@@ -20,3 +20,6 @@ launch/
 
 # Agent worktrees
 .claude/worktrees/
+
+# Research notes: brainstorms, the ideas backlog, gap maps, the daily watch (not in git)
+research/

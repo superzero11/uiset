@@ -35,7 +35,8 @@ pnpm web:dev        # the Web Components pages at http://localhost:5640
 - `docs/`: the docs pages, in Markdown.
 - `scripts/registry.mjs`: the registry manifest. New items are added here.
 - `tests/unit` and `tests/e2e` (with `tests/e2e/web` for Web Components).
-- `ROADMAP.md`: the plan, status and decision log. Read it first.
+- `docs/roadmap.md`: the plan. Read it first. `HISTORY.md`: the decision log, what shipped,
+  and the UI SDK issues UISet found.
 - `skills/`: UISet's own agent skills, which teach coding agents to build with UISet.
   The third-party skills used while developing it are pinned in `skills-lock.json`; install
   any you want with `npx skills add <source>`.
@@ -81,7 +82,7 @@ Every new or changed component, kit or template ships only with:
 
 - Keep each pull request to one change, and describe what a person will see differently.
 - Run `pnpm check` and `scripts/install-test.sh` before you open it.
-- If you changed a decision recorded in `ROADMAP.md`, add a line to its decision log.
+- If you changed a decision recorded in `HISTORY.md`, add a line to its decision log.
 - Bugs in UI SDK itself belong upstream at
   [vercel-labs/ui](https://github.com/vercel-labs/ui). Link the upstream issue if UISet
   works around it.

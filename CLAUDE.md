@@ -2,8 +2,11 @@
 
 Open-source themes, components, kits and templates for Vercel's UI SDK (renamed from the
 working name Veneer on 2026-11-15), published as a shadcn registry under
-GitHub `superzero11`. **Read `ROADMAP.md` first**: it holds the plan, schedule, status
-table and decision log. Update its Status and Decision log whenever something lands.
+GitHub `superzero11`. **Read `docs/roadmap.md` first**: it's the one plan (Now, Next in
+order, Later, Waiting on others), short and public on uiset.dev. `HISTORY.md` holds the
+decision log, what shipped and the UI SDK issues. When something lands, update the roadmap
+and add a decision-log entry. Research (brainstorms, the ideas backlog, gap maps, the daily
+watch) lives in `research/`, git-ignored; work goes on the roadmap only when it's planned.
 
 ## Skills in this repo
 

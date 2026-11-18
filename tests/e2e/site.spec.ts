@@ -449,7 +449,7 @@ test.describe("Agent Console", () => {
   }
 
   test("passes axe, contrast included", async ({ page, browserName }) => {
-    test.fixme(browserName === "firefox", "Playwright's Firefox crashes (signal 11) while automation inspects this page; normal use doesn't (ROADMAP decision log, 2026-11-15)")
+    test.fixme(browserName === "firefox", "Playwright's Firefox crashes (signal 11) while automation inspects this page; normal use doesn't (HISTORY.md decision log, 2026-11-15)")
     await ask(page, "Turn on the weekly digest")
     await expect(page.getByRole("switch", { name: "Weekly digest" })).toHaveAttribute(
       "aria-checked",

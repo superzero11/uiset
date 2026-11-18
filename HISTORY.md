@@ -1,111 +1,20 @@
-# UISet — Roadmap
+# UISet history
 
-> **UISet**: themes, components, kits and templates for Vercel's UI SDK. UI SDK is the
-> structure (behavior, focus, keyboard, ARIA); UISet is everything built on it (look,
-> sound and feel, kits, page templates). Renamed from the working name "Veneer" on
-> 2026-11-15. Name, namespace, homepage and repo live in `uiset.config.json`.
+What happened and why: the decision log, what shipped, and the UI SDK issues UISet found.
+The plan is [docs/roadmap.md](docs/roadmap.md); research lives in `research/` (not in git).
+When something lands, add a decision-log entry here and update the roadmap.
 
-**Owner:** GitHub `superzero11` · **License:** MIT · **Status:** foundation shipped locally 2026-11-14 (Day 1)
-**Repo (planned):** `github.com/superzero11/uiset` · **Registry namespace:** `@uiset`
-(free in shadcn's directory, and as an npm scope and package, as of 2026-11-15)
+Until 2026-11-18 this was part of `ROADMAP.md`, with the plan; its old strategy sections
+(thesis, catalog, architecture, the first 30-day schedule) are in
+`research/strategy-2026-11-14.md`.
 
-This file is the source of truth across sessions. Update the **Status** table and the
-**Decision log** whenever something ships or changes.
-
----
-
-## 1. Thesis
-
-Vercel's UI SDK (`vercel-labs/ui`, public beta since 2026-11-12) moved the hard part of
-UI — keyboard, focus, selection, dismissal, popups, drag and drop, ARIA — into a
-framework-free core with adapters for React, Vue, Svelte, Solid and Web Components.
-It ships **55 unstyled components** and ~100 behavior helpers, plus an **agent bridge**
-(`createAgent`, `snapshot`, `act`) and **WebMCP** so agents can operate the UI directly.
-
-What it does not ship: **looks**, and the **heavy domain components** (grid, board,
-scheduler, canvas, console). That is the gap UISet fills.
-
-**Positioning:** one brand, one shadcn registry, many kits.
-UI SDK is "one core, five frameworks". UISet is "one component API, many skins".
-Signature demo: the same app switching live between skins, with identical keyboard,
-focus and screen-reader behavior in every one.
-
-## 2. Research snapshot (2026-11-14)
-
-- ≥50 public repos depend on `@ui-sdk/react` within 2 days. Mostly demos; few polished kits.
-- **Lanes taken — avoid:** hardware look (`shuding/spec-01`, by a Vercel engineer),
-  Apple-style glass (`LioRael/lenso-ui`), Mac OS 9 (`nostalgia-ui`), shadcn-look-for-Rails
-  (`runeui`), Angular/Flutter ports, agent form-fill + chat demos (`kapishdima/uisdk-ideas`),
-  unstyled rich-text editor (`htmujahid/unstyled-editor`).
-- **Demand signals (GitHub stars):** react-bits 52k, magicui 23k, awesome-shadcn-ui 21k,
-  motion-primitives 7k, tablecn 6.4k, neobrutalism 5.6k, ai-elements 2.5k, 8bitcn 2.1k,
-  shadcn-chat 1.6k. → delight sells; hard practical components earn durable stars;
-  strong aesthetics earn 2–6k.
-- **Skeptic take on launch:** "behavior isn't the problem, aesthetics is." Our answer.
-- **Known agent failure:** agents hand-wire arrow keys instead of using behaviors → ship a
-  skill per kit so agents compose UISet correctly.
-- **Distribution is X + shadcn ecosystem, not HN** (HN launch: 7 points, 0 comments).
-  Shu's SPEC-01 video ("sound on") hit 32.5K views in hours.
-- UI SDK is **beta** (`0.1.0-beta.2`); dozens of open issues (SSR, form reset, IME).
-
-## 3. Catalog
-
-### Practical kits (fill what UI SDK doesn't ship — durable stars)
-
-| Kit             | Signature components                                        | UI SDK building blocks                                                                                     |
-| --------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `data-grid`     | Editable, virtualized grid; spreadsheet copy/paste          | `createGridFocus`, `createCellRange`, `cellsToText`/`textToCells`, `createInlineEdit`, `createVirtualizer` |
-| `agent-console` | Thread, prompt with history, tool-call cards, streaming log | `createStickToBottom`, `createInputHistory`, `isComposing`, announcements                                  |
-| `board`         | Kanban, sortable lists, cross-column moves                  | `createTransfer`, `createReorder`, `createAutoScroll`                                                      |
-| `scheduler`     | Week/day views, overlapping events, resource lanes          | `createSpans`, `stackSpans`, `isSpanFree`, Dates helpers                                                   |
-| `canvas`        | Node/workflow editor, wires, minimap, lasso                 | `createViewport`, `createConnect`, `createMove`, `createLasso`                                             |
-| `ide`           | File tree, tabs, split panes, command palette               | `treeFromPaths`, `createTreeReorder`, Tree, Resizable, Command                                             |
-| `mobile`        | Swipe rows, wheel pickers, sheets                           | `createSwipeActions`, `bindScrollPicker`, `rubberBand`, Drawer                                              |
-
-### Themed skins (original looks, never a copy of a brand — viral reach)
-
-`studio` (synth rack: knobs, faders, patch cables, sound) · `terminal` (phosphor, command
-history) · `blueprint` (technical drawing) · `cockpit` (guarded switches, gauges) ·
-`paper` (cards, tape, corkboard) · `eink` (greyscale, no motion) · `print` (brutalist type)
-
-### Agent-operable templates
-
-Settings console, admin dashboard, onboarding — pre-wired to the agent bridge and WebMCP
-with an `allow` approval step. Re-run Vercel's benchmark on our kits and publish numbers.
-
-### Tooling
-
-Theme generator (key color → tokens), a `SKILL.md` per kit, `llms.txt` for the docs.
-
-## 3b. End-to-end coverage map (owner goal, 2026-11-15)
-
-> A developer who picks UI SDK should be able to build their whole product with UISet and
-> never mix in a second UI library. Every row below is "complete" only when it is
-> installable, skinned in every skin, documented, agent-named, and tested (unit, axe,
-> keyboard), per the complete-set rule.
-
-| Layer                                         | What it covers                                                                                                                                                                                                                                                                              | Status                                                                                                                        |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| **Foundation**                                | `<UISet>` root, tokens, skins (base, blueprint, studio, phosphor, ink), dark mode, RTL, forced colors, sound, haptics                                                                                                                                                                       | done; Phosphor and Ink added 2026-11-15                                                                                       |
-| **Base components: all 55 UI SDK components** | Each as its own styled, installable item                                                                                                                                                                                                                                                    | **done 2026-11-15**: 55 of 55, on /components in every skin; axe-clean in 3 skins × 2 themes (one tracked upstream exception) |
-| **What apps need that UI SDK doesn't ship**   | App shell and layout (sidebar layout, header, page, card, breadcrumbs), data display (badge, stat, empty state, skeleton, description list, list), stepper/wizard, alert/banner, search field, **charts** (line, bar, area, donut, sparkline, keyboard-explorable), rich text editor, icons | **done 2026-11-15**, the rich text editor included (React and Web Components); 2026-11-16: table, avatar group, count badge, code block, inline edit and upload added (React; web versions next) |
-| **Domain kits**                               | Studio ✓, Agent Console ✓, Chat ✓, Data Grid ✓, Charts ✓, Board ✓ (kanban), Scheduler ✓ (calendar events), Canvas ✓ (node editor), IDE ✓ (file tree, tabs, panes), Mobile ✓ (gestures, sheets), Terminal ✓                                                                                         | **11 of 11, 2026-11-15**                                                                                                      |
-| **Templates (whole pages/apps)**              | Auth (sign in/up/reset), dashboard, settings, chat app, admin CRUD with data grid, inbox, project board, pricing/marketing landing                                                                                                                                                          | **10 done 2026-11-15**: project board and calendar-app added (React and web)                                                  |
-| **Frameworks**                                | React now. UI SDK also serves Vue, Svelte, Solid and Web Components; our primitives and CSS are framework-free, so a Web Components build is the cheapest way to reach the rest                                                                                                             | **Started 2026-11-15**: `uiset.css` skins UI SDK's 55 web components (axe-clean, 3 skins × 2 themes), `<uiset-root>`; every kit complete as elements (2026-11-15): Studio, Mobile, Board, Scheduler, Canvas, IDE, Agent Console, Terminal, Charts with sparkline and stat, Data Grid, Chat, App Shell; every page template as a web page (2026-11-15). Search field, copy button and stepper ported 2026-11-15; rich text editor as `<uiset-rich-text>`                                                                                                                    |
-| **Developer experience**                      | Docs page per item (usage, API, keyboard, agent names), a `uiset` agent skill so coding agents build with it correctly, llms.txt, theme builder, migration guide from shadcn/Radix                                                                                                         | **done 2026-11-15**: docs/README.md index generated from the registry (every item has a page; base components link UI SDK's API), new chat, app-shell, theming and migrate-from-shadcn pages; `skills/uiset` (SKILL.md + generated catalog); public/llms.txt and llms-full.txt; theme builder with contrast checks (replaced by the /themes/generator theme generator on 2026-11-15); per-item install check (tests/unit/registry-closure.test.ts) |
-
-**Proposed order** (to confirm with the owner): base components (all 55) → app shell and
-data display → Data Grid → charts → templates (dashboard, settings, auth, chat app) →
-remaining domain kits → Web Components build. The base layer comes first because every
-template and kit stands on it, and it's the most "mix-in a second library" risk today.
-
-## 3c. UI SDK issues to report upstream
+## UI SDK issues
 
 Verify each against the latest beta, then file on vercel-labs/ui before launch.
 Checked on 0.1.0-beta.5 (2026-11-16, repros in a worktree): all still present except #4
 (not reproduced; dropped) and #18 (Chrome's own textarea undo; not filed); #7 is upstream
 #541. UISet's typecheck, unit tests and Chromium e2e also pass on beta.5 unchanged. Drafts:
-`launch/ui-sdk-issues.md` (not in git).
+`research/upstream/ui-sdk-issues.md` (not in git).
 
 On 0.1.0-beta.9 (2026-11-18, which UISet now pins), betas 6–9 fixed #1, #2, #5, #11, #14, #15,
 #16, #19, #21, #22, #23, #24 and #26, by their release notes. UISet's own fixes for #1 and #26
@@ -233,133 +142,7 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
     Without it five web pages drop below 100 on `agent-check`. Filed as vercel-labs/ui#857
     (2026-11-18); the web Tabs docs name the list, as React's do.
 
-## 4. Architecture
-
-```
-registry/                 ← source of every installable item (site imports it too)
-  foundation/             ← the `uiset` root item: tokens, <UISet> root, lib/*
-    lib/                  ← sound, haptics, input modality, key color → tokens
-    styles/               ← tokens.css, base.css (structure), one file per skin
-  ui/                     ← shared base components (UI SDK components, restyled)
-  kits/<kit>/             ← signature components + examples + blocks per kit
-src/                      ← the gallery site (Vite + React)
-scripts/registry.mjs      ← generates registry.json → `shadcn build` → public/r/*.json
-tests/                    ← Playwright (keyboard, focus, a11y, agent snapshot)
-```
-
-Rules:
-
-1. **Behavior comes from UI SDK, never hand-written.** Prefer shipped components
-   (`@ui-sdk/react/<name>`) restyled; use `definePrimitive` + core behaviors only where
-   nothing ships. Never hand-wire arrow keys, focus traps, or ARIA.
-2. **Styling is plain CSS**, no Tailwind dependency. Cascade layers
-   `@layer uiset.tokens, uiset.base, uiset.skin` so apps override without `!important`.
-   Parts are styled through UI SDK's `data-*` state attributes. Skins are scoped by
-   `[data-skin="<name>"]`. Tokens also map onto shadcn variable names
-   (`--background`, `--primary`, …) so kits drop into existing shadcn apps.
-3. **Colors in OKLCH**, derived from one key color. Contrast checked (WCAG AA minimum).
-4. **React first** (shadcn registry is React-centric), Web Components second from the same
-   primitives (reaches Vue, Svelte, Rails, plain HTML).
-5. **Pin `@ui-sdk/*` exactly.** Nightly CI against the `beta` tag catches breakage early.
-
-## 5. Quality bar (every component, before it ships)
-
-- Keyboard-complete; focus visible only for keyboard users; no focus loss.
-- UI SDK testing kit (`checkPattern`) + Playwright keyboard tests + axe scan.
-- `prefers-reduced-motion`, `forced-colors`, RTL, IME input, 24px+ touch targets.
-- SSR without flash (`preferencesScript` for saved prefs).
-- Shows up correctly in `agent.snapshot()` with a label and actions.
-- Sound and haptics are opt-in-able, respect reduced motion, never block interaction.
-- Example file + docs entry naming the UI SDK behaviors it uses.
-- Size budget per item.
-
-## 6. 30-day schedule (Day 1 = 2026-11-14)
-
-| Day   | Date         | Ships                                                           |
-| ----- | ------------ | --------------------------------------------------------------- |
-| 1–3   | Nov 14–16    | Foundation, gallery site, registry build, CI, agent-bridge demo |
-| 4     | Nov 17       | **studio** skin (viral launch, video with sound)                |
-| 7     | Nov 20       | **agent-console**                                               |
-| 12    | Nov 25       | **data-grid**                                                   |
-| 16–20 | Nov 29–Dec 3 | **board**, **scheduler**                                        |
-| 24    | Dec 7        | **canvas**, **terminal**                                        |
-| 30    | Dec 13       | Live skin switcher showcase + Product Hunt                      |
-
-Then one kit or skin every 3–4 days, driven by install metrics.
-
-### 6b. Next (planned 2026-11-17)
-
-The 30-day schedule above had shipped by 2026-11-16. What comes next, in order; the
-evidence for each is its row in `launch/watch/ideas.md`. Every batch ships in React and as
-Web Components together, with the gallery, docs and guide notes, and the checks in section 5:
-by eye in 5 skins × 2 themes and at phone width, keyboard, agent and axe tests, mutation
-checks, then a release, a deploy, and npm by the owner.
-
-**Waiting on others.**
-- `@uiset/web` 0.3.0 is on npm (the owner published it 2026-11-17; `latest`, 75 files,
-  checksum matching the checked build, a fresh install imports `defineForm` and
-  `formTool`). awesome-ui-sdk lists the Web Components: LioRael/awesome-ui-sdk#1, merged
-  2026-11-17.
-- `@uiset` is in shadcn's registry directory (merged in shadcn-ui/ui#12677, which closed our
-  #12725), and `npx shadcn@latest view @uiset/<item>` works. Install lines read
-  `@uiset/<item>` since 2026-11-17. registry.directory refused the namespace update (422: "not
-  listed in the official shadcn registry index"), though shadcn's `registries.json` lists it.
-  Its check (`apps/web/app/api/submit/route.ts`) reads that file with a one-hour cache and
-  wants the entry's homepage on the submitted URL's domain. On 2026-11-18, with the owner's
-  go-ahead, the retry passed (200, "Submission updated"): the pending entry carries
-  `namespace: "@uiset"`, the other fields as first sent. It waits for their review.
-- UISet is on UI SDK 0.1.0-beta.9; beta.10 is out (2026-11-18, 09:42 UTC: date picker and
-  dialog focus, `FieldDescription` ids, Input form reset). vercel-labs/ui#848's fix comes in
-  the beta after it. #780, #856 and #857 are open (section 3c).
-
-**Batch 3: agent-first**, first: what no other registry does (owner, 2026-11-17).
-1. Schema form and multi-step form: one schema renders the form and registers an agent tool,
-   so an agent fills it by field name, with validation and approval (ideas #4). M.
-   **Done 2026-11-17** (`schema-form` in React, `<uiset-schema-form>` for Web Components).
-2. Agent-readiness check: a test helper and CLI that flag unnamed and ambiguous controls,
-   with a score per page (ideas #7). S–M. **Done 2026-11-17** (`agent-check`), and UISet's
-   own templates and Web Components pages score 100 on it, held by a test. It reads any site
-   too, from a bookmarklet, and [uiset.dev/check](https://uiset.dev/check) checks a public
-   page from its pasted link.
-
-**Batch 2: data apps**, next: the most-asked pieces still missing.
-3. Filter builder and saved views for the data grid (ideas #2): typed operators, a filter
-   bar, saved views, and an agent setting a filter by name. M.
-4. Data grid remote rows (server sort, filter and cursor paging), tree rows and detail rows
-   (ideas #5). M–L.
-5. App shell variants: nested menus that fly out when collapsed, drill-down, a double
-   sidebar, a top bar (ideas #3). M.
-
-**Batch 4: a skin and screens.**
-6. Print skin, from a written design plan first (Swiss and letterpress type, section 3).
-7. SaaS console screens: team and roles, API keys and webhooks, audit log, usage, CSV import
-   (ideas #8). M.
-
-**Between batches**, small and asked for: a radial gauge and circular progress chart (ideas
-#9), an Angular guide (next framework by demand), tree select (ideas #14).
-
-**Later, one at a time:** Gantt, media player, map kit, generative UI adapters.
-
-## 7. Launch playbook (per kit)
-
-1. 30–60s video, sound on. Post on X; tag @vercel and @shadcn.
-2. Registry listed: PR to `shadcn-ui/ui` `apps/v4/registry/directory.json`
-   (`pnpm validate:registries`), and `registry.directory`.
-3. Skill published on skills.sh; `llms.txt` updated.
-4. PRs to awesome-shadcn-ui and 21st.dev; DEV post explaining the behaviors used.
-5. Agent demo clip (e.g. "make the pad darker" → agent turns knobs via `act()`).
-6. Product Hunt for major kits. Answer skeptics with "same Select, six skins".
-7. Fix/report upstream UI SDK bugs we hit — visibility with maintainers.
-8. Track registry JSON hits, skill installs, stars; double down on winners.
-
-## 8. Risks
-
-- UI SDK API churn during beta → pin, nightly CI, small adapter surface.
-- Vercel/shadcn ship official kits (as with AI Elements) → own niches, out-polish.
-- Agent-written code quality → every PR passes the quality bar in §5.
-- Trademark → no recreations of real products; "built on UI SDK", not "Vercel X".
-
-## 9. Status
+## What shipped
 
 | Item                                                                                                 | Status  | Notes                                                                                                                                               |
 | ---------------------------------------------------------------------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -409,7 +192,7 @@ checks, then a release, a deploy, and npm by the owner.
 | UISet on UI SDK 0.1.0-beta.9                                                                       | done | 2026-11-18: from beta.5. The image cropper's handles beside the selection; agents call the terminal's `runCommand` and a swipe list's `runAction` (vercel-labs/ui#848); agent-check stops counting a closed tooltip; UISet's drop zone rule gone. Chrome and WebKit 1718 + the 149 after the renames; Firefox 844 (2 load-timing failures pass 6/6 alone); 2 mutations caught |
 | UISet's fixes for what UI SDK betas 6–9 fixed are gone                                           | done, not pushed | 2026-11-18: `returnFocus` (UI SDK's `keepFocus` in 8 places), the date picker and tree ring overrides, the wheel's focus-follow (React and web), React's editor tabs' root name; the terminal trims past scrollback while you're scrolled up (new web e2e and React unit tests, mutations caught). Web tabs keep their root name (3c #29). Chrome and WebKit 1734, Firefox 846 (one load-timing test since fixed) |
 
-## 10. Decision log
+## Decision log
 
 - 2026-11-14 — Plan approved by owner. Open source under `superzero11`, MIT.
 - 2026-11-14 — Working name "Veneer", namespace `@veneer` (renamed to UISet on 2026-11-15; see that entry).
@@ -1786,3 +1569,15 @@ checks, then a release, a deploy, and npm by the owner.
   draft: On UI SDK beta.9, Tailwind CSS 4 with no setup, and the agent readiness check
   (Schema form and the shadcn directory listing make room). Checked by eye in four skins and
   at phone width; `whats-new.spec.ts` holds the X link on two pages and the beta.9 entry.
+- 2026-11-18 — **One plan, one history, research apart** (the owner: plans were kept in too
+  many places, and the 1,788-line `ROADMAP.md` didn't show what's happening or what's next).
+  `docs/roadmap.md`, public on uiset.dev, is now the one plan: Now, Next in order, items added
+  but not yet ordered, Later, Following UI SDK, Waiting on others. This file holds what
+  happened: the decision log, what shipped and the UI SDK issues. Research moved to a
+  git-ignored `research/` folder (the ideas backlog and the daily watch's reports, the
+  brainstorm, the sink gap map, a landscape note, issue drafts, and ROADMAP's old strategy
+  sections word for word); `launch/` keeps launch assets. ROADMAP's architecture and quality
+  bar were out of date and `CONTRIBUTING.md` already had the current ones. The daily community
+  watch now reads the roadmap and writes to `research/`. Added to the plan, not yet ordered:
+  Agent view, sortable list and tree reordering, a confirm button, an emoji picker, draggable
+  tabs, password rules and radio cards, and recipes (from UI SDK's sink and Keyframery).

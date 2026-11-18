@@ -15,7 +15,7 @@ test.beforeEach(async ({ page }) => {
 })
 
 test("drag a node: it moves, and its wires follow", async ({ page, browserName }) => {
-  test.fixme(browserName === "firefox", "Playwright's Firefox crashes (signal 11) while automation inspects this page; normal use doesn't (ROADMAP decision log, 2026-11-15)")
+  test.fixme(browserName === "firefox", "Playwright's Firefox crashes (signal 11) while automation inspects this page; normal use doesn't (HISTORY.md decision log, 2026-11-15)")
   const search = node(page, /^Search docs/)
   const before = (await search.boundingBox())!
   const wireBefore = await canvas(page).locator('path[data-slot="canvas-wire"]').evaluateAll((paths) => paths.map((p) => p.getAttribute("d")))

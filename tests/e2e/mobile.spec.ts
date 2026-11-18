@@ -87,7 +87,7 @@ test("set an alarm on the wheels in a sheet, by keys and by scrolling", async ({
   await phone(page).getByRole("button", { name: "New alarm" }).click()
   const sheet = page.getByRole("dialog", { name: "New alarm" })
   // The sheet reveals its focused element once it comes to rest, which can scroll a wheel
-  // (ROADMAP §3c, issue 21); in WebKit that lands a few hundred ms after it opens. Act once
+  // (HISTORY.md, UI SDK issue 21); in WebKit that lands a few hundred ms after it opens. Act once
   // the sheet and its wheels have held still for half a second, as a person's tap would.
   const positions = () =>
     sheet.evaluate((el) =>

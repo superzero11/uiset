@@ -330,7 +330,7 @@ scripts/install-test.sh
 ```
 
 [CONTRIBUTING.md](CONTRIBUTING.md) has the rules and what a pull request needs, and
-[ROADMAP.md](ROADMAP.md) the plan and the decisions behind it. Report security issues
+the [roadmap](docs/roadmap.md) the plan; [HISTORY.md](HISTORY.md) has the decisions behind it. Report security issues
 privately ([SECURITY.md](SECURITY.md)). Everyone taking part follows the
 [code of conduct](CODE_OF_CONDUCT.md).
 
