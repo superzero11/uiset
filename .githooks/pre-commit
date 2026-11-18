@@ -1,0 +1,4 @@
+#!/bin/sh
+# UISet's project lint on this commit's staged files (scripts/lint). It installs with
+# `pnpm install`; `git commit --no-verify` skips it once, and `pnpm lint` still checks.
+exec node --no-warnings scripts/lint/index.ts --staged

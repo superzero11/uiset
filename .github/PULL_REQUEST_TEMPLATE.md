@@ -4,7 +4,8 @@
 
 ## Checklist
 
-- [ ] `pnpm check` passes (typecheck, unit, and e2e in Chrome, Safari and Firefox)
+- [ ] `pnpm check` passes (lint, typecheck, unit, and e2e in Chrome, Safari and Firefox)
+- [ ] A slip review caught that a lint rule could have caught has a new rule in `scripts/lint/rules/`
 - [ ] `scripts/install-test.sh` passes
 - [ ] Every new control has an accessible name, and an agent test covers it
 - [ ] axe passes in every skin (base, blueprint, studio, phosphor, ink), light and dark

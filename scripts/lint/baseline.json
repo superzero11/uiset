@@ -1,0 +1,17 @@
+{
+  "focus/no-deferred-focus": {
+    "registry/uiset/ui/data-grid.tsx": 1,
+    "registry/uiset/ui/rich-text.tsx": 3,
+    "registry/uiset/ui/templates/ide-app.tsx": 4,
+    "web/src/chat.ts": 1,
+    "web/src/data-grid.ts": 1,
+    "web/src/ide-demo.ts": 3,
+    "web/src/ide.ts": 3,
+    "web/src/mobile.ts": 1,
+    "web/src/rich-text.ts": 3,
+    "web/src/templates/admin.ts": 1,
+    "web/src/templates/calendar-app.ts": 1,
+    "web/src/templates/inbox.ts": 1,
+    "web/src/templates/settings.ts": 1
+  }
+}

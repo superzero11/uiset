@@ -27,7 +27,8 @@ Angular guide.
 
 ## Added 2026-11-18, not yet in the order
 
-From UI SDK's own showcase of styled screens and another UI SDK library, Keyframery:
+From UI SDK's own showcase of styled screens, another UI SDK library (Keyframery), and the
+new project lint:
 
 - **Agent view** on component and kit pages: what an agent reads, beside the live example,
   with the actions it can run. S–M
@@ -38,6 +39,8 @@ From UI SDK's own showcase of styled screens and another UI SDK library, Keyfram
 - **Draggable tabs**, for the IDE kit. S–M
 - **Password rules** that tick off as you type, and **radio cards**. S each
 - **Recipes:** real tasks built from UISet's parts, filtered by part, in every skin. M
+- **Same-task focus everywhere.** 24 places still move focus a frame or two late (rich text,
+  IDE, chat, data grid, templates); the lint's baseline lists them. M
 
 ## Later
 

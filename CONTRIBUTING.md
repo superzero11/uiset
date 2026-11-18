@@ -78,11 +78,29 @@ Every new or changed component, kit or template ships only with:
 7. **A clean install:** `scripts/install-test.sh` passes, so the item installs on its own
    with everything it imports.
 
+## The project lint
+
+`pnpm lint` checks the repo against rules made from slips this project has actually had, like
+focus moved a frame too late, an import that breaks after `shadcn add`, or a second plan file.
+`pnpm lint --rules` lists each rule and the incident behind it. It runs first in `pnpm check`,
+in CI, and, after `pnpm install`, on every commit for the files you changed.
+
+- **Fix what it reports**, or, where the rule truly doesn't fit, put
+  `lint-ignore <rule>: <reason>` on that line or the one above. An ignore without a reason
+  fails.
+- **Problems that were already there** are listed in `scripts/lint/baseline.json` and don't
+  block you. When you fix one, run `pnpm lint --update-baseline` so it can't come back.
+- **Every slip gets a rule.** When review finds a mistake that a rule could have caught, the
+  fix adds one in `scripts/lint/rules/`, with what happened in its `why`, and a sample it
+  must catch and one it must allow in `tests/unit/lint.test.ts`. If it can't be linted (how
+  something looks, say), the pull request says what checks it instead.
+
 ## Pull requests
 
 - Keep each pull request to one change, and describe what a person will see differently.
 - Run `pnpm check` and `scripts/install-test.sh` before you open it.
-- If you changed a decision recorded in `HISTORY.md`, add a line to its decision log.
+- Maintainers write the changelog, the roadmap and the `HISTORY.md` decision log when they
+  merge; you don't need to. The `plan/` lint rules only apply when those files change.
 - Bugs in UI SDK itself belong upstream at
   [vercel-labs/ui](https://github.com/vercel-labs/ui). Link the upstream issue if UISet
   works around it.

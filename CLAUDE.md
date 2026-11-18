@@ -47,10 +47,15 @@ Project skills live in `.claude/skills/` (installed with `npx skills add`, pinne
   mutation check on new behavior (break it, see a test fail, restore).
 - No `Vercel` in product names; "built on UI SDK". No recreations of real products' looks.
 - Don't push, create the GitHub repo or open PRs without the owner's go-ahead.
+- Every slip gets a lint rule: when the owner or a review catches a mistake a rule could
+  have caught, the fix adds one to `scripts/lint/rules/` with the incident in its `why` and
+  samples in `tests/unit/lint.test.ts`. Never silence the lint without a
+  `lint-ignore <rule>: <reason>`; `pnpm lint --update-baseline` only after fixing.
 
 ## Commands
 
-`pnpm dev` · `pnpm check` (typecheck + unit + e2e) · `pnpm registry:build` ·
+`pnpm dev` · `pnpm lint` (the project lint; `--rules` lists why each rule exists) · `pnpm check`
+(lint + typecheck + unit + e2e) · `pnpm registry:build` ·
 `scripts/install-test.sh` (fresh-app install, typecheck and build).
 Local Playwright uses installed Google Chrome (`channel: "chrome"`); CI installs Chromium.
 The e2e suite also runs in WebKit and Firefox (projects `webkit`, `firefox`, `web-webkit`,

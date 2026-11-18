@@ -30,6 +30,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - if: matrix.sdk == 'beta'
         run: pnpm add @ui-sdk/core@beta @ui-sdk/react@beta
+      - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm exec playwright install --with-deps chromium webkit firefox

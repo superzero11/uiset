@@ -24,7 +24,9 @@
     "test:e2e": "playwright test",
     "web:dev": "vite --config web/vite.config.ts",
     "web:build": "vite build --config web/vite.config.ts && node scripts/web-types.mjs",
-    "check": "pnpm typecheck && pnpm test && pnpm web:build && pnpm test:e2e",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm web:build && pnpm test:e2e",
+    "lint": "node --no-warnings scripts/lint/index.ts",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "deploy:prod": "vercel build --prod && vercel deploy --prebuilt --prod"
   },
   "dependencies": {

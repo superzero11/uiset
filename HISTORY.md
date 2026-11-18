@@ -1581,3 +1581,19 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   watch now reads the roadmap and writes to `research/`. Added to the plan, not yet ordered:
   Agent view, sortable list and tree reordering, a confirm button, an emoji picker, draggable
   tabs, password rules and radio cards, and recipes (from UI SDK's sink and Keyframery).
+- 2026-11-18 — **A project lint, with a rule for every slip** (the owner, after asking how
+  the new plan process would keep from drifting: "a lint rule for every slop or drift").
+  `pnpm lint` (`scripts/lint/`, TypeScript run by Node, no new dependencies) has ten rules,
+  each with the incident behind it in its `why`: one plan file, the roadmap's sections and
+  length, the roadmap re-dated after each decision, a changelog entry with its decision-log
+  entry, focus not put off to a later frame, no hand-written roles UI SDK provides, relative
+  imports in `registry/`, no `!important` outside the reduced-motion reset, `@ui-sdk/*` pinned
+  exactly, and no `test.only`. It runs first in `pnpm check`, in CI, and as a pre-commit hook
+  on staged files (installed by `pnpm install` through `core.hooksPath`; `--no-verify` skips
+  it once). An exception needs `lint-ignore <rule>: <reason>`; the `[hidden]` rule in
+  `uiset.css` has one. Problems already there sit in `scripts/lint/baseline.json`: the 24
+  deferred-focus sites, now on the roadmap. `tests/unit/lint.test.ts` holds a sample each rule
+  must catch and one it must allow (15 tests); breaking the focus rule, the roadmap's order
+  check and the ignore's reason each failed a test (the order check only after a swapped-order
+  case was added). For contributors: the `plan/` rules only fire when CHANGELOG.md,
+  HISTORY.md or the roadmap change, and CONTRIBUTING.md says maintainers write those.
