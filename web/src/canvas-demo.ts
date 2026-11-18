@@ -56,7 +56,8 @@ canvas.renderNode = (n) => (n.data?.detail ? String(n.data.detail) : null)
 canvas.addEventListener("open", (event) => {
   const id = (event as CustomEvent<{ value: string }>).detail.value
   ;(canvas as unknown as { api: { select: (...ids: string[]) => boolean } }).api.select(id)
-  requestAnimationFrame(() => requestAnimationFrame(() => document.querySelector<HTMLElement>("uiset-canvas-inspector textarea")?.focus()))
+  // The inspector redraws for the node in a microtask; its field takes focus right after.
+  queueMicrotask(() => document.querySelector<HTMLElement>("uiset-canvas-inspector textarea")?.focus())
 })
 
 // The inspector's own field: notes on the node, saved as focus leaves.

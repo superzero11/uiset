@@ -133,9 +133,8 @@ function ProjectBoardTemplate({
     try {
       board.moveCard(key, from, at + 1)
       onMove?.(key, from)
-      // Once the toast that was pressed has closed (it hands focus on as it goes).
-      if (view === "board")
-        requestAnimationFrame(() => requestAnimationFrame(() => board.focusCard(key)))
+      // At once, as the card renders: a toast that no longer has focus doesn't hand it on.
+      if (view === "board") board.focusCard(key)
     } catch (failure) {
       toast((failure as Error).message)
     } finally {

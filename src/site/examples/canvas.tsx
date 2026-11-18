@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { flushSync } from "react-dom"
 import {
   Canvas,
   CanvasInspector,
@@ -125,11 +126,9 @@ export default function CanvasExample() {
           }
         }}
         onNodeOpen={(n) => {
-          setSelected([n.id])
-          // Enter opens the node's details beside the canvas.
-          requestAnimationFrame(() =>
-            document.getElementById("canvas-demo-detail")?.focus(),
-          )
+          // Enter opens the node's details beside the canvas, and its notes take focus at once.
+          flushSync(() => setSelected([n.id]))
+          document.getElementById("canvas-demo-detail")?.focus()
         }}
         renderNode={(n) => (n.data?.detail ? String(n.data.detail) : null)}
         onUndo={history.undo}

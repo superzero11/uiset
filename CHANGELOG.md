@@ -93,6 +93,13 @@ old names:
   from its picture's alt text or its hidden name.
 - **Templates:** the auth template's "Email me a sign-in link" is "Send me a one-time link",
   and the schema form example's Name field is "Full name".
+- **Focus after Undo or Add node lands at once, not a frame or two later.** The project
+  board's Undo (React and Web Components) and the canvas toolbar's Add node (React and Web
+  Components) put focus off to a later frame, so a quick key or click could land first and
+  then lose its focus: Escape on a card just picked up sent focus to the card Undo had brought
+  back. Undo now focuses the card as the board draws it, and a new node takes focus as it
+  renders (React) or as the closing menu hands focus back (Web Components), in the same task
+  as the press. The board and canvas demos and the canvas example do the same.
 
 ## 0.3.0 (2026-11-17)
 

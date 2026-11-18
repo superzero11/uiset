@@ -214,6 +214,28 @@ test.describe("review fixes", () => {
     await expect(node(page, /^New model/)).toBeFocused()
   })
 
+  test("the new node takes focus in the same task as the choice", async ({ page }) => {
+    await demo(page).getByRole("button", { name: "Add node" }).click()
+    // Where focus is once the choice's task is done, before the next frame: a focus put off
+    // to a later frame would still be on its way.
+    const focused = await page.getByRole("menuitem", { name: "Tool" }).evaluate((item) => {
+      ;(item as HTMLElement).click()
+      return new Promise<string | null>((done) => setTimeout(() => done(document.activeElement?.getAttribute("aria-roledescription") ?? null)))
+    })
+    expect(focused).toBe("node")
+    await expect(node(page, /^New tool/)).toBeFocused()
+  })
+
+  test("Enter on a node puts focus in its notes in the same task", async ({ page }) => {
+    await node(page, /^Draft answer/).focus()
+    // Checked as the key event returns: the notes render and take focus within it.
+    const focused = await node(page, /^Draft answer/).evaluate((el) => {
+      el.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }))
+      return document.activeElement?.id ?? null
+    })
+    expect(focused).toBe("canvas-demo-detail")
+  })
+
   test("the inspector shows one set of fields per node, and renames the node shown", async ({ page }) => {
     for (const name of [/^Search docs/, /^Draft answer/, /^Reply/, /^User question/]) {
       await node(page, name).focus()

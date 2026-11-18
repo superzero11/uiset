@@ -157,6 +157,30 @@ test("Add node puts a new node in view and focuses it; Undo removes it without d
   expect(await page.evaluate(() => document.activeElement !== document.body)).toBe(true)
 })
 
+test("the new node takes focus in the same task as the closing menu hands it back", async ({ page }) => {
+  await tools(page).getByRole("button", { name: "Add node" }).click()
+  // Where focus is once the task in which the menu returns it to Add node is done, before
+  // the next frame: a focus put off to a later frame would still be on its way.
+  await tools(page).getByRole("button", { name: "Add node" }).evaluate((button) => {
+    ;(window as unknown as { settled: Promise<string | null> }).settled = new Promise((done) =>
+      button.addEventListener("focusin", () => setTimeout(() => done(document.activeElement?.getAttribute("aria-roledescription") ?? null)), { once: true }),
+    )
+  })
+  await page.getByRole("menuitem", { name: "Tool" }).click()
+  expect(await page.evaluate(() => (window as unknown as { settled: Promise<string | null> }).settled)).toBe("node")
+  await expect(node(page, /^New tool/)).toBeFocused()
+})
+
+test("Enter on a node puts focus in its notes in the same task", async ({ page }) => {
+  await node(page, /^Draft answer/).focus()
+  const focused = await node(page, /^Draft answer/).evaluate((el) => {
+    el.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }))
+    return new Promise<string | null>((done) => setTimeout(() => done(document.activeElement?.tagName.toLowerCase() ?? null)))
+  })
+  expect(focused).toBe("textarea")
+  await expect(inspector(page).getByRole("textbox", { name: "Notes" })).toBeFocused()
+})
+
 test("the inspector renames the node shown, keeps fields per node, and Enter opens notes", async ({ page }) => {
   await node(page, /^Draft answer/).focus()
   await page.keyboard.press("Enter")

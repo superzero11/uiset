@@ -266,16 +266,23 @@ checks, then a release, a deploy, and npm by the owner.
 **Waiting on others.**
 - `@uiset/web` 0.3.0 is on npm (the owner published it 2026-11-17; `latest`, 75 files,
   checksum matching the checked build, a fresh install imports `defineForm` and
-  `formTool`). The owner asked awesome-ui-sdk to list the Web Components:
-  LioRael/awesome-ui-sdk#1, open.
+  `formTool`). awesome-ui-sdk lists the Web Components: LioRael/awesome-ui-sdk#1, merged
+  2026-11-17.
 - `@uiset` is in shadcn's registry directory (merged in shadcn-ui/ui#12677, which closed our
   #12725), and `npx shadcn@latest view @uiset/<item>` works. Install lines read
   `@uiset/<item>` since 2026-11-17. registry.directory refused the namespace update (422: "not
-  listed in the official shadcn registry index"), though shadcn's `registries.json` lists it:
-  its check seems to use an older copy. Retry the update (POST with the token in
-  `launch/registry-directory-response.json`) once shadcn's index pages show `@uiset`.
-- UI SDK's next beta: rerun everything on it and drop workarounds whose issues are fixed
-  (#622 is closed upstream: the wheel's focus move; then #780–#782 as they land).
+  listed in the official shadcn registry index"), though shadcn's `registries.json` lists it.
+  Its check (`apps/web/app/api/submit/route.ts`) reads that file with a one-hour cache and
+  wants the entry's homepage on the submitted URL's domain. On 2026-11-18, with the owner's
+  go-ahead, the retry passed (200, "Submission updated"): the pending entry carries
+  `namespace: "@uiset"`, the other fields as first sent. It waits for their review.
+- UI SDK 0.1.0-beta.9 is out (2026-11-18; we pin beta.5). It fixes #607 (beta.9: the image
+  cropper's handles move out of the selection, so `ImageCropperHandle` goes into the
+  viewport and the expecting test in `components.spec.ts` flips), #781 (beta.8: drop the
+  drop zone spacing in `web/src/web.css`) and #782 (beta.8: `removeFile` by name for
+  agents). #780 is still open: `keepWheelOnValue` stays. Betas 6–9 also change Select and
+  Listbox focus (`virtualFocus`), Page Up/Down, Tabs hydration and exit animations: rerun
+  everything in Chrome, WebKit and Firefox when moving, on the owner's word.
 
 **Batch 3: agent-first**, first: what no other registry does (owner, 2026-11-17).
 1. Schema form and multi-step form: one schema renders the form and registers an agent tool,
@@ -370,6 +377,7 @@ checks, then a release, a deploy, and npm by the owner.
 | Chat and board demos score 100 on `agent-check`                                                     | done | 2026-11-17: found filming the agent-check video (chat template 94 after a reply, chat demo 84, board demo 92, all through the bridge). Chat toolbars and feedback groups named per message, React and web; the board demos' search is "Search cards". Agent tests for both demos, the chat template with a reply, and a chat with replies (React unit, web e2e), 4/4 mutations caught |
 | uiset.dev's home page scores 100 on `agent-check`                                                  | done | 2026-11-18: 94 through the bridge with the chat demo open, 80 with the rich text one. Four renames: the hero's skin picker, the hero form's "Tone", the "Kit demos" tabs, the editor demo's "Show as" tabs. An e2e test checks the page with each kit demo open (Chrome, WebKit, Firefox), 2/2 mutations caught |
 | uiset.dev's Kits page scores 100 on `agent-check`                                                  | done | 2026-11-18: 98 through the bridge. The data grid's "View" menu met the scheduler's "View" switch and the canvas's "Fit to view", and the terminal's "Command" every install line's "Copy the command to …". Kit renames, React and web: "Calendar layout", "Zoom to fit", "Command line". An e2e test checks the page (Chrome, WebKit, Firefox), 2/2 mutations caught |
+| Focus after Undo and Add node lands in the same task                                               | done | 2026-11-18: the project board's Undo, the canvas's Add node and Enter to a node's notes put focus off a frame or two, so a quick key could land first and lose its focus. Now the same task as the press, React and web, demos and the canvas example too. 7 tests (Chrome, WebKit, Firefox) that read focus before the next frame; 7/7 mutations caught |
 
 ## 10. Decision log
 
@@ -1680,3 +1688,20 @@ checks, then a release, a deploy, and npm by the owner.
   project-board templates and the canvas; nobody acts within two frames, so they stay. On the
   same day a long local WebKit run stalled with two WebKit processes at about 7 GB each; a run
   from a fresh start stayed under 340 MB a process.
+- 2026-11-18 — **Focus after Undo and Add node lands in the same task as the press** (the
+  owner: "fix the same delayed focus in the templates and canvas"). Undo on the project board
+  and Add node on the canvas put focus off by two frames, waiting for the toast or menu to
+  hand it back as it closed; Enter on a canvas node put its notes' focus off by one or two.
+  A key or click in those frames lost its focus to the late one (the web board's test, 5 of 6
+  in WebKit). Each now lands in the press's task, using what each case has: the board's
+  `focusCard` before the toast closes (a toast that no longer has focus hands nothing on); in
+  the web demo, once the board has drawn, in a microtask, since a deleted card has no element
+  until then; React's canvas `focusNode` before the menu closes, as the node renders with the
+  update; Web Components' canvas from the closing menu's own hand-back to Add node, since the
+  canvas draws the node in the next frame and a `ui-menu-content`'s `finalFocus` takes a
+  string only (a function is turned into one, though the docs list functions); the notes with
+  `flushSync` (React) or a microtask (web). The web board's keyboard test no longer waits
+  frames. 7 new tests read where focus is before the next frame (Chrome, WebKit, Firefox);
+  putting the old code back fails all 7 in both Chromium and WebKit. Not touched: about 20
+  more one- or two-frame focus moves in rich text, the IDE, chat, and the admin, settings
+  and calendar templates.

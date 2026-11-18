@@ -42,9 +42,6 @@ test("a card moves by keyboard: the board redraws as it's carried, and Undo take
   await expect(card(page, "Keyboard shortcuts sheet")).toBeFocused()
   await undo(page).click()
   await expect(column(page, "Backlog").getByRole("option", { name: "Keyboard shortcuts sheet" })).toBeVisible()
-  // Undo focuses the card two frames later. Headless WebKit's frames are slow enough that,
-  // unawaited, that focus lands during the next move.
-  await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(done)))))
   await expect(column(page, "Backlog").getByRole("option", { name: "Keyboard shortcuts sheet" })).toBeFocused()
   // Escape puts a carried card back where it was.
   await card(page, "Ship the beta").focus()
@@ -52,6 +49,21 @@ test("a card moves by keyboard: the board redraws as it's carried, and Undo take
   await page.keyboard.press("ArrowLeft")
   await page.keyboard.press("Escape")
   await expect(column(page, "Done").getByRole("option", { name: "Ship the beta" })).toBeFocused()
+})
+
+test("Undo focuses the card in the same task as the press, so nothing can come in between", async ({ page }) => {
+  await card(page, "Keyboard shortcuts sheet").focus()
+  await page.keyboard.press("Space")
+  await page.keyboard.press("ArrowRight")
+  await page.keyboard.press("Space")
+  await card(page, "Ship the beta").focus()
+  // Where focus is once the press's task is done, before the next frame: a focus put off to
+  // a later frame would still be on its way.
+  const focused = await undo(page).evaluate((button) => {
+    ;(button as HTMLElement).click()
+    return new Promise<string | null>((done) => setTimeout(() => done(document.activeElement?.getAttribute("aria-label") ?? null)))
+  })
+  expect(focused).toBe("Keyboard shortcuts sheet")
 })
 
 test("a card drags to another column with the pointer", async ({ page }) => {

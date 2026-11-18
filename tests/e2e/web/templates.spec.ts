@@ -361,6 +361,24 @@ test("project board: a card moves by keyboard, the progress follows, and Undo pu
   await expect(progress).toHaveAttribute("aria-valuetext", "4 of 14 issues done")
 })
 
+test("project board: Undo focuses the card in the same task as the press", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await open(page, "project-board")
+  const moved = issueColumn(page, "In review").getByRole("option", { name: "Search results layout" })
+  await moved.focus()
+  await page.keyboard.press("Space")
+  await page.keyboard.press("ArrowRight")
+  await page.keyboard.press("Space")
+  await issueColumn(page, "In review").getByRole("option").first().focus()
+  // Where focus is once the press's task is done, before the next frame: a focus put off to
+  // a later frame would still be on its way.
+  const focused = await undoButton(page).evaluate((button) => {
+    ;(button as HTMLElement).click()
+    return new Promise<string | null>((done) => setTimeout(() => done(document.activeElement?.getAttribute("aria-label") ?? null)))
+  })
+  expect(focused).toBe("Search results layout")
+})
+
 test("project board: the list shows the same issues, and Enter opens one in the card dialog", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "project-board")

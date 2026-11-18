@@ -516,14 +516,10 @@ class UISetCanvasToolbar extends ElementBase {
   private build() {
     const tool = (label: string, attrs: Record<string, unknown>, run: () => void, ...content: (Node | string)[]) =>
       h("ui-toolbar-button", null, h("button", { type: "button", "data-variant": "ghost", ...attrs, onclick: run }, ...content, label))
+    const addButton = h("button", { type: "button", "data-variant": "outline" }, iconElement("plus"), "Add node")
     const menuContent = h("ui-menu-content")
-    const menu = h(
-      "ui-menu",
-      null,
-      h("ui-toolbar-button", null, h("ui-menu-trigger", null, h("button", { type: "button", "data-variant": "outline" }, iconElement("plus"), "Add node"))),
-      menuContent,
-    )
-    menu.addEventListener("action", (event) => this.add(String((event as CustomEvent<{ value: unknown }>).detail.value)))
+    const menu = h("ui-menu", null, h("ui-toolbar-button", null, h("ui-menu-trigger", null, addButton)), menuContent)
+    menu.addEventListener("action", (event) => this.add(String((event as CustomEvent<{ value: unknown }>).detail.value), addButton))
     const remove = tool("Remove node", { "data-agent-confirm": "Removes the selected nodes and their wires" }, () => this.#canvas?.api?.removeSelected(), iconElement("trash"))
     const undo = tool("Undo", { "aria-keyshortcuts": ariaKeyshortcuts("mod+z") }, () => this.#canvas?.undo?.())
     const redo = tool("Redo", { "aria-keyshortcuts": ariaKeyshortcuts("mod+shift+z") }, () => this.#canvas?.redo?.())
@@ -556,8 +552,10 @@ class UISetCanvasToolbar extends ElementBase {
     this.update()
   }
 
-  // The menu hands focus back to its button as it closes; the new node takes it after.
-  private add(kind: string) {
+  // The canvas draws the new node in the next frame, and the closing menu then hands focus
+  // back to its button; the node takes it from there, in the same task. If focus goes
+  // anywhere else first, or the person presses a key or the pointer, it stays put.
+  private add(kind: string, button: HTMLElement) {
     const canvas = this.#canvas
     let id: string | undefined
     try {
@@ -565,7 +563,16 @@ class UISetCanvasToolbar extends ElementBase {
     } catch {
       return
     }
-    if (id) requestAnimationFrame(() => requestAnimationFrame(() => canvas?.api?.focusNode(id!)))
+    if (!id) return
+    const done = new AbortController()
+    const options = { capture: true, signal: done.signal }
+    const doc = this.ownerDocument
+    doc.addEventListener("focusin", (event) => {
+      done.abort()
+      if (event.target === button) queueMicrotask(() => canvas?.api?.focusNode(id!))
+    }, options)
+    doc.addEventListener("keydown", () => done.abort(), options)
+    doc.addEventListener("pointerdown", () => done.abort(), options)
   }
 
   private update() {

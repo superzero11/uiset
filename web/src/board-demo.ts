@@ -35,10 +35,10 @@ board.cards = cards
 board.lanes = { backlog: ["c1", "c2"], doing: ["c3", "c4"], review: ["c5", "c6"], done: ["c7"] }
 
 // Every move, by a person or an agent, can be taken back: Undo moves that one card back
-// where it was, and leaves every other move since alone.
-// Focus goes to the card once the toast that was pressed has closed (a closing toast hands
-// focus to the next one).
-const focusSoon = (key: string) => requestAnimationFrame(() => requestAnimationFrame(() => board.api?.focusCard(key)))
+// where it was, and leaves every other move since alone. Focus goes to the card as soon as
+// the board has drawn it (it draws in a microtask): still in the press's task, so nothing a
+// person does comes in between.
+const focusDrawn = (key: string) => queueMicrotask(() => board.api.focusCard(key))
 let undoing = false
 board.addEventListener("laneschange", (event) => {
   const { reason, key, from, to } = (event as CustomEvent<{ value: TransferLists; reason: string; key: string; from: string; to: string }>).detail
@@ -54,7 +54,7 @@ board.addEventListener("laneschange", (event) => {
           undoing = true
           try {
             board.api.moveCard(key, from, at + 1)
-            focusSoon(key)
+            focusDrawn(key)
           } catch (failure) {
             toast((failure as Error).message)
           } finally {
@@ -156,7 +156,7 @@ document.getElementById("card-delete")!.addEventListener("click", () => {
         const lane = [...(board.lanes[column] ?? [])]
         lane.splice(Math.min(at, lane.length), 0, key)
         board.lanes = { ...board.lanes, [column]: lane }
-        focusSoon(key)
+        focusDrawn(key)
       },
     },
   })

@@ -429,7 +429,7 @@ function CanvasToolbar({
   canRedo?: boolean
   children?: ReactNode
 }) {
-  // The menu hands focus back to its button as it closes; the new node takes it after.
+  // The new node takes focus as it renders; the menu, no longer holding focus, leaves it there.
   const add = (kind: string) => {
     let id: string | true | undefined
     try {
@@ -437,7 +437,7 @@ function CanvasToolbar({
     } catch {
       return
     }
-    if (typeof id === "string") requestAnimationFrame(() => requestAnimationFrame(() => canvas.focusNode(id as string)))
+    if (typeof id === "string") canvas.focusNode(id)
   }
   return (
     <Toolbar className="canvas-toolbar" aria-label={label}>

@@ -164,9 +164,8 @@ $("view").addEventListener("valuechange", (event) => {
 /* ------------------------------------------------------- moves and Undo */
 
 // Every move, by a person, an agent or the dialog, can be taken back: Undo moves that one
-// card back where it was and leaves every other move since alone. Focus goes to the card
-// once the toast that was pressed has closed (a closing toast hands focus on).
-const focusSoon = (key: string) => requestAnimationFrame(() => requestAnimationFrame(() => board.api.focusCard(key)))
+// card back where it was and leaves every other move since alone. Focus goes to the card at
+// once: a toast that no longer has focus doesn't hand it on as it closes.
 let undoing = false
 board.addEventListener("laneschange", (event) => {
   const { value, key, from, to } = (event as CustomEvent<{ value: TransferLists; key: string; from: string; to: string }>).detail
@@ -183,7 +182,7 @@ board.addEventListener("laneschange", (event) => {
           undoing = true
           try {
             board.api.moveCard(key, from, at + 1)
-            if (view === "board") focusSoon(key)
+            if (view === "board") board.api.focusCard(key)
           } catch (failure) {
             toast((failure as Error).message)
           } finally {
