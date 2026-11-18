@@ -1609,3 +1609,19 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   owner asks; changes run the specs for what they touch. Pagination still trips its dev
   check (vercel-labs/ui#856). The board demo's own delete-focus handling may now be redundant
   (beta.10's 211b82a); not changed.
+- 2026-11-18 — **Agent view** on every component page and on Kits (the owner: Agent view on
+  every component and kit page, after beta.10). A switch shows, under the live example, what
+  UI SDK's agent bridge reads from it: each component's name, kind and state, the example's
+  agent-check score, its actions, and the raw snapshot. It replaces the JSON-only view under
+  each example. A yes-or-no setter is one button that flips it; a choice comes from the items
+  the bridge lists, or, for a closed list that lists none, a typed label beside the bridge's
+  own note. Agent view, its switch included, is `data-agent-hidden`, so turning it on changes
+  nothing an agent sees: the switch had made "View" ambiguous with the IDE's View menu (UI SDK
+  matches names by words), dropping Kits to 99. The bridge queues every `query`, so eleven
+  panels checking at once kept each waiting 6–12 s in WebKit; a panel now reads and checks
+  only near the viewport, one run at a time, keeping each result. It sits under the example,
+  not beside it as planned: the docs column is 696px at most. Checked: lint, typecheck, the
+  Agent view spec (10 tests) and the Kits and component readiness tests in Chrome and WebKit;
+  five mutations, each failing a test (switch or panel not hidden, no flip button, no reads
+  past the snapshot's 100, every panel reading at once); by eye in base, phosphor and ink,
+  light and dark, at 1280 and 390px. Not run: the full suite, and Firefox.

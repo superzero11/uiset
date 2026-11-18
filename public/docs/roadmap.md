@@ -8,8 +8,7 @@ M medium, L large.
 
 ## Now
 
-- **Agent view** on component and kit pages: what an agent reads, beside the live example,
-  scored by agent-check, with the actions it can run. S–M
+Nothing in progress. Agent view shipped on 2026-11-18; next is the first item below.
 
 ## Next, in order
 

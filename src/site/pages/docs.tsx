@@ -5,7 +5,7 @@ import registry from "@/registry.json"
 import type { Skin } from "@/registry/uiset/ui/uiset"
 import { CopyButton } from "@/registry/uiset/ui/copy-button"
 import { docPages, docSections, pathOfFile, type DocPage } from "../docs/nav"
-import { AgentView, ExamplePreview, useExample } from "../docs/component-preview"
+import { ExamplePreview, useExample } from "../docs/component-preview"
 import { CodeBlock, InstallCommand } from "../shell/code"
 import { useSiteTheme } from "../shell/layout"
 import { articleData, usePageMeta } from "../shell/meta"
@@ -304,7 +304,12 @@ function ComponentPage({ page }: { page: DocPage }) {
           UI SDK&rsquo;s agent bridge finds this component by its accessible name: give it a visible label or an <code>aria-label</code>, and an agent can read its state and call
           its actions without screenshots. <a href="/docs/ai">Building with AI agents</a> shows how to connect one.
         </p>
-        {example && <AgentView example={example} />}
+        {example && (
+          <p>
+            Turn on <strong>Agent view</strong> above the example to see what an agent reads from it, as you use it, with its agent-check score and every action
+            it offers, which you can run from there.
+          </p>
+        )}
         <PageFooter page={page} />
       </div>
       <OnThisPage headings={headings} />

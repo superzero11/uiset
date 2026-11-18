@@ -1225,8 +1225,8 @@ html {
   }
 }
 
-/* The docs' prose. Its element rules stop at a live example (a nested <UISet>): a dialog's
-   or calendar's h2 is the component's, not a section heading of the page. */
+/* The docs' prose. Its element rules stop at a live example (a nested <UISet>), whose
+   dialog's or calendar's h2 is the component's, and at Agent view, which has its own type. */
 .docs-article {
   min-width: 0;
   max-width: 46rem;
@@ -1236,30 +1236,30 @@ html {
     margin-top: 1.125rem;
   }
 
-  & h2:not([data-uiset] [data-uiset] *) {
+  & h2:not([data-uiset] [data-uiset] *, .agent-view *) {
     margin-top: 2.75rem;
     font-size: 1.5rem;
     line-height: 1.25;
   }
 
-  & h3:not([data-uiset] [data-uiset] *) {
+  & h3:not([data-uiset] [data-uiset] *, .agent-view *) {
     margin-top: 2rem;
     font-size: 1.125rem;
   }
 
-  & :is(p, li):not([data-uiset] [data-uiset] *) {
+  & :is(p, li):not([data-uiset] [data-uiset] *, .agent-view *) {
     max-width: 44rem;
   }
 
-  & :is(ul, ol):not([data-uiset] [data-uiset] *) {
+  & :is(ul, ol):not([data-uiset] [data-uiset] *, .agent-view *) {
     padding-inline-start: 1.25rem;
   }
 
-  & li:not([data-uiset] [data-uiset] *) + li {
+  & li:not([data-uiset] [data-uiset] *, .agent-view *) + li {
     margin-top: 0.375rem;
   }
 
-  & :not(pre) > code:not([data-uiset] [data-uiset] *) {
+  & :not(pre) > code:not([data-uiset] [data-uiset] *, .agent-view *) {
     overflow-wrap: anywhere;
     padding: 0.1em 0.35em;
     border-radius: 4px;
@@ -1377,11 +1377,169 @@ html {
   justify-content: space-between;
   gap: 0.75rem;
 
-  /* At its own width, wrapping under the tabs when they don't fit side by side. */
+}
+
+/* At their own width, wrapping under the tabs when they don't fit side by side. */
+.docs-example-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-inline-start: auto;
+
   > .skin-picker {
     flex: none;
     max-width: 100%;
   }
+}
+
+/* Agent view: a live example above what the agent bridge reads from it (the docs column, at
+   696px at most, is too narrow for both side by side). Off, the wrappers take no box. */
+.agent-view-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--ui-muted-foreground);
+  cursor: pointer;
+}
+
+.agent-view-frame,
+.agent-view-split {
+  display: contents;
+}
+
+.agent-view-frame[data-on] {
+  display: block;
+  min-width: 0;
+
+  > .agent-view-split {
+    display: grid;
+    gap: 1rem;
+  }
+}
+
+.agent-view {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  max-height: 40rem;
+  overflow: auto;
+  padding: 1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+  background: var(--ui-background);
+  color: var(--ui-foreground);
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  h3 {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.agent-view-top {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.agent-view-score {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.5rem;
+  color: var(--ui-muted-foreground);
+
+  strong {
+    color: var(--ui-foreground);
+    font-size: 1rem;
+  }
+
+  span {
+    flex-basis: 100%;
+  }
+}
+
+.agent-view-problems {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+
+.agent-view-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.agent-view-row {
+  display: grid;
+  gap: 0.375rem;
+  padding-block: 0.625rem;
+  border-top: 1px solid var(--ui-border);
+}
+
+.agent-view-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+}
+
+.agent-view-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.agent-view-kind {
+  font-family: var(--site-mono);
+  font-size: 0.8125rem;
+  color: var(--ui-muted-foreground);
+}
+
+.agent-view-state,
+.agent-view-note {
+  color: var(--ui-muted-foreground);
+  overflow-wrap: anywhere;
+}
+
+.agent-view-confirm {
+  font-size: 0.8125rem;
+}
+
+.agent-view-actions,
+.agent-view-arg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.agent-view-actions [data-slot="button"],
+.agent-view-arg [data-slot="button"] {
+  min-height: 2rem;
+  padding-inline: 0.625rem;
+  font-size: 0.8125rem;
+}
+
+.agent-view-arg [data-slot="field"] {
+  flex: 1 1 10rem;
+}
+
+.agent-view-said:empty {
+  display: none;
+}
+
+.agent-view-raw {
+  display: grid;
+  gap: 0.5rem;
 }
 
 /* The same type context as the components page, not the article's prose (line-height 1.7). */

@@ -133,5 +133,5 @@ function AgentPanel({ within, script, showSnapshot = true, beforeRun }: AgentPan
   )
 }
 
-export { AgentPanel }
+export { AgentPanel, useAgentVersion }
 export type { Script }

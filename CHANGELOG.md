@@ -29,6 +29,10 @@ On UI SDK `0.1.0-beta.10`.
 - **[uiset.dev/check](https://uiset.dev/check)**: paste a public page's link and see whether
   an agent can use it. It loads the page in a browser that reaches public addresses only,
   and a link to the report checks the page again.
+- **Agent view on uiset.dev.** On every component page and on Kits, a switch shows, beside
+  the live example, what UI SDK's agent bridge reads from it as you use it: each component's
+  name, kind and state, its agent-check score, and each action it offers, which you can run
+  from there. The switch carries across pages, and Agent view is hidden from agents itself.
 - **Every page template and Web Components page scores 100** on `agent-check`, and a test in
   each browser holds them there. Its first run on them scored the templates 50 to 91.
 - **A horizontal Timeline** (`orientation="horizontal"`), which was unstyled: the markers on

@@ -2,6 +2,7 @@ import { useRef, type ReactNode } from "react"
 import { IdeTemplate } from "@/registry/uiset/ui/templates/ide-app"
 import { UISet, type Skin } from "@/registry/uiset/ui/uiset"
 import { AgentPanel } from "../agent-panel"
+import { AgentViewPanel, AgentViewSwitch, useAgentView } from "../agent-view"
 import { BoardDemo } from "../board-demo"
 import { CanvasDemo } from "../canvas-demo"
 import { ChartsDemo } from "../charts-demo"
@@ -124,10 +125,27 @@ const kits: Kit[] = [
   },
 ]
 
+/** A kit's live demo, with what an agent reads from it under it when Agent view is on. */
+function KitStage({ kit, skin, theme }: { kit: Kit; skin: Skin; theme: ReturnType<typeof useSiteTheme>["theme"] }) {
+  const on = useAgentView()
+  const stage = useRef<HTMLDivElement>(null)
+  return (
+    <div className="agent-view-frame" data-on={on ? "" : undefined}>
+      <div className="agent-view-split">
+        <UISet ref={stage} skin={skin} theme={theme} className={kit.stage ?? "grid-stage"}>
+          {kit.demo(skin)}
+        </UISet>
+        {on && <AgentViewPanel root={stage} title={kit.name} />}
+      </div>
+    </div>
+  )
+}
+
 function KitsPage() {
   const { theme } = useSiteTheme()
   const [skin, setSkin] = useUrlState<Skin>("skin", skinValues, "base")
   const studio = useRef<HTMLDivElement>(null)
+  const agentView = useAgentView()
 
   usePageMeta({
     title: "UI SDK kits: chat, rich text, data grid, charts and more",
@@ -153,6 +171,7 @@ function KitsPage() {
         </nav>
         <div className="page-controls">
           <SkinPicker value={skin} onChange={setSkin} />
+          <AgentViewSwitch />
         </div>
       </header>
 
@@ -162,9 +181,7 @@ function KitsPage() {
             <h2 id={`${kit.id}-title`}>{kit.title}</h2>
             <p>{kit.what}</p>
           </div>
-          <UISet skin={skin} theme={theme} className={kit.stage ?? "grid-stage"}>
-            {kit.demo(skin)}
-          </UISet>
+          <KitStage kit={kit} skin={skin} theme={theme} />
           <div className="kit-actions">
             <InstallCommand items={kit.items} label={`Install the ${kit.name} kit`} />
             <a className="kit-docs" href={kit.docs}>
@@ -191,9 +208,14 @@ function KitsPage() {
             </p>
           )}
         </div>
-        <UISet ref={studio} skin={skin} theme={theme} sound className="studio-stage">
-          <StudioDevice />
-        </UISet>
+        <div className="agent-view-frame" data-on={agentView ? "" : undefined}>
+          <div className="agent-view-split">
+            <UISet ref={studio} skin={skin} theme={theme} sound className="studio-stage">
+              <StudioDevice />
+            </UISet>
+            {agentView && <AgentViewPanel root={studio} title="Studio" />}
+          </div>
+        </div>
         <AgentPanel within={studio} script={studioScript} showSnapshot={false} beforeRun={() => synth.unlock()} />
         <div className="kit-actions">
           <InstallCommand items={["knob", "patch-bay", "fader", "level-meter", "step-sequencer"]} label="Install the Studio kit" />
