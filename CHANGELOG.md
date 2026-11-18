@@ -29,10 +29,18 @@ On UI SDK `0.1.0-beta.10`.
 - **[uiset.dev/check](https://uiset.dev/check)**: paste a public page's link and see whether
   an agent can use it. It loads the page in a browser that reaches public addresses only,
   and a link to the report checks the page again.
-- **Agent view on uiset.dev.** On every component page and on Kits, a switch shows, beside
-  the live example, what UI SDK's agent bridge reads from it as you use it: each component's
-  name, kind and state, its agent-check score, and each action it offers, which you can run
-  from there. The switch carries across pages, and Agent view is hidden from agents itself.
+- **Agent view on uiset.dev.** On every component, kit and template page, a switch shows,
+  under the live example, what UI SDK's agent bridge reads from it as you use it: each
+  component's name, kind and state, its agent-check score, and each action it offers, which you
+  can run from there. The switch carries across pages, and Agent view is hidden from agents.
+- **uiset.dev, redesigned.** The home and Agent pages have a top nav with a Library menu; the
+  docs and the library sit in a sidebar frame, with the page in a panel. The library's tabs
+  (Components, Kits, Templates, Themes) show each piece as a live card that opens its page:
+  every kit's page starts with its demo, each template has a page of its own, and so does
+  each of the app's parts (Badge, Stat, Alert…), as UI SDK's components do. The theme
+  generator previews one mode at a time, with a Light/Dark switch. The skin
+  beside the light/dark switch dresses the whole site, and in Base every example wears the
+  site's own grays. Every example at once, live, is at `/gallery`. A new logo, and Inter.
 - **Every page template and Web Components page scores 100** on `agent-check`, and a test in
   each browser holds them there. Its first run on them scored the templates 50 to 91.
 - **A horizontal Timeline** (`orientation="horizontal"`), which was unstyled: the markers on
@@ -109,6 +117,13 @@ old names:
 
 ### Fixed
 
+- **The pricing template's comparison table no longer widens a positioned container.** Its
+  screen-reader text was placed against the nearest positioned ancestor, so inside one (a card,
+  a dialog) the container could scroll sideways by the whole table's width.
+- **The IDE's selected code keeps 4.5:1 with a near-black accent**, such as shadcn/ui's neutral
+  theme. The selection is a tint of the accent, and a dark accent made it gray enough to take
+  syntax colors under 4.5:1; its lightness now stays in a readable range. React and Web
+  Components.
 - **Rich text shown read-only no longer looks clickable on its to-do boxes.** Saved text
   (`RichTextContent`, `<uiset-rich-text-content>`) kept the editor's pointer cursor on a
   to-do's box, which is a picture of its state there.

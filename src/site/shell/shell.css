@@ -90,144 +90,6 @@ html[data-navigating] {
   }
 }
 
-/* ------------------------------------------------------------------ header */
-
-.site-top {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  border-bottom: 1px solid var(--ui-border);
-  background: color-mix(in oklab, var(--ui-background) 88%, transparent);
-  backdrop-filter: blur(10px);
-}
-
-@supports not (backdrop-filter: blur(1px)) {
-  .site-top {
-    background: var(--ui-background);
-  }
-}
-
-.site-top-inner {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  width: min(100% - var(--site-gutter) * 2, var(--site-max));
-  height: var(--site-header);
-  margin-inline: auto;
-}
-
-.site .site-logo {
-  text-decoration: none;
-  border-radius: 4px;
-}
-
-.site-nav {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-inline-end: auto;
-}
-
-.site .site-nav a {
-  padding: 0.375rem 0.625rem;
-  border-radius: var(--ui-radius);
-  color: var(--ui-muted-foreground);
-  font-size: 0.9375rem;
-  text-decoration: none;
-
-  &:hover {
-    color: var(--ui-foreground);
-  }
-
-  &[aria-current="page"] {
-    color: var(--ui-foreground);
-    font-weight: 600;
-  }
-}
-
-.site-tools {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-inline-start: auto;
-}
-
-.site-search {
-  gap: 0.5rem;
-  min-width: 12rem;
-  justify-content: flex-start;
-  color: var(--ui-muted-foreground);
-  font-weight: 400;
-
-  & [data-slot$="shortcut"],
-  & kbd {
-    margin-inline-start: auto;
-  }
-}
-
-.site .site-icon-link {
-  display: inline-grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: var(--ui-radius);
-  color: var(--ui-muted-foreground);
-
-  &:hover {
-    color: var(--ui-foreground);
-    background: var(--ui-muted);
-  }
-}
-
-.site-theme [data-slot="segmented-control-item"] {
-  padding-inline: 0.5rem;
-}
-
-.site-menu-button {
-  display: none;
-}
-
-.site-menu nav {
-  display: grid;
-  gap: 0.25rem;
-  padding: 1rem;
-
-  & a {
-    padding: 0.75rem 0.5rem;
-    border-radius: var(--ui-radius);
-    font-size: 1.125rem;
-    text-decoration: none;
-
-    &:hover {
-      background: var(--ui-muted);
-    }
-
-    &[aria-current="page"] {
-      font-weight: 600;
-      background: var(--ui-muted);
-    }
-  }
-}
-
-.site-menu {
-  overscroll-behavior: contain;
-}
-
-.site-menu .site-menu-theme {
-  margin-inline: 1rem;
-}
-
-@media (max-width: 64rem) {
-  .site-search {
-    min-width: 0;
-
-    & .site-search-label,
-    & [data-slot$="shortcut"] {
-      display: none;
-    }
-  }
-}
-
 /* A theme kept from an earlier visit, set on <html> before the first paint (index.html),
    so a prerendered page doesn't flash the other scheme before the app takes over. */
 html[data-site-theme="light"] {
@@ -246,41 +108,22 @@ html {
   scroll-padding-top: calc(var(--site-header) + 1rem);
 }
 
-.site-menu-theme {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--ui-border);
-  color: var(--ui-muted-foreground);
-
-  & .site-theme {
-    display: inline-flex;
-  }
-}
-
-@media (max-width: 52rem) {
-  .site-nav {
-    display: none;
-  }
-
-  .site-menu-button {
-    display: inline-flex;
-  }
-
-  .site-theme {
-    display: none;
-  }
-}
-
 /* The search palette */
 
+/* A dim scrim, not UI SDK's white wash: the palette is the only thing to look at. */
+.site-search-backdrop {
+  background: light-dark(oklch(20% 0 0 / 0.28), oklch(0% 0 0 / 0.62));
+}
+
+/* Pinned near the top, so it doesn't jump as the results shrink. */
 .site-search-dialog {
   width: min(40rem, 100vw - 2rem);
+  margin-block: min(14vh, 8rem) auto;
   padding: 0;
   overflow: hidden;
+  box-shadow:
+    0 1px 2px oklch(0% 0 0 / 0.08),
+    0 24px 64px -16px oklch(0% 0 0 / 0.4);
 
   /* The palette fills the dialog: its standalone width, border and corners belong to the dialog. */
   & > [data-slot="command"] {
@@ -325,118 +168,40 @@ html {
   color: var(--ui-muted-foreground);
 }
 
-/* ------------------------------------------------------------------ footer */
-
-.site-bottom {
-  margin-top: 4rem;
-  border-top: 1px solid var(--ui-border);
-  background: var(--ui-muted);
-}
-
-.site-bottom-inner {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
-  gap: 2rem;
-  width: min(100% - var(--site-gutter) * 2, var(--site-max));
-  margin-inline: auto;
-  padding-block: 3rem 2rem;
-}
-
-.site-bottom-brand {
-  grid-column: span 2;
-
-  & p {
-    max-width: 22rem;
-    margin: 0.75rem 0 0;
-    color: var(--ui-muted-foreground);
-  }
-
-  /* The icon's box is wider than the icon: pull it back so the mark lines up with the text. */
-  & .site-bottom-social {
-    margin: 0.5rem 0 0 -0.5625rem;
-  }
-}
-
-.site-bottom-col {
-  & h2 {
-    margin: 0 0 0.75rem;
-    font-size: 0.9375rem;
-    font-weight: 600;
-  }
-
-  & ul {
-    display: grid;
-    gap: 0.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  & a {
-    color: var(--ui-muted-foreground);
-    text-decoration: none;
-
-    &:hover {
-      color: var(--ui-foreground);
-      text-decoration: underline;
-    }
-  }
-}
-
-.site-bottom-note {
-  width: min(100% - var(--site-gutter) * 2, var(--site-max));
-  margin: 0 auto;
-  padding-block: 1.25rem 2.5rem;
-  border-top: 1px solid var(--ui-border);
-  color: var(--ui-muted-foreground);
-  font-size: 0.875rem;
-}
-
-@media (max-width: 40rem) {
-  .site-bottom-brand {
-    grid-column: auto;
-  }
-}
-
 /* ------------------------------------------------------------------ shared page parts */
 
-.page,
-.home > .whats-new,
-.home > .band,
-.home > .hero {
-  width: min(100% - var(--site-gutter) * 2, var(--site-max));
-  margin-inline: auto;
-}
-
 .page {
-  padding-block: 2.5rem 2rem;
+  width: min(100% - 32px, 1008px);
+  margin-inline: auto;
+  padding-block: 64px 32px;
 }
 
-.page-narrow {
+/* A short page: in the same column as the top nav, its content at a reading width. */
+.page-narrow > * {
   max-width: 44rem;
 }
 
 .page-head {
   display: grid;
-  gap: 1rem;
-  max-width: 48rem;
-  margin-bottom: 2rem;
+  gap: 12px;
+  max-width: 44rem;
+  margin-bottom: 32px;
 
   & h1 {
     margin: 0;
-    font-family: var(--site-display);
-    font-size: clamp(2.5rem, 6vw, 3.75rem);
-    font-stretch: 75%;
-    font-weight: 700;
-    line-height: 0.95;
-    letter-spacing: -0.02em;
+    font-family: var(--site-font);
+    font-size: 40px;
+    font-stretch: normal;
+    font-weight: 500;
+    line-height: 46px;
+    letter-spacing: -1.2px;
   }
 
   & > p {
     margin: 0;
-    color: var(--ui-muted-foreground);
-    font-size: 1.0625rem;
-    line-height: 1.6;
+    color: var(--site-muted, var(--ui-muted-foreground));
+    font-size: 16px;
+    line-height: 24px;
   }
 }
 
@@ -490,26 +255,72 @@ html {
 
 .install-command {
   display: grid;
-  /* The command scrolls inside its line; the copy button always shows whole. */
+  /* The command wraps inside its line; the copy button always shows whole. */
   grid-template-columns: minmax(0, 1fr);
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
-  border: 1px solid var(--ui-border);
-  border-radius: calc(var(--ui-radius) * 1.25);
-  background: var(--ui-muted);
+  padding: 0 6px 6px;
+  border: 1px solid var(--site-card-edge, var(--ui-border));
+  border-radius: 14px;
+  background: var(--site-card, var(--ui-background));
 }
 
-.install-command-managers {
+.install-command-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0 6px 2px;
+
+  & .copy-button[data-slot="button"] {
+    height: 28px;
+    padding: 0 8px;
+    border: 0;
+    background: transparent;
+    color: var(--site-muted, var(--ui-muted-foreground));
+    box-shadow: none;
+    font-size: 13px;
+
+    &:hover {
+      background: var(--site-fill, var(--ui-muted));
+      color: var(--site-text, var(--ui-foreground));
+    }
+  }
+}
+
+/* pnpm, npm, yarn, bun: a small pill track, the chosen one lifted. */
+.install-command-managers[data-slot="segmented-control"] {
   justify-self: start;
-  margin: 0.375rem;
+  gap: 2px;
+  margin: 0;
+  padding: 2px;
   border: 0;
-  background: transparent;
+  border-radius: 999px;
+  background: var(--site-fill, var(--ui-muted));
 
   & [data-slot="segmented-control-item"] {
-    height: 1.75rem;
-    padding-inline: 0.625rem;
-    font-size: 0.8125rem;
+    height: 24px;
+    padding-inline: 10px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--site-muted, var(--ui-muted-foreground));
+    box-shadow: none;
+    font-size: 12.5px;
+    font-weight: 500;
+
+    &[data-pressed],
+    &[data-checked],
+    &[aria-checked="true"] {
+      background: var(--site-card, var(--ui-background));
+      color: var(--site-text, var(--ui-foreground));
+      box-shadow: 0 0 0 1px var(--site-state-edge, var(--ui-input));
+    }
+  }
+
+  & [data-slot="segmented-control-indicator"] {
+    display: none;
   }
 }
 
@@ -518,15 +329,18 @@ html {
   min-width: 0;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.5rem 0.5rem 0.5rem 1rem;
-  border-top: 1px solid var(--ui-border);
+  padding: 12px 14px;
+  border-radius: 9px;
+  background: var(--site-preview, var(--ui-muted));
 
   /* A long command wraps, at spaces first, so the whole of it shows and nothing scrolls. */
   & code {
     flex: 1;
     min-width: 0;
+    padding: 0;
+    background: none;
     font-family: var(--site-mono);
-    font-size: 0.875rem;
+    font-size: 13px;
     overflow-wrap: anywhere;
   }
 
@@ -535,24 +349,33 @@ html {
   }
 }
 
-.install-command-single .install-command-line {
-  border-top: 0;
+.install-command-single {
+  padding: 6px;
 }
 
+.install-command-single .install-command-line {
+  padding-block: 6px;
+}
+
+/* A block of code: a white card with its file's name and Copy along the top, the code on a
+   gray inset below, as the install command is. */
 .code-block {
   margin: 0;
   overflow: hidden;
-  border: 1px solid var(--ui-border);
-  border-radius: calc(var(--ui-radius) * 1.25);
-  background: var(--ui-muted);
+  padding: 0 6px 6px;
+  border: 1px solid var(--site-card-edge, var(--ui-border));
+  border-radius: 14px;
+  background: var(--site-card, var(--ui-background));
 
   & pre {
     margin: 0;
-    padding: 1rem 1.125rem;
+    padding: 12px 14px;
     overflow-x: auto;
+    border-radius: 9px;
+    background: var(--site-preview, var(--ui-muted));
     font-family: var(--site-mono);
-    font-size: 0.8125rem;
-    line-height: 1.65;
+    font-size: 13px;
+    line-height: 21px;
     tab-size: 2;
   }
 
@@ -567,116 +390,28 @@ html {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.375rem 0.5rem 0.375rem 1rem;
-  border-bottom: 1px solid var(--ui-border);
-  color: var(--ui-muted-foreground);
-  font-size: 0.8125rem;
-}
+  min-height: 40px;
+  padding: 6px 0 6px 8px;
+  color: var(--site-muted, var(--ui-muted-foreground));
+  font-size: 13px;
 
-/* ------------------------------------------------------------------ home */
+  & .copy-button[data-slot="button"] {
+    height: 28px;
+    padding: 0 8px;
+    border: 0;
+    background: transparent;
+    color: var(--site-muted, var(--ui-muted-foreground));
+    box-shadow: none;
+    font-size: 13px;
 
-.home > .band {
-  border-top: 1px solid var(--ui-border);
-}
-
-/* What's new: the latest releases in a row above the hero. On a phone the row scrolls
-   sideways, so the hero stays near the top. */
-
-.whats-new {
-  display: grid;
-  gap: 0.875rem;
-  padding-block: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--ui-border);
-}
-
-.whats-new-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-
-  & h2 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-  }
-
-  & a {
-    font-size: 0.875rem;
-    color: var(--ui-muted-foreground);
-  }
-}
-
-.whats-new-list [data-slot="timeline-description"] {
-  max-width: 40ch;
-  font-size: 0.875rem;
-}
-
-@media (max-width: 47.99rem) {
-  .whats-new-list {
-    grid-auto-columns: minmax(15rem, 1fr);
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x proximity;
-    /* Room for the focus ring inside the scroller. */
-    margin: -4px;
-    padding: 4px;
-
-    & > [data-slot="timeline-item"] {
-      scroll-snap-align: start;
+    &:hover {
+      background: var(--site-fill, var(--ui-muted));
+      color: var(--site-text, var(--ui-foreground));
     }
   }
 }
 
-.hero {
-  display: grid;
-  gap: clamp(2rem, 5vw, 4rem);
-  padding-block: clamp(2.5rem, 7vw, 5rem) clamp(2.5rem, 6vw, 4.5rem);
-}
-
-@media (min-width: 64rem) {
-  .hero {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-    align-items: start;
-  }
-}
-
-.hero-copy {
-  display: grid;
-  min-width: 0;
-  gap: 1.5rem;
-  align-content: start;
-
-  & h1 {
-    margin: 0;
-    font-family: var(--site-display);
-    font-size: clamp(3rem, 8vw, 5.75rem);
-    font-stretch: 75%;
-    font-weight: 700;
-    line-height: 0.92;
-    letter-spacing: -0.025em;
-    text-wrap: balance;
-  }
-}
-
-.hero-lede {
-  max-width: 34rem;
-  margin: 0;
-  color: var(--ui-muted-foreground);
-  font-size: 1.1875rem;
-  line-height: 1.55;
-}
-
-.hero-actions,
-.themes-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.625rem;
-}
-
-.hero-copy .install-command {
-  max-width: 34rem;
-}
+/* ------------------------------------------------------------------ home */
 
 .hero-stage {
   display: grid;
@@ -724,108 +459,10 @@ html {
   font-size: 0.875rem;
 }
 
-/* UI SDK under UISet: two layers, the lower one drawn dashed (behavior, no look). */
-.layers {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.layer {
-  padding: 1.25rem 1.5rem 1.5rem;
-  border-radius: calc(var(--ui-radius) * 2);
-
-  & h3 {
-    margin: 0 0 1rem;
-    font-family: var(--site-display);
-    font-size: 1.5rem;
-    font-stretch: 75%;
-    font-weight: 700;
-  }
-
-  & dl {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
-    gap: 1rem 1.5rem;
-    margin: 0;
-  }
-
-  & dt {
-    font-weight: 600;
-  }
-
-  & dd {
-    margin: 0.125rem 0 0;
-    color: var(--ui-muted-foreground);
-  }
-}
-
-.layer-uiset {
-  border: 1.5px solid var(--ui-foreground);
-  background: var(--ui-background);
-}
-
-.layer-sdk {
-  border: 1.5px dashed var(--ui-input);
-}
-
-/* The four offerings: peers, so cards. */
-.offerings {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
-  gap: 1rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.site .offering {
-  display: grid;
-  /* Packed at the top: stretched rows would put each card's name at a different height. */
-  align-content: start;
-  gap: 0.375rem;
-  height: 100%;
-  padding: 1.25rem;
-  border: 1px solid var(--ui-border);
-  border-radius: calc(var(--ui-radius) * 2);
-  color: inherit;
-  text-decoration: none;
-
-  &:hover {
-    border-color: var(--ui-input);
-    background: var(--ui-muted);
-  }
-}
-
-.offering-count {
-  font-family: var(--site-display);
-  font-size: 2.25rem;
-  font-stretch: 75%;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.offering-name {
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-.offering-what {
-  color: var(--ui-muted-foreground);
-  font-size: 0.9375rem;
-}
-
 .home-kits {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
-}
-
-/* A row of many tabs scrolls sideways on a phone rather than widening the page. */
-.home-kit-tabs,
-.template-tabs {
-  max-width: 100%;
-  overflow-x: auto;
-  scrollbar-width: thin;
 }
 
 .home-kit-loading {
@@ -846,149 +483,15 @@ html {
 .kit-actions {
   display: flex;
   flex-wrap: wrap;
-  align-items: end;
-  gap: 1rem;
+  align-items: center;
+  gap: 12px;
 
   & .install-command {
-    flex: 1 1 28rem;
-  }
-}
-
-.site .kit-docs {
-  padding-block: 0.5rem;
-  font-weight: 600;
-}
-
-.bench-summary {
-  display: grid;
-  gap: 1rem;
-
-  & > p {
-    margin: 0;
-    max-width: 44rem;
-    font-size: 1.125rem;
-  }
-}
-
-.bench-figures {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
-  gap: 1rem;
-  margin: 0;
-  font-variant-numeric: tabular-nums;
-
-  & div {
-    padding-top: 0.75rem;
-    border-top: 2px solid var(--ui-foreground);
-  }
-
-  & dt {
-    color: var(--ui-muted-foreground);
-    font-size: 0.875rem;
-  }
-
-  & dd {
-    margin: 0.25rem 0 0;
-    font-family: var(--site-display);
-    font-size: 2rem;
-    font-stretch: 75%;
-    font-weight: 700;
-  }
-}
-
-.checks {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-  gap: 1.5rem 2.5rem;
-  margin: 0;
-
-  & dt {
-    font-weight: 600;
-  }
-
-  & dd {
-    margin: 0.25rem 0 0;
-    color: var(--ui-muted-foreground);
-  }
-}
-
-.steps {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-  gap: 1.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: step;
-
-  & li {
-    display: grid;
-    min-width: 0;
-    align-content: start;
-    gap: 0.75rem;
-    counter-increment: step;
-  }
-
-  & h3 {
-    display: flex;
-    align-items: baseline;
-    gap: 0.625rem;
-    margin: 0;
-    font-size: 1.125rem;
-
-    &::before {
-      content: counter(step);
-      display: inline-grid;
-      place-items: center;
-      width: 1.75rem;
-      height: 1.75rem;
-      border-radius: 999px;
-      background: var(--ui-foreground);
-      color: var(--ui-background);
-      font-size: 0.875rem;
-    }
-  }
-
-  & p {
-    margin: 0;
-    color: var(--ui-muted-foreground);
-  }
-}
-
-.framework-tabs {
-  display: grid;
-  gap: 1rem;
-  max-width: 52rem;
-
-  & [data-slot="tabs-panel"] {
-    display: grid;
-    gap: 0.75rem;
-  }
-}
-
-.faq {
-  max-width: 52rem;
-
-  & p {
-    max-width: 44rem;
-    margin: 0 0 1rem;
-    color: var(--ui-muted-foreground);
-    line-height: 1.6;
+    flex: 1 1 24rem;
   }
 }
 
 /* ------------------------------------------------------------------ kits, themes, agents */
-
-.band-intro .band-note {
-  margin-top: 0.75rem;
-  font-size: 0.9375rem;
-}
-
-.kit-index {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 1rem;
-}
 
 .ide-stage {
   padding: clamp(0.75rem, 2vw, 1.25rem);
@@ -996,55 +499,6 @@ html {
   border-radius: calc(var(--ui-radius) * 2);
 }
 
-.skin-band {
-  grid-template-columns: minmax(0, 1fr);
-  align-items: start;
-}
-
-@media (min-width: 56rem) {
-  .skin-band {
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
-  }
-}
-
-.skin-band-copy {
-  display: grid;
-  gap: 1rem;
-  align-content: start;
-
-  & h2 {
-    margin: 0;
-    font-family: var(--site-display);
-    font-size: 2.25rem;
-    font-stretch: 75%;
-    font-weight: 700;
-  }
-
-  & p {
-    margin: 0;
-  }
-}
-
-.skin-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  margin: 0;
-
-  & dt {
-    color: var(--ui-muted-foreground);
-    font-size: 0.8125rem;
-  }
-
-  & dd {
-    margin: 0;
-    font-weight: 600;
-  }
-}
-
-.skin-band-stage .skins-demo-form {
-  max-width: 26rem;
-}
 
 .bench-headline {
   max-width: 44rem;
@@ -1091,186 +545,67 @@ html {
 
 /* ------------------------------------------------------------------ docs */
 
-.docs {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 2.5rem;
-  width: min(100% - var(--site-gutter) * 2, var(--site-max));
-  margin-inline: auto;
-  padding-block: 2rem 2rem;
-}
-
-/* The sidebar follows the article in the page (for the skip link, headings and tab order)
-   and is placed beside it on wide screens. */
-@media (min-width: 56rem) {
-  .docs {
-    grid-template-columns: 14rem minmax(0, 1fr);
-
-    & > .docs-nav {
-      grid-column: 1;
-      grid-row: 1;
-    }
-
-    & > .docs-main {
-      grid-column: 2;
-      grid-row: 1;
-    }
-  }
-}
-
-.docs-nav {
-  display: grid;
-  align-content: start;
-  gap: 1.5rem;
-  font-size: 0.9375rem;
-
-  & h2 {
-    margin: 0 0 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-  }
-
-  & ul {
-    display: grid;
-    gap: 0.125rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  & a {
-    display: block;
-    padding: 0.25rem 0.625rem;
-    border-radius: var(--ui-radius);
-    color: var(--ui-muted-foreground);
-    text-decoration: none;
-
-    &:hover {
-      color: var(--ui-foreground);
-      background: var(--ui-muted);
-    }
-
-    &[aria-current="page"] {
-      color: var(--ui-foreground);
-      font-weight: 600;
-      background: var(--ui-muted);
-    }
-  }
-}
-
-@media (min-width: 56rem) {
-  .docs-nav {
-    position: sticky;
-    top: calc(var(--site-header) + 1.5rem);
-    max-height: calc(100dvh - var(--site-header) - 3rem);
-    overflow-y: auto;
-    padding-inline-end: 0.5rem;
-  }
-}
-
-@media (max-width: 56rem) {
-  .docs-nav {
-    padding-top: 2rem;
-    border-top: 1px solid var(--ui-border);
-  }
-}
-
-.docs-head {
-  display: grid;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-
-  & h1 {
-    margin: 0;
-    font-family: var(--site-display);
-    font-size: clamp(2.25rem, 5vw, 3rem);
-    font-stretch: 75%;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.015em;
-  }
-}
-
-.docs-crumbs ol {
-  display: flex;
-  gap: 0.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  color: var(--ui-muted-foreground);
-  font-size: 0.875rem;
-
-  & li + li::before {
-    content: "/" / "";
-    margin-inline-end: 0.5rem;
-  }
-}
-
-.docs-lede {
-  max-width: 44rem;
-  margin: 0;
-  color: var(--ui-muted-foreground);
-  font-size: 1.125rem;
-}
-
-.docs-body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 3rem;
-}
-
-@media (min-width: 80rem) {
-  .docs-body {
-    grid-template-columns: minmax(0, 1fr) 13rem;
-  }
-}
-
 /* The docs' prose. Its element rules stop at a live example (a nested <UISet>), whose
    dialog's or calendar's h2 is the component's, and at Agent view, which has its own type. */
 .docs-article {
   min-width: 0;
-  max-width: 46rem;
-  line-height: 1.7;
+  max-width: none;
+  font-size: 14px;
+  line-height: 23px;
 
   & > * + * {
-    margin-top: 1.125rem;
+    margin-top: 14px;
   }
 
   & h2:not([data-uiset] [data-uiset] *, .agent-view *) {
-    margin-top: 2.75rem;
-    font-size: 1.5rem;
-    line-height: 1.25;
+    margin-top: 56px;
+    padding-bottom: 0;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    line-height: 26px;
+  }
+
+  & h2:not([data-uiset] [data-uiset] *, .agent-view *) + * {
+    margin-top: 10px;
   }
 
   & h3:not([data-uiset] [data-uiset] *, .agent-view *) {
-    margin-top: 2rem;
-    font-size: 1.125rem;
+    margin-top: 32px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
   }
 
+  /* Body text runs the column's width, a step quieter than headings and bold words. */
   & :is(p, li):not([data-uiset] [data-uiset] *, .agent-view *) {
-    max-width: 44rem;
+    max-width: none;
+    color: var(--site-prose, var(--ui-foreground));
+  }
+
+  & :is(p, li) :is(strong, a, code):not([data-uiset] [data-uiset] *, .agent-view *) {
+    color: var(--site-text);
   }
 
   & :is(ul, ol):not([data-uiset] [data-uiset] *, .agent-view *) {
-    padding-inline-start: 1.25rem;
-  }
-
-  & li:not([data-uiset] [data-uiset] *, .agent-view *) + li {
-    margin-top: 0.375rem;
+    display: grid;
+    gap: 8px;
+    padding-inline-start: 18px;
   }
 
   & :not(pre) > code:not([data-uiset] [data-uiset] *, .agent-view *) {
     overflow-wrap: anywhere;
     padding: 0.1em 0.35em;
-    border-radius: 4px;
-    background: var(--ui-muted);
+    border-radius: 5px;
+    background: var(--site-fill);
     font-family: var(--site-mono);
-    font-size: 0.875em;
+    font-size: 0.86em;
   }
 
   & .code-block,
-  & .install-command {
-    margin-block: 1.25rem;
+  & .install-command,
+  & .docs-table {
+    margin-block: 18px;
   }
 }
 
@@ -1317,49 +652,6 @@ html {
   &:focus-visible {
     outline: 2px solid var(--ui-ring-border);
     outline-offset: 2px;
-  }
-}
-
-.docs-toc {
-  display: none;
-  font-size: 0.875rem;
-
-  & h2 {
-    margin: 0 0 0.75rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-  }
-
-  & ul {
-    display: grid;
-    gap: 0.375rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  & li[data-level="3"] {
-    padding-inline-start: 0.75rem;
-  }
-
-  & a {
-    color: var(--ui-muted-foreground);
-    text-decoration: none;
-
-    &:hover {
-      color: var(--ui-foreground);
-    }
-  }
-}
-
-@media (min-width: 80rem) {
-  .docs-toc {
-    display: block;
-    position: sticky;
-    top: calc(var(--site-header) + 1.5rem);
-    align-self: start;
-    max-height: calc(100dvh - var(--site-header) - 3rem);
-    overflow-y: auto;
   }
 }
 

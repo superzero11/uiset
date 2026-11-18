@@ -14,7 +14,7 @@ const actions = (page: Page) => form(page).locator(".schema-form-actions")
 
 async function open(page: Page, query = "") {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await openGallery(page, `/components${query}`)
+  await openGallery(page, `/gallery${query}`)
   await expect(page.locator(".components-surface")).toBeVisible({ timeout: 20_000 })
   await form(page).scrollIntoViewIfNeeded()
 }
@@ -144,7 +144,7 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     // Plain DOM queries only: in Playwright's Firefox a role query before an axe scan crashes the page.
     test(`passes axe in ${skin}, ${theme}, with a problem showing and on the review`, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
-      await openGallery(page, `/components?skin=${skin}&theme=${theme}`)
+      await openGallery(page, `/gallery?skin=${skin}&theme=${theme}`)
       const card = page.locator("section.example:has(.schema-form)")
       await card.locator("form").waitFor({ timeout: 20_000 })
       await card.scrollIntoViewIfNeeded()

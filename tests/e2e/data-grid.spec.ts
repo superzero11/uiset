@@ -5,7 +5,7 @@ import { expect, test, type Page } from "@playwright/test"
 // 1 select, 2 Order, 3 Customer, 4 Region, 5 Status, 6 Amount, 7 Placed, 8 Rush.
 
 const grid = (page: Page) => page.getByRole("grid", { name: "Orders" })
-const section = (page: Page) => page.locator("#data")
+const section = (page: Page) => page.locator(".item-frame")
 const active = (page: Page) =>
   page.evaluate(() => {
     const el = document.activeElement as HTMLElement
@@ -35,7 +35,7 @@ const cellAt = (page: Page, row: number, col: number) =>
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/kits#data")
+  await page.goto("/docs/kits/data-grid")
   await expect(grid(page)).toHaveAttribute("aria-rowcount", "10001")
 })
 
@@ -48,7 +48,7 @@ for (const scheme of ["light", "dark"] as const) {
     await page.keyboard.press("Shift+ArrowDown")
     await page.keyboard.press("Shift+ArrowRight")
     const results = await new AxeBuilder({ page })
-      .include("#data")
+      .include(".item-frame")
       .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
       .analyze()
     expect(results.violations.map((v) => `${v.id}: ${v.nodes.length} node(s)`)).toEqual([])
@@ -56,7 +56,7 @@ for (const scheme of ["light", "dark"] as const) {
     await page.keyboard.press("Enter")
     await expect(grid(page).getByRole("textbox")).toBeFocused()
     const editing = await new AxeBuilder({ page })
-      .include("#data")
+      .include(".item-frame")
       .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
       .analyze()
     expect(editing.violations.map((v) => `${v.id}: ${v.nodes.length} node(s)`)).toEqual([])
@@ -67,7 +67,7 @@ for (const scheme of ["light", "dark"] as const) {
     await page.keyboard.press("Enter")
     await expect(grid(page).getByRole("option").first()).toBeVisible()
     const choosing = await new AxeBuilder({ page })
-      .include("#data")
+      .include(".item-frame")
       .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
       .analyze()
     expect(choosing.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(" | ")}`)).toEqual([])

@@ -45,7 +45,8 @@ Project skills live in `.claude/skills/` (installed with `npx skills add`, pinne
   syntax has a static fallback.
 - Every component: named for agents, an agent test, axe in all skins × themes, a
   mutation check on new behavior (break it, see a test fail, restore).
-- No `Vercel` in product names; "built on UI SDK". No recreations of real products' looks.
+- No `Vercel` in product names; "built on UI SDK". Skins, kits and templates don't recreate real
+  products' looks. The site's own design is in `design/site-plan.md`.
 - Don't push, create the GitHub repo or open PRs without the owner's go-ahead.
 - Every slip gets a lint rule: when the owner or a review catches a mistake a rule could
   have caught, the fix adds one to `scripts/lint/rules/` with the incident in its `why` and

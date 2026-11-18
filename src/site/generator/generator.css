@@ -4,29 +4,30 @@
   .generator-screen uses only --ui-* and sizes, never the site's colors.
 */
 
-/* The site's own column, so the page lines up with the header. */
+/* In the library's panel: the page's own padding is the panel's. */
 .generator {
-  inline-size: min(100% - var(--site-gutter, 1.5rem) * 2, var(--site-max, 78rem));
+  inline-size: 100%;
   margin-inline: auto;
-  padding-block: clamp(2rem, 5vw, 3.5rem) 5rem;
+  padding-block: 38px 32px;
 }
 
 /* ------------------------------------------------------------------ intro */
 
 .generator-intro h1 {
-  margin: 0 0 0.75rem;
-  font-size: clamp(2.25rem, 4.5vw, 3.25rem);
-  font-stretch: 75%;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.015em;
+  margin: 0;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 44px;
+  letter-spacing: -0.8px;
 }
 
 .generator-intro p {
-  max-inline-size: 42rem;
+  max-inline-size: 44rem;
   margin: 0;
-  color: var(--ui-muted-foreground);
-  font-size: 1.0625rem;
+  padding-top: 8px;
+  color: var(--site-muted, var(--ui-muted-foreground));
+  font-size: 16px;
+  line-height: 24px;
   text-wrap: pretty;
 }
 
@@ -271,28 +272,26 @@
 
 /* ------------------------------------------------------------------ previews */
 
-.generator-previews {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem;
-  margin-block-start: 1rem;
+.generator-preview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  & h2 {
+    margin: 0;
+  }
 }
 
-@container generator-main (width < 50rem) {
-  .generator-previews {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.generator-previews {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-block-start: 1rem;
 }
 
 .generator-screen-frame {
   min-inline-size: 0;
-}
-
-.generator-screen-label {
-  margin: 0 0 0.5rem;
-  color: var(--ui-muted-foreground);
-  font-size: 0.875rem;
-  font-weight: 500;
 }
 
 /* The screen: everything inside is the generated skin. */

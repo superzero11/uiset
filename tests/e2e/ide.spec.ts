@@ -16,7 +16,7 @@ const caretAt = (page: Page, path: string, where: "start" | "end" | number) =>
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/templates?template=ide-app")
+  await page.goto("/templates/ide-app")
   await expect(ide(page)).toBeVisible()
 })
 
@@ -157,7 +157,7 @@ test("agents open files and edit code by the names people see", async ({ page })
 test("in every skin the editor's text is drawn by its colors, not a skinned field over them", async ({ page }) => {
   test.slow() // one page load per skin and theme
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
-    await page.goto(`/templates?template=ide-app&skin=${skin}&theme=dark`)
+    await page.goto(`/templates/ide-app?skin=${skin}&theme=dark`)
     const code = editor(page, "src/index.ts")
     const look = await code.evaluate((el) => {
       const style = getComputedStyle(el)
@@ -293,7 +293,7 @@ test("selected code keeps 4.5:1 in every skin and theme", async ({ page }) => {
     for (const theme of ["light", "dark"]) {
       if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme as "light" | "dark" })
-      await page.goto(`/templates?template=ide-app&skin=${skin}&theme=${theme}`)
+      await page.goto(`/templates/ide-app?skin=${skin}&theme=${theme}`)
       const shown = ide(page).locator('[role="tabpanel"]:not([hidden])')
       await expect(shown.locator(".ide-code-colors span[style]").first()).toBeVisible()
       const worst = await shown.locator(".ide-code").evaluate((code) => {

@@ -463,7 +463,9 @@ function ThemeGeneratorPage() {
     return () => clearTimeout(id)
   }, [input])
 
-  const schemes: ("light" | "dark")[] = theme.input.start === "dark" ? ["dark", "light"] : ["light", "dark"]
+  // One screen at a time, switched between light and dark; it opens on the starting point.
+  const [scheme, setScheme] = useState<"light" | "dark">(() => (input.start === "dark" ? "dark" : "light"))
+  useEffect(() => setScheme(theme.input.start === "dark" ? "dark" : "light"), [theme.input.start])
 
   return (
     <div className="generator">
@@ -485,11 +487,15 @@ function ThemeGeneratorPage() {
         </aside>
         <div className="generator-main">
           <section className="generator-section" aria-labelledby="generator-preview-title">
-            <h2 id="generator-preview-title">Preview</h2>
+            <div className="generator-preview-head">
+              <h2 id="generator-preview-title">Preview</h2>
+              <SegmentedControl aria-label="Preview mode" value={scheme} onValueChange={(v) => v && setScheme(v as "light" | "dark")}>
+                <SegmentedControlItem value="light">Light</SegmentedControlItem>
+                <SegmentedControlItem value="dark">Dark</SegmentedControlItem>
+              </SegmentedControl>
+            </div>
             <div className="generator-previews">
-              {schemes.map((scheme) => (
-                <Preview key={scheme} skin={skin} scheme={scheme} />
-              ))}
+              <Preview skin={skin} scheme={scheme} />
             </div>
           </section>
           <Checks theme={theme} set={setInput} />

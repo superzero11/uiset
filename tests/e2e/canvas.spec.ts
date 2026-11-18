@@ -9,7 +9,7 @@ const tick = (page: Page) => page.evaluate(() => new Promise((resolve) => reques
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await openGallery(page, "/components")
+  await openGallery(page, "/gallery")
   await canvas(page).scrollIntoViewIfNeeded()
   await tick(page)
 })
@@ -166,7 +166,7 @@ test("node edges, wires and ports clear 3:1 in every skin and theme", async ({ p
     for (const theme of ["light", "dark"]) {
       if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme as "light" | "dark" })
-      await openGallery(page, `/components?skin=${skin}&theme=${theme}`)
+      await openGallery(page, `/gallery?skin=${skin}&theme=${theme}`)
       await canvas(page).scrollIntoViewIfNeeded()
       const ratios = await canvas(page).evaluate((root) => {
         const pen = document.createElement("canvas").getContext("2d", { willReadFrequently: true })!
@@ -370,7 +370,7 @@ test.describe("review fixes", () => {
       for (const theme of ["light", "dark"]) {
         if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
         await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme as "light" | "dark" })
-        await openGallery(page, `/components?skin=${skin}&theme=${theme}`)
+        await openGallery(page, `/gallery?skin=${skin}&theme=${theme}`)
         await canvas(page).scrollIntoViewIfNeeded()
         await node(page, /^Reply/).focus()
         await page.keyboard.press("Space")

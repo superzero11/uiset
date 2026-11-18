@@ -8,7 +8,7 @@ const example = (page: Page) => page.locator("#example-scheduler").locator("xpat
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await openGallery(page, "/components")
+  await openGallery(page, "/gallery")
   await example(page).scrollIntoViewIfNeeded()
 })
 
@@ -179,7 +179,7 @@ test("event edges and today's name clear contrast in every skin and theme", asyn
     for (const theme of ["light", "dark"]) {
       if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme as "light" | "dark" })
-      await openGallery(page, `/components?skin=${skin}&theme=${theme}`)
+      await openGallery(page, `/gallery?skin=${skin}&theme=${theme}`)
       await example(page).scrollIntoViewIfNeeded()
       const ratios = await calendar(page).evaluate((root) => {
         const canvas = document.createElement("canvas").getContext("2d", { willReadFrequently: true })!
@@ -220,7 +220,7 @@ test.describe("on a touch screen", () => {
     test.skip(browserName !== "chromium", "drives touches through Chrome's DevTools protocol")
     const errors: string[] = []
     page.on("pageerror", (error) => errors.push(error.message))
-    await openGallery(page, "/components")
+    await openGallery(page, "/gallery")
     const week = calendar(page)
     await week.scrollIntoViewIfNeeded()
     const before = await week.evaluate((el) => el.querySelectorAll(".schedule-event").length)

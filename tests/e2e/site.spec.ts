@@ -11,6 +11,12 @@ async function choose(page: Page, group: string, option: string) {
     .click()
 }
 
+/** The site's skin, from the select beside the theme switch. */
+async function chooseSkin(page: Page, skin: string) {
+  await page.getByRole("combobox", { name: "Site skin", exact: true }).click()
+  await page.getByRole("option", { name: skin, exact: true }).click()
+}
+
 for (const skin of skins) {
   for (const theme of themes) {
     test(`${skin} skin in ${theme.toLowerCase()} theme passes axe, contrast included`, async ({
@@ -42,7 +48,7 @@ test("the whole page passes axe", async ({ page }) => {
 
 // UI SDK styles every <code> as inline code; inside <pre> its padding once pushed the first
 // line of every code block (the site's and the chat kit's) 4px right of the rest.
-for (const path of ["/agents", "/kits#chat"]) {
+for (const path of ["/agents", "/docs/kits/chat"]) {
   test(`code blocks on ${path} start every line at the same edge`, async ({ page }) => {
     await page.goto(path)
     await expect(page.locator("pre").first()).toBeVisible()
@@ -67,7 +73,7 @@ for (const path of ["/agents", "/kits#chat"]) {
 
 // A copy button with a fuller aria-label once matched UI SDK's icon-only button rule and was
 // squeezed to a square, its label spilling out. Every copy button shows its whole label.
-for (const path of ["/", "/docs/components/select", "/kits"]) {
+for (const path of ["/", "/docs/components/select", "/docs/kits/chat"]) {
   test(`copy buttons on ${path} show their whole label`, async ({ page }) => {
     await page.goto(path)
     await expect(page.locator(".copy-button").first()).toBeVisible()
@@ -174,22 +180,22 @@ test("the switch thumb travels the other way in right-to-left", async ({ page })
 // The Studio kit follows the page's skin like every other kit (it was once pinned to its own
 // skin while the page showed Base), and its stage paints no Studio-only surface in other skins
 // (it once left Blueprint, Phosphor and Ink text at about 1.1:1 on the page behind it).
-test("the Studio rack follows the skin picker, and links to its own skin", async ({ page }) => {
-  await page.goto("/kits")
+test("the Studio rack and the whole site follow the skin picker", async ({ page }) => {
+  await page.goto("/docs/kits/studio")
   const stage = page.locator(".studio-stage")
   await expect(stage).toHaveAttribute("data-skin", "base")
-  await choose(page, "Skin", "Ink")
+  await chooseSkin(page, "Ink")
   await expect(stage).toHaveAttribute("data-skin", "ink")
-  await page.getByRole("link", { name: "See it in the Studio skin" }).click()
+  await expect(page.locator(".site")).toHaveAttribute("data-skin", "ink")
+  await chooseSkin(page, "Studio")
   await expect(stage).toHaveAttribute("data-skin", "studio")
-  await expect(page.getByRole("radiogroup", { name: "Skin" }).getByRole("radio", { name: "Studio" })).toHaveAttribute("aria-checked", "true")
 })
 
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     test(`the Studio rack passes axe in ${skin}, ${theme}`, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
-      await page.goto(`/kits?skin=${skin}&theme=${theme}#studio`)
+      await page.goto(`/docs/kits/studio?skin=${skin}&theme=${theme}`)
       await expect(page.locator(".studio-stage")).toHaveAttribute("data-skin", skin)
       const results = await new AxeBuilder({ page })
         .include(".studio-stage")
@@ -203,25 +209,21 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
 // Links to a section of the same page land on it and stay (a Back-button handler once sent
 // every in-page jump back to the top).
 test("links to sections of the same page land on them and stay", async ({ page }) => {
-  const heading = (id: string) => page.locator(`#${id} h2`).first()
-  await page.goto("/kits#scheduler")
-  await expect(heading("scheduler")).toBeInViewport()
-  const index = page.getByRole("navigation", { name: "Kits on this page" })
-  for (const [name, id] of [["Charts", "charts"], ["Studio", "studio"], ["Chat", "chat"]] as const) {
-    await index.getByRole("link", { name, exact: true }).click()
-    await expect(page).toHaveURL(new RegExp(`#${id}$`))
-    await expect(heading(id)).toBeInViewport()
-    await page.waitForTimeout(400)
-    await expect(heading(id)).toBeInViewport()
-  }
-  await page.goBack()
-  await expect(page).toHaveURL(/#studio$/)
-  await expect(heading("studio")).toBeInViewport()
+  await page.goto("/docs/installation")
+  const section = page.locator("#with-tailwind-css")
+  await expect(page.locator("main h1").first()).toBeVisible()
+  await page.getByRole("link", { name: "With Tailwind CSS", exact: true }).first().click()
+  await expect(page).toHaveURL(/#with-tailwind-css$/)
+  await expect(section).toBeInViewport()
+  await page.waitForTimeout(400)
+  await expect(section).toBeInViewport()
 })
 
 // The search palette fills its dialog, and its results start right under the field (the
-// palette once kept its standalone width, and the empty message's padding left a gap).
+// palette once kept its standalone width, and the empty message's padding left a gap). It
+// stays where it opened as the results shrink: centered, it jumped with every key.
 test("search fills its dialog, finds a page and goes to it", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto("/")
   await page.getByRole("button", { name: "Search docs" }).click()
   const dialog = page.getByRole("dialog", { name: "Search the docs" })
@@ -243,6 +245,7 @@ test("search fills its dialog, finds a page and goes to it", async ({ page }) =>
   await expect(dialog.getByRole("option").first()).toContainText("Data grid")
   await field.fill("zzzz")
   await expect(dialog.getByRole("status")).toContainText("Nothing matches")
+  expect(Math.abs((await dialog.boundingBox())!.y - box!.y)).toBeLessThan(1)
   await field.fill("select")
   await expect(dialog.getByRole("option", { name: /^Select/ }).first()).toBeVisible()
   await page.keyboard.press("Enter")
@@ -260,23 +263,22 @@ test("the heading takes focus after moving to another page, not on first load", 
   await expect(heading).toBeVisible()
   await page.waitForTimeout(300)
   await expect(heading).not.toBeFocused()
-  await page.getByRole("navigation", { name: "Site", exact: true }).getByRole("link", { name: "Templates" }).click()
+  await page.getByRole("navigation", { name: "Library", exact: true }).getByRole("link", { name: /^Templates/ }).click()
   await expect(page).toHaveURL(/\/templates$/)
-  await expect(heading).toHaveText(/template/i)
+  await expect(heading).toHaveText(/templates/i)
   await expect(heading).toBeFocused()
 })
 
 test.describe("Studio", () => {
   test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" })
-    await page.goto("/kits#studio")
+    await page.goto("/docs/kits/studio")
     await expect(page.locator(".studio-stage")).toBeVisible()
   })
 
-  test("a #studio link lands on the Studio section", async ({ page }) => {
-    await expect(
-      page.getByRole("heading", { name: "Studio: a synth rack, with sound" }),
-    ).toBeInViewport()
+  test("its page opens on the rack", async ({ page }) => {
+    await expect(page.getByRole("heading", { level: 1, name: "Studio" })).toBeInViewport()
+    await expect(page.locator(".studio-stage")).toBeVisible()
   })
 
   test("the rack passes axe, contrast included", async ({ page }) => {
@@ -404,7 +406,7 @@ test.describe("Studio", () => {
   })
 
   test("an agent plays the rack: beat, filter, cable, pattern", async ({ page }) => {
-    const section = page.locator("#studio")
+    const section = page.locator(".item-stage")
     for (const prompt of [
       "Start the beat",
       "Make it darker",
@@ -555,10 +557,10 @@ test.describe("Agent Console", () => {
 test.describe("Chat kit", () => {
   test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" })
-    await page.goto("/kits#chat")
+    await page.goto("/docs/kits/chat")
   })
 
-  const chat = (page: Page) => page.locator("#chat")
+  const chat = (page: Page) => page.locator(".item-frame")
   const box = (page: Page) => chat(page).getByRole("textbox", { name: "Message" })
 
   for (const scheme of ["light", "dark"] as const) {
@@ -569,7 +571,7 @@ test.describe("Chat kit", () => {
         .evaluate((el) => (el.scrollTop = 0))
       await expect(chat(page).locator(".chat-code-line").first()).toBeVisible()
       const results = await new AxeBuilder({ page })
-        .include("#chat")
+        .include(".item-frame")
         .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
         .analyze()
       expect(results.violations.map((v) => `${v.id}: ${v.nodes.length} node(s)`)).toEqual(

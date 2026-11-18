@@ -1,13 +1,13 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test, type Page } from "@playwright/test"
 
-const section = (page: Page) => page.locator("#charts")
+const section = (page: Page) => page.locator(".item-frame")
 const chart = (page: Page, name: string) => section(page).getByRole("listbox", { name })
 const tooltip = (page: Page) => section(page).locator(".chart-tooltip")
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/kits#charts")
+  await page.goto("/docs/kits/charts")
   await expect(chart(page, "Revenue and costs")).toBeVisible()
 })
 
@@ -22,7 +22,7 @@ for (const scheme of ["light", "dark"] as const) {
       .getByRole("radio", { name: "Table" })
       .click()
     const results = await new AxeBuilder({ page })
-      .include("#charts")
+      .include(".item-frame")
       .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
       .analyze()
     expect(results.violations.map((v) => `${v.id}: ${v.nodes.length} node(s)`)).toEqual([])

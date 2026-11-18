@@ -45,18 +45,18 @@ test.beforeEach(async ({ page }) => {
 })
 
 test("Tailwind's reset doesn't strip UISet's controls", async ({ page }) => {
-  await openGallery(page, "/components")
+  await openGallery(page, "/gallery")
   await ready(page)
   const plain = await look(page)
   await withTailwind(page)
-  await openGallery(page, "/components")
+  await openGallery(page, "/gallery")
   await ready(page)
   expect(await look(page)).toEqual(plain)
 })
 
 test("Tailwind's utility classes win over UISet's styles", async ({ page }) => {
   await withTailwind(page)
-  await openGallery(page, "/components")
+  await openGallery(page, "/gallery")
   await ready(page)
   await button(page).evaluate((el) => el.classList.add("tw-red"))
   await expect(button(page)).toHaveCSS("color", "rgb(255, 0, 0)")
@@ -65,7 +65,7 @@ test("Tailwind's utility classes win over UISet's styles", async ({ page }) => {
 })
 
 test("a page without Tailwind keeps the layer order it has", async ({ page }) => {
-  await openGallery(page, "/components")
+  await openGallery(page, "/gallery")
   await ready(page)
   await expect(page.locator("#uiset-layer-order")).toHaveCount(0)
 })

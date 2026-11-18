@@ -6,9 +6,10 @@ const frame = (page: Page) => page.locator(".template-frame")
 
 async function open(page: Page, template: string, query = "") {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto(`/templates?template=${template}${query}`)
-  // The gallery loads every template's code; under a full parallel run that takes a while.
+  await page.goto(`/templates/${template}${query.replace(/^&/, "?")}`)
+  // The template's code loads with its page; under a full parallel run that takes a while.
   await expect(frame(page)).toBeVisible({ timeout: 15000 })
+  await expect(frame(page).getByText("Loading the demo…")).toHaveCount(0, { timeout: 15000 })
 }
 
 async function axe(page: Page) {

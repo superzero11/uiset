@@ -850,7 +850,10 @@
     font-weight: 650;
   }
 
+  /* Positioned, so the table's screen-reader text (absolutely placed) stays inside it: in a
+     positioned container, it widened that container's scroll width to the whole table's. */
   .pricing-table-scroller {
+    position: relative;
     overflow-x: auto;
     border: 1px solid var(--ui-border);
     border-radius: calc(var(--ui-radius) + 4px);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useSyncExternalStore } from "react"
 import { SegmentedControl, SegmentedControlItem } from "@/registry/uiset/ui/segmented-control"
 import type { Skin } from "@/registry/uiset/ui/uiset"
 
@@ -25,6 +25,52 @@ function useUrlState<T extends string>(key: string, allowed: readonly T[], fallb
   return [value, setValue] as const
 }
 
+// The site's skin: the frame and every example wear it. A link can carry it (?skin=…);
+// otherwise the last one chosen is kept, as the light or dark setting is.
+const SKIN_KEY = "uiset-site-skin"
+let skinNow: Skin = (() => {
+  if (typeof window === "undefined") return "base"
+  const fromUrl = new URLSearchParams(window.location.search).get("skin")
+  if (skins.some((s) => s.value === fromUrl)) return fromUrl as Skin
+  try {
+    const kept = localStorage.getItem(SKIN_KEY)
+    if (skins.some((s) => s.value === kept)) return kept as Skin
+  } catch {
+    /* no storage: base */
+  }
+  return "base"
+})()
+const skinListeners = new Set<() => void>()
+
+function setSkin(next: Skin) {
+  skinNow = next
+  try {
+    if (next === "base") localStorage.removeItem(SKIN_KEY)
+    else localStorage.setItem(SKIN_KEY, next)
+  } catch {
+    /* no storage: it lasts for the visit */
+  }
+  const url = new URL(window.location.href)
+  if (url.searchParams.has("skin")) {
+    url.searchParams.delete("skin")
+    window.history.replaceState(window.history.state, "", url)
+  }
+  for (const listener of skinListeners) listener()
+}
+
+/** The site's skin, and a setter. */
+function useSkin() {
+  const skin = useSyncExternalStore(
+    (listener) => {
+      skinListeners.add(listener)
+      return () => skinListeners.delete(listener)
+    },
+    () => skinNow,
+    () => "base" as Skin,
+  )
+  return [skin, setSkin] as const
+}
+
 function SkinPicker({ value, onChange, label = "Skin" }: { value: Skin; onChange: (skin: Skin) => void; label?: string }) {
   return (
     <SegmentedControl className="skin-picker" aria-label={label} value={value} onValueChange={(v) => v && onChange(v as Skin)}>
@@ -39,4 +85,4 @@ function SkinPicker({ value, onChange, label = "Skin" }: { value: Skin; onChange
 
 const skinValues = skins.map((s) => s.value)
 
-export { SkinPicker, skins, skinValues, useUrlState }
+export { SkinPicker, skins, skinValues, useSkin, useUrlState }

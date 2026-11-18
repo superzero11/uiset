@@ -10,7 +10,7 @@ const example = (page: Page, title: string) =>
 
 async function open(page: Page, query = "") {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await openGallery(page, `/components${query}`)
+  await openGallery(page, `/gallery${query}`)
   await expect(page.locator(".components-surface")).toBeVisible({ timeout: 20_000 })
 }
 
@@ -344,7 +344,7 @@ for (const theme of ["light", "dark"] as const) {
     test(`${title} passes axe at phone width, ${theme}`, async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 800 })
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
-      await openGallery(page, `/components?theme=${theme}`)
+      await openGallery(page, `/gallery?theme=${theme}`)
       await expect(page.locator(".components-surface")).toBeVisible({ timeout: 20_000 })
       const section = example(page, title)
       await section.scrollIntoViewIfNeeded()

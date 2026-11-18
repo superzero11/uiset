@@ -13,10 +13,39 @@ type DocPage = {
   file?: string
   /** A registry item, for component pages. */
   item?: string
+  /** A UISet part (app frame, data display, forms), not a UI SDK component: no API reference
+   *  from UI SDK, and a link to its section in its kit's guide instead. */
+  part?: { guide: string }
   keywords?: string[]
 }
 
 type Item = { name: string; title?: string; description?: string; type: string }
+
+// The app frame's, data display's and forms' parts, each with its section in its kit's guide.
+const appParts: Record<string, string> = {
+  "app-shell": "/docs/kits/app-shell#the-shell",
+  breadcrumbs: "/docs/kits/app-shell#page-parts",
+  "page-header": "/docs/kits/app-shell#page-parts",
+  card: "/docs/kits/app-shell#page-parts",
+  stepper: "/docs/kits/app-shell#page-parts",
+  "search-field": "/docs/kits/app-shell#page-parts",
+  badge: "/docs/kits/app-shell#data-display",
+  stat: "/docs/kits/app-shell#data-display",
+  "empty-state": "/docs/kits/app-shell#data-display",
+  skeleton: "/docs/kits/app-shell#data-display",
+  "description-list": "/docs/kits/app-shell#data-display",
+  "item-list": "/docs/kits/app-shell#data-display",
+  alert: "/docs/kits/app-shell#data-display",
+  kbd: "/docs/kits/app-shell#data-display",
+  spinner: "/docs/kits/app-shell#data-display",
+  "avatar-group": "/docs/kits/app-shell#data-display",
+  table: "/docs/kits/app-shell#table",
+  "code-block": "/docs/kits/app-shell#code",
+  "copy-button": "/docs/kits/app-shell#code",
+  "schema-form": "/docs/kits/forms#schema-form",
+  "inline-edit": "/docs/kits/forms#inline-edit",
+  upload: "/docs/kits/forms#upload",
+}
 const items = (registry as { items: Item[] }).items
 const describe = (name: string) => items.find((i) => i.name === name)?.description ?? ""
 
@@ -64,10 +93,14 @@ const templates: DocPage[] = [{ path: "/docs/templates", title: "Templates", fil
 
 // UI SDK's own components, each a UISet item with a page of its own.
 const SDK = new Set<string>(sdkComponents)
-const components: DocPage[] = items
-  .filter((i) => SDK.has(i.name))
-  .map((i) => ({ path: `/docs/components/${i.name}`, title: i.title ?? i.name, item: i.name, section: "Components", description: i.description ?? "" }))
-  .sort((a, b) => a.title.localeCompare(b.title))
+const components: DocPage[] = [
+  ...items
+    .filter((i) => SDK.has(i.name))
+    .map((i) => ({ path: `/docs/components/${i.name}`, title: i.title ?? i.name, item: i.name, section: "Components", description: i.description ?? "" })),
+  ...items
+    .filter((i) => appParts[i.name])
+    .map((i) => ({ path: `/docs/components/${i.name}`, title: i.title ?? i.name, item: i.name, section: "Components", description: i.description ?? "", part: { guide: appParts[i.name]! } })),
+].sort((a, b) => a.title.localeCompare(b.title))
 
 const docPages: DocPage[] = [...guides, ...kits, ...skins, ...templates, ...components]
 const docSections = ["Get started", "Kits", "Components", "Templates", "Skins"]

@@ -11,8 +11,8 @@ const templates = ["auth", "dashboard", "settings", "admin", "inbox", "chat-app"
 for (const template of templates) {
   test(`the ${template} template scores 100`, async ({ page }) => {
     await captureAgentTools(page)
-    await page.goto(`/templates?template=${template}`)
-    await page.locator("#main .template-panel").first().waitFor()
+    await page.goto(`/templates/${template}`)
+    await page.locator("#main .template-frame").first().waitFor()
     // Components join the bridge as they mount.
     await page.waitForTimeout(500)
     const report = await checkPage(page)
@@ -41,19 +41,18 @@ test("the home page scores 100 with each kit demo open", async ({ page }) => {
   expect(found).toEqual([])
 })
 
-// The Kits page shows every kit at once, so a one-word name in one kit, like the grid's "View"
-// menu, can't be a word of another kit's names, like a scheduler's or a canvas's.
-test("the Kits page scores 100 with every kit on it", async ({ page }) => {
-  await captureAgentTools(page)
-  await page.goto("/kits")
-  await page.locator("#studio .studio-stage").waitFor()
-  await page.locator("#terminal").getByRole("textbox").waitFor()
-  await page.locator("#canvas .canvas-controls").waitFor()
-  await page.waitForTimeout(500)
-  const report = await checkPage(page, { mode: "bridge" })
-  expect(report.controls).toBeGreaterThan(100)
-  expect(report.score, formatAgentReadiness(report, "kits")).toBe(100)
-})
+// The library's tabs: each card is a picture of its piece (hidden from agents) with a link and
+// a copy button named for it, so every name on the page is its own.
+for (const path of ["/components", "/kits", "/templates", "/themes"]) {
+  test(`the library's ${path.slice(1)} tab scores 100`, async ({ page }) => {
+    await captureAgentTools(page)
+    await page.goto(path)
+    await page.locator(".lib-card").first().waitFor()
+    await page.waitForTimeout(500)
+    const report = await checkPage(page, { mode: "bridge" })
+    expect(report.score, formatAgentReadiness(report, path)).toBe(100)
+  })
+}
 
 // Agents pick a control by its name alone, so on every page each control has a name of its
 // own: two links that share one open the same page, a section's link says it's a section, the

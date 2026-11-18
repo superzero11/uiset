@@ -1,16 +1,18 @@
-import { Children, isValidElement, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { Children, isValidElement, useEffect, useRef, useState, type ReactNode } from "react"
 import ReactMarkdown, { type Components } from "react-markdown"
 import remarkGfm from "remark-gfm"
 import registry from "@/registry.json"
-import type { Skin } from "@/registry/uiset/ui/uiset"
 import { CopyButton } from "@/registry/uiset/ui/copy-button"
-import { docPages, docSections, pathOfFile, type DocPage } from "../docs/nav"
+import { docPages, pathOfFile, type DocPage } from "../docs/nav"
 import { ExamplePreview, useExample } from "../docs/component-preview"
 import { CodeBlock, InstallCommand } from "../shell/code"
 import { useSiteTheme } from "../shell/layout"
 import { articleData, usePageMeta } from "../shell/meta"
 import { useLocation } from "../shell/router"
-import { skinValues, useUrlState } from "../shell/skin-picker"
+import { ItemStage } from "../item-stage"
+import { kits } from "../library"
+import { kitDemos } from "../library-demos"
+import { useSkin } from "../shell/skin-picker"
 
 // Every Markdown page in docs/, loaded when its page opens.
 const markdown = import.meta.glob("/docs/*.md", { query: "?raw", import: "default" }) as Record<string, () => Promise<string>>
@@ -112,51 +114,8 @@ const mdComponents: Components = {
 
 /* ------------------------------------------------------------------ layout parts */
 
-// Under their section's heading the sidebar's titles are clear, but agents find links by name
-// alone: Studio is a kit and a skin, and the header has a Templates link of its own.
-const sidebarName = (page: DocPage) =>
-  page.section === "Kits" ? `${page.title} kit` : page.section === "Skins" ? `${page.title} skin` : page.section === "Templates" ? `${page.title} guide` : undefined
-
-function Sidebar({ current }: { current: string }) {
-  return (
-    <nav className="docs-nav" aria-label="Docs">
-      {docSections.map((section) => (
-        <div key={section} className="docs-nav-section">
-          <h2>{section}</h2>
-          <ul>
-            {docPages
-              .filter((p) => p.section === section)
-              .map((p) => (
-                <li key={p.path}>
-                  <a href={p.path} aria-current={p.path === current ? "page" : undefined} aria-label={sidebarName(p)}>
-                    {p.title}
-                  </a>
-                </li>
-              ))}
-          </ul>
-        </div>
-      ))}
-    </nav>
-  )
-}
-
-function OnThisPage({ headings }: { headings: { id: string; text: string; level: number }[] }) {
-  if (headings.length < 2) return null
-  return (
-    <nav className="docs-toc" aria-label="On this page">
-      <h2>On this page</h2>
-      <ul>
-        {headings.map((h) => (
-          <li key={h.id} data-level={h.level}>
-            <a href={`#${h.id}`} aria-label={sectionName(h.text)}>
-              {h.text}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  )
-}
+// A page's section in the breadcrumb opens that section's place in the library.
+const crumbOf: Record<string, string> = { Components: "/components", Kits: "/kits", Templates: "/templates", Skins: "/themes" }
 
 function PrevNext({ page }: { page: DocPage }) {
   const i = docPages.indexOf(page)
@@ -181,15 +140,6 @@ function PrevNext({ page }: { page: DocPage }) {
 }
 
 /* ------------------------------------------------------------------ pages */
-
-/** The ## and ### headings of a Markdown page, for On this page. */
-const headingsOf = (source: string, deepest = 3) =>
-  source
-    .replace(/```[\s\S]*?```/g, "")
-    .split("\n")
-    .map((line) => /^(#{2,3}) (.+)$/.exec(line))
-    .filter((m): m is RegExpExecArray => !!m && m[1]!.length <= deepest)
-    .map((m) => ({ level: m[1]!.length, text: m[2]!.replace(/[`*_]/g, ""), id: slugify(m[2]!) }))
 
 // Markdown already fetched, so a page that was preloaded (routes.tsx) draws at once.
 const texts = new Map<() => Promise<string>, string>()
@@ -226,14 +176,19 @@ function useMarkdown(load: (() => Promise<string>) | undefined) {
 
 function MarkdownPage({ page }: { page: DocPage }) {
   const source = useMarkdown(markdown[`/docs/${page.file}`])
-  const headings = useMemo(() => headingsOf(source ?? ""), [source])
+  const kit = page.section === "Kits" ? kits.find((k) => k.href === page.path) : undefined
+  const Demo = kit ? kitDemos[kit.id] : undefined
   return (
     <>
+      {kit && Demo && (
+        <ItemStage title={kit.title} items={kit.items} stageClass={kit.stage ?? "grid-stage"} sound={kit.id === "studio"}>
+          <Demo />
+        </ItemStage>
+      )}
       <div className="docs-article">
         {source === null ? <p className="docs-loading">Loading…</p> : <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents} skipHtml>{source}</ReactMarkdown>}
         <PageFooter page={page} markdownUrl={`/docs/${page.file}`} source={source} />
       </div>
-      <OnThisPage headings={headings} />
     </>
   )
 }
@@ -246,24 +201,16 @@ const sdkDocs = import.meta.glob("../docs/sdk/*.md", { query: "?raw", import: "d
 function ComponentPage({ page }: { page: DocPage }) {
   const item = (registry as { items: Item[] }).items.find((i) => i.name === page.item)!
   const { theme } = useSiteTheme()
-  const [skin, setSkin] = useUrlState<Skin>("skin", skinValues, "base")
+  const [skin] = useSkin()
   const example = useExample(item.name)
-  const sdk = useMarkdown(sdkDocs[`../docs/sdk/${item.name}.md`])
   const extras = item.registryDependencies?.map((d) => d.split("/").at(-1)!).filter((d) => d !== "uiset") ?? []
-  const headings = [
-    ...(example ? [{ id: "example", text: "Example", level: 2 }] : []),
-    { id: "installation", text: "Installation", level: 2 },
-    { id: "what-uiset-adds", text: "What UISet adds", level: 2 },
-    ...headingsOf(sdk ?? "", 2),
-    { id: "agents", text: "Agents", level: 2 },
-  ]
   return (
     <>
       <div className="docs-article">
         {example && (
           <>
             <h2 id="example">Example</h2>
-            <ExamplePreview example={example} item={item.name} skin={skin} theme={theme} onSkinChange={setSkin} />
+            <ExamplePreview example={example} item={item.name} title={page.title} skin={skin} theme={theme} />
           </>
         )}
         <h2 id="installation">Installation</h2>
@@ -273,31 +220,24 @@ function ComponentPage({ page }: { page: DocPage }) {
           {extras.length ? <> and {extras.map((d, i) => <span key={d}>{i > 0 && ", "}<code>{d}</code></span>)}</> : null}. Wrap your app in{" "}
           <a href="/docs/theming">&lt;UISet&gt;</a> once, and every component takes its skin.
         </p>
-        <h2 id="what-uiset-adds">What UISet adds</h2>
-        <p>
-          The component is UI SDK&rsquo;s own, with its parts, props and names, so everything below works as UI SDK documents it. UISet adds the look and checks it:
-        </p>
-        <ul>
-          <li>Styles in five skins, each in light and dark, from CSS variables you can override.</li>
-          <li>Text at 4.5:1 contrast and control edges and focus rings at 3:1, in every skin and theme, checked with axe in tests.</li>
-          <li>Haptic cues on phones, and sound cues when you set <code>sound</code> on <code>&lt;UISet&gt;</code>.</li>
-          <li>Examples that name every control, so agents can find it (see Agents below).</li>
-        </ul>
-        {sdk === null ? (
-          <p className="docs-loading">Loading the API reference…</p>
-        ) : (
+        {page.part ? (
           <>
-            <div className="docs-sdk-credit">
-              <p>
-                The API reference and accessibility notes below are UI SDK&rsquo;s, from its docs for <code>@ui-sdk/react</code> (Apache-2.0).{" "}
-                <a href={`https://ui-sdk.dev/docs/react/components/${item.name}`}>{page.title} on ui-sdk.dev</a> has more usage examples. Your coding agent can read the same page
-                at <code>node_modules/@ui-sdk/react/docs/components/{item.name}.md</code>.
-              </p>
-            </div>
-            <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents} skipHtml>
-              {sdk}
-            </ReactMarkdown>
+            <h2 id="what-it-is">What it is</h2>
+            <p>
+              {page.title} is one of UISet&rsquo;s own parts, not a UI SDK component: it&rsquo;s built from UI SDK&rsquo;s behaviors and components, so it takes the
+              keyboard, focus, screen readers and agents from them, and every skin styles it.
+            </p>
+            <ul>
+              <li>Styles in five skins, each in light and dark, from CSS variables you can override.</li>
+              <li>Text at 4.5:1 contrast and control edges and focus rings at 3:1, in every skin and theme, checked with axe in tests.</li>
+              <li>Named for agents, so an agent can find it (see Agents below).</li>
+            </ul>
+            <p>
+              Its props, its parts and how to wire it to your data are in <a href={page.part.guide}>its section of the {page.part.guide.includes("/forms") ? "Forms" : "App frame and data display"} guide</a>.
+            </p>
           </>
+        ) : (
+          <SdkReference item={item.name} title={page.title} />
         )}
         <h2 id="agents">Agents</h2>
         <p>
@@ -312,7 +252,41 @@ function ComponentPage({ page }: { page: DocPage }) {
         )}
         <PageFooter page={page} />
       </div>
-      <OnThisPage headings={headings} />
+    </>
+  )
+}
+
+/** What UISet adds to a UI SDK component, and UI SDK's own API reference for it. */
+function SdkReference({ item, title }: { item: string; title: string }) {
+  const sdk = useMarkdown(sdkDocs[`../docs/sdk/${item}.md`])
+  return (
+    <>
+      <h2 id="what-uiset-adds">What UISet adds</h2>
+      <p>
+        The component is UI SDK&rsquo;s own, with its parts, props and names, so everything below works as UI SDK documents it. UISet adds the look and checks it:
+      </p>
+      <ul>
+        <li>Styles in five skins, each in light and dark, from CSS variables you can override.</li>
+        <li>Text at 4.5:1 contrast and control edges and focus rings at 3:1, in every skin and theme, checked with axe in tests.</li>
+        <li>Haptic cues on phones, and sound cues when you set <code>sound</code> on <code>&lt;UISet&gt;</code>.</li>
+        <li>Examples that name every control, so agents can find it (see Agents below).</li>
+      </ul>
+      {sdk === null ? (
+        <p className="docs-loading">Loading the API reference…</p>
+      ) : (
+        <>
+          <div className="docs-sdk-credit">
+            <p>
+              The API reference and accessibility notes below are UI SDK&rsquo;s, from its docs for <code>@ui-sdk/react</code> (Apache-2.0).{" "}
+              <a href={`https://ui-sdk.dev/docs/react/components/${item}`}>{title} on ui-sdk.dev</a> has more usage examples. Your coding agent can read the same page at{" "}
+              <code>node_modules/@ui-sdk/react/docs/components/{item}.md</code>.
+            </p>
+          </div>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents} skipHtml>
+            {sdk}
+          </ReactMarkdown>
+        </>
+      )}
     </>
   )
 }
@@ -344,35 +318,29 @@ function DocsPage() {
         }
       : { title: "Page not found", description: "This docs page doesn't exist.", path: pathname, noindex: true },
   )
-  return (
-    <div className="docs">
-      {page ? (
-        <article className="docs-main" aria-labelledby="docs-title">
-          <header className="docs-head">
-            <nav className="docs-crumbs" aria-label="Breadcrumb">
-              <ol>
-                <li>
-                  <a href="/docs">Docs</a>
-                </li>
-                {page.path !== "/docs" && <li>{page.section}</li>}
-                {page.path !== "/docs" && <li aria-current="page">{page.title}</li>}
-              </ol>
-            </nav>
-            <h1 id="docs-title">{page.title}</h1>
-            <p className="docs-lede">{page.description}</p>
-          </header>
-          <div className="docs-body">{page.file ? <MarkdownPage key={page.path} page={page} /> : <ComponentPage key={page.path} page={page} />}</div>
-        </article>
-      ) : (
-        <article className="docs-main">
-          <h1>That page isn&rsquo;t here</h1>
-          <p>
-            Try the search at the top of the page, or start at the <a href="/docs">introduction</a>.
-          </p>
-        </article>
-      )}
-      <Sidebar current={pathname} />
-    </div>
+  return page ? (
+    <article className="docs-main" data-wide={page.section === "Kits" ? "" : undefined} aria-labelledby="docs-title">
+      <header className="docs-head">
+        <nav className="docs-crumbs" aria-label="Breadcrumb">
+          <ol>
+            <li>
+              <a href={crumbOf[page.section] ?? "/docs"}>{page.section === "Get started" ? "Docs" : page.section}</a>
+            </li>
+            {page.path !== "/docs" && <li aria-current="page">{page.title}</li>}
+          </ol>
+        </nav>
+        <h1 id="docs-title">{page.title}</h1>
+        <p className="docs-lede">{(page.section === "Kits" && kits.find((k) => k.href === page.path)?.description) || page.description}</p>
+      </header>
+      {page.file ? <MarkdownPage key={page.path} page={page} /> : <ComponentPage key={page.path} page={page} />}
+    </article>
+  ) : (
+    <article className="docs-main">
+      <h1>That page isn&rsquo;t here</h1>
+      <p>
+        Try the search in the sidebar, or start at the <a href="/docs">introduction</a>.
+      </p>
+    </article>
   )
 }
 

@@ -31,7 +31,7 @@ for (const item of uiSdkComponents) {
 
     // The components page draws all 79 examples; WebKit and Firefox take longer over it.
     test.slow()
-    await openGallery(page, "/components")
+    await openGallery(page, "/gallery")
     const gallery = `section.example:has(#${id}) .example-body`
     await expect(page.locator(gallery)).toBeVisible({ timeout: 20_000 })
     const expected = await styles(page, gallery)
@@ -47,3 +47,18 @@ for (const item of uiSdkComponents) {
     }
   })
 }
+
+// A popup opens next to its trigger on a docs page. The docs' example once kept a loading
+// example's 8rem of room after it drew, so its trigger stretched to fill it and the hover card
+// opened far below the link.
+test("a hover card opens next to its link on its docs page", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" })
+  await page.goto("/docs/components/hover-card")
+  const trigger = page.locator(".docs-preview [data-slot='hover-card-trigger']").first()
+  await trigger.hover()
+  const card = page.locator("[data-slot='hover-card-content']")
+  await expect(card).toBeVisible({ timeout: 10_000 })
+  const [link, popup] = [(await trigger.boundingBox())!, (await card.boundingBox())!]
+  expect(link.height).toBeLessThan(40)
+  expect(Math.abs(popup.y - (link.y + link.height))).toBeLessThan(16)
+})

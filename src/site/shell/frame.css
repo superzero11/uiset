@@ -1,0 +1,1886 @@
+/* The site's frame (design/site-plan.md, 2026-11-18): the top nav
+   of the home and Agent pages, the sidebar and panel of the docs and library, the library's
+   cards and the footer. Plain (unlayered) CSS on the site's own classes. The tokens sit on the
+   site root, so the demos inside, each a UISet root of its own, keep their skins. */
+
+.site {
+  --site-page: light-dark(oklch(97% 0 0), oklch(15.5% 0.002 286));
+  --site-home: light-dark(oklch(100% 0 0), oklch(15.5% 0.002 286));
+  --site-panel: light-dark(oklch(99.1% 0 0), oklch(18.3% 0.002 286));
+  --site-panel-edge: light-dark(oklch(94.3% 0 0), oklch(25.3% 0.004 286));
+  --site-card: light-dark(oklch(100% 0 0), oklch(21.4% 0.004 286));
+  --site-card-edge: light-dark(oklch(14.5% 0 0 / 5.5%), oklch(100% 0 0 / 5%));
+  --site-preview: light-dark(oklch(98.5% 0 0), oklch(24% 0.004 286));
+  --site-fill: light-dark(oklch(0% 0 0 / 4%), oklch(100% 0 0 / 5%));
+  --site-hover: light-dark(oklch(0% 0 0 / 5%), oklch(100% 0 0 / 7%));
+  --site-text: light-dark(oklch(14.5% 0 0), oklch(94.6% 0 0));
+  /* At 4.9:1 on the sidebar's gray (a lighter #737373 would be 4.35:1). */
+  --site-muted: light-dark(oklch(52.8% 0 0), oklch(65% 0 0));
+  --site-hair: light-dark(oklch(92.2% 0 0), oklch(26.9% 0.004 286));
+  --site-primary: light-dark(oklch(20.5% 0 0), oklch(94.6% 0 0));
+  --site-on-primary: light-dark(oklch(100% 0 0), oklch(18.3% 0.002 286));
+  /* A selected segment's edge, at 3:1 against the track (a white fill alone is 1.1:1). */
+  --site-state-edge: light-dark(oklch(61.7% 0 0), oklch(58% 0 0));
+  --site-shadow-panel: 0 1px 0 light-dark(oklch(0% 0 0 / 4%), oklch(0% 0 0 / 45%)), 0 2px 1px -1px light-dark(oklch(0% 0 0 / 5%), oklch(0% 0 0 / 50%));
+  --site-shadow-card: 0 1px 1.5px light-dark(oklch(0% 0 0 / 4%), oklch(0% 0 0 / 30%)), inset 0 -1px 0 light-dark(oklch(0% 0 0 / 6%), oklch(100% 0 0 / 4%));
+  --site-shadow-pop: 0 4px 42px light-dark(oklch(0% 0 0 / 6%), oklch(0% 0 0 / 40%)), 0 2px 6px light-dark(oklch(0% 0 0 / 5%), oklch(0% 0 0 / 20%)), 0 0 0 1px light-dark(oklch(0% 0 0 / 6%), oklch(100% 0 0 / 8%));
+  --site-prose: light-dark(oklch(40% 0 0), oklch(80% 0 0));
+  --site-font: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  background: var(--site-page);
+  color: var(--site-text);
+  font-family: var(--site-font);
+  font-size: 13px;
+  line-height: 1.4286;
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The frame's palette as a shadcn theme, which the base skin adopts: every component, kit and
+   template shown in Base wears the same grays and near-black as the page around it. */
+.site {
+  --background: light-dark(oklch(100% 0 0), oklch(21.4% 0.004 286));
+  --foreground: light-dark(oklch(14.5% 0 0), oklch(94.6% 0 0));
+  --muted: light-dark(oklch(97% 0 0), oklch(26% 0.004 286));
+  /* The base skin's own lightness for secondary text: it holds 4.5:1 on tinted surfaces too
+     (a scheduler's events, a badge), where the frame's lighter gray would not. */
+  --muted-foreground: light-dark(oklch(47% 0 0), oklch(73% 0 0));
+  --border: light-dark(oklch(92.2% 0 0), oklch(26.9% 0.004 286));
+  /* Control edges at 3:1 against the surface. */
+  --input: light-dark(oklch(61.7% 0 0), oklch(58% 0 0));
+  /* Plain values: the key's text color is worked out from it (relative color), per scheme. */
+  --primary: oklch(20.5% 0 0);
+}
+
+.site[data-theme="dark"] {
+  --primary: oklch(94.6% 0 0);
+}
+
+@media (prefers-color-scheme: dark) {
+  .site:not([data-theme="light"]) {
+    --primary: oklch(94.6% 0 0);
+  }
+}
+
+/* In the base skin, the frame's components take the frame's palette. */
+.site[data-skin="base"] {
+  --ui-font-sans: var(--site-font);
+  --ui-background: var(--site-panel);
+  --ui-foreground: var(--site-text);
+  --ui-muted: var(--site-fill);
+  --ui-muted-foreground: var(--site-muted);
+  --ui-border: var(--site-hair);
+  --ui-primary: var(--site-primary);
+  --ui-primary-foreground: var(--site-on-primary);
+}
+
+/* In any other skin the whole site wears it: the frame's palette and type are the skin's. */
+.site:not([data-skin="base"]) {
+  --site-page: color-mix(in oklab, var(--ui-background), var(--ui-foreground) 4%);
+  --site-home: var(--ui-background);
+  --site-panel: var(--ui-background);
+  --site-panel-edge: var(--ui-border);
+  --site-card: var(--ui-background);
+  --site-card-edge: var(--ui-border);
+  --site-preview: color-mix(in oklab, var(--ui-background), var(--ui-foreground) 3%);
+  --site-fill: color-mix(in oklab, var(--ui-foreground) 7%, transparent);
+  --site-hover: color-mix(in oklab, var(--ui-foreground) 10%, transparent);
+  --site-text: var(--ui-foreground);
+  --site-muted: var(--ui-muted-foreground);
+  --site-prose: var(--ui-foreground);
+  --site-hair: var(--ui-border);
+  --site-primary: var(--ui-primary);
+  --site-on-primary: var(--ui-primary-foreground);
+  --site-state-edge: var(--ui-input);
+  --site-font: var(--ui-font-sans);
+}
+
+.site:not([data-skin="base"]) .home-button[data-variant="primary"] {
+  background: var(--site-primary);
+  box-shadow: none;
+  color: var(--site-on-primary);
+}
+
+.site-home {
+  background: var(--site-home);
+
+  /* The hero's faded pieces reach past the window's edge. */
+  & > .site-main {
+    overflow-x: clip;
+  }
+}
+
+.site-icon {
+  flex: none;
+}
+
+/* ------------------------------------------------------------------ logo */
+
+.logo {
+  gap: 0.5rem;
+}
+
+.logo-word {
+  font-family: var(--site-font);
+  font-size: 15px;
+  font-stretch: normal;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Black on the dark page too: a faint edge keeps the tile apart from it. */
+.logo-tile {
+  stroke: light-dark(transparent, oklch(100% 0 0 / 22%));
+  stroke-width: 1;
+}
+
+.site-logo {
+  display: inline-flex;
+  align-items: center;
+  color: var(--site-text);
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.site-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.5rem;
+  height: 18px;
+  margin-inline-start: 6px;
+  padding-inline: 5px;
+  border-radius: 999px;
+  background: var(--site-fill);
+  color: var(--site-muted);
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* ------------------------------------------------------------------ shared controls */
+
+/* A field-like search button: the top nav's and the sidebar's. */
+.site-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 8px 0 11px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--site-card);
+  box-shadow:
+    0 0 0 1px var(--site-card-edge),
+    0 1px 1.5px light-dark(oklch(0% 0 0 / 4%), oklch(0% 0 0 / 30%));
+  color: var(--site-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--site-text);
+  }
+
+  & .site-search-label {
+    flex: 1;
+    text-align: start;
+  }
+
+  & .site-search-keys {
+    display: inline-flex;
+    gap: 3px;
+    font-family: var(--site-font);
+    font-size: 12px;
+    color: var(--site-muted);
+  }
+}
+
+.site-search-compact {
+  width: 32px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--site-fill);
+  box-shadow: none;
+}
+
+/* System, Light, Dark: a pill track with the chosen one lifted out. */
+.site-theme[data-slot="segmented-control"] {
+  display: inline-flex;
+  gap: 2px;
+  height: 32px;
+  padding: 3px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--site-fill);
+
+  & [data-slot="segmented-control-item"] {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    min-width: 0;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--site-muted);
+    box-shadow: none;
+
+    &:hover {
+      color: var(--site-text);
+    }
+
+    &[data-pressed],
+    &[data-checked],
+    &[aria-checked="true"] {
+      background: var(--site-card);
+      color: var(--site-text);
+      box-shadow:
+        0 0 0 1px var(--site-state-edge),
+        0 1px 2px light-dark(oklch(0% 0 0 / 8%), oklch(0% 0 0 / 40%));
+    }
+  }
+
+  & [data-slot="segmented-control-indicator"] {
+    display: none;
+  }
+}
+
+.site-github,
+.site-icon-link {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--site-fill);
+  color: var(--site-text);
+
+  &:hover {
+    background: var(--site-hover);
+  }
+}
+
+/* ------------------------------------------------------------------ top nav (home, Agent) */
+
+.site-top {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in oklab, var(--site-home) 86%, transparent);
+  backdrop-filter: saturate(1.4) blur(12px);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .site-top {
+    background: var(--site-home);
+  }
+}
+
+.site-top-inner {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  width: min(100% - 32px, 1008px);
+  height: 64px;
+  margin-inline: auto;
+}
+
+.site-nav[data-slot="navigation-menu"] {
+  position: relative;
+  min-width: 0;
+}
+
+.site-nav-list[data-slot="navigation-menu-list"] {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--site-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover,
+  &[data-open],
+  &[aria-expanded="true"] {
+    background: var(--site-fill);
+    color: var(--site-text);
+  }
+
+  &[aria-current="page"],
+  &[data-current] {
+    color: var(--site-text);
+  }
+
+  & .site-icon {
+    transition: rotate 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &[aria-expanded="true"] .site-icon {
+    rotate: 180deg;
+  }
+}
+
+.site-nav-viewport[data-slot="navigation-menu-viewport"] {
+  width: var(--viewport-width);
+  height: var(--viewport-height);
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+  background: var(--site-page);
+  box-shadow: var(--site-shadow-pop);
+  transition:
+    width 0.2s,
+    height 0.2s,
+    opacity 0.2s;
+
+  & > [data-slot="navigation-menu-content"] {
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+  }
+}
+
+.site-nav-panel[data-slot="navigation-menu-content"] {
+  padding: 0;
+  background: transparent;
+}
+
+.site-libmenu {
+  width: 34rem;
+  padding: 6px;
+}
+
+.site-libmenu-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 14px 12px 12px;
+  border-radius: 14px;
+  background: var(--site-card);
+  box-shadow: 0 0 0 1px var(--site-card-edge);
+
+  & ul {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.site-libmenu-head {
+  margin: 0 0 6px;
+  padding-inline: 8px;
+  color: var(--site-muted);
+  font-size: 12px;
+}
+
+.site-libmenu-link,
+.site-libmenu-soon {
+  display: grid;
+  gap: 1px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  color: var(--site-text);
+  text-decoration: none;
+}
+
+.site-libmenu-link:hover,
+.site-libmenu-link:focus-visible {
+  background: var(--site-fill);
+}
+
+.site-libmenu-title {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 500;
+
+  & .badge {
+    margin-inline-start: 6px;
+    font-size: 11px;
+  }
+}
+
+.site-libmenu-what {
+  color: var(--site-muted);
+}
+
+.site-libmenu-soon .site-libmenu-title {
+  color: var(--site-muted);
+}
+
+.site-libmenu-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 4px;
+  color: var(--site-muted);
+}
+
+.site-libmenu-new {
+  color: var(--site-text);
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.site-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+
+  & > .site-search {
+    width: 13.5rem;
+  }
+}
+
+.site-menu-button {
+  display: none;
+}
+
+.site-menu {
+  & nav {
+    display: grid;
+    gap: 2px;
+  }
+
+  & nav a {
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--site-text);
+    font-size: 15px;
+    text-decoration: none;
+
+    &[aria-current="page"],
+    &:hover {
+      background: var(--site-fill);
+    }
+  }
+}
+
+.site-menu-theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--site-hair);
+  color: var(--site-muted);
+}
+
+@media (max-width: 52rem) {
+  .site-nav,
+  .site-tools > .site-theme,
+  .site-tools > .site-search {
+    display: none;
+  }
+
+  .site-menu-button {
+    display: inline-flex;
+  }
+}
+
+/* ------------------------------------------------------------------ app frame (docs, library) */
+
+/* The site's own AppShell, directly under the site root: a template on a page is an AppShell
+   too, and keeps its own layout. A fixed frame: past 1440px wide, it stays that width in the
+   middle of the window. */
+.site > div > .app-shell {
+  --sidebar-width: 256px;
+  max-width: 1440px;
+  margin-inline: auto;
+  background: var(--site-page);
+  transition: grid-template-columns 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site > div > .app-shell > .app-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  padding: 8px 0 12px;
+  border: 0;
+  background: var(--site-page);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.site > div > .app-shell > .app-sidebar > .app-sidebar-top {
+  min-height: 38px;
+  padding: 0 10px 0 17px;
+  border: 0;
+}
+
+.site > div > .app-shell > .app-sidebar .app-sidebar-toggle {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  color: var(--site-muted);
+}
+
+.site > div > .app-shell > .app-main {
+  min-width: 0;
+  background: var(--site-page);
+}
+
+.site > div > .app-shell > .app-main > .app-content {
+  display: grid;
+  align-content: start;
+  padding: 8px 8px 0 0;
+}
+
+.site-side {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+
+  & > .site-search {
+    flex: none;
+    margin: 6px 10px 0;
+  }
+}
+
+.site-side .sidebar-nav {
+  padding: 10px 10px 0;
+}
+
+.site-side-main,
+.site-side-list,
+.site-side .sidebar-group > ul {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-side .sidebar-group {
+  padding: 0;
+}
+
+/* The page lists scroll under the fixed top (search, sections, skin). */
+.site-side > .sidebar-nav:last-child {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: 36px;
+  scrollbar-width: thin;
+}
+
+.site .site-side .sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 29px;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--site-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--site-hover);
+  }
+
+  &[aria-current="page"] {
+    background: var(--site-hover);
+    font-weight: 500;
+  }
+
+  &::before {
+    display: none;
+  }
+
+  & .sidebar-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 16px;
+    color: var(--site-muted);
+  }
+
+  & .sidebar-label {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* A folded group's pages: indented under its title, in the muted color until chosen. */
+.site .site-side-panel .sidebar-link {
+  padding-inline-start: 32px;
+  color: var(--site-muted);
+
+  &[aria-current="page"] {
+    color: var(--site-text);
+  }
+}
+
+.site-side-toggle {
+  & > .site-icon:last-child {
+    color: var(--site-muted);
+    rotate: -90deg;
+    transition: rotate 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &[aria-expanded="true"] > .site-icon:last-child {
+    rotate: 0deg;
+  }
+}
+
+/* The library's groups have no icon: their titles carry the weight. */
+.site-side .sidebar-group .site-side-toggle {
+  font-weight: 500;
+}
+
+.site-side .sidebar-group .site-side-panel .sidebar-link {
+  padding-inline-start: 22px;
+}
+
+/* A group opens and closes by its height. */
+.site-side-panel[data-slot="collapsible-panel"] {
+  height: var(--collapsible-panel-height);
+  overflow: hidden;
+  transition: height 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &:is([data-starting-style], [data-ending-style]) {
+    height: 0;
+  }
+
+  & > ul {
+    padding: 1px 0 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site > div > .app-shell,
+  .site-side-panel[data-slot="collapsible-panel"] {
+    transition: none;
+  }
+}
+
+/* The skin: a compact pill beside the theme switch. */
+.site-skin {
+  display: inline-flex;
+  align-items: center;
+
+  & [data-slot="select-trigger"] {
+    gap: 6px;
+    width: auto;
+    min-width: 0;
+    height: 32px;
+    min-height: 32px;
+    padding: 0 10px 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--site-fill);
+    color: var(--site-text);
+    box-shadow: none;
+    font-size: 13px;
+    font-weight: 500;
+
+    &:hover {
+      background: var(--site-hover);
+    }
+  }
+}
+
+/* Collapsed to a rail (AppShell sets data-sidebar on its wrapper): the sections keep their
+   icons, the search its glass; the long lists and the skin step out. */
+.site > [data-sidebar="collapsed"] > .app-shell:not([data-narrow]) {
+  --sidebar-width: 60px;
+
+  & .app-sidebar-top {
+    justify-content: center;
+    padding: 0;
+  }
+
+  & .site-side > .site-search {
+    justify-content: center;
+    width: 36px;
+    margin-inline: auto;
+    padding: 0;
+
+    & .site-search-label,
+    & .site-search-keys {
+      display: none;
+    }
+  }
+
+  & .site-side .sidebar-nav {
+    padding-inline: 12px;
+  }
+
+  & .site-side > .sidebar-nav:last-child,
+  & .site-side-toggle > .site-icon:last-child,
+  & .site-side-main .site-side-panel {
+    display: none;
+  }
+
+  & .site-side .sidebar-link {
+    justify-content: center;
+    padding-inline: 0;
+
+    & .sidebar-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+}
+
+/* The page, in a panel inset from the window's edge. */
+.site-panel {
+  min-width: 0;
+  min-height: calc(100dvh - 8px);
+  border: 1px solid var(--site-panel-edge);
+  border-radius: 18px;
+  background: var(--site-panel);
+  box-shadow: var(--site-shadow-panel);
+}
+
+/* The panel's top strip: the theme and GitHub on the right. It stays as you scroll, in the
+   panel's own color, so the page passes under it. */
+/* Stuck at the top, it reads as the panel's top edge: the rounded strip (inner) sits on a
+   square one in the page's color, which fills the corners outside the curve and the 8px above.
+   At rest it lies exactly over the panel's own top edge. */
+.site-panel-bar {
+  position: sticky;
+  top: 8px;
+  z-index: 6;
+  height: 54px;
+  margin: -1px -1px 0;
+  background: var(--site-page);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -8px 0 auto;
+    height: 8px;
+    background: var(--site-page);
+  }
+}
+
+.site-panel-bar-inner {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  padding: 10px 28px 0;
+  border: 1px solid var(--site-panel-edge);
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  background: var(--site-panel);
+}
+
+.site-panel {
+  --panel-pad: 28px;
+}
+
+.site-panel > .site-main {
+  padding: 0 var(--panel-pad) 64px;
+}
+
+/* On a phone and a narrow window: AppShell's bar on top, with the drawer's button. */
+.site > div > .app-shell > .app-main > .app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  min-height: 52px;
+  padding: 8px 12px;
+  border: 0;
+  background: color-mix(in oklab, var(--site-page) 88%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.site-phonebar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+
+  & > .site-logo {
+    margin-inline-end: auto;
+  }
+}
+
+.site > div > .app-shell[data-narrow] > .app-main > .app-content {
+  padding: 0 8px;
+}
+
+.site .app-drawer:has(.site-side) {
+  width: min(18rem, 86vw);
+  padding: 8px 0 12px;
+  background: var(--site-page);
+}
+
+.site > div > .app-shell[data-narrow] .site-panel {
+  min-height: 0;
+}
+
+.site > div > .app-shell[data-narrow] .site-panel {
+  --panel-pad: 16px;
+}
+
+.site > div > .app-shell[data-narrow] .docs-main {
+  padding-top: 12px;
+}
+
+.site > div > .app-shell[data-narrow] .lib-title {
+  margin-top: 16px;
+}
+
+.site > div > .app-shell > .app-main > .app-header .app-menu-button {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--site-fill);
+  color: var(--site-text);
+}
+
+.site > div > .app-shell[data-narrow] .site-panel > .site-main {
+  padding: 20px var(--panel-pad) 48px;
+}
+
+/* ------------------------------------------------------------------ footer */
+
+.site-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  width: min(100% - 32px, 1008px);
+  margin-inline: auto;
+  padding: 48px 0 56px;
+  color: var(--site-text);
+
+  & a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.app-content > .site-bottom {
+  width: auto;
+  margin: 0;
+  padding: 48px 28px 56px;
+}
+
+.site-bottom-brand {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  flex: 1 1 16rem;
+
+  & p {
+    max-width: 17rem;
+    margin: 0;
+    color: var(--site-muted);
+  }
+
+  & .site-icon-link {
+    width: 28px;
+    height: 28px;
+    background: none;
+    color: var(--site-muted);
+
+    &:hover {
+      color: var(--site-text);
+    }
+  }
+}
+
+.site-bottom-cols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px 56px;
+}
+
+.site-bottom-col {
+  & h2 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  & ul {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  & a {
+    color: var(--site-muted);
+
+    &:hover {
+      color: var(--site-text);
+    }
+  }
+}
+
+.site-bottom-note {
+  flex-basis: 100%;
+  margin: 24px 0 0;
+  color: var(--site-muted);
+}
+
+/* ------------------------------------------------------------------ library */
+
+.lib-title {
+  max-width: 40rem;
+  margin: 28px 0 28px;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.6px;
+  line-height: 30px;
+}
+
+.lib-tabs {
+  position: sticky;
+  top: 62px;
+  z-index: 4;
+  display: flex;
+  align-items: stretch;
+  gap: 22px;
+  margin: 0 calc(-1 * var(--panel-pad, 28px)) 18px;
+  padding: 0 var(--panel-pad, 28px);
+  background: var(--site-panel);
+  box-shadow: inset 0 -1px 0 var(--site-hair);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.lib-tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: none;
+  padding: 16px 0 10px;
+  color: var(--site-muted);
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--site-text);
+  }
+
+  &[aria-current="page"] {
+    color: var(--site-text);
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 1.5px;
+      border-radius: 1px;
+      background: var(--site-text);
+    }
+  }
+}
+
+.lib-tabs-end {
+  align-self: center;
+  margin-inline-start: auto;
+  padding: 6px 0 0;
+  color: var(--site-text);
+  font-weight: 500;
+  flex: none;
+}
+
+.lib-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: 14px;
+}
+
+@media (min-width: 72rem) {
+  .lib-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.lib-card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 6px 6px 0;
+  border: 1px solid var(--site-card-edge);
+  border-radius: 14px;
+  background: var(--site-card);
+  box-shadow: var(--site-shadow-card);
+  transition: box-shadow 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &:hover {
+    box-shadow: var(--site-shadow-card), 0 4px 12px -6px light-dark(oklch(0% 0 0 / 9%), oklch(0% 0 0 / 45%));
+  }
+
+  &:focus-within:has(.lib-card-title a:focus-visible) {
+    outline: 2px solid var(--ui-ring-border);
+    outline-offset: 2px;
+  }
+}
+
+.lib-card-stage {
+  position: relative;
+  height: 230px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--site-preview);
+  box-shadow: inset 0 0 0 1px var(--site-card-edge);
+}
+
+/* Its own stacking context: a demo's layered parts (a grid's sticky header) stay under the tag. */
+.lib-card-preview {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* The preview's skin root fills the stage. In Base it lets the stage's gray show; the other
+   skins paint their own ground. */
+.lib-card-skin {
+  position: absolute;
+  inset: 0;
+
+  &[data-skin="base"] {
+    background: transparent;
+  }
+}
+
+/* A component's example: in the stage below the tag, scaled to fill it (library-card.tsx). It
+   lays out at a card's width at most, as it does in the gallery. */
+.lib-fit {
+  position: absolute;
+  inset: 44px 20px 16px;
+  display: grid;
+  place-items: center;
+}
+
+.lib-example {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  width: 300px;
+}
+
+/* A kit or a template: a window onto its page, set below the tag, open at the bottom. */
+.lib-window {
+  position: absolute;
+  inset: 44px 18px 0;
+  overflow: hidden;
+  border: 1px solid var(--site-card-edge);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  background: var(--ui-background);
+  box-shadow: 0 10px 24px -14px light-dark(oklch(0% 0 0 / 22%), oklch(0% 0 0 / 60%));
+}
+
+/* Sign-in centers its form in the window's height (--auth-height); in a card, the card's. */
+.lib-window-page {
+  --auth-height: 400px;
+  padding: 14px;
+  overflow: hidden;
+}
+
+.lib-skin-sample {
+  width: 380px;
+  zoom: 0.62;
+
+  & form {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+}
+
+.lib-card-tag {
+  position: absolute;
+  top: 10px;
+  inset-inline-start: 10px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: var(--site-card);
+  box-shadow:
+    0 0 0 1px light-dark(oklch(14.5% 0 0 / 14%), oklch(100% 0 0 / 16%)),
+    0 1px 2px light-dark(oklch(0% 0 0 / 6%), oklch(0% 0 0 / 40%));
+  color: var(--site-text);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.lib-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 4px 10px 11.5px;
+}
+
+.lib-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.lib-card-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4286;
+
+  & a {
+    color: var(--site-text);
+    text-decoration: none;
+    outline: none;
+
+    /* The whole card opens the page; the copy button sits above this. */
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+    }
+  }
+}
+
+.lib-card-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4286;
+  overflow: hidden;
+  color: var(--site-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lib-card-copy[data-slot="button"] {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--site-card);
+  box-shadow: 0 0 0 1px var(--site-hair);
+  color: var(--site-muted);
+
+  &:hover {
+    color: var(--site-text);
+    background: var(--site-card);
+  }
+}
+
+/* ------------------------------------------------------------------ docs and item pages */
+
+.docs-main {
+  width: min(100%, 894px);
+  margin: 0 auto;
+  padding-top: 38px;
+
+  &[data-wide] {
+    width: min(100%, 1120px);
+  }
+}
+
+.docs-head {
+  margin-bottom: 24px;
+
+  & h1 {
+    margin: 0;
+    font-family: var(--site-font);
+    font-size: 32px;
+    font-stretch: normal;
+    font-weight: 600;
+    letter-spacing: -0.8px;
+    line-height: 44px;
+  }
+}
+
+.docs-crumbs {
+  margin-bottom: 12px;
+
+  & ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--site-muted);
+    font-size: 13px;
+  }
+
+  & li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  & li + li::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-block: 3.5px solid transparent;
+    border-inline-start: 4px solid currentColor;
+  }
+
+  & a {
+    color: var(--site-muted);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--site-text);
+    }
+  }
+
+  & [aria-current="page"] {
+    color: var(--site-text);
+  }
+}
+
+.docs-lede {
+  max-width: 44rem;
+  margin: 0;
+  padding-top: 8px;
+  color: var(--site-muted);
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.item-stage {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.item-stage-note {
+  margin: 0;
+  color: var(--site-muted);
+}
+
+.item-frame {
+  position: relative;
+  min-height: 360px;
+  overflow: hidden;
+  border: 1px solid var(--site-card-edge);
+  border-radius: 16px;
+  background: var(--site-card);
+}
+
+.item-frame.template-frame {
+  min-height: 640px;
+}
+
+.site-copy-dark[data-slot="button"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px 0 10px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--site-primary);
+  color: var(--site-on-primary);
+  font-size: 13px;
+  font-weight: 500;
+
+  &:hover {
+    background: color-mix(in oklab, var(--site-primary), var(--site-panel) 14%);
+  }
+}
+
+/* Preview and Code: a pill switch, like the theme's. */
+.docs-example-bar [data-slot="tabs-list"] {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--site-fill);
+  box-shadow: none;
+
+  &::before,
+  &::after {
+    display: none;
+  }
+
+  & [data-slot="tabs-tab"] {
+    height: 30px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--site-muted);
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: none;
+
+    &::after {
+      display: none;
+    }
+
+    &:hover {
+      color: var(--site-text);
+    }
+
+    &[data-selected],
+    &[aria-selected="true"] {
+      background: var(--site-card);
+      color: var(--site-text);
+      box-shadow:
+        0 0 0 1px var(--site-state-edge),
+        0 1px 2px light-dark(oklch(0% 0 0 / 8%), oklch(0% 0 0 / 40%));
+    }
+  }
+
+  & [data-slot="tabs-indicator"] {
+    display: none;
+  }
+}
+
+/* The live example: a large white frame. */
+.docs-preview {
+  min-height: 360px;
+  border: 1px solid var(--site-card-edge);
+  border-radius: 16px;
+  background: var(--site-card);
+}
+
+/* ------------------------------------------------------------------ narrow screens */
+
+@media (max-width: 40rem) {
+  .lib-title {
+    margin-top: 12px;
+    font-size: 20px;
+    line-height: 26px;
+  }
+
+  .lib-title br {
+    display: none;
+  }
+
+  .docs-main {
+    padding-top: 8px;
+  }
+
+  .docs-head h1 {
+    font-size: 26px;
+    line-height: 34px;
+  }
+}
+
+/* The install command's line is code already: no inline-code tint inside it. */
+.docs-article .install-command-line code {
+  padding: 0;
+  background: none;
+}
+
+/* ------------------------------------------------------------------ home */
+
+.home {
+  display: grid;
+  gap: 128px;
+  width: min(100% - 32px, 1008px);
+  margin-inline: auto;
+  padding-bottom: 96px;
+}
+
+.home-hero {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  padding-top: 104px;
+  text-align: center;
+
+  /* In em, not ch: a monospace skin's ch is a whole glyph, and 14ch broke the line in four. */
+  & h1 {
+    max-width: 11.5em;
+    margin: 0;
+    font-family: var(--site-font);
+    font-size: 56px;
+    font-stretch: normal;
+    font-weight: 500;
+    letter-spacing: -2px;
+    line-height: 60px;
+    text-wrap: balance;
+  }
+}
+
+.home-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  margin-bottom: 22px;
+  padding: 0 12px 0 4px;
+  border-radius: 999px;
+  background: var(--site-fill);
+  color: var(--site-muted);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--site-text);
+  }
+}
+
+.home-eyebrow-chip {
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: light-dark(oklch(14.5% 0 0 / 8%), oklch(100% 0 0 / 10%));
+  color: var(--site-text);
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.home-lede {
+  max-width: 37.5rem;
+  margin: 0;
+  padding-top: 16px;
+  color: var(--site-muted);
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 30px;
+}
+
+/* A link styled as a pill button: dark, or the light gray of the rest. */
+.home-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--site-fill);
+  color: var(--site-text);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--site-hover);
+  }
+
+  /* .site in front: the plain-link rule (site.css) sets a link's color too. */
+  .site &[data-variant="primary"] {
+    background: linear-gradient(light-dark(oklch(31% 0.006 286), oklch(96.7% 0.001 286)), light-dark(oklch(23% 0.008 286), oklch(92% 0.004 286)));
+    box-shadow:
+      0 0 0 1px light-dark(oklch(16% 0 0), oklch(0% 0 0 / 60%)),
+      0 2px 4px oklch(0% 0 0 / 10%),
+      inset 0 1px 0 light-dark(oklch(100% 0 0 / 14%), oklch(100% 0 0 / 80%));
+    color: light-dark(oklch(98.5% 0 0), oklch(18.3% 0.002 286));
+
+    &:hover {
+      background: linear-gradient(light-dark(oklch(35% 0.006 286), oklch(100% 0 0)), light-dark(oklch(26% 0.008 286), oklch(94% 0.003 286)));
+    }
+  }
+}
+
+.home-actions .home-button {
+  height: 42px;
+  padding: 0 20px;
+  font-size: 14px;
+}
+
+/* The hero's sides: live pieces, faded toward the page. */
+.home-piece {
+  position: absolute;
+  top: 56px;
+  width: 360px;
+  pointer-events: none;
+  opacity: 0.55;
+  mask-image: radial-gradient(closest-side, black 40%, transparent);
+
+  &[data-side="start"] {
+    inset-inline-end: calc(100% - 4px);
+    rotate: -2deg;
+  }
+
+  &[data-side="end"] {
+    inset-inline-start: calc(100% - 4px);
+    top: 96px;
+    rotate: 2deg;
+  }
+}
+
+.home-piece-skin {
+  background: transparent;
+}
+
+@media (max-width: 90rem) {
+  .home-piece[data-side="start"] {
+    inset-inline-end: calc(100% - 140px);
+  }
+
+  .home-piece[data-side="end"] {
+    inset-inline-start: calc(100% - 140px);
+  }
+}
+
+@media (max-width: 72rem) {
+  .home-piece {
+    display: none;
+  }
+}
+
+.home-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  min-width: 0;
+
+  & > h2 {
+    margin: 0;
+    font-family: var(--site-font);
+    font-size: 28px;
+    font-stretch: normal;
+    font-weight: 500;
+    letter-spacing: -0.7px;
+    line-height: 34px;
+    text-align: center;
+  }
+}
+
+.home-sub {
+  max-width: 36rem;
+  margin: 12px auto 40px;
+  color: var(--site-muted);
+  font-size: 15px;
+  line-height: 22px;
+  text-align: center;
+}
+
+.home-section > h2 + :not(.home-sub) {
+  margin-top: 40px;
+}
+
+.home-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.home-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--site-card-edge);
+  border-radius: 14px;
+  background: var(--site-card);
+  box-shadow: var(--site-shadow-card);
+
+  & h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+  }
+
+  & p {
+    margin: 0;
+    color: var(--site-muted);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  & > .home-button {
+    justify-self: start;
+    margin-top: 6px;
+  }
+}
+
+.home-pills[data-slot="tabs-list"] {
+  display: flex;
+  justify-self: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  justify-content: center;
+  gap: 2px;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 auto 20px;
+  padding: 3px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--site-fill);
+  box-shadow: none;
+
+  &::before,
+  &::after {
+    display: none;
+  }
+
+  & [data-slot="tabs-tab"] {
+    flex: none;
+    height: 30px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--site-muted);
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: none;
+
+    &::after {
+      display: none;
+    }
+
+    &[data-selected],
+    &[aria-selected="true"] {
+      background: var(--site-card);
+      color: var(--site-text);
+      box-shadow:
+        0 0 0 1px var(--site-state-edge),
+        0 1px 2px oklch(0% 0 0 / 8%);
+    }
+  }
+
+  & [data-slot="tabs-indicator"] {
+    display: none;
+  }
+}
+
+.home-frame {
+  border: 1px solid var(--site-card-edge);
+  border-radius: 16px;
+  box-shadow: var(--site-shadow-card);
+}
+
+.home-kit-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+
+  & .install-command {
+    flex: 1 1 24rem;
+  }
+}
+
+.home-duo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 14px;
+}
+
+.home-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 8px 0;
+
+  & div {
+    display: grid;
+    gap: 2px;
+  }
+
+  & dt {
+    color: var(--site-muted);
+  }
+
+  & dd {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.6px;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.home-card-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 6px;
+
+  & > a:not(.home-button) {
+    color: var(--site-text);
+  }
+}
+
+.home-steps,
+.home-news {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-news {
+  & time {
+    color: var(--site-muted);
+  }
+
+  & h3 a {
+    color: var(--site-text);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.home-faq {
+  width: min(100%, 44rem);
+  margin-inline: auto;
+
+  & p {
+    margin: 0;
+    color: var(--site-muted);
+    font-size: 14px;
+    line-height: 22px;
+  }
+}
+
+.home-section .hero-stage {
+  justify-items: center;
+}
+
+@media (max-width: 40rem) {
+  .home {
+    gap: 88px;
+  }
+
+  .home-hero {
+    padding-top: 48px;
+
+    & h1 {
+      font-size: 40px;
+      letter-spacing: -1.4px;
+      line-height: 44px;
+    }
+  }
+
+  .home-section > h2 {
+    font-size: 24px;
+    line-height: 30px;
+  }
+}
+
+/* On a narrow screen the phone header is the strip the tabs stop under. */
+.site > div > .app-shell[data-narrow] .lib-tabs {
+  top: 52px;
+}
+
+/* What's new: UI SDK's Timeline, laid out in a row (base.css). On a phone the row scrolls
+   sideways by itself; the page doesn't. */
+.whats-new-list {
+  & [data-slot="timeline-title"] a {
+    color: var(--site-text);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  & [data-slot="timeline-time"] {
+    color: var(--site-muted);
+  }
+
+  & [data-slot="timeline-description"] {
+    max-width: 40ch;
+    color: var(--site-muted);
+    font-size: 13px;
+    line-height: 20px;
+  }
+}
+
+@media (max-width: 47.99rem) {
+  .whats-new-list {
+    grid-auto-columns: minmax(15rem, 1fr);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    /* Room for the focus ring inside the scroller. */
+    margin: -4px;
+    padding: 4px;
+
+    & > [data-slot="timeline-item"] {
+      scroll-snap-align: start;
+    }
+  }
+}

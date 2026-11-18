@@ -8,6 +8,14 @@
     --code-selection: color-mix(in oklch, var(--ui-primary) 14%, transparent);
   }
 
+  /* A near-black accent (shadcn's neutral theme) would tint the selection dark enough to take
+     syntax colors under 4.5:1, so the tint's lightness stays between 0.55 and 0.75. */
+  @supports (color: oklch(from red l c h)) {
+    :where([data-uiset]) {
+      --code-selection: oklch(from var(--ui-primary) clamp(0.55, l, 0.75) c h / 0.14);
+    }
+  }
+
   :where([data-uiset][data-skin="blueprint"], [data-uiset][data-skin="studio"]) {
     --code-selection: oklch(0 0 0 / 0.32);
   }

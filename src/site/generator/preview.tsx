@@ -53,7 +53,6 @@ function Preview({ skin, scheme }: { skin: string; scheme: "light" | "dark" }) {
   const name = scheme === "light" ? "Light" : "Dark"
   return (
     <section className="generator-screen-frame" aria-label={`${name} preview`}>
-      <p className="generator-screen-label">{name}</p>
       <UISet skin={skin} theme={scheme} className="generator-screen" data-agent-hidden="">
         <div className="generator-screen-bar">
           <span className="generator-screen-app">Northwind</span>

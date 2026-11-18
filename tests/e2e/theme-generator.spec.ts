@@ -126,8 +126,10 @@ test("the URL restores the inputs", async ({ page }) => {
   await expect(page.getByRole("radiogroup", { name: "Starting point" }).getByRole("radio", { name: "Dark first" })).toHaveAttribute("aria-checked", "true")
   await expect(page.getByRole("switch", { name: "Lead the charts with the key" })).toHaveAttribute("aria-checked", "false")
   await expect(skinCss(page)).toHaveText(css!)
-  // Dark first shows the dark screen first.
-  await expect(page.locator(".generator-screen-frame").first()).toHaveAttribute("aria-label", "Dark preview")
+  // Dark first opens the preview on dark, and the switch shows light.
+  await expect(page.locator(".generator-screen-frame")).toHaveAttribute("aria-label", "Dark preview")
+  await page.getByRole("radiogroup", { name: "Preview mode" }).getByRole("radio", { name: "Light" }).click()
+  await expect(page.locator(".generator-screen-frame")).toHaveAttribute("aria-label", "Light preview")
 })
 
 test("the skin downloads under its own name, and the preview uses that name", async ({ page }) => {

@@ -1,5 +1,6 @@
 import type { Rule } from "../core.ts"
 import { noDeferredFocus, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "./code.ts"
+import { currentUiSdk, statedCounts } from "./facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "./plan.ts"
 
 // Every slip the project catches gets a rule here, with what happened in `why`.
@@ -14,4 +15,6 @@ export const rules: Rule[] = [
   noImportant,
   pinUiSdk,
   noOnly,
+  statedCounts,
+  currentUiSdk,
 ]

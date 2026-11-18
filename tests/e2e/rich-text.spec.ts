@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test, type Page } from "@playwright/test"
 
-const section = (page: Page) => page.locator("#writing")
+const section = (page: Page) => page.locator(".item-frame")
 const editor = (page: Page) => section(page).getByRole("textbox", { name: "Release notes" })
 const toolbar = (page: Page) => section(page).getByRole("toolbar", { name: "Release notes formatting" })
 const markdown = async (page: Page) => {
@@ -10,7 +10,11 @@ const markdown = async (page: Page) => {
 }
 
 async function choose(page: Page, group: string, option: string) {
-  await page.getByRole("radiogroup", { name: group }).getByRole("radio", { name: option }).click()
+  // The skin is the site's select; the theme a radio group.
+  if (group === "Skin") {
+    await page.getByRole("combobox", { name: "Site skin", exact: true }).click()
+    await page.getByRole("option", { name: option, exact: true }).click()
+  } else await page.getByRole("radiogroup", { name: group }).getByRole("radio", { name: option }).click()
 }
 
 // macOS moves to a line's ends with Cmd+arrows (Home and End scroll there).
@@ -27,7 +31,7 @@ async function clear(page: Page) {
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await page.goto("/kits#writing")
+  await page.goto("/docs/kits/rich-text")
   await expect(editor(page).getByRole("heading", { name: "Release 2.4" })).toBeVisible()
 })
 
@@ -42,7 +46,7 @@ for (const skin of ["Base", "Blueprint", "Studio", "Phosphor", "Ink"]) {
       await page.keyboard.type("/")
       await expect(page.getByRole("option", { name: "Heading 2" })).toBeVisible()
       const results = await new AxeBuilder({ page })
-        .include("#writing")
+        .include(".item-frame")
         .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
         .analyze()
       expect(results.violations.map((v) => `${v.id}: ${v.nodes.length} node(s)`)).toEqual([])

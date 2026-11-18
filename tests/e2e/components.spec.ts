@@ -14,7 +14,7 @@ for (const skin of skins) {
         reducedMotion: "reduce",
         colorScheme: theme as "light" | "dark",
       })
-      await openGallery(page, `/components?skin=${skin}&theme=${theme}`)
+      await openGallery(page, `/gallery?skin=${skin}&theme=${theme}`)
       await expect(page.locator(".components-surface")).toHaveAttribute("data-skin", skin, { timeout: 20_000 })
       const results = await new AxeBuilder({ page })
         .include(".components-surface")
@@ -34,7 +34,7 @@ for (const skin of skins) {
 }
 
 test("no component on the page is nameless to agents", async ({ page }) => {
-  await openGallery(page, "/components")
+  await openGallery(page, "/gallery")
   const unnamed = await page.evaluate(() =>
     (
       window as unknown as {

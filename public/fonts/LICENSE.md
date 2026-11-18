@@ -3,9 +3,9 @@
 The fonts in this folder are distributed under the SIL Open Font License 1.1. Each
 family's copyright notice and license follow.
 
-## Instrument Sans
+## Inter
 
-Copyright 2022 The Instrument Sans Project Authors (https://github.com/Instrument/instrument-sans)
+Copyright 2020 The Inter Project Authors (https://github.com/rsms/inter)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

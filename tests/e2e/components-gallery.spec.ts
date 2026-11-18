@@ -19,7 +19,7 @@ async function trackExamples(page: Page, hold: (slug: string) => boolean = () =>
 }
 
 test("opening the page loads its first examples, not all of them, and they draw with it", async ({ page }) => {
-  await page.goto("/")
+  await page.goto("/components")
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 20_000 })
   // Only the first examples are answered, so the page can't have waited for the rest.
   const requested = await trackExamples(page, (slug) => !firstSix.includes(slug))
@@ -27,13 +27,13 @@ test("opening the page loads its first examples, not all of them, and they draw 
   await page.evaluate(() => {
     const w = window as unknown as { firstDraw?: boolean }
     new MutationObserver((_, observer) => {
-      if (document.querySelector("main h1")?.textContent !== "Components") return
+      if (document.querySelector("main h1")?.textContent !== "Every component, live") return
       w.firstDraw = document.querySelector("section.example")?.hasAttribute("data-ready") ?? false
       observer.disconnect()
     }).observe(document.body, { subtree: true, childList: true, characterData: true })
   })
-  await page.locator("header.site-top nav[aria-label=Site]").getByRole("link", { name: "Components", exact: true }).click()
-  await page.waitForFunction(() => document.querySelector("main h1")?.textContent === "Components", null, { timeout: 20_000 })
+  await page.getByRole("link", { name: "Try them all live" }).click()
+  await page.waitForFunction(() => document.querySelector("main h1")?.textContent === "Every component, live", null, { timeout: 20_000 })
   expect(await page.evaluate(() => (window as unknown as { firstDraw?: boolean }).firstDraw)).toBe(true)
   expect(requested.size).toBeLessThan(30)
   // Every card's heading is there from the start, for links and find in page.
@@ -43,8 +43,8 @@ test("opening the page loads its first examples, not all of them, and they draw 
 test("a card coming into view loads even while others are still loading", async ({ page }) => {
   // The background fill is stuck on held examples; scrolling to the last card loads it anyway.
   const requested = await trackExamples(page, (slug) => slug === "select" || slug === "combobox")
-  await page.goto("/components")
-  await expect(page.locator("main h1")).toHaveText("Components", { timeout: 20_000 })
+  await page.goto("/gallery")
+  await expect(page.locator("main h1")).toHaveText("Every component, live", { timeout: 20_000 })
   const last = page.locator("section.example").last()
   await last.scrollIntoViewIfNeeded()
   await expect(last).toHaveAttribute("data-ready", "", { timeout: 20_000 })
@@ -65,7 +65,7 @@ test("a link to an example far down the page lands on it, without scroll anchori
     await new Promise((resolve) => setTimeout(resolve, 800))
     await route.continue()
   })
-  await page.goto("/components#example-timeline")
+  await page.goto("/gallery#example-timeline")
   await page.locator(".gallery[data-ready]").waitFor({ timeout: 60_000 })
   await page.waitForTimeout(300)
   const top = await page.locator("#example-timeline").evaluate((el) => el.getBoundingClientRect().top)

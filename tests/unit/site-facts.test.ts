@@ -14,3 +14,8 @@ test("the site's counts are the registry's", () => {
   expect(appParts.every((n) => registry.items.some((i) => i.name === n))).toBe(true)
   expect(appParts.length).toBe(facts.appParts)
 })
+
+test("the library menu counts the kit pages the docs list", async () => {
+  const { docPages } = await import("@/src/site/docs/nav")
+  expect(docPages.filter((p) => p.section === "Kits").length).toBe(facts.kitPages)
+})

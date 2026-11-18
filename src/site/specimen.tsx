@@ -37,15 +37,18 @@ function Specimen() {
           <Input defaultValue="Living room" autoComplete="off" />
         </Field>
 
-        <Select name="output" defaultValue="speakers">
-          <SelectLabel>Output</SelectLabel>
-          <SelectTrigger />
-          <SelectContent>
-            <SelectItem value="speakers">Built-in speakers</SelectItem>
-            <SelectItem value="headphones">Headphones</SelectItem>
-            <SelectItem value="line-out">Line out</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* Select's root renders no element, so its label and trigger need a wrapper to sit together. */}
+        <div className="specimen-select">
+          <Select name="output" defaultValue="speakers">
+            <SelectLabel>Output</SelectLabel>
+            <SelectTrigger />
+            <SelectContent>
+              <SelectItem value="speakers">Built-in speakers</SelectItem>
+              <SelectItem value="headphones">Headphones</SelectItem>
+              <SelectItem value="line-out">Line out</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
         <Field>
           <FieldLabel>Volume</FieldLabel>

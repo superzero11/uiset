@@ -7,7 +7,7 @@ const row = (page: Page, from: string) => list(page).getByRole("listitem", { nam
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await openGallery(page, "/components")
+  await openGallery(page, "/gallery")
   await phone(page).scrollIntoViewIfNeeded()
 })
 

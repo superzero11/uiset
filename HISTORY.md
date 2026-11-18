@@ -1625,3 +1625,46 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   five mutations, each failing a test (switch or panel not hidden, no flip button, no reads
   past the snapshot's 100, every panel reading at once); by eye in base, phosphor and ink,
   light and dark, at 1280 and 390px. Not run: the full suite, and Firefox.
+- 2026-11-18 — **uiset.dev in a new layout and look** (the owner's direction, built from
+  UISet's own components): Inter at 13px, neutral grays, an 18px-radius panel, 14px cards. The
+  home and Agent pages get a top nav with a Library menu (Build: Components, Kits, Themes, Templates; Animate:
+  Illustrations and Motion, coming soon and now on the roadmap). Docs and the library use
+  AppShell: a 256px sidebar and the page in an inset panel, capped at 1440px. The library's tabs
+  show live cards (inert, hidden from agents) that open each piece's page; kit pages open on
+  their demo, templates get pages of their own, and the all-live gallery moved to /gallery
+  (its tests kept). The skin beside the theme switch dresses the whole site; the frame's
+  palette is also given as shadcn variables, so the base skin's examples wear it. Contrast
+  held on purpose: muted text 4.9:1 (#737373 would be 4.35:1 on the sidebar), a 3:1 edge on a
+  selected segment, the base skin's focus rings. The logo is a white circle on a black tile.
+  Agent-check caught new name clashes the frame made: "Docs" (the sidebar's group and "Search
+  docs"), "Collapse sidebar" (the site and a template are both AppShells), "Skin", "Site",
+  "Library", and two copy buttons per page; the sidebar's groups and the site's AppShell
+  buttons are hidden from agents (they only show links, or share the template's setting).
+  Known: a template or kit that is an AppShell shares the site's remembered sidebar setting.
+  From the owner's review: the 22 app parts (Badge, Stat…) get pages of their own, like UI
+  SDK's components; card previews are measured without resetting their zoom (resetting it
+  made the image cropper's card flicker), kits and templates show through a window sized per
+  card, and the tag pills read; the theme generator previews one mode with a Light/Dark
+  switch; the panel's sticky bar covers the gap above it and keeps its corners; the nav reads
+  Library, Docs, Agent. Bugs the change exposed: the frame's AppShell styles reached templates
+  that are AppShells (now scoped to the site's own); the docs preview's examples lacked
+  `data-ready`, so a hover card opened far from its trigger (a test, mutation-checked); the
+  Agent Console kit page had lost its form (a test); the IDE's selection and the pricing
+  table's hidden labels broke contrast and layout under the neutral palette (both fixed in
+  the registry). Checked: the affected Chrome specs, WebKit (475 passed, 10 skipped), and
+  every site page at 1440 and 390px for sideways scroll, errors and broken links.
+- 2026-11-19 — **An audit of the new site** (the owner asked for one after the change):
+  every page at 1440 and 390px, screenshots across the five skins, light and dark, and
+  full-page shots of the home and Agent pages. Fixed: the docs introduction and README said
+  21 app parts where the site says 22, and a new rule, `content/stated-counts`, holds counts
+  in README.md and docs/ to src/site/facts.ts; What's new still led with "On UI SDK beta.9",
+  and `content/current-ui-sdk` holds the site to the UI SDK version package.json pins (docs/
+  may name beta.5, the published `@uiset/web`'s peer, until 0.4.0 is on npm). The search
+  palette sat centered on UI SDK's white wash, so it jumped with each key and barely stood
+  off the page: it's pinned near the top on a dim scrim (a test; with the pin removed it
+  moved 168px and failed). A monospace skin's `ch` broke the home heading into four lines;
+  it's measured in `em`. The home page's skin form put Output twice as far from its select
+  as the other labels (Select's root renders no element, so the site's rule never matched).
+  The Agent page's docs links are the home page's pill buttons. Checked: lint, typecheck,
+  unit (536), and the What's new, site and agent-ready specs in Chrome (77 passed). Not
+  run: WebKit for these fixes, Firefox, the full suite.

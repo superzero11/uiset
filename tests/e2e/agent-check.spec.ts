@@ -7,9 +7,9 @@ import { captureAgentTools, checkPage } from "@/registry/uiset/ui/agent-check/pl
 
 test("reaches the bridge through the page's WebMCP tools, and finds a control agents can't see", async ({ page }) => {
   await captureAgentTools(page)
-  await page.goto("/templates?template=pricing")
+  await page.goto("/templates/pricing")
   await expect.poll(() => page.evaluate(() => Object.keys((window as unknown as { __uisetAgentTools?: object }).__uisetAgentTools ?? {}).sort())).toEqual(["act", "query", "snapshot"])
-  await page.locator("#main .template-panel").first().waitFor()
+  await page.locator("#main .template-frame").first().waitFor()
   await page.evaluate(() => {
     const probe = document.createElement("section")
     probe.id = "probe"

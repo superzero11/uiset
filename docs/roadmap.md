@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated 2026-11-18. What we're building, what comes next, and what we won't do. What
+Updated 2026-11-19. What we're building, what comes next, and what we won't do. What
 shipped is in the [changelog](https://github.com/superzero11/uiset/blob/main/CHANGELOG.md),
 and the decisions behind it in
 [HISTORY.md](https://github.com/superzero11/uiset/blob/main/HISTORY.md). Sizes: S small,
@@ -8,7 +8,7 @@ M medium, L large.
 
 ## Now
 
-Nothing in progress. Agent view shipped on 2026-11-18; next is the first item below.
+Nothing in progress; next is the first item below.
 
 ## Next, in order
 
@@ -37,6 +37,8 @@ new project lint:
 - **Draggable tabs**, for the IDE kit. S–M
 - **Password rules** that tick off as you type, and **radio cards**. S each
 - **Recipes:** real tasks built from UISet's parts, filtered by part, in every skin. M
+- **Illustrations and Motion**, the Library menu's Animate column: animated scenes, and text,
+  number and transition motion. L each
 - **Same-task focus everywhere.** 24 places still move focus a frame or two late (rich text,
   IDE, chat, data grid, templates); the lint's baseline lists them. M
 
@@ -62,7 +64,8 @@ for [#848](https://github.com/vercel-labs/ui/issues/848) ships after beta.10.
 - Two awesome-shadcn-ui lists:
   [birobirobiro/awesome-shadcn-ui#772](https://github.com/birobirobiro/awesome-shadcn-ui/pull/772)
   and [bytefer/awesome-shadcn-ui#61](https://github.com/bytefer/awesome-shadcn-ui/pull/61).
-- `@uiset/web` 0.4.0 on npm.
+- `@uiset/web` 0.4.0 on npm. Then the install commands and the README badge move from
+  beta.5 to beta.10.
 
 ## Shipped so far
 

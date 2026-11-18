@@ -142,7 +142,7 @@ await agent.act({ steps: [{ ref: "Orders", action: "filter", args: ["Region", "E
         </div>
         <div className="kit-actions">
           <InstallCommand items={["agent-console"]} label="Install the Agent Console" />
-          <a className="kit-docs" href="/docs/kits/agent-console">
+          <a className="home-button" href="/docs/kits/agent-console">
             Agent Console docs
           </a>
         </div>
@@ -159,7 +159,7 @@ await agent.act({ steps: [{ ref: "Orders", action: "filter", args: ["Region", "E
         <AgentCheckDemo />
         <div className="kit-actions">
           <InstallCommand items={["agent-check"]} label="Install the agent-readiness check" />
-          <a className="kit-docs" href="/docs/agent-check">
+          <a className="home-button" href="/docs/agent-check">
             Agent readiness check docs
           </a>
         </div>

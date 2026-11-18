@@ -1,4 +1,6 @@
 import { lazy, type ComponentType, type LazyExoticComponent } from "react"
+import { isAppPath, loadAppFrame } from "./shell/layout"
+import { templates } from "./template-list"
 
 // The site's pages by path. Each page's code loads when it's first needed: before the first
 // render for the page you arrive on, and before the address changes for the next one, so
@@ -10,10 +12,9 @@ type PageModule = { default: ComponentType; preload?: (pathname: string) => Prom
 const loaders = {
   home: () => import("./pages/home"),
   docs: () => import("./pages/docs"),
-  components: () => import("./pages/components"),
-  kits: () => import("./pages/kits"),
-  templates: () => import("./pages/templates"),
-  themes: () => import("./pages/themes"),
+  library: () => import("./pages/library"),
+  template: () => import("./pages/template"),
+  gallery: () => import("./pages/gallery"),
   generator: () => import("./pages/generator"),
   agents: () => import("./pages/agents"),
   check: () => import("./pages/check"),
@@ -31,10 +32,9 @@ function keyOf(pathname: string): Key {
   const path = pathname.replace(/\/+$/, "") || "/"
   if (path === "/") return "home"
   if (path === "/docs" || path.startsWith("/docs/")) return "docs"
-  if (path === "/components") return "components"
-  if (path === "/kits") return "kits"
-  if (path === "/templates") return "templates"
-  if (path === "/themes") return "themes"
+  if (path === "/components" || path === "/kits" || path === "/templates" || path === "/themes") return "library"
+  if (path.startsWith("/templates/")) return "template"
+  if (path === "/gallery") return "gallery"
   if (path === "/themes/generator" || path === "/theme") return "generator"
   if (path === "/agents") return "agents"
   if (path === "/check") return "check"
@@ -51,12 +51,12 @@ function route(pathname: string): ComponentType {
 /** Loads a page's code, and its content when it says how. */
 async function preloadRoute(pathname: string) {
   const key = keyOf(pathname)
-  const page: PageModule = await loaders[key]()
+  const [page] = await Promise.all([loaders[key]() as Promise<PageModule>, isAppPath(pathname) ? loadAppFrame() : undefined])
   loaded.set(key, page.default)
   await page.preload?.(pathname)
 }
 
 /** Every page the build renders ahead of time (docs pages come from the docs list). */
-const staticPaths = ["/", "/components", "/kits", "/templates", "/themes", "/themes/generator", "/agents", "/check"]
+const staticPaths = ["/", "/components", "/gallery", "/kits", "/templates", "/themes", "/themes/generator", "/agents", "/check", ...templates.map((t) => `/templates/${t.id}`)]
 
 export { preloadRoute, route, staticPaths }

@@ -11,10 +11,10 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs"
 
 const FAMILIES = [
-  // The site's own face: text, and the condensed headings (the wdth axis). Preloaded, and its
-  // text waits for it (block): drawn first in a fallback face, the page's largest paragraph
-  // would be drawn again, larger, when React takes over, and count as a late LCP.
-  { family: "Instrument Sans", axes: "wdth,wght@75..100,400..700", license: "ofl/instrumentsans", display: "block" },
+  // The site's own face, and the base skin's. Preloaded, and its text waits for it (block):
+  // drawn first in a fallback face, the page's largest paragraph would be drawn again, larger,
+  // when React takes over, and count as a late LCP.
+  { family: "Inter", axes: "wght@400..700", license: "ofl/inter", display: "block" },
   // The skins' faces, used where a skin is shown.
   { family: "Barlow Semi Condensed", axes: "wght@400;500;600", license: "ofl/barlowsemicondensed" },
   { family: "Saira Semi Condensed", axes: "wght@400;500;600", license: "ofl/sairasemicondensed" },

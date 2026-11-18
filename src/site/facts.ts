@@ -10,6 +10,8 @@ const facts = {
   templates: 10,
   skins: 5,
   registryItems: 115,
+  /** Kit pages in the docs and cards in the library: the kits above, the app frame and forms. */
+  kitPages: 14,
 } as const
 
 export { facts }

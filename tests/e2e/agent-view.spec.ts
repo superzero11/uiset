@@ -81,21 +81,17 @@ test("Agent view is hidden from agents, so turning it on changes nothing an agen
   expect(await read()).toEqual(off)
 })
 
-test("on the Kits page every kit gets its own view, read when it's in view", async ({ page }) => {
-  await page.goto("/kits")
-  await page.locator("#data .grid-stage").waitFor({ timeout: 20_000 })
+test("a kit's page has its own view, and the library's cards stay out of agents' way", async ({ page }) => {
+  await page.goto("/docs/kits/data-grid")
+  await page.locator(".item-frame [role='grid']").first().waitFor({ timeout: 20_000 })
   await turnOn(page)
   const grid = page.getByRole("region", { name: "Agent view of Data grid" })
-  await grid.scrollIntoViewIfNeeded()
   await expect(grid.getByRole("listitem").filter({ hasText: "data-grid" }).first()).toBeVisible()
   await expect(grid.getByText(/\d+\/100/)).toBeVisible({ timeout: 10_000 })
-  // Far down the page, the Terminal's panel waits: the bridge queues every query, so reading
-  // all eleven at once held each back for seconds.
-  const terminal = page.getByRole("region", { name: "Agent view of Terminal" })
-  await expect(terminal).toContainText("Reading the example…")
-  await terminal.scrollIntoViewIfNeeded()
-  await expect(terminal.getByRole("listitem").filter({ hasText: "terminal" }).first()).toBeVisible()
-  await expect(terminal.getByText(/\d+\/100/)).toBeVisible({ timeout: 10_000 })
+  // The Kits tab draws every kit as a picture: none of them is in an agent's snapshot.
+  await page.goto("/kits")
+  await expect(page.locator(".lib-card").first()).toBeVisible()
+  expect((await snapshot(page)).some((e) => e.component === "data-grid")).toBe(false)
 })
 
 for (const [skin, theme] of [
@@ -128,4 +124,14 @@ test("on a phone the panel goes under the example, and the page doesn't scroll s
   const box = (await panel.boundingBox())!
   expect(box.y).toBeGreaterThanOrEqual(preview.y + preview.height - 1)
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true)
+})
+
+// The Agent Console's kit page shows the settings the agent works on, beside the console: it
+// once showed the console alone, so every step failed with nothing to change.
+test("on the Agent Console's page, a prompt changes the settings beside it", async ({ page }) => {
+  await page.goto("/docs/kits/agent-console")
+  const stage = page.locator(".item-stage")
+  await stage.getByRole("button", { name: "Make it public and move it to Europe" }).click({ timeout: 20_000 })
+  await expect(stage).toContainText("Done: 2 changes", { timeout: 15_000 })
+  await expect(stage.getByRole("combobox", { name: "Region" })).toContainText("Europe")
 })

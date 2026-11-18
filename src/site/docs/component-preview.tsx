@@ -5,7 +5,7 @@ import { Toaster } from "@/registry/uiset/ui/toast"
 import { AgentViewPanel, AgentViewSwitch, useAgentView } from "../agent-view"
 import { displaySource, exampleMetas, exampleSlugByItem, usesOf, type ExampleMeta } from "../examples/meta"
 import { CodeBlock, InstallCommand } from "../shell/code"
-import { SkinPicker } from "../shell/skin-picker"
+import { CopyDark } from "../item-stage"
 import { docPages } from "./nav"
 
 // A component's live example, its source, and, with Agent view on, what an agent reads from
@@ -48,15 +48,15 @@ function useExample(item: string): Example | null {
 function ExamplePreview({
   example,
   item,
+  title,
   skin,
   theme,
-  onSkinChange,
 }: {
   example: Example
   item: string
+  title: string
   skin: Skin
   theme: ComponentProps<typeof UISet>["theme"]
-  onSkinChange: (skin: Skin) => void
 }) {
   const { meta, ready } = example
   const agentView = useAgentView()
@@ -73,14 +73,16 @@ function ExamplePreview({
         </TabsList>
         <div className="docs-example-tools">
           <AgentViewSwitch />
-          <SkinPicker value={skin} onChange={onSkinChange} />
+          {ready && <CopyDark value={displaySource(ready.source)} label={`Copy the ${title} example's code`} />}
         </div>
       </div>
       <TabsPanel value="preview">
         <div className="agent-view-frame" data-on={agentView ? "" : undefined}>
           <div className="agent-view-split">
             <UISet ref={stage} skin={skin} theme={theme} className="docs-preview">
-              <div className="example" data-wide={meta.wide ? "" : undefined}>
+              {/* Ready once drawn, as the gallery's cards are: a loading example holds 8rem of room,
+                  which a drawn one's trigger would stretch to fill (a hover card opened far below). */}
+              <div className="example" data-wide={meta.wide ? "" : undefined} data-ready={ready ? "" : undefined}>
                 <div className="example-body">
                   {ready ? <ready.Component /> : <p className="example-note">{example.failed ? "The example didn\u2019t load. Reload the page to try again." : "Loading the example\u2026"}</p>}
                 </div>

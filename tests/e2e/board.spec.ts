@@ -7,7 +7,7 @@ const card = (page: Page, name: string) => board(page).getByRole("option", { nam
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
-  await openGallery(page, "/components")
+  await openGallery(page, "/gallery")
   await board(page).scrollIntoViewIfNeeded()
 })
 

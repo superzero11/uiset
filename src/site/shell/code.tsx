@@ -115,6 +115,12 @@ const useManager = () =>
     () => "pnpm" as Manager,
   )
 
+/** The shadcn command that adds these items, for the package manager people picked. */
+function useInstallText(items: string[]) {
+  const manager = managers.find((m) => m.id === useManager())!
+  return `${manager.run} ${items.map((item) => (item.includes("/") ? item : `@uiset/${item}`)).join(" ")}`
+}
+
 /** The shadcn command that adds UISet items, for the package manager people use, with copy. */
 function InstallCommand({ items, className, label = "Install" }: { items: string[]; className?: string; label?: string }) {
   const pm = useManager()
@@ -123,19 +129,23 @@ function InstallCommand({ items, className, label = "Install" }: { items: string
   return (
     <div className={["install-command", className].filter(Boolean).join(" ")} role="group" aria-label={label}>
       {/* Named for its command: a page can show several, and a step by name must find one. */}
-      <SegmentedControl
-        className="install-command-managers"
-        aria-label={`Package manager to ${label.charAt(0).toLowerCase()}${label.slice(1)}`}
-        value={pm} onValueChange={(value) => value && setManager(value as Manager)}>
-        {managers.map((m) => (
-          <SegmentedControlItem key={m.id} value={m.id}>
-            {m.label}
-          </SegmentedControlItem>
-        ))}
-      </SegmentedControl>
+      <div className="install-command-head">
+        <SegmentedControl
+          className="install-command-managers"
+          aria-label={`Package manager to ${label.charAt(0).toLowerCase()}${label.slice(1)}`}
+          value={pm}
+          onValueChange={(value) => value && setManager(value as Manager)}
+        >
+          {managers.map((m) => (
+            <SegmentedControlItem key={m.id} value={m.id}>
+              {m.label}
+            </SegmentedControlItem>
+          ))}
+        </SegmentedControl>
+        <CopyButton value={command} label="Copy" copiedLabel="Copied" aria-label={`Copy the command to ${label.charAt(0).toLowerCase()}${label.slice(1)}`} />
+      </div>
       <div className="install-command-line">
         <code translate="no">{command}</code>
-        <CopyButton value={command} label="Copy" copiedLabel="Copied" aria-label={`Copy the command to ${label.charAt(0).toLowerCase()}${label.slice(1)}`} />
       </div>
     </div>
   )
@@ -154,4 +164,4 @@ function CommandLine({ command, className }: { command: string; className?: stri
   )
 }
 
-export { CodeBlock, CommandLine, InstallCommand }
+export { CodeBlock, CommandLine, InstallCommand, useInstallText }
