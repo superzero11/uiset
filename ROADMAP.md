@@ -109,10 +109,10 @@ Checked on 0.1.0-beta.5 (2026-11-16, repros in a worktree): all still present ex
 
 On 0.1.0-beta.9 (2026-11-18, which UISet now pins), betas 6–9 fixed #1, #2, #5, #11, #14, #15,
 #16, #19, #21, #22, #23, #24 and #26, by their release notes. UISet's own fixes for #1 and #26
-are gone. Those for #2, #14, #16, #19, #21 and #22 are next: each is a plain delete or a swap
-for UI SDK's `keepFocus`. #5's search field works and stays as it is. #23's code also restores
-the caret on Tab, so it stays. #24's Cancel keeps a row ready to retry, which UI SDK's remove
-doesn't. The rest aren't in betas 6–9's notes, and #25 is still open. Two new: #27 and #28.
+are gone, and so (later that day) are those for #2, #14, #19, #21 and #22, and #16's in React.
+#5's search field works and stays as it is. #23's code also restores the caret on Tab, so it
+stays. #24's Cancel keeps a row ready to retry, which UI SDK's remove doesn't. The rest aren't
+in betas 6–9's notes, and #25 is still open. New: #27, #28 and #29.
 
 1. **Image cropper nests sliders.** The selection is `role="slider"` with handle sliders
    inside it; slider children are presentational, so screen readers may not reach the
@@ -216,6 +216,11 @@ doesn't. The rest aren't in betas 6–9's notes, and #25 is still open. Two new:
     is a link, which takes focus, so its slot needs focus`. A console warning in a
     development build; with `__UI_SDK_STRICT__` it throws on import. UISet's unit setup loads
     Pagination before turning strict mode on. Not filed yet.
+29. **The web agent bridge names tabs from their root, not their list.** A `<ui-tabs>` whose
+    `<ui-tabs-list>` has `aria-label` is "tabs c1 has no name" to agents; React names it
+    from the list. UISet's web code and pages put the list's name on the root too (the IDE's
+    open files, code tabs, the settings template, the rich text demo's output, the gallery).
+    Without it five web pages drop below 100 on `agent-check`. Not filed yet.
 
 ## 4. Architecture
 
@@ -390,7 +395,8 @@ checks, then a release, a deploy, and npm by the owner.
 | uiset.dev's home page scores 100 on `agent-check`                                                  | done | 2026-11-18: 94 through the bridge with the chat demo open, 80 with the rich text one. Four renames: the hero's skin picker, the hero form's "Tone", the "Kit demos" tabs, the editor demo's "Show as" tabs. An e2e test checks the page with each kit demo open (Chrome, WebKit, Firefox), 2/2 mutations caught |
 | uiset.dev's Kits page scores 100 on `agent-check`                                                  | done | 2026-11-18: 98 through the bridge. The data grid's "View" menu met the scheduler's "View" switch and the canvas's "Fit to view", and the terminal's "Command" every install line's "Copy the command to …". Kit renames, React and web: "Calendar layout", "Zoom to fit", "Command line". An e2e test checks the page (Chrome, WebKit, Firefox), 2/2 mutations caught |
 | Focus after Undo and Add node lands in the same task                                               | done | 2026-11-18: the project board's Undo, the canvas's Add node and Enter to a node's notes put focus off a frame or two, so a quick key could land first and lose its focus. Now the same task as the press, React and web, demos and the canvas example too. 7 tests (Chrome, WebKit, Firefox) that read focus before the next frame; 7/7 mutations caught |
-| UISet on UI SDK 0.1.0-beta.9                                                                       | done, not pushed | 2026-11-18: from beta.5. The image cropper's handles beside the selection; agents call the terminal's `runCommand` and a swipe list's `runAction` (vercel-labs/ui#848); agent-check stops counting a closed tooltip; UISet's drop zone rule gone. Chrome and WebKit 1718 + the 149 after the renames; Firefox 844 (2 load-timing failures pass 6/6 alone); 2 mutations caught |
+| UISet on UI SDK 0.1.0-beta.9                                                                       | done | 2026-11-18: from beta.5. The image cropper's handles beside the selection; agents call the terminal's `runCommand` and a swipe list's `runAction` (vercel-labs/ui#848); agent-check stops counting a closed tooltip; UISet's drop zone rule gone. Chrome and WebKit 1718 + the 149 after the renames; Firefox 844 (2 load-timing failures pass 6/6 alone); 2 mutations caught |
+| UISet's fixes for what UI SDK betas 6–9 fixed are gone                                           | done, not pushed | 2026-11-18: `returnFocus` (UI SDK's `keepFocus` in 8 places), the date picker and tree ring overrides, the wheel's focus-follow (React and web), React's editor tabs' root name; the terminal trims past scrollback while you're scrolled up (new web e2e and React unit tests, mutations caught). Web tabs keep their root name (3c #29). Chrome and WebKit 1734, Firefox 846 (one load-timing test since fixed) |
 
 ## 10. Decision log
 
@@ -1741,3 +1747,24 @@ checks, then a release, a deploy, and npm by the owner.
   WebKit (React and web) 1718 passed with only the 14 `run` failures, which pass after the
   renames (149); Firefox, React and web, 844 passed and 26 skipped (Chromium-only), its two
   failures load timing (6/6 alone). Next: the workarounds betas 6–9 made unneeded (3c).
+- 2026-11-18 — **UISet's own fixes for what UI SDK betas 6–9 fixed are gone** (the owner: "Yes,
+  remove them"). Each was checked as it went:
+  - `returnFocus` (3c #22): beta.9's `keepFocus` treats focus on an ancestor of the target
+    as lost, Safari's clicked button, and retries the same way, so the 8 callers use it and
+    `uiset/focus.ts` is gone (its unit test now holds `keepFocus` to those cases).
+  - The date picker override (#2): the input and trigger measure the same with and without
+    it in 6 skin and theme pairs. The tree ring (#14): `ide.spec.ts`'s ring test passes.
+  - The wheel's focus-follow (#21), React and web: the mobile specs pass 3 times over in
+    Chrome and WebKit, the tests where an agent's value moves focus among them (#25's
+    `keepWheelOnValue` stays).
+  - The terminal (#19) trims past `scrollback` while you're scrolled up: UI SDK holds the
+    view still as rows above go. New tests, web e2e (Chrome and WebKit, line 50 doesn't move
+    as the oldest go) and React unit (a wheel up in jsdom); with the old guard back both fail.
+  - Tabs' root names (#16): React's editor tabs drop theirs, but the web bridge still names
+    tabs from their root, not their list: without them five web pages fell below 100, so
+    they stay (3c #29).
+  Checks: typecheck, 518 unit tests, both builds; e2e Chrome and WebKit, React and web, 1734
+  passed; Firefox 846 passed and 26 skipped. Its one failure, in two full Firefox runs now,
+  was the package manager tabs test reading the Code block after a reload before it had drawn:
+  it brings the example into view first now, as it does before the reload (3/3 in each
+  browser).

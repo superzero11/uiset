@@ -152,11 +152,6 @@
   }
 }
 
-/* UI SDK's generic ring would outline the whole branch (upstream issue 14). */
-[data-uiset] [data-slot="tree-item"]:focus-visible {
-  outline: none;
-}
-
 [data-uiset] :is([data-slot="button"], [data-slot$="-trigger"]):not([data-disabled]) {
   transition:
     scale var(--uiset-fast) var(--uiset-ease),
@@ -548,18 +543,6 @@
   [data-uiset] [data-slot="timeline-connector"] {
     background: CanvasText;
   }
-}
-
-/* UI SDK's stylesheet puts a trailing trigger inside the date picker's input with
-   display:flex, but the root's earlier flex-direction:column still stacks them. In a row,
-   the column layout's gap would push the trigger past the input's edge, so it goes. */
-[data-uiset]
-  [data-slot="date-picker"]:has(
-    > [data-slot="date-picker-input"] + [data-slot="date-picker-trigger"]
-  ) {
-  flex-direction: row;
-  align-items: center;
-  column-gap: 0;
 }
 
 /* UI SDK's date picker wraps its month header (previous, month, next) in a plain <div>;

@@ -12,6 +12,7 @@ import {
   css,
   definePrimitive,
   isFocusFromKeyboard,
+  keepFocus,
   live,
   matchesShortcut,
   selects,
@@ -23,7 +24,6 @@ import {
   type MovePoint,
   type Viewport,
 } from "@ui-sdk/core"
-import { returnFocus } from "../uiset/focus"
 import {
   boundsOf,
   nodeRect,
@@ -312,7 +312,7 @@ const canvasPrimitive = definePrimitive({
       onRemove(ids)
       change("selected", get().selected.filter((id) => !ids.includes(id)), { reason: "imperative" })
       announce(`Removed ${ids.length === 1 ? title(ids[0]!) : `${ids.length} nodes`}.`)
-      returnFocus(() => (next && nodeElement(next)) || (context.element("root") ?? undefined))
+      keepFocus(() => (next && nodeElement(next)) || (context.element("root") ?? undefined))
       return true
     }
 

@@ -57,7 +57,8 @@ socket.onmessage = (event) => shell.print(event.data)
   URLs and OSC 8 links become links, http(s) only. Control and bidi-override characters are
   dropped.
 - The page catches up once a frame, however fast output comes, and only changed lines draw
-  again. Old lines go only while you're following the end, so what you're reading stays put.
+  again. Past `scrollback` lines (2000), old lines go even while you're scrolled up, and
+  what you're reading stays put.
 - `help`, `clear` and `history` come built in. `onCommand` gets lines no command matched.
 - `messages` replaces the terminal's own words, for other languages.
 - `controller` (`createTerminalController()`) writes output (`print`, `error`), runs and clears

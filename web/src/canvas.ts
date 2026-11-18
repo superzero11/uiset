@@ -4,7 +4,7 @@
 // focus, Shift-drag box selection, wires by pointer or with C and arrows, undo with
 // `history`, and agent actions. <uiset-canvas-toolbar> and <uiset-canvas-inspector> are
 // the React CanvasToolbar and CanvasInspector, joined to a canvas by its id.
-import { ariaKeyshortcuts, createUndoStack, type Viewport } from "@ui-sdk/core"
+import { ariaKeyshortcuts, createUndoStack, keepFocus, type Viewport } from "@ui-sdk/core"
 import { createParts, wrappedButton, type UiChangeEvent, type UiElement } from "@ui-sdk/web"
 import "@ui-sdk/web/button"
 import "@ui-sdk/web/field"
@@ -17,7 +17,6 @@ import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/chart/tokens.css"
 import "@/registry/uiset/ui/canvas/canvas.css"
 import { attr, defineElement, ElementBase, h, holdRender, isOn, place, uid, upgradeProperties } from "./dom"
-import { returnFocus } from "@/registry/uiset/ui/uiset/focus"
 
 type CanvasNode = CanvasNodeShape & {
   x: number
@@ -716,7 +715,7 @@ class UISetCanvasInspector extends ElementBase {
       const wire = wires[index]!
       const next = wires[index + 1] ?? wires[index - 1]
       canvas.api?.disconnect(wire.id)
-      returnFocus(() => (next ? (parts.wires.querySelector<HTMLElement>(`[data-canvas-wire="${CSS.escape(next.id)}"]`) ?? undefined) : canvas.api?.nodeElement(node.id)))
+      keepFocus(() => (next ? (parts.wires.querySelector<HTMLElement>(`[data-canvas-wire="${CSS.escape(next.id)}"]`) ?? undefined) : canvas.api?.nodeElement(node.id)))
     }
     parts.wires.replaceChildren(
       h("h4", { class: "canvas-inspector-heading" }, "Wires"),

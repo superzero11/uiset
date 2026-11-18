@@ -182,7 +182,10 @@ test("the package manager tabs move with the arrow keys, change the command and 
   await expect(block.locator('[data-slot="tabs-panel"]:not([hidden])')).toContainText("pnpm dlx shadcn@latest add")
   await page.reload()
   await expect(page.locator(".components-surface")).toBeVisible({ timeout: 20_000 })
-  await expect(example(page, "Code block").getByRole("tab", { name: "pnpm" })).toHaveAttribute("aria-selected", "true")
+  // Examples this far down draw as they come into view, or once the browser is idle.
+  const reloaded = example(page, "Code block")
+  await reloaded.scrollIntoViewIfNeeded()
+  await expect(reloaded.getByRole("tab", { name: "pnpm" })).toHaveAttribute("aria-selected", "true", { timeout: 20_000 })
 })
 
 /* ------------------------------------------------------------------ inline edit */

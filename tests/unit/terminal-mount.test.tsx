@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react"
 import { startTransition, Suspense, use } from "react"
 import { afterEach, expect, test, vi } from "vitest"
-import { Terminal } from "@/registry/uiset/ui/terminal"
+import { createTerminalController, Terminal } from "@/registry/uiset/ui/terminal"
 
 afterEach(() => vi.restoreAllMocks())
 
@@ -47,4 +47,28 @@ test("the welcome shows once the terminal mounts", () => {
   render(<Terminal label="Shell" welcome={"Hello there\nType help"} />)
   expect(screen.getByText("Hello there")).toBeTruthy()
   expect(screen.getByText("Type help")).toBeTruthy()
+})
+
+test("past scrollback, old lines go even while scrolled up", async () => {
+  const frames: FrameRequestCallback[] = []
+  vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+    frames.push(callback)
+    return frames.length
+  })
+  const flush = () => act(async () => frames.splice(0).forEach((frame) => frame(0)))
+  const controller = createTerminalController()
+  render(<Terminal label="Shell" scrollback={20} controller={controller} />)
+  const log = screen.getByRole("log", { name: "Shell output" })
+  for (let i = 1; i <= 15; i++) controller.print(`line ${i}\n`)
+  await flush()
+  // Scrolled up, as a wheel turned up on output taller than the view (jsdom has no layout).
+  Object.defineProperty(log, "scrollHeight", { configurable: true, value: 600 })
+  Object.defineProperty(log, "clientHeight", { configurable: true, value: 200 })
+  await act(async () => log.dispatchEvent(new WheelEvent("wheel", { deltaY: -100 })))
+  for (let i = 1; i <= 15; i++) controller.print(`more ${i}\n`)
+  await flush()
+  expect(screen.getByRole("button", { name: "New output below" })).toBeTruthy()
+  expect(screen.queryByText("line 1")).toBeNull()
+  expect(screen.getByText("line 15")).toBeTruthy()
+  expect(screen.getByText("more 15")).toBeTruthy()
 })

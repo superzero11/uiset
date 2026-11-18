@@ -1,6 +1,6 @@
 "use client"
 
-import { type StateOf, type TransferLists, type TransferMessage } from "@ui-sdk/core"
+import { keepFocus, type StateOf, type TransferLists, type TransferMessage } from "@ui-sdk/core"
 import { usePart, usePrimitive, type PartProps } from "@ui-sdk/react/primitive"
 import { useCallback, useId, useRef, useState, type FormEvent, type ReactNode } from "react"
 import {
@@ -40,7 +40,6 @@ import {
 } from "./board/board"
 import "./shell/shell.css"
 import "./board/board.css"
-import { returnFocus } from "./uiset/focus"
 
 type BoardCardData = {
   id: string
@@ -195,7 +194,7 @@ function AddCard({
   const close = () => {
     setOpen(false)
     setError(null)
-    returnFocus(() => button.current ?? undefined)
+    keepFocus(() => button.current ?? undefined)
   }
   if (!open)
     return (

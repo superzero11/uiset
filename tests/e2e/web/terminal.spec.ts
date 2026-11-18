@@ -200,6 +200,35 @@ test.describe("review fixes", () => {
     expect(width).toBeGreaterThan(60)
   })
 
+  test("past scrollback, old lines go even while you're scrolled up, and what you read stays put", async ({ page }) => {
+    const lines = output(page).locator(".terminal-line")
+    await term(page).evaluate((el) => {
+      el.setAttribute("scrollback", "150")
+      const api = (el as unknown as { api: { print: (text: string) => boolean } }).api
+      for (let i = 1; i <= 120; i++) api.print(`line ${i}\n`)
+    })
+    await expect(lines.filter({ hasText: /^line 120$/ })).toHaveCount(1)
+    const reading = lines.filter({ hasText: /^line 50$/ })
+    // Scrolled up, with "line 50" at the top of the output.
+    await output(page).evaluate((el) => {
+      const line = [...el.querySelectorAll(".terminal-line")].find((l) => l.textContent === "line 50")!
+      el.scrollTop += line.getBoundingClientRect().top - el.getBoundingClientRect().top
+    })
+    await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))))
+    expect(await output(page).evaluate((el) => el.scrollHeight - el.clientHeight - el.scrollTop)).toBeGreaterThan(50)
+    const top = await reading.evaluate((el) => el.getBoundingClientRect().top)
+    await term(page).evaluate((el) => {
+      const api = (el as unknown as { api: { print: (text: string) => boolean } }).api
+      for (let i = 1; i <= 50; i++) api.print(`more ${i}\n`)
+    })
+    await expect(lines.filter({ hasText: /^more 50$/ })).toHaveCount(1)
+    // The oldest went, though you're scrolled up; the line you were reading didn't move.
+    await expect(lines.filter({ hasText: /^line 1$/ })).toHaveCount(0)
+    expect(await lines.count()).toBeLessThanOrEqual(150)
+    expect(Math.abs((await reading.evaluate((el) => el.getBoundingClientRect().top)) - top)).toBeLessThan(2)
+    await expect(term(page).getByRole("button", { name: "New output below" })).toBeVisible()
+  })
+
   test("New output below brings you to the end and puts you back in the prompt", async ({ page }) => {
     await run(page, "help")
     await run(page, "help")

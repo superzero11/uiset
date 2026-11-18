@@ -486,9 +486,9 @@ shell.api.print("from the server\n")         // output from outside, like a sock
   `complete`) its argument, and a second Tab lists several matches. Ctrl+C stops a running
   command (the prompt comes back at once), and with text selected it copies. Ctrl+L clears.
 - Output keeps ANSI colors, readable in every skin and theme, and links (OSC 8 and plain
-  http addresses). The log reads out new lines only, and old lines go only while you're
-  following the end, past `scrollback` lines. "New output below" appears when you've
-  scrolled up.
+  http addresses). The log reads out new lines only, and past `scrollback` lines old ones go,
+  even while you're scrolled up, without moving what you're reading. "New output below"
+  appears when you've scrolled up.
 - `shell.api` has `run`, `clear`, `print` and `error`. Agents run commands with
   `runCommand` and read the last lines; while a command runs, they're told to wait.
 

@@ -51,6 +51,21 @@ On UI SDK `0.1.0-beta.9`.
   first argument as one of the component's items, so `run("ls")` and
   `run("Ada Lovelace", "Archive")` were refused (vercel-labs/ui#848). Your code still calls
   `run`, React and Web Components.
+- **The terminal keeps to its scrollback while you're scrolled up.** Past `scrollback` lines
+  (2000), old lines go even while you're reading further up, and what you're reading stays
+  put: UI SDK has held the view still as rows above it go since beta.6. Until now nothing was
+  trimmed until you followed the end again, so a long command's output grew without limit.
+  React and Web Components.
+- **UISet's own fixes for what UI SDK now does are gone**, with nothing to see:
+  - `uiset/focus.ts`'s `returnFocus` is gone. The board, IDE, canvas, scheduler and calendar
+    use UI SDK's `keepFocus`, which handles Safari's focus on a clicked button since beta.6.
+    When you add your items again, delete `uiset/focus.ts` from your project.
+  - Two style overrides UI SDK's `web.css` covers now are gone: the date picker's trigger
+    inside its input, and the tree item's ring.
+  - The wheel picker's focus following a value set from outside is gone; `bindScrollPicker`
+    does it.
+  - React's editor tabs no longer repeat their name on the root. Web Components keep it: the
+    web agent bridge still names tabs from their root, not their list.
 - **Install lines use the `@uiset` namespace**, now that shadcn's registry directory lists it:
   `npx shadcn@latest add @uiset/<item>`. `superzero11/uiset/<item>` and
   `https://uiset.dev/r/<item>.json` still work.

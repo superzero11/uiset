@@ -1,6 +1,6 @@
 "use client"
 
-import { ariaKeyshortcuts, createUndoStack, type Viewport } from "@ui-sdk/core"
+import { ariaKeyshortcuts, createUndoStack, keepFocus, type Viewport } from "@ui-sdk/core"
 import { usePart, usePrimitive, type PartProps } from "@ui-sdk/react/primitive"
 import { Fragment, useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react"
 import { flushSync } from "react-dom"
@@ -20,7 +20,6 @@ import { boundsOf, describeWires, nodeRect, parsePort, portKey, type CanvasNodeS
 import "./shell/shell.css"
 import "./chart/tokens.css"
 import "./canvas/canvas.css"
-import { returnFocus } from "./uiset/focus"
 
 type CanvasNode = CanvasNodeShape & {
   x: number
@@ -526,7 +525,7 @@ function CanvasInspector({
     const wire = wires[index]!
     const next = wires[index + 1] ?? wires[index - 1]
     canvas.disconnect(wire.id)
-    returnFocus(() =>
+    keepFocus(() =>
       next
         ? (document.querySelector<HTMLElement>(`[data-canvas-wire="${CSS.escape(next.id)}"]`) ?? undefined)
         : canvas.nodeElement(node.id),

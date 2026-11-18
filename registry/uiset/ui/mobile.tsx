@@ -260,16 +260,6 @@ function WheelPicker({
       keep()
     }
   }, [])
-  // Focus in the wheel stays on its value. A value set from elsewhere (a parent, an agent)
-  // would otherwise leave focus on the old option, and anything that reveals the focused
-  // element, like a sheet settling, would scroll the wheel back and choose it again.
-  useLayoutEffect(() => {
-    const el = list.current
-    const focused = document.activeElement
-    if (!el || !(focused instanceof HTMLElement) || !el.contains(focused)) return
-    if (focused.getAttribute("aria-selected") === "true") return
-    el.querySelector<HTMLElement>('[aria-selected="true"]')?.focus({ preventScroll: true })
-  }, [value])
   return (
     <div className={["wheel", className].filter(Boolean).join(" ")}>
       <Listbox

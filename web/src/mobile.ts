@@ -273,7 +273,6 @@ type WheelListbox = HTMLElement & { api: { setValue: (v: unknown) => void }; val
 class UISetWheel extends ElementBase {
   #stop?: () => void
   #keep?: () => void
-  #watch?: MutationObserver
   #children?: MutationObserver
   #bound: WheelListbox | null = null
   #pending: unknown = undefined
@@ -302,7 +301,6 @@ class UISetWheel extends ElementBase {
   #unbind() {
     this.#stop?.()
     this.#keep?.()
-    this.#watch?.disconnect()
     this.#stop = undefined
     this.#keep = undefined
     this.#bound = null
@@ -337,15 +335,6 @@ class UISetWheel extends ElementBase {
       stop?.()
       listbox.removeEventListener("valuechange", report)
     }
-    // Focus in the wheel stays on its value: a value set from elsewhere would otherwise leave
-    // focus on the old option, and anything that reveals the focused element (a sheet coming
-    // to rest) would scroll the wheel back and choose it again.
-    this.#watch = new MutationObserver(() => {
-      const focused = document.activeElement
-      if (!(focused instanceof HTMLElement) || !listbox.contains(focused) || focused.getAttribute("aria-selected") === "true") return
-      listbox.querySelector<HTMLElement>('[aria-selected="true"]')?.focus({ preventScroll: true })
-    })
-    this.#watch.observe(listbox, { subtree: true, attributeFilter: ["aria-selected"] })
   }
 }
 

@@ -42,7 +42,7 @@ import {
   type CalendarView,
 } from "./calendar-app-sample"
 import "./templates.css"
-import { returnFocus } from "../uiset/focus"
+import { keepFocus } from "@ui-sdk/core"
 
 // A calendar app: a day, a week or a month of events, with a small month to jump around,
 // calendars to show or hide, and what's next. Events are drawn, moved and resized on the
@@ -245,7 +245,7 @@ function CalendarAppTemplate({
                 go(day)
                 setView("day")
                 // The month gives way to the day: focus goes to its first event, or the day itself.
-                returnFocus(() => schedule.element())
+                keepFocus(() => schedule.element())
               }}
             />
           ) : (

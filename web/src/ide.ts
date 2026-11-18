@@ -3,7 +3,7 @@
 // same editing rules, ide/editing.ts, and the same colors, code/highlight.ts) on UI SDK's
 // tree, tabs, textarea, command and dialogs. They take data as properties and report
 // what people do as events; web/ide.html joins them into an editor.
-import { announce, createUndoStack, matchesShortcut } from "@ui-sdk/core"
+import { announce, createUndoStack, keepFocus, matchesShortcut } from "@ui-sdk/core"
 import { fuzzyScore } from "@ui-sdk/core/text-match"
 import { treeFromPaths, visibleTreeRows, type TreeItemData } from "@ui-sdk/core/tree"
 import "@ui-sdk/web/alert-dialog"
@@ -23,7 +23,6 @@ import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/code/code.css"
 import "@/registry/uiset/ui/ide/ide.css"
 import { attr, defineElement, ElementBase, Evented, h, isOn, place, reportInput, uid, upgradeProperties } from "./dom"
-import { returnFocus } from "@/registry/uiset/ui/uiset/focus"
 
 const baseName = (path: string) => path.split("/").pop() ?? path
 const dirName = (path: string) => path.split("/").slice(0, -1).join("/")
@@ -602,7 +601,7 @@ class UISetEditorTabs extends Evented<UISetEditorTabsEvents>() {
     const gone = this.#closing
     if (gone && !open.has(gone)) {
       this.#closing = null
-      returnFocus(() => (current ? this.#views.get(current)?.tab : dom.empty) ?? undefined)
+      keepFocus(() => (current ? this.#views.get(current)?.tab : dom.empty) ?? undefined)
     }
   }
 

@@ -34,11 +34,6 @@
           "target": "@ui/uiset/feedback.ts"
         },
         {
-          "path": "registry/uiset/ui/uiset/focus.ts",
-          "type": "registry:file",
-          "target": "@ui/uiset/focus.ts"
-        },
-        {
           "path": "registry/uiset/ui/uiset/haptics.ts",
           "type": "registry:file",
           "target": "@ui/uiset/haptics.ts"

@@ -124,7 +124,7 @@ function Terminal({
   /** Printed first. */
   welcome?: string
   defaultHistory?: string[]
-  /** How many lines to keep; older ones go while you're following the end. */
+  /** How many lines to keep; older ones go, and what you're reading stays put. */
   scrollback?: number
   /** The terminal's own words, for other languages. */
   messages?: Partial<TerminalMessages>
@@ -165,8 +165,8 @@ function Terminal({
       if (frame.current !== null || typeof requestAnimationFrame === "undefined") return
       frame.current = requestAnimationFrame(() => {
         frame.current = null
-        // Old lines go only while you're following the end, so what you read stays put.
-        if (stick.get().following) made.trim(scrollback)
+        // Past scrollback, old lines go even while you're scrolled up: the view stays put.
+        made.trim(scrollback)
         setFrame((n) => n + 1)
       })
     })

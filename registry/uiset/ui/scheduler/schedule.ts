@@ -4,6 +4,7 @@ import {
   createSpans,
   definePrimitive,
   isSpanFree,
+  keepFocus,
   live,
   type ChangeDetails,
   type Span,
@@ -11,7 +12,6 @@ import {
   type SpansDraft,
   type SpansReason,
 } from "@ui-sdk/core"
-import { returnFocus } from "../uiset/focus"
 
 // A schedule's behavior: tracks (days down a week, or rooms across a timeline) holding
 // events. UI SDK's createSpans draws, moves and resizes them with the pointer, moves them
@@ -328,7 +328,7 @@ const schedulePrimitive = definePrimitive({
           const next = deleting ? api.neighbor(key) : undefined
           // A deleted event takes its focus with it: hand it to the next event, or the schedule.
           if (api.spans.keydown(e, key) && deleting)
-            returnFocus(() => (next && api.eventElement(next)) || api.rootElement())
+            keepFocus(() => (next && api.eventElement(next)) || api.rootElement())
         },
         pointerdown: (event, { api, key }) => api.spans.spanPointerdown(event as PointerEvent, key),
       },

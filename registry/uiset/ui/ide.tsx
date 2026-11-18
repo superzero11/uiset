@@ -1,6 +1,6 @@
 "use client"
 
-import { announce, createUndoStack, matchesShortcut } from "@ui-sdk/core"
+import { announce, createUndoStack, keepFocus, matchesShortcut } from "@ui-sdk/core"
 import { fuzzyScore, matchRanges, matchSegments } from "@ui-sdk/core/text-match"
 import { flushSync } from "react-dom"
 import {
@@ -59,7 +59,6 @@ import { indent, lineCol, moveLines, newline, offsetOf, outdent, type Edit, type
 import "./shell/shell.css"
 import "./code/code.css"
 import "./ide/ide.css"
-import { returnFocus } from "./uiset/focus"
 
 const baseName = (path: string) => path.split("/").pop() ?? path
 const dirName = (path: string) => path.split("/").slice(0, -1).join("/")
@@ -506,7 +505,7 @@ function EditorTabs({
     const gone = closing.current
     if (!gone || files.some((f) => f.path === gone)) return
     closing.current = null
-    returnFocus(() => (current ? tabs.current.get(current) : emptyPane.current) ?? undefined)
+    keepFocus(() => (current ? tabs.current.get(current) : emptyPane.current) ?? undefined)
   })
   if (!files.length)
     return (
@@ -517,8 +516,6 @@ function EditorTabs({
   return (
     <Tabs
       className={["ide-tabs", className].filter(Boolean).join(" ")}
-      // The agent bridge names tabs from their root in the browser; the list names them for people.
-      aria-label={label}
       value={current}
       onValueChange={(next: unknown) => onValueChange(String(next))}
     >

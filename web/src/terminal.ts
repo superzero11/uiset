@@ -153,8 +153,8 @@ class TerminalView {
     if (this.frame !== null) return
     this.frame = requestAnimationFrame(() => {
       this.frame = null
-      // Old lines go only while you're following the end, so what you read stays put.
-      if (this.stick.get().following) this.screen.trim(Number(this.el.getAttribute("scrollback")) || 2000)
+      // Past scrollback, old lines go even while you're scrolled up: the view stays put.
+      this.screen.trim(Number(this.el.getAttribute("scrollback")) || 2000)
       this.drawLines()
     })
   }
