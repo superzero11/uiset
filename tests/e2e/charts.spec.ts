@@ -53,7 +53,9 @@ test("Tab reaches a chart once, arrows read each month, Enter pins it", async ({
 test("hovering a line chart snaps to the nearest month and shows every series", async ({
   page,
 }) => {
-  const plot = section(page).locator(".chart-plot").first()
+  // By name: the kit now opens with the Traffic sources bar, which has one row a part.
+  const plot = section(page).locator("figure.line-chart").filter({ has: page.getByText("Revenue and costs", { exact: true }) }).locator(".chart-plot")
+  await plot.scrollIntoViewIfNeeded()
   const box = (await plot.boundingBox())!
   await page.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.5)
   await expect(tooltip(page)).toBeVisible()
