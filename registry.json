@@ -2542,7 +2542,7 @@
       "name": "ide",
       "type": "registry:ui",
       "title": "IDE",
-      "description": "A code editor's parts on UI SDK: a file tree on Tree with version control marks and New, Rename, Move and Delete; editor tabs on Tabs; a code editor with syntax colors, indenting and problems; a command palette on Command; problems and a status bar.",
+      "description": "A code editor's parts on UI SDK: a file tree on Tree with version control marks, New, Rename, Move and Delete, and files dragged into folders; editor tabs on Tabs; a code editor with syntax colors, indenting and problems; a command palette on Command; problems and a status bar.",
       "dependencies": [
         "@ui-sdk/core@0.1.0-beta.10",
         "@ui-sdk/react@0.1.0-beta.10",
@@ -2579,6 +2579,11 @@
           "target": "@ui/ide/editing.ts"
         },
         {
+          "path": "registry/uiset/ui/ide/file-drag.ts",
+          "type": "registry:file",
+          "target": "@ui/ide/file-drag.ts"
+        },
+        {
           "path": "registry/uiset/ui/code/highlight.ts",
           "type": "registry:file",
           "target": "@ui/code/highlight.ts"
@@ -2587,6 +2592,11 @@
           "path": "registry/uiset/ui/code/code.css",
           "type": "registry:file",
           "target": "@ui/code/code.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/drag-preview.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/drag-preview.ts"
         },
         {
           "path": "registry/uiset/ui/shell/shell.css",

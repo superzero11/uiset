@@ -57,6 +57,7 @@ import {
 } from "./tree"
 import { languageOf, tokenize, type Token } from "./code/highlight"
 import { indent, lineCol, moveLines, newline, offsetOf, outdent, type Edit, type Problem } from "./ide/editing"
+import { bindFileDrag, type FileDragOptions } from "./ide/file-drag"
 import "./shell/shell.css"
 import "./code/code.css"
 import "./ide/ide.css"
@@ -263,11 +264,38 @@ function FileTree({
     }
   }
 
+  // A file or folder dragged onto a folder moves there, through the same checks as Move to….
+  const section = useRef<HTMLElement>(null)
+  const drag = useRef<FileDragOptions | null>(null)
+  useLayoutEffect(() => {
+    drag.current = {
+      isFolder,
+      isExpanded: (folder) => tree.getExpanded().includes(folder),
+      expand: (folder) => void tree.expand(folder),
+      move: (from, to) => {
+        const target = join(to, baseName(from))
+        if (exists(target)) return `${baseName(target)} already exists there.`
+        const refused = onMove?.(from, to)
+        if (refused) return refused
+        reveal.current = target
+        select(target)
+      },
+    }
+  })
+  const movable = !!onMove
+  useEffect(() => {
+    const root = section.current
+    const list = root?.querySelector<HTMLElement>(".ide-tree")
+    const area = root?.querySelector<HTMLElement>(".ide-tree-scroller")
+    if (!movable || !root || !list || !area) return
+    return bindFileDrag(root, list, area, () => drag.current!)
+  }, [movable])
+
   const canEdit = onCreate || onRename || onMove || onDelete
   const allFolders = ["", ...[...folders].sort()]
 
   return (
-    <section className={["ide-files", className].filter(Boolean).join(" ")} aria-labelledby={titleId}>
+    <section ref={section} className={["ide-files", className].filter(Boolean).join(" ")} aria-labelledby={titleId} data-movable={onMove ? "" : undefined}>
       <div className="ide-pane-header">
         <Heading id={titleId} className="ide-pane-title">
           {label}

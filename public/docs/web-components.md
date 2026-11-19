@@ -405,7 +405,9 @@ palette.addEventListener("openfile", (e) => openFile(e.detail.value))
   (`movable`), Delete with the Delete key after a confirm (`deletable`). `create`, `rename`
   and `move` carry `refuse(message)`, which keeps the dialog open with your reason. A new or
   renamed item takes focus; a deleted one hands it to its neighbor. An agent's choice of a
-  file opens it.
+  file opens it. With `movable`, a file or folder dragged onto a folder (or a file, meaning
+  its folder, or the room under the last row, meaning the top) fires the same `move`, and a
+  refusal is read out. See [IDE](./ide.md#use).
 - `<uiset-editor-tabs>` is UI SDK's tabs. `renderPanel(path)` fills a file's panel once and
   it stays while the tab is open, so an editor keeps its caret, scroll and undo. Delete on
   a tab, a middle click or its × fires `close`; once the file leaves `files`, focus goes to

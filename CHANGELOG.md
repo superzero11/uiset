@@ -79,6 +79,14 @@ On UI SDK `0.1.0-beta.10`.
   again, with what moved and where. Agents get `moveItem(item, into, position)`,
   `expandItem` and `collapseItem`. Web Components: `<uiset-sortable-tree>`.
 
+- **Drag a file into a folder in the IDE's file tree.** With `onMove` (`movable` on
+  `<uiset-file-tree>`), a file or folder dragged onto a folder moves into it; onto a file, into
+  that file's folder; onto the room under the last row, to the top. The folder is ringed
+  while the drag is over it and opens if the drag rests on it, a folder can't go inside
+  itself, and Escape cancels. The drop runs the same `onMove` (or `move` event) and checks as
+  Move to…, selects the file and says where it went. Built on UI SDK's `bindDrag`,
+  `bindDragPreview` and `createAutoScroll` around UI SDK's Tree, which keeps its keys.
+
 ### Changed
 
 - **The kits and templates scroll in UI SDK's scroll areas**, with its scrollbars and the

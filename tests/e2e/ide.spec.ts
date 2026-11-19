@@ -328,3 +328,69 @@ test("selected code keeps 4.5:1 in every skin and theme", async ({ page }) => {
     }
   }
 })
+
+/* ------------------------------------------------------------------ dragging into folders */
+
+const row = (page: Page, path: string) => tree(page).locator(`[data-path="${path}"]`)
+const spoken = (page: Page) => page.evaluate(() => Array.from(document.querySelectorAll("[aria-live]"), (el) => el.textContent ?? "").join(" | "))
+
+/** Drags a row onto another row, or onto the room under the rows (""); `hold` rests there first. */
+async function dragRow(page: Page, path: string, onto: string, { hold = 0, release = true } = {}) {
+  // The room under the last row is the top folder's: in view before the drag starts.
+  if (!onto) await ide(page).locator(".ide-tree").evaluate((el) => el.scrollIntoView({ block: "end" }))
+  const from = (await row(page, path).locator("> .ide-tree-label").boundingBox())!
+  await page.mouse.move(from.x + 40, from.y + from.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(from.x + 40, from.y + from.height / 2 + 8, { steps: 3 })
+  if (onto) {
+    const to = (await row(page, onto).locator("> .ide-tree-label").boundingBox())!
+    await page.mouse.move(to.x + 60, to.y + to.height / 2, { steps: 10 })
+  } else {
+    const list = (await ide(page).locator(".ide-tree").boundingBox())!
+    await page.mouse.move(list.x + 60, list.y + list.height - 12, { steps: 10 })
+  }
+  if (hold) await page.waitForTimeout(hold)
+  if (release) await page.mouse.up()
+}
+
+test("dragging a file onto a folder moves it there, selects it and says so; its tab follows", async ({ page }) => {
+  await dragRow(page, "src/index.ts", "src/lib", { release: false })
+  await expect(row(page, "src/lib")).toHaveAttribute("data-drop-target", "")
+  await expect(page.locator("[data-drag-preview]")).toBeVisible()
+  await page.mouse.up()
+  await expect(row(page, "src/lib/index.ts")).toBeVisible()
+  await expect(row(page, "src/index.ts")).toHaveCount(0)
+  await expect(row(page, "src/lib/index.ts")).toHaveAttribute("aria-selected", "true")
+  await expect.poll(() => spoken(page)).toContain("Moved index.ts to src/lib.")
+  await expect(editor(page, "src/lib/index.ts")).toBeVisible()
+  await expect(page.locator("[data-drop-target], [data-drag-preview]")).toHaveCount(0)
+})
+
+test("onto a file means its folder, below the rows means the top, and a folder can't go inside itself", async ({ page }) => {
+  // Clicks that reach the tree: the press that ends a drag mustn't count as one on the row.
+  await tree(page).evaluate((el) => el.addEventListener("click", () => (el.dataset.clicks = String(Number(el.dataset.clicks ?? 0) + 1))))
+  await dragRow(page, "README.md", "src/config.ts")
+  await expect(row(page, "src/README.md")).toBeVisible()
+  await expect(tab(page, "README.md")).toHaveCount(0)
+  expect(await tree(page).getAttribute("data-clicks")).toBeNull()
+  await dragRow(page, "src/config.ts", "")
+  await expect(row(page, "config.ts")).toBeVisible()
+  await expect.poll(() => spoken(page)).toContain("Moved config.ts to the top folder.")
+  await dragRow(page, "src", "src/lib", { release: false })
+  await expect(page.locator("[data-drop-target]")).toHaveCount(0)
+  await page.mouse.up()
+  await expect(row(page, "src/lib")).toBeVisible()
+})
+
+test("a drag resting on a closed folder opens it, Escape puts it back, and a click still opens a file", async ({ page }) => {
+  await row(page, "src/lib").locator("> .ide-tree-label .ide-tree-chevron").click()
+  await expect(row(page, "src/lib")).toHaveAttribute("aria-expanded", "false")
+  await dragRow(page, "package.json", "src/lib", { hold: 900, release: false })
+  await expect(row(page, "src/lib")).toHaveAttribute("aria-expanded", "true")
+  await page.keyboard.press("Escape")
+  await page.mouse.up()
+  await expect(row(page, "package.json")).toBeVisible()
+  await expect(page.locator("[data-drop-target], [data-drag-preview], [data-drag-source]")).toHaveCount(0)
+  await row(page, "src/lib/greet.ts").locator("> .ide-tree-label").click()
+  await expect(tab(page, "greet.ts")).toBeVisible()
+})

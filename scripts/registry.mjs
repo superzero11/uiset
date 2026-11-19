@@ -403,8 +403,8 @@ const components = [
   [
     "ide",
     "IDE",
-    "A code editor's parts on UI SDK: a file tree on Tree with version control marks and New, Rename, Move and Delete; editor tabs on Tabs; a code editor with syntax colors, indenting and problems; a command palette on Command; problems and a status bar.",
-    ["ide/ide.css", "ide/editing.ts", "code/highlight.ts", "code/code.css", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
+    "A code editor's parts on UI SDK: a file tree on Tree with version control marks, New, Rename, Move and Delete, and files dragged into folders; editor tabs on Tabs; a code editor with syntax colors, indenting and problems; a command palette on Command; problems and a status bar.",
+    ["ide/ide.css", "ide/editing.ts", "ide/file-drag.ts", "code/highlight.ts", "code/code.css", "shell/drag-preview.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
     ["alert-dialog", "button", "command", "dialog", "field", "menu", "scroll-area", "select", "tabs", "textarea", "tree"],
     ["shiki"],
   ],

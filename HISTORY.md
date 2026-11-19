@@ -203,6 +203,7 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
 | UISet's fixes for what UI SDK betas 6–9 fixed are gone                                           | done, not pushed | 2026-11-18: `returnFocus` (UI SDK's `keepFocus` in 8 places), the date picker and tree ring overrides, the wheel's focus-follow (React and web), React's editor tabs' root name; the terminal trims past scrollback while you're scrolled up (new web e2e and React unit tests, mutations caught). Web tabs keep their root name (3c #29). Chrome and WebKit 1734, Firefox 846 (one load-timing test since fixed) |
 | Sortable list (`sortable-list`), React and Web Components                                          | done, not pushed | 2026-11-19: on `createReorder` and `createSelection`, with a guide of its own. 13 unit tests, 8/8 mutations caught |
 | Sortable tree (`sortable-tree`), React and Web Components                                          | done, not pushed | 2026-11-19: on `createTreeReorder`, `createRovingFocus` and `createTypeahead`. 11 unit tests, 11/11 mutations caught |
+| IDE file tree: drag a file or folder into a folder, React and Web Components                    | done, not pushed | 2026-11-19: `ide/file-drag.ts`, shared. 3 e2e tests each in React and web, also in WebKit; 6/6 mutations caught |
 
 ## Decision log
 
@@ -1851,3 +1852,13 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   item that isn't a branch is refused in `set`, read out, and marked while it's carried
   there (a feature request for UI SDK). The IDE's file tree keeps UI SDK's Tree: files sort
   by name, so a drag there should move a file into a folder, not set an order.
+- 2026-11-19 — **The IDE's file tree takes a drag into a folder, not a sortable tree.**
+  Files sort by name, so where a file lands among its neighbours means nothing; only the
+  folder does. The tree stays UI SDK's (its keys, selection, typeahead and controller), and
+  `ide/file-drag.ts` adds a pointer drag from outside it with `bindDrag`, `bindDragPreview`
+  and `createAutoScroll`: onto a folder, into it; onto a file, into its folder; onto the room
+  under the last row (2rem kept there when the tree is movable), to the top. Resting 700 ms
+  on a closed folder opens it, as file managers do. The drop runs the same move as Move to…,
+  which stays the way to move from the keyboard and on a touch screen, where a finger
+  scrolls the tree. A guard against the drop's press counting as a click was dropped:
+  mutation testing showed `bindDrag` already swallows that click.

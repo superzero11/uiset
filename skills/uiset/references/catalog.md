@@ -81,7 +81,7 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 
 ## IDE (docs/ide.md)
 
-- `ide`: A code editor's parts on UI SDK: a file tree on Tree with version control marks and New, Rename, Move and Delete; editor tabs on Tabs; a code editor with syntax colors, indenting and problems; a command palette on Command; problems and a status bar.
+- `ide`: A code editor's parts on UI SDK: a file tree on Tree with version control marks, New, Rename, Move and Delete, and files dragged into folders; editor tabs on Tabs; a code editor with syntax colors, indenting and problems; a command palette on Command; problems and a status bar.
 
 ## Mobile (docs/mobile.md)
 

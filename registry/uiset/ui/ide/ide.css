@@ -133,6 +133,44 @@
     background: var(--ui-muted-foreground);
   }
 
+  /* A file or folder dragged onto a folder: the folder and what's in it are ringed and tinted. */
+  .ide-tree-item[data-drop-target] {
+    border-radius: var(--ui-radius);
+    background: color-mix(in oklch, var(--ui-primary) 10%, transparent);
+    outline: 2px solid var(--ui-primary);
+    outline-offset: -2px;
+  }
+
+  /* A tree whose files can be dragged keeps room under its last row to drop to the top folder. */
+  .ide-files:is([data-movable], [movable]:not([movable="false"])) .ide-tree {
+    padding-block-end: 2rem;
+  }
+
+  /* Onto the tree's empty space: to the top folder, so the whole tree is ringed. */
+  .ide-tree-scroller[data-drop-target] {
+    background: color-mix(in oklch, var(--ui-primary) 6%, transparent);
+    outline: 2px dashed var(--ui-primary);
+    outline-offset: -4px;
+  }
+
+  /* The row being dragged stays as a ghost while its copy follows the pointer. */
+  .ide-tree-item[data-drag-source] > .ide-tree-label {
+    opacity: 0.45;
+  }
+
+  /* The drag's copy: its size, place, edge and surface are set where it's made (file-drag.ts). */
+  [data-drag-preview].ide-tree-label {
+    box-shadow: var(--ui-shadow);
+    cursor: grabbing;
+  }
+
+  @media (forced-colors: active) {
+    .ide-tree-item[data-drop-target],
+    .ide-tree-scroller[data-drop-target] {
+      outline-color: Highlight;
+    }
+  }
+
   .ide-tree-item {
     &[data-status="modified"] > .ide-tree-label {
       --mark: var(--tone-warning);

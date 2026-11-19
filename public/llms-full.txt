@@ -81,7 +81,7 @@ npx shadcn@latest add @uiset/uiset
 | `board` | A kanban board on UI SDK createTransfer: one tab stop, arrows across cards and columns, Space to carry a card, drag with the pointer, column limits, add in place, a details dialog to edit, move or delete, filters, and agent actions. | [Board](./board.md) |
 | `scheduler` | Calendars on UI SDK createSpans: a week, a day or a room timeline where people draw, move and resize events with the pointer or arrows, overlapping events sharing lanes, a month view, a toolbar, an event dialog, and agent actions. | [Scheduler](./scheduler.md) |
 | `canvas` | A node editor on UI SDK's canvas behaviors: pan and zoom, drag nodes or move them with Alt and arrows, spatial focus, Shift-drag box selection, wires drawn by pointer or with C and arrows, a minimap, zoom controls, a toolbar, an inspector, undo, and agent actions. | [Canvas](./canvas.md) |
-| `ide` | A code editor's parts on UI SDK: a file tree on Tree with version control marks and New, Rename, Move and Delete; editor tabs on Tabs; a code editor with syntax colors, indenting and problems; a command palette on Command; problems and a status bar. | [IDE](./ide.md) |
+| `ide` | A code editor's parts on UI SDK: a file tree on Tree with version control marks, New, Rename, Move and Delete, and files dragged into folders; editor tabs on Tabs; a code editor with syntax colors, indenting and problems; a command palette on Command; problems and a status bar. | [IDE](./ide.md) |
 | `mobile` | Phone app parts on UI SDK: rows that swipe aside to actions (createSwipeActions), wheel pickers and a time wheel (bindScrollPicker), bottom sheets and action sheets (Drawer), pull to refresh, an app bar and a tab bar. | [Mobile](./mobile.md) |
 | `terminal` | A terminal on UI SDK's input history and stick-to-bottom: ANSI colors kept readable in every skin, links, streaming commands with progress lines, Tab completion, Ctrl+C and Ctrl+L, built-in help, clear and history, and agent actions. | [Terminal](./terminal.md) |
 | `knob` | A rotary control built as a UI SDK primitive: drag, arrow keys, log scales, double-click reset, agent actions. | [Studio](./studio-kit.md) |
@@ -1091,7 +1091,9 @@ palette.addEventListener("openfile", (e) => openFile(e.detail.value))
   (`movable`), Delete with the Delete key after a confirm (`deletable`). `create`, `rename`
   and `move` carry `refuse(message)`, which keeps the dialog open with your reason. A new or
   renamed item takes focus; a deleted one hands it to its neighbor. An agent's choice of a
-  file opens it.
+  file opens it. With `movable`, a file or folder dragged onto a folder (or a file, meaning
+  its folder, or the room under the last row, meaning the top) fires the same `move`, and a
+  refusal is read out. See [IDE](./ide.md#use).
 - `<uiset-editor-tabs>` is UI SDK's tabs. `renderPanel(path)` fills a file's panel once and
   it stays while the tab is open, so an editor keeps its caret, scroll and undo. Delete on
   a tab, a middle click or its × fires `close`; once the file leaves `files`, focus goes to
@@ -3660,9 +3662,7 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**Sortable lists and trees.** The sortable list and tree are in: drag or pick up with Space,
-move a selection together, and nest rows by moving them sideways. Next, the IDE's file tree
-lets a file be dragged into a folder. M
+Nothing in progress; next is the first item below.
 
 ## Next, in order
 
@@ -3735,7 +3735,8 @@ list).
 
 The root and five skins with sound and haptics; all 55 UI SDK components styled, plus app
 frame, data display and form parts, and the small ones from UI SDK's showcase (scroll edge
-fades, radio cards, rings, a textarea's count, password rules, a confirm button); twelve
+fades, radio cards, rings, a textarea's count, password rules, a confirm button); a
+sortable list and a sortable tree, and files dragged into folders in the IDE; twelve
 kits (chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal,
 Studio, Agent Console); ten page templates; Web Components for every kit and template; a
 schema form agents fill by field name; [agent-check](./agent-check.md), which scores whether
@@ -5844,7 +5845,7 @@ npx shadcn@latest add @uiset/ide-app   # the whole page
 
 | Part             | What it is                                                                                         |
 | ---------------- | -------------------------------------------------------------------------------------------------- |
-| `FileTree`       | Files on UI SDK's Tree, folders first, version control marks; New file, New folder, Rename, Move, Delete |
+| `FileTree`       | Files on UI SDK's Tree, folders first, version control marks; New file, New folder, Rename, Move (or drag onto a folder), Delete |
 | `EditorTabs`     | Open files on UI SDK's Tabs: unsaved dots, same-named files told apart by folder, closing             |
 | `CodeEditor`     | A textarea with line numbers, syntax colors (shiki, themed by every skin), indenting and problems    |
 | `CommandPalette` | Go to a file (⌘P), run a command (⌘⇧P, or start with `>`), go to a line (start with `:`)              |
@@ -5877,6 +5878,13 @@ npx shadcn@latest add @uiset/ide-app   # the whole page
 - `onCreate`, `onRename` and `onMove` get the full new path (or the target folder) and may
   return a message to refuse; the dialog shows it. Names that exist or hold a slash are
   refused before your handler runs. Deleting asks first (`data-agent-confirm`).
+- With `onMove`, a file or folder can also be dragged onto a folder. Files sort by name, so
+  a drop says which folder and not where in it: onto a folder, into it; onto a file, into
+  that file's folder; onto the room under the last row, to the top. The folder is ringed
+  while the drag is over it, a closed one opens if the drag rests on it, and a folder can't
+  go inside itself. A drop runs `onMove` with the same checks as Move to…, then selects the
+  file and says where it went, or why not. Escape cancels a drag. A finger scrolls the tree
+  instead, and Move to… moves on a touch screen and from the keyboard.
 - `status` marks files `modified`, `added`, `deleted`, `untracked` or `conflict`: a letter
   and a color on screen, the word in the item's name. Folders say "has changes".
 - `EditorTabs` asks to close through `onClose`; the file closes when you drop it from
@@ -5904,6 +5912,7 @@ npx shadcn@latest add @uiset/ide-app   # the whole page
 | Anywhere    | ⌘⇧P / Ctrl+Shift+P           | Run a command; `:` then a number goes to a line          |
 | File tree   | Arrows, Home, End, Enter     | UI SDK's Tree; Enter opens a file                        |
 | File tree   | F2, Delete                   | Rename, delete (asks first)                              |
+| File tree   | Escape, while dragging       | Put the dragged file back                                |
 | Tabs        | Arrows, Delete               | UI SDK's Tabs; Delete closes the focused tab             |
 | Editor      | Tab, Shift+Tab               | Indent, outdent (every selected line)                    |
 | Editor      | Enter                        | New line, keeping the indent; one deeper after `{`       |

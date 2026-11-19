@@ -15,9 +15,7 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**Sortable lists and trees.** The sortable list and tree are in: drag or pick up with Space,
-move a selection together, and nest rows by moving them sideways. Next, the IDE's file tree
-lets a file be dragged into a folder. M
+Nothing in progress; next is the first item below.
 
 ## Next, in order
 
@@ -90,7 +88,8 @@ list).
 
 The root and five skins with sound and haptics; all 55 UI SDK components styled, plus app
 frame, data display and form parts, and the small ones from UI SDK's showcase (scroll edge
-fades, radio cards, rings, a textarea's count, password rules, a confirm button); twelve
+fades, radio cards, rings, a textarea's count, password rules, a confirm button); a
+sortable list and a sortable tree, and files dragged into folders in the IDE; twelve
 kits (chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal,
 Studio, Agent Console); ten page templates; Web Components for every kit and template; a
 schema form agents fill by field name; [agent-check](./agent-check.md), which scores whether

@@ -19,6 +19,7 @@ import "@ui-sdk/web/textarea"
 import "@ui-sdk/web/tree"
 import { languageOf, tokenize, type Token } from "@/registry/uiset/ui/code/highlight"
 import { indent, lineCol, moveLines, newline, offsetOf, outdent, type Edit, type Problem } from "@/registry/uiset/ui/ide/editing"
+import { bindFileDrag } from "@/registry/uiset/ui/ide/file-drag"
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/code/code.css"
 import "@/registry/uiset/ui/ide/ide.css"
@@ -43,7 +44,7 @@ const statusMark: Record<FileStatus, [string, string]> = {
 type TreeElement = HTMLElement & {
   paths?: string[]
   value?: string | null
-  api?: { reveal: (value: string) => void; collapseAll: () => boolean; getExpanded: () => string[]; setValue: (value: string | null) => boolean }
+  api?: { reveal: (value: string) => void; collapseAll: () => boolean; getExpanded: () => string[]; expand: (value: string) => boolean; setValue: (value: string | null) => boolean }
 }
 type DialogElement = HTMLElement & { open: boolean; api?: { open: () => Promise<unknown>; close: () => boolean; getPayload: () => unknown } }
 type NameDialog = { mode: "file" | "folder" | "rename" | "move"; path: string }
@@ -215,8 +216,18 @@ class UISetFileTree extends Evented<UISetFileTreeEvents>() {
       h("ui-alert-dialog-content", { hidden: true }, alertTitle, alertText, h("div", { class: "ide-dialog-actions" }, h("ui-alert-dialog-close", null, h("button", { type: "button" }, "Keep it")), h("ui-alert-dialog-close", null, confirm))),
     ) as DialogElement
     this.classList.add("ide-files")
-    const treeArea = scrollArea(tree, { axis: "both", frame: { class: "ide-tree-frame" }, viewport: { class: "ide-tree-scroller", role: "group", "aria-label": "Files" } }).root
-    this.replaceChildren(h("section", { class: "ide-files-section", "aria-labelledby": titleId }, h("div", { class: "ide-pane-header" }, title, actions), treeArea), dialog, alert)
+    const { root: treeArea, view: treeView } = scrollArea(tree, { axis: "both", frame: { class: "ide-tree-frame" }, viewport: { class: "ide-tree-scroller", role: "group", "aria-label": "Files" } })
+    const section = h("section", { class: "ide-files-section", "aria-labelledby": titleId }, h("div", { class: "ide-pane-header" }, title, actions), treeArea)
+    this.replaceChildren(section, dialog, alert)
+    // A file or folder dragged onto a folder moves there, with `movable`, through the same
+    // checks and `move` event as Move to….
+    bindFileDrag(section, tree, treeView, () => ({
+      enabled: () => isOn(this, "movable"),
+      isFolder: (path) => this.model().folders.has(path),
+      isExpanded: (folder) => tree.api?.getExpanded().includes(folder) ?? false,
+      expand: (folder) => void tree.api?.expand(folder),
+      move: (from, to) => this.dragMove(from, to),
+    }))
     this.#dom = { title, actions, newFile, newFolder, more, menuContent, tree, dialog, dialogContent, alert, alertTitle, alertText }
   }
 
@@ -418,6 +429,19 @@ class UISetFileTree extends Evented<UISetFileTreeEvents>() {
     this.closeDialog()
     this.#reveal = target
     this.select(target)
+  }
+
+  /** A drop's move: refused, with why, when the name's taken or the page says no. */
+  private dragMove(from: string, to: string) {
+    const { files, folders } = this.model()
+    const target = to ? `${to}/${baseName(from)}` : baseName(from)
+    if (files.has(target) || folders.has(target)) return `${baseName(target)} already exists there.`
+    let refused: string | null = null
+    this.dispatchEvent(new CustomEvent("move", { detail: { value: to, from, refuse: (message: string) => (refused = message) } }))
+    if (refused) return refused
+    this.#reveal = target
+    this.select(target)
+    return null
   }
 
   private closeDialog() {

@@ -12,7 +12,7 @@ npx shadcn@latest add @uiset/ide-app   # the whole page
 
 | Part             | What it is                                                                                         |
 | ---------------- | -------------------------------------------------------------------------------------------------- |
-| `FileTree`       | Files on UI SDK's Tree, folders first, version control marks; New file, New folder, Rename, Move, Delete |
+| `FileTree`       | Files on UI SDK's Tree, folders first, version control marks; New file, New folder, Rename, Move (or drag onto a folder), Delete |
 | `EditorTabs`     | Open files on UI SDK's Tabs: unsaved dots, same-named files told apart by folder, closing             |
 | `CodeEditor`     | A textarea with line numbers, syntax colors (shiki, themed by every skin), indenting and problems    |
 | `CommandPalette` | Go to a file (⌘P), run a command (⌘⇧P, or start with `>`), go to a line (start with `:`)              |
@@ -45,6 +45,13 @@ npx shadcn@latest add @uiset/ide-app   # the whole page
 - `onCreate`, `onRename` and `onMove` get the full new path (or the target folder) and may
   return a message to refuse; the dialog shows it. Names that exist or hold a slash are
   refused before your handler runs. Deleting asks first (`data-agent-confirm`).
+- With `onMove`, a file or folder can also be dragged onto a folder. Files sort by name, so
+  a drop says which folder and not where in it: onto a folder, into it; onto a file, into
+  that file's folder; onto the room under the last row, to the top. The folder is ringed
+  while the drag is over it, a closed one opens if the drag rests on it, and a folder can't
+  go inside itself. A drop runs `onMove` with the same checks as Move to…, then selects the
+  file and says where it went, or why not. Escape cancels a drag. A finger scrolls the tree
+  instead, and Move to… moves on a touch screen and from the keyboard.
 - `status` marks files `modified`, `added`, `deleted`, `untracked` or `conflict`: a letter
   and a color on screen, the word in the item's name. Folders say "has changes".
 - `EditorTabs` asks to close through `onClose`; the file closes when you drop it from
@@ -72,6 +79,7 @@ npx shadcn@latest add @uiset/ide-app   # the whole page
 | Anywhere    | ⌘⇧P / Ctrl+Shift+P           | Run a command; `:` then a number goes to a line          |
 | File tree   | Arrows, Home, End, Enter     | UI SDK's Tree; Enter opens a file                        |
 | File tree   | F2, Delete                   | Rename, delete (asks first)                              |
+| File tree   | Escape, while dragging       | Put the dragged file back                                |
 | Tabs        | Arrows, Delete               | UI SDK's Tabs; Delete closes the focused tab             |
 | Editor      | Tab, Shift+Tab               | Indent, outdent (every selected line)                    |
 | Editor      | Enter                        | New line, keeping the indent; one deeper after `{`       |
