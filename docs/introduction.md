@@ -57,7 +57,7 @@ included (the kits and templates). See [Coming from shadcn/ui](./migrate-from-sh
 
 ## Status
 
-UI SDK is in public beta (`0.1.0-beta.5`), and UISet pins that exact version. Every item is
+UI SDK is in public beta (`0.1.0-beta.10`), and UISet pins that exact version. Every item is
 tested for accessibility in every skin and theme, for keyboard use, for agent use, and for
 a clean install into a new app. Expect API changes until UI SDK reaches 1.0; the
 [roadmap](./roadmap.md) says what's next.

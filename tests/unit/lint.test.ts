@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest"
 import { lint, type FileRule, type RepoContext, type RepoRule } from "../../scripts/lint/core.ts"
 import { noDeferredFocus, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "../../scripts/lint/rules/code.ts"
 import { rules } from "../../scripts/lint/rules/index.ts"
-import { currentUiSdk, statedCounts } from "../../scripts/lint/rules/facts.ts"
+import { currentUiSdk, installVersions, statedCounts } from "../../scripts/lint/rules/facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "../../scripts/lint/rules/plan.ts"
 
 // Each rule gets a sample it must catch and one it must let through, so no rule goes quiet.
@@ -50,6 +50,12 @@ describe("code rules", () => {
   // lint-ignore tests/no-only: the sample tests/no-only must catch
   fileRule(noOnly, "tests/e2e/board.spec.ts", `test.only("a card moves", async () => {})`, `test("a card moves", async () => {})`)
   fileRule(statedCounts, "docs/introduction.md", `| Components | 55, plus 21 app parts |`, `| Components | 55, plus 22 app parts | 5 skins | 100 components on one page |`)
+  fileRule(
+    installVersions,
+    "docs/vue.md",
+    "pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.5 @ui-sdk/core@0.1.0-beta.5",
+    "pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.10 @ui-sdk/core@0.1.0-beta.10\n`@ui-sdk/vue` 0.1.0-beta.5, on Node 24.21 (what was tested then)",
+  )
   test("content/current-ui-sdk catches a stale UI SDK version on the site and lets the pinned one through", () => {
     const pkg = `{ "dependencies": { "@ui-sdk/react": "0.1.0-beta.10" } }`
     const stale = repo({ "package.json": pkg, "src/site/pages/home.tsx": `title: "On UI SDK beta.9"` })

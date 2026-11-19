@@ -14,12 +14,12 @@ This page describes `@uiset/web` 0.3.0 or later.
 npm install @uiset/web @ui-sdk/web
 ```
 
-With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.5`, the exact
-version UISet pins. pnpm takes UI SDK's `latest` tag instead (`0.1.0-beta.3`) and reports
-unmet peers, so name the versions:
+With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.10`, the exact
+version UISet pins. pnpm takes UI SDK's `latest` tag, the same beta today, which moves on with
+UI SDK's next one, so name the versions:
 
 ```bash
-pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.5 @ui-sdk/core@0.1.0-beta.5
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.10 @ui-sdk/core@0.1.0-beta.10
 ```
 
 `shiki` is optional: with it, code in chats is colored; without it the app still builds and
@@ -453,7 +453,7 @@ they render the same parts with the same `data-slot` and state attributes, and `
 styles those attributes. Install the version UISet pins:
 
 ```bash
-npm install @ui-sdk/vue@0.1.0-beta.5
+npm install @ui-sdk/vue@0.1.0-beta.10
 ```
 
 ```vue
@@ -623,6 +623,12 @@ What each kit offers agents, approvals and the Agent Console are in
 [Building with AI agents](./ai.md).
 
 ## What was tested
+
+On 2026-11-19, the first screen above in a new app, with `@uiset/web` 0.4.0 and UI SDK
+0.1.0-beta.10 from npm (`npm install @uiset/web @ui-sdk/web`), Vue 3.5.45, Vite 8.3.8 and
+`vue-tsc` 3.3.14. It typechecks with default settings and with `strictTemplates` and the
+declarations above, builds, and in Chrome its elements upgrade, take the base skin and
+update Vue's state. The run through every code block on this page, next, was on beta.5.
 
 On 2026-11-16, in a new Vite app from the `vue-ts` template: Vue 3.5.45, Vite 8.3.8,
 `@vitejs/plugin-vue` 6.0.11, `vue-tsc` 3.3.14 and TypeScript 6.0.3, with `@uiset/web`

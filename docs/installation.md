@@ -109,7 +109,7 @@ pnpm resolves UI SDK's `latest` tag, which is an older beta than the one UISet p
 the versions there:
 
 ```bash
-pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.5 @ui-sdk/core@0.1.0-beta.5
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.10 @ui-sdk/core@0.1.0-beta.10
 ```
 
 ```html

@@ -82,8 +82,6 @@ for [#848](https://github.com/vercel-labs/ui/issues/848) ships after beta.10.
 - Two awesome-shadcn-ui lists:
   [birobirobiro/awesome-shadcn-ui#772](https://github.com/birobirobiro/awesome-shadcn-ui/pull/772)
   and [bytefer/awesome-shadcn-ui#61](https://github.com/bytefer/awesome-shadcn-ui/pull/61).
-- `@uiset/web` 0.4.0 on npm. Then the install commands and the README badge move from
-  beta.5 to beta.10.
 
 ## Shipped so far
 

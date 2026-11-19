@@ -1713,3 +1713,14 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   2026-11-17; the changelog is dated and names the three changes to act on. A dry run packs 76
   files, 268 kB: the module, the stylesheet and 69 type files. The owner publishes; then the
   install commands and the README badge move from beta.5 to beta.10.
+- 2026-11-19 — **@uiset/web 0.4.0 on npm**, published by the owner after an expired npm
+  sign-in (a 401 that npm reports as 404 on the upload) was renewed. The install commands,
+  the README badge and the Vue and Svelte guides move from beta.5 to beta.10, and two
+  statements of the pin that had said beta.5 since the move to beta.9 (the docs introduction,
+  the README) are fixed. A new rule, `content/install-versions`, holds install lines and
+  stated versions in README.md, web/README.md and docs/ to package.json's pin. The package's
+  own README, inside the 0.4.0 tarball, still says beta.5 until the next release. The guides
+  were checked against the published package: a new Vue app and a new Svelte app with
+  their first screen install with `npm install @uiset/web @ui-sdk/web`, typecheck (vue-tsc
+  with and without `strictTemplates`; svelte-check with no warnings), build, and in Chrome
+  upgrade, take Base's black-and-white default and update their state.
