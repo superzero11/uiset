@@ -20,7 +20,7 @@ UI SDK's agent bridge does. The Agent Console is the human side of that bridge:
 | See every change the agent made             | `createHistory`, `describeEntry`                           | `AgentActivity`              |
 | Undo the agent, keep my own edits           | `history.undoSource("agent")`                              | Undo button                  |
 | See _where_ it changed something            | `observe` + `elementOf`                                    | `highlightAgent()`           |
-| Talk to it                                  | `createStickToBottom`, `createInputHistory`, `isComposing` | `AgentThread`, `AgentPrompt` |
+| Talk to it                                  | `ScrollArea` (`stickToEnd`), `createInputHistory`, `isComposing` | `AgentThread`, `AgentPrompt` |
 | See what it sees                            | `agent.snapshot()`                                         | Page tab                     |
 | Plug in any model                           | `agentTools` (snapshot, query, act)                        | `runAgentTool()`             |
 

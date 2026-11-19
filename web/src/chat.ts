@@ -9,7 +9,7 @@
 // A message keeps its element, and each part its own, as text streams in: open disclosures,
 // a code block's Wrap and colors, and focus all stay, and a screen reader hears what's new
 // rather than the conversation again.
-import { announce, createInputHistory, createStickToBottom, isComposing } from "@ui-sdk/core"
+import { announce, createInputHistory, isComposing } from "@ui-sdk/core"
 import "@ui-sdk/web/alert-dialog"
 import "@ui-sdk/web/avatar"
 import "@ui-sdk/web/button"
@@ -29,6 +29,7 @@ import "@/registry/uiset/ui/chat/chat.css"
 import "@/registry/uiset/ui/code/code.css"
 import "./chat.css"
 import { attr, defineElement, ElementBase, Evented, h, isOn, keepInputInside, place, reportInput, upgradeProperties } from "./dom"
+import { nameScrollArea, scrollArea, type ScrollAreaApi } from "./scroll"
 import { safeUrl, sameOriginImages } from "./urls"
 
 type ToolState =
@@ -92,7 +93,6 @@ const textOf = (message: ChatMessage) =>
     .filter((p): p is { type: "text"; text: string } => p.type === "text")
     .map((p) => p.text)
     .join("\n\n")
-const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches
 
 /** A signature for "did this change": BigInt and circular tool input or output can't stop it. */
 function signature(value: unknown) {
@@ -143,7 +143,7 @@ function codeFigure(text: string, language: string | undefined, name: string): C
     "figure",
     { class: "chat-code" },
     h("figcaption", { class: "chat-code-header" }, h("span", { translate: "no" }, title), h("span", { class: "chat-code-actions" }, toggle, h("ui-button", null, copyButton))),
-    h("pre", { tabindex: "0", role: "region", "aria-label": name, dir: "ltr" }, code),
+    scrollArea(h("pre", null, code), { axis: "x", frame: { class: "chat-code-scroll", dir: "ltr" }, viewport: { role: "region", "aria-label": name } }).root,
   )
   toggle.addEventListener("pressedchange", (event) => figure.toggleAttribute("data-wrap", !!(event as CustomEvent<{ value: boolean }>).detail.value))
   view.figure = figure
@@ -205,6 +205,11 @@ function json(value: unknown) {
   }
 }
 
+/** A tool's input or output, in a scroll area of its own named by `label`. */
+function toolCode(code: Node, label: string) {
+  return scrollArea(h("pre", null, code), { axis: "both", frame: { class: "chat-tool-code", dir: "ltr" }, viewport: { role: "region", "aria-label": label } }).root
+}
+
 function host(href: string) {
   try {
     return new URL(href).hostname.replace(/^www\./, "")
@@ -255,9 +260,8 @@ class UISetChat extends Evented<UISetChatEvents>() {
   #feedback: Record<string, Feedback> = {}
   #allowImage: (url: URL) => boolean = sameOriginImages
   #queued = false
-  #stick = createStickToBottom({ threshold: 32 })
   #views = new Map<string, MessageView>()
-  #dom?: { scroller: HTMLElement; log: HTMLElement; jump: HTMLElement; jumpButton: HTMLButtonElement; empty: HTMLElement; thinking: HTMLElement; error: HTMLElement }
+  #dom?: { area: HTMLElement & { api: ScrollAreaApi }; scroller: HTMLElement; log: HTMLElement; jump: HTMLElement; jumpButton: HTMLButtonElement; empty: HTMLElement; thinking: HTMLElement; error: HTMLElement }
   // Open or closed, per disclosure, as the person left it.
   #open = new Map<string, boolean>()
   #cleanups: (() => void)[] = []
@@ -316,10 +320,14 @@ class UISetChat extends Evented<UISetChatEvents>() {
     if (!this.#dom) {
       this.classList.add("chat-thread")
       const log = h("div", { role: "log", class: "chat-thread-log" })
-      const scroller = h("div", { class: "chat-thread-scroller", role: "region", tabindex: "0" }, log)
+      // The scroll area follows new text until you scroll up (stick-to-end); away from the end,
+      // Jump to latest brings you back.
+      const area = scrollArea(log, { frame: { class: "chat-thread-frame", "stick-to-end": true }, viewport: { class: "chat-thread-scroller", role: "region" } })
+      const scroller = area.view
+      const root = area.root as HTMLElement & { api: ScrollAreaApi }
       const jumpButton = h("button", { type: "button", "data-variant": "outline", class: "chat-thread-jump" }, "Jump to latest") as HTMLButtonElement
       jumpButton.addEventListener("click", () => {
-        this.#stick.scrollToBottom({ behavior: reducedMotion() ? "auto" : "smooth" })
+        root.api.scrollToEnd({ behavior: "smooth" })
         // The button goes once the log is at its end; focus goes to the log.
         scroller.focus({ preventScroll: true })
       })
@@ -327,11 +335,14 @@ class UISetChat extends Evented<UISetChatEvents>() {
       const empty = h("div", { class: "chat-empty" })
       const thinking = h("div", { class: "chat-message", "data-from": "assistant", "aria-busy": "true" }, h("div", { class: "chat-message-body" }, h("span", { class: "chat-shimmer" }, "Thinking…")))
       const error = h("div", { class: "chat-error", role: "alert" })
-      this.replaceChildren(scroller, jump)
-      this.#dom = { scroller, log, jump, jumpButton, empty, thinking, error }
+      this.replaceChildren(area.root, jump)
+      this.#dom = { area: root, scroller, log, jump, jumpButton, empty, thinking, error }
     }
     this.#cleanups.forEach((cleanup) => cleanup())
-    this.#cleanups = [this.#stick.connect(this.#dom.scroller), this.#stick.subscribe(() => this.showJump())]
+    const scroller = this.#dom.scroller
+    const onScroll = () => this.showJump()
+    scroller.addEventListener("scroll", onScroll, { passive: true })
+    this.#cleanups = [() => scroller.removeEventListener("scroll", onScroll)]
     this.schedule()
   }
 
@@ -341,8 +352,7 @@ class UISetChat extends Evented<UISetChatEvents>() {
   }
 
   private showJump() {
-    const state = this.#stick.get()
-    if (this.#dom) this.#dom.jump.style.display = state.unseen && !state.following ? "" : "none"
+    if (this.#dom) this.#dom.jump.style.display = this.#dom.area.api && !this.#dom.area.api.isAtEnd() ? "" : "none"
   }
 
   private schedule() {
@@ -362,7 +372,7 @@ class UISetChat extends Evented<UISetChatEvents>() {
     const dom = this.#dom
     if (!dom) return
     const focusInside = this.contains(document.activeElement)
-    dom.scroller.setAttribute("aria-label", this.getAttribute("label") ?? "Conversation")
+    nameScrollArea(dom.area, this.getAttribute("label") ?? "Conversation")
     this.showJump()
     const messages = this.#messages
     const status = this.#status
@@ -606,10 +616,10 @@ class UISetChat extends Evented<UISetChatEvents>() {
     const where = `message ${ordinal}, step ${index + 1}`
     const panel: Node[] = []
     if (part.input !== undefined)
-      panel.push(h("section", null, h("h4", null, "Input"), h("pre", { tabindex: "0", role: "region", "aria-label": `${title} input, ${where}`, dir: "ltr" }, h("code", { translate: "no" }, json(part.input)))))
+      panel.push(h("section", null, h("h4", null, "Input"), toolCode(h("code", { translate: "no" }, json(part.input)), `${title} input, ${where}`)))
     if (part.errorText) panel.push(h("section", null, h("h4", null, "Error"), h("p", { class: "chat-tool-error" }, part.errorText)))
     else if (part.output !== undefined)
-      panel.push(h("section", null, h("h4", null, "Output"), h("pre", { tabindex: "0", role: "region", "aria-label": `${title} output, ${where}`, dir: "ltr" }, h("code", { translate: "no" }, json(part.output)))))
+      panel.push(h("section", null, h("h4", null, "Output"), toolCode(h("code", { translate: "no" }, json(part.output)), `${title} output, ${where}`)))
     if (status === "approval") {
       const decide = (approved: boolean) => this.emit("approve", { value: approved, id: message.id, part: index })
       const allow = h("button", { type: "button", "data-variant": "solid", "data-agent-confirm": `Runs ${title}`, "data-focus-key": `${key}:allow` }, "Allow")

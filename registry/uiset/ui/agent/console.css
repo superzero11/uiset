@@ -192,9 +192,9 @@
     color: var(--ui-muted-foreground);
   }
 
+  /* The snapshot scrolls in a UI SDK scroll area; the viewport holds the table. */
   .agent-snapshot-view {
     max-height: var(--agent-thread-height, 22rem);
-    overflow: auto;
 
     table {
       width: 100%;

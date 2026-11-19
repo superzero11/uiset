@@ -3,7 +3,7 @@
 // Ctrl+L, on the same screen (terminal/ansi.ts) and the same session (terminal/session.ts)
 // as the React Terminal: built-in help, clear and history, streaming commands, agents
 // running commands through the same path as the person.
-import { announce, createInputHistory, createStickToBottom, isComposing, matchesShortcut } from "@ui-sdk/core"
+import { announce, createInputHistory, isComposing, matchesShortcut } from "@ui-sdk/core"
 import { createParts } from "@ui-sdk/web"
 import "@ui-sdk/web/button"
 import "@ui-sdk/web/input"
@@ -11,6 +11,7 @@ import { plain, Screen, urlPattern, type Run, type ScreenLine } from "@/registry
 import { createTerminalSession, english, terminalPrimitive, type TerminalCommand, type TerminalControllerApi, type TerminalIO, type TerminalMessages, type TerminalResult } from "@/registry/uiset/ui/terminal/session"
 import "@/registry/uiset/ui/terminal/terminal.css"
 import { attr, h, holdRender, uid } from "./dom"
+import { nameScrollArea, scrollArea, type ScrollAreaApi } from "./scroll"
 
 type TerminalElement = HTMLElement & {
   commands?: Record<string, TerminalCommand>
@@ -54,14 +55,18 @@ const viewOf = (el: TerminalElement) => {
 class TerminalView {
   readonly screen: Screen
   readonly session: ReturnType<typeof createTerminalSession>
-  private scroller = h("div", { class: "terminal-scroll", role: "log", "aria-relevant": "additions", tabindex: "0", translate: "no" })
+  // The scroll area follows the output's end until you scroll up (stick-to-end). Output that
+  // arrives while you read above offers New output below.
+  private area = scrollArea(null, { frame: { class: "terminal-frame", "stick-to-end": true }, viewport: { class: "terminal-scroll", role: "log", "aria-relevant": "additions", translate: "no" } })
+  private scroller = this.area.view
+  private lineBox = this.area.content
   private jump: HTMLElement
   private input: HTMLInputElement
   private status = h("span", { class: "terminal-status", "aria-hidden": "true" })
   private ps1 = h("span", { class: "terminal-ps1", "aria-hidden": "true" })
   private help = h("p", { id: uid("terminal-help"), hidden: true })
   private lines = new Map<number, { el: HTMLElement; version: number; prompt: string }>()
-  private stick = createStickToBottom({ threshold: 24 })
+  private unseen = false
   private frame: number | null = null
   private lastTab: string | null = null
   private welcomed = false
@@ -100,7 +105,7 @@ class TerminalView {
     })
     const jumpButton = h("button", { type: "button", "data-variant": "outline", class: "terminal-jump" })
     jumpButton.addEventListener("click", () => {
-      this.stick.scrollToBottom()
+      this.toEnd()
       // The button goes once you're at the end; the prompt takes focus.
       this.input.focus({ preventScroll: true })
     })
@@ -112,13 +117,16 @@ class TerminalView {
       if (this.session.running()) return announce(this.messages.stillRunning)
       this.history.reset()
       this.setValue("")
-      this.stick.scrollToBottom()
+      this.toEnd()
       void this.session.execute(value)
     })
     el.classList.add("terminal")
-    el.replaceChildren(this.scroller, this.jump, form, this.help)
-    this.stick.connect(this.scroller)
-    this.stick.subscribe(() => this.drawJump())
+    el.replaceChildren(this.area.root, this.jump, form, this.help)
+    this.scroller.addEventListener("scroll", () => {
+      if (!this.unseen || !this.view.isAtEnd()) return
+      this.unseen = false
+      this.drawJump()
+    }, { passive: true })
     // A click on the output puts the caret in the prompt, unless it selected text. A tap
     // doesn't: it would open the phone's keyboard over what you're reading.
     el.addEventListener("pointerup", (event) => {
@@ -156,13 +164,29 @@ class TerminalView {
       // Past scrollback, old lines go even while you're scrolled up: the view stays put.
       this.screen.trim(Number(this.el.getAttribute("scrollback")) || 2000)
       this.drawLines()
+      if (!this.unseen && !this.view.isSticking()) {
+        this.unseen = true
+        this.drawJump()
+      }
     })
+  }
+
+  /** The scroll area's controller. */
+  private get view() {
+    return (this.area.root as HTMLElement & { api: ScrollAreaApi }).api
+  }
+
+  private toEnd() {
+    this.view.scrollToEnd()
+    this.unseen = false
+    this.drawJump()
   }
 
   private drawChrome() {
     const label = this.el.getAttribute("label") ?? this.el.getAttribute("aria-label") ?? "Terminal"
     attr(this.el, "aria-label", label)
-    attr(this.scroller, "aria-label", `${label} output`)
+    // Not "<label> output": that would contain the terminal's own name for agents.
+    nameScrollArea(this.area.root, "Output")
     attr(this.input, "aria-label", this.messages.command)
     this.ps1.textContent = this.prompt
     this.help.textContent = this.messages.help
@@ -171,8 +195,7 @@ class TerminalView {
   }
 
   private drawJump() {
-    const stuck = this.stick.get()
-    this.jump.style.display = stuck.unseen && !stuck.following ? "" : "none"
+    this.jump.style.display = this.unseen ? "" : "none"
   }
 
   /** The lines, kept by id: one is drawn again only when it changed. */
@@ -194,9 +217,9 @@ class TerminalView {
     // New lines go at the end; a log hears only what's added.
     let previous: Element | null = null
     for (const el of els) {
-      if (el.parentElement !== this.scroller || el.previousElementSibling !== previous) {
+      if (el.parentElement !== this.lineBox || el.previousElementSibling !== previous) {
         if (previous) previous.after(el)
-        else this.scroller.prepend(el)
+        else this.lineBox.prepend(el)
       }
       previous = el
     }
@@ -235,7 +258,7 @@ class TerminalView {
   }
 
   run(line: string) {
-    this.stick.scrollToBottom()
+    this.toEnd()
     void this.session.execute(line)
   }
 

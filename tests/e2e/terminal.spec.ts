@@ -3,7 +3,7 @@ import { openGallery } from "./gallery"
 
 const term = (page: Page) => page.getByRole("group", { name: "Shell", exact: true })
 const input = (page: Page) => term(page).getByRole("textbox", { name: /Command/ })
-const output = (page: Page) => term(page).getByRole("log", { name: "Shell output" })
+const output = (page: Page) => term(page).getByRole("log", { name: "Output" })
 const run = async (page: Page, line: string) => {
   await input(page).fill(line)
   await input(page).press("Enter")

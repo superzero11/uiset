@@ -8,6 +8,7 @@ import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import remend from "remend"
 import { unified } from "unified"
+import { scrollArea } from "./scroll"
 import { safeUrl, sameOriginImages } from "./urls"
 
 type HastNode =
@@ -119,13 +120,7 @@ function toDom(nodes: HastNode[], options: Options, counter: { code: number }): 
       }
     }
     if (tag === "table") {
-      const region = document.createElement("div")
-      region.className = "chat-table"
-      region.setAttribute("role", "region")
-      region.setAttribute("aria-label", "Table")
-      region.tabIndex = 0
-      region.append(element)
-      out.push(region)
+      out.push(scrollArea(element, { axis: "x", frame: { class: "chat-table" }, viewport: { role: "region", "aria-label": "Table" } }).root)
       continue
     }
     out.push(element)

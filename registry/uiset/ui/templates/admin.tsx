@@ -34,6 +34,7 @@ import {
 import { EmptyState } from "../empty-state"
 import { Field, FieldError, FieldLabel, Input } from "../field"
 import { PageHeader } from "../page-header"
+import { ScrollBox } from "../scroll-area"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger } from "../select"
 import { Icon } from "../shell/icons"
 import { toast } from "../toast"
@@ -332,11 +333,15 @@ function AdminTemplate({
       <Drawer side="end" preventEdgeSwipe open={drawerOpen} onOpenChange={setDrawerOpen}>
         <DrawerBackdrop />
         <DrawerContent className="admin-drawer">
-          <DrawerTitle>{editing ? `Edit ${editing.name}` : "New customer"}</DrawerTitle>
-          <DrawerDescription>
-            {editing ? `Customer since ${day.format(editing.joined)}.` : "They'll get a welcome email."}
-          </DrawerDescription>
-          <CustomerForm key={opened} customer={editing} onSave={save} />
+          <ScrollBox data-frame="none" className="admin-drawer-frame" viewport={{ className: "admin-drawer-scroller", role: "group", "aria-label": "Content" }}>
+            <div className="admin-drawer-body">
+              <DrawerTitle>{editing ? `Edit ${editing.name}` : "New customer"}</DrawerTitle>
+              <DrawerDescription>
+                {editing ? `Customer since ${day.format(editing.joined)}.` : "They'll get a welcome email."}
+              </DrawerDescription>
+              <CustomerForm key={opened} customer={editing} onSave={save} />
+            </div>
+          </ScrollBox>
         </DrawerContent>
       </Drawer>
     </AppShell>

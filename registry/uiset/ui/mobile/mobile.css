@@ -355,12 +355,11 @@
     font-size: 0.875rem;
   }
 
+  /* The body scrolls in a UI SDK scroll area under the sheet's title. */
   .mobile-sheet-body {
     display: grid;
     align-content: start;
     gap: 1rem;
-    min-block-size: 0;
-    overflow: auto;
   }
 
   /* The body spaces its children with its gap; their own margins would stack on it. */
@@ -541,19 +540,10 @@
     }
   }
 
-  .mobile-refresh-scroll {
-    position: relative;
-    min-block-size: 0;
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
+  /* The list scrolls in a UI SDK scroll area; a pull moves the whole area, scrollbar and all. */
+  .mobile-refresh-frame {
     translate: 0 var(--pull, 0px);
-    touch-action: pan-y;
     transition: translate 260ms cubic-bezier(0.2, 0.9, 0.3, 1);
-
-    /* At the top, a finger pulling down is ours; scrolling down stays the browser's. */
-    &[data-at-top] {
-      touch-action: pan-x pan-down;
-    }
 
     [data-state="pulling"] &,
     [data-state="ready"] & {
@@ -562,6 +552,17 @@
 
     @media (prefers-reduced-motion: reduce) {
       transition: none;
+    }
+  }
+
+  .mobile-refresh-scroll {
+    position: relative;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+
+    /* At the top, a finger pulling down is ours; scrolling down stays the browser's. */
+    &[data-at-top] {
+      touch-action: pan-x pan-down;
     }
   }
 

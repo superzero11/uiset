@@ -13,6 +13,7 @@ import type { createApprovals } from "@/registry/uiset/ui/agent/approvals"
 import { highlightElement } from "@/registry/uiset/ui/agent/highlight"
 import "@/registry/uiset/ui/agent/console.css"
 import { attr, defineElement, ElementBase, h, uid, upgradeProperties } from "./dom"
+import { scrollArea } from "./scroll"
 
 type History = ReturnType<typeof createHistory>
 type Approvals = ReturnType<typeof createApprovals>
@@ -244,6 +245,7 @@ class UISetAgentActivity extends ElementBase {
 
 /** <uiset-agent-snapshot within="#settings"> is a table of what `agent` can see: each control, its kind, state and actions. */
 class UISetAgentSnapshot extends ElementBase {
+  #area = scrollArea(null, { axis: "both", frame: { class: "agent-snapshot-frame" }, viewport: { class: "agent-snapshot-view", role: "region", "aria-label": "Snapshot" } })
   static observedAttributes = ["within"]
   #agent?: Agent
   #stop?: () => void
@@ -261,7 +263,7 @@ class UISetAgentSnapshot extends ElementBase {
 
   connectedCallback() {
     upgradeProperties(this, ["agent"])
-    this.classList.add("agent-snapshot-view")
+    if (!this.#area.root.isConnected) this.replaceChildren(this.#area.root)
     this.schedule()
   }
   attributeChangedCallback() {
@@ -283,7 +285,7 @@ class UISetAgentSnapshot extends ElementBase {
       if (value === undefined || value === null) return "—"
       return typeof value === "string" ? `“${value}”` : String(value)
     }
-    this.replaceChildren(
+    this.#area.content.replaceChildren(
       h(
         "table",
         null,

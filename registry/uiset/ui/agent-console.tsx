@@ -21,6 +21,7 @@ import type { Approvals } from "./agent/approvals"
 import { highlightElement } from "./agent/highlight"
 import type { Agent } from "./agent/tools"
 import { Button } from "./button"
+import { ScrollBox } from "./scroll-area"
 import "./agent/console.css"
 
 type History = ReturnType<typeof createHistory>
@@ -260,7 +261,12 @@ function AgentSnapshot({
   }, [agent, within, version])
 
   return (
-    <div className="agent-snapshot-view">
+    <ScrollBox
+      axis="both"
+      data-frame="none"
+      className="agent-snapshot-frame"
+      viewport={{ className: "agent-snapshot-view", role: "region", "aria-label": "Snapshot" }}
+    >
       <table>
         <caption className="agent-visually-hidden">
           What the agent can see on this page
@@ -284,7 +290,7 @@ function AgentSnapshot({
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollBox>
   )
 }
 

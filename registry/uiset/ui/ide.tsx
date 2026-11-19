@@ -39,6 +39,7 @@ import {
 import { Field, FieldError, FieldLabel, Input } from "./field"
 import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "./menu"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger } from "./select"
+import { ScrollBox } from "./scroll-area"
 import { Icon } from "./shell/icons"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "./tabs"
 import { Textarea } from "./textarea"
@@ -325,26 +326,28 @@ function FileTree({
           </div>
         )}
       </div>
-      <Tree
-        aria-labelledby={titleId}
-        className="ide-tree"
-        items={items}
-        controller={tree}
-        value={selected}
-        onValueChange={(next, details) => {
-          select(next as string | null)
-          // An agent's choice of a file opens it, as Enter or a click would for a person.
-          if (details?.reason === "imperative" && typeof next === "string" && files.has(next)) onOpen?.(next)
-        }}
-        activation="automatic"
-        defaultExpanded={defaultExpanded}
-        onAction={(path) => {
-          if (files.has(path)) onOpen?.(path)
-        }}
-        onKeyDown={keyDown}
-      >
-        <FileItems list={items} folders={folders} status={status} changed={changedFolders} />
-      </Tree>
+      <ScrollBox axis="both" data-frame="none" className="ide-tree-frame" viewport={{ className: "ide-tree-scroller", role: "group", "aria-label": "Files" }}>
+        <Tree
+          aria-labelledby={titleId}
+          className="ide-tree"
+          items={items}
+          controller={tree}
+          value={selected}
+          onValueChange={(next, details) => {
+            select(next as string | null)
+            // An agent's choice of a file opens it, as Enter or a click would for a person.
+            if (details?.reason === "imperative" && typeof next === "string" && files.has(next)) onOpen?.(next)
+          }}
+          activation="automatic"
+          defaultExpanded={defaultExpanded}
+          onAction={(path) => {
+            if (files.has(path)) onOpen?.(path)
+          }}
+          onKeyDown={keyDown}
+        >
+          <FileItems list={items} folders={folders} status={status} changed={changedFolders} />
+        </Tree>
+      </ScrollBox>
 
       <Dialog open={dialog !== null} onOpenChange={(open: boolean) => !open && (setDialog(null), setError(null))}>
         <DialogBackdrop />
@@ -519,52 +522,54 @@ function EditorTabs({
       value={current}
       onValueChange={(next: unknown) => onValueChange(String(next))}
     >
-      <TabsList className="ide-tab-list" aria-label={label}>
-        {files.map((file) => {
-          const name = baseName(file.path)
-          const twin = (names.get(name) ?? 0) > 1
-          return (
-            <span key={file.path} className="ide-tab" role="presentation" data-dirty={file.dirty ? "" : undefined}>
-              <TabsTab
-                value={file.path}
-                ref={(el: HTMLElement | null) => {
-                  if (el) tabs.current.set(file.path, el)
-                  else tabs.current.delete(file.path)
-                }}
-                className="ide-tab-button"
-                title={file.path}
-                // Visible text first, then what the dot means.
-                aria-label={`${name}${twin ? ` ${dirName(file.path)}` : ""}${file.dirty ? ", unsaved" : ""}`}
-                onKeyDown={(event: ReactKeyboardEvent) => {
-                  if (event.key === "Delete") {
-                    event.preventDefault()
-                    close(file.path)
-                  }
-                }}
-                onAuxClick={(event: React.MouseEvent) => {
-                  if (event.button === 1) close(file.path)
-                }}
-              >
-                <Icon name="file" className="ide-tab-icon" />
-                <span className="ide-tab-name">{name}</span>
-                {twin && <span className="ide-tab-dir">{dirName(file.path)}</span>}
-              </TabsTab>
-              {/* The keyboard closes a tab with Delete; this button is for the pointer, and never takes focus. */}
-              <button
-                type="button"
-                className="ide-tab-close"
-                tabIndex={-1}
-                aria-hidden="true"
-                title={`Close ${name}`}
-                onPointerDown={(event) => event.preventDefault()}
-                onClick={() => close(file.path)}
-              >
-                <Icon name="close" />
-              </button>
-            </span>
-          )
-        })}
-      </TabsList>
+      <ScrollBox axis="x" data-frame="none" className="ide-tab-strip" viewport={{ className: "ide-tab-scroller", role: "group", "aria-label": "Tabs" }}>
+        <TabsList className="ide-tab-list" aria-label={label}>
+          {files.map((file) => {
+            const name = baseName(file.path)
+            const twin = (names.get(name) ?? 0) > 1
+            return (
+              <span key={file.path} className="ide-tab" role="presentation" data-dirty={file.dirty ? "" : undefined}>
+                <TabsTab
+                  value={file.path}
+                  ref={(el: HTMLElement | null) => {
+                    if (el) tabs.current.set(file.path, el)
+                    else tabs.current.delete(file.path)
+                  }}
+                  className="ide-tab-button"
+                  title={file.path}
+                  // Visible text first, then what the dot means.
+                  aria-label={`${name}${twin ? ` ${dirName(file.path)}` : ""}${file.dirty ? ", unsaved" : ""}`}
+                  onKeyDown={(event: ReactKeyboardEvent) => {
+                    if (event.key === "Delete") {
+                      event.preventDefault()
+                      close(file.path)
+                    }
+                  }}
+                  onAuxClick={(event: React.MouseEvent) => {
+                    if (event.button === 1) close(file.path)
+                  }}
+                >
+                  <Icon name="file" className="ide-tab-icon" />
+                  <span className="ide-tab-name">{name}</span>
+                  {twin && <span className="ide-tab-dir">{dirName(file.path)}</span>}
+                </TabsTab>
+                {/* The keyboard closes a tab with Delete; this button is for the pointer, and never takes focus. */}
+                <button
+                  type="button"
+                  className="ide-tab-close"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  title={`Close ${name}`}
+                  onPointerDown={(event) => event.preventDefault()}
+                  onClick={() => close(file.path)}
+                >
+                  <Icon name="close" />
+                </button>
+              </span>
+            )
+          })}
+        </TabsList>
+      </ScrollBox>
       {files.map((file) => (
         <TabsPanel key={file.path} value={file.path} className="ide-tab-panel" keepMounted>
           {children(file.path)}
@@ -925,47 +930,56 @@ function CodeEditor({
   return (
     // Code reads left to right and isn't translated, whatever the page's language does.
     <div className={["ide-code", className].filter(Boolean).join(" ")} data-readonly={readOnly ? "" : undefined} dir="ltr" translate="no">
-      <div
-        className="ide-code-scroll"
-        ref={scroller}
-        style={{ "--code-digits": String(lines.length).length } as React.CSSProperties}
+      <ScrollBox
+        axis="both"
+        data-frame="none"
+        className="ide-code-frame"
+        viewport={{
+          className: "ide-code-scroll",
+          role: "group",
+          "aria-label": "Lines",
+          ref: scroller,
+          style: { "--code-digits": String(lines.length).length } as React.CSSProperties,
+        }}
       >
-        <CodeGutter count={lines.length} marks={marks} />
-        <div className="ide-code-body" style={{ "--code-columns": width } as React.CSSProperties}>
-          <div ref={bar} className="ide-code-current" aria-hidden="true" />
-          <CodeColors lines={lines} colored={lang ? colored : null} />
-          <Textarea
-            ref={input}
-            className="ide-code-input"
-            aria-label={label}
-            aria-describedby={hintId}
-            defaultValue={initial}
-            onValueChange={changed}
-            readOnly={readOnly}
-            wrap="off"
-            spellCheck={false}
-            autoCapitalize="off"
-            autoComplete="off"
-            autoCorrect="off"
-            onKeyDown={keyDown}
-            // Undo and Redo from the Edit menu or a gesture take the same steps.
-            onBeforeInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
-              const kind = (event.nativeEvent as InputEvent).inputType
-              if (kind === "historyUndo" || kind === "historyRedo") {
-                event.preventDefault()
-                step(kind === "historyUndo")
-              }
-            }}
-            onFocus={() => {
-              escaped.current = false
-              onCursorChange?.(cursor.current)
-            }}
-            onPointerDown={() => {
-              escaped.current = false
-            }}
-          />
+        <div className="ide-code-lines">
+          <CodeGutter count={lines.length} marks={marks} />
+          <div className="ide-code-body" style={{ "--code-columns": width } as React.CSSProperties}>
+            <div ref={bar} className="ide-code-current" aria-hidden="true" />
+            <CodeColors lines={lines} colored={lang ? colored : null} />
+            <Textarea
+              ref={input}
+              className="ide-code-input"
+              aria-label={label}
+              aria-describedby={hintId}
+              defaultValue={initial}
+              onValueChange={changed}
+              readOnly={readOnly}
+              wrap="off"
+              spellCheck={false}
+              autoCapitalize="off"
+              autoComplete="off"
+              autoCorrect="off"
+              onKeyDown={keyDown}
+              // Undo and Redo from the Edit menu or a gesture take the same steps.
+              onBeforeInput={(event: React.FormEvent<HTMLTextAreaElement>) => {
+                const kind = (event.nativeEvent as InputEvent).inputType
+                if (kind === "historyUndo" || kind === "historyRedo") {
+                  event.preventDefault()
+                  step(kind === "historyUndo")
+                }
+              }}
+              onFocus={() => {
+                escaped.current = false
+                onCursorChange?.(cursor.current)
+              }}
+              onPointerDown={() => {
+                escaped.current = false
+              }}
+            />
+          </div>
         </div>
-      </div>
+      </ScrollBox>
       <p id={hintId} hidden>
         {readOnly
           ? "Read only."

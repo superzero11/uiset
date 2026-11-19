@@ -11,6 +11,7 @@ import { clock, schedulePrimitive, type ScheduleChange, type ScheduleControllerA
 import "@/registry/uiset/ui/chart/tokens.css"
 import "@/registry/uiset/ui/scheduler/scheduler.css"
 import { attr, defineElement, ElementBase, Evented, h, holdRender, isOn, place, uid, upgradeProperties } from "./dom"
+import { scrollArea } from "./scroll"
 
 type ScheduleTrack = { id: string; label: string; short?: string }
 
@@ -93,7 +94,8 @@ class ScheduleView {
 
   constructor(private el: ScheduleElement) {
     el.classList.add("schedule")
-    el.replaceChildren(this.help, this.head, h("div", { class: "schedule-body" }, this.gutter, this.tracksBox))
+    const grid = h("div", { class: "schedule-grid" }, this.head, h("div", { class: "schedule-body" }, this.gutter, this.tracksBox))
+    el.replaceChildren(this.help, scrollArea(grid, { axis: "both", frame: { class: "schedule-frame" }, viewport: { class: "schedule-scroller", role: "group", "aria-label": "Hours" } }).root)
     // These attributes change what's drawn: they draw again here.
     // Options read from attributes (axis, hours, step) go back into the primitive, so a switch
     // to a timeline lays events out across and drags them across too.

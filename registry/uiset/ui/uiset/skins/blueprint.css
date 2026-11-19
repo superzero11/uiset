@@ -127,7 +127,7 @@
         [data-slot="drawer-close"],
         [data-slot="popover-close"]
       ):not([data-variant], [data-slot="menubar"] [data-slot="menu-trigger"])
-    ):not(.stepper-step, .chat-thread-link, .ide-problem, .ide-status-item, .ide-palette-trigger, .chat-suggestions *, .sidebar-link, .mobile-action, .mobile-tab, .calendar-upcoming-item) {
+    ):not(.stepper-step, .chat-thread-link, .ide-problem, .ide-status-item, .ide-palette-trigger, .chat-suggestions *, .sidebar-link, .mobile-action, .mobile-tab, .calendar-upcoming-item, .chat-thread-jump, .terminal-jump) {
     border-color: var(--blueprint-line);
     background: transparent;
     color: var(--blueprint-line);
@@ -136,6 +136,18 @@
     &:is(:hover, [data-open], [data-popup-open]):not([data-disabled]) {
       background-color: var(--blueprint-faint);
       background-image: none;
+    }
+  }
+
+  /* A button that floats over text, like a thread's Jump to latest, is drawn on paper: with
+     no fill, its lettering ran into the message under it. */
+  & :is(.chat-thread-jump, .terminal-jump)[data-variant="outline"] {
+    border-color: var(--blueprint-line);
+    background: var(--blueprint-paper);
+    color: var(--blueprint-line);
+
+    &:hover:not([data-disabled]) {
+      background-image: linear-gradient(var(--blueprint-faint), var(--blueprint-faint));
     }
   }
 

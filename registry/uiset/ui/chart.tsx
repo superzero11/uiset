@@ -14,6 +14,7 @@ import {
 } from "react"
 import { chartPoints, type ChartCommands, type ChartSelectChange } from "./chart/points"
 import { formatValue, type ChartValue } from "./chart/scale"
+import { ScrollBox } from "./scroll-area"
 import { SegmentedControl, SegmentedControlItem } from "./segmented-control"
 import "./shell/shell.css"
 import "./chart/tokens.css"
@@ -147,7 +148,14 @@ function ChartLegend({
 
 function ChartTableView({ title, table }: { title: string; table: ChartTable }) {
   return (
-    <div className="chart-table-scroller" role="region" aria-label={`${title} table`} tabIndex={0}>
+    <ScrollBox
+      axis="both"
+      data-frame="none"
+      className="chart-table-frame"
+      // A group, not a region: a page of charts shouldn't be a page of landmarks. Not "<title>
+      // table" either: that would contain the chart's own name, which agents act on.
+      viewport={{ className: "chart-table-scroller", role: "group", "aria-label": "Data table" }}
+    >
       <table className="chart-table">
         <caption className="uiset-visually-hidden">{title}</caption>
         <thead>
@@ -177,7 +185,7 @@ function ChartTableView({ title, table }: { title: string; table: ChartTable }) 
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollBox>
   )
 }
 

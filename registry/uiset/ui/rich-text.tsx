@@ -7,6 +7,7 @@ import { createElement, Fragment, useCallback, useEffect, useId, useMemo, useRef
 import { Button } from "./button"
 import { Field, FieldLabel, Input } from "./field"
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "./popover"
+import { ScrollBox } from "./scroll-area"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./select"
 import { Icon } from "./shell/icons"
 import { Toggle } from "./toggle"
@@ -241,7 +242,10 @@ function RichTextEditor({
             })
           }}
         >
-          {editable}
+          {/* No fades: the caret often sits at the edge as you type. */}
+          <ScrollBox data-frame="none" data-fades="none" className="rich-text-frame" viewport={{ className: "rich-text-scroller", role: "group", "aria-label": "Writing area" }}>
+            {editable}
+          </ScrollBox>
           {/* With nothing matching, the menu closes, so Enter makes a new line as usual. */}
           <TriggerMenuContent className="rich-text-menu">
             <TriggerMenuList>

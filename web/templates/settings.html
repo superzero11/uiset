@@ -35,14 +35,21 @@
             <div class="settings">
               <uiset-page-header title="Settings" description="Your account, your team and how you pay."></uiset-page-header>
               <ui-tabs default-value="profile" aria-label="Settings sections">
-                <ui-tabs-list aria-label="Settings sections" class="settings-tabs">
-                  <ui-tabs-tab value="profile"><button type="button">Profile</button></ui-tabs-tab>
-                  <ui-tabs-tab value="security"><button type="button">Security</button></ui-tabs-tab>
-                  <ui-tabs-tab value="notifications"><button type="button">Notifications</button></ui-tabs-tab>
-                  <ui-tabs-tab value="billing"><button type="button">Billing</button></ui-tabs-tab>
-                  <ui-tabs-tab value="team"><button type="button">Team</button></ui-tabs-tab>
-                  <ui-tabs-tab value="workspace"><button type="button">Workspace</button></ui-tabs-tab>
-                </ui-tabs-list>
+                <ui-scroll-area data-frame="none" class="settings-tabs-frame" aria-label="Tabs">
+                  <ui-scroll-area-viewport class="settings-tabs-scroller" role="group" aria-label="Tabs">
+                    <ui-scroll-area-content>
+                      <ui-tabs-list aria-label="Settings sections" class="settings-tabs">
+                        <ui-tabs-tab value="profile"><button type="button">Profile</button></ui-tabs-tab>
+                        <ui-tabs-tab value="security"><button type="button">Security</button></ui-tabs-tab>
+                        <ui-tabs-tab value="notifications"><button type="button">Notifications</button></ui-tabs-tab>
+                        <ui-tabs-tab value="billing"><button type="button">Billing</button></ui-tabs-tab>
+                        <ui-tabs-tab value="team"><button type="button">Team</button></ui-tabs-tab>
+                        <ui-tabs-tab value="workspace"><button type="button">Workspace</button></ui-tabs-tab>
+                      </ui-tabs-list>
+                    </ui-scroll-area-content>
+                  </ui-scroll-area-viewport>
+                  <ui-scroll-area-scrollbar orientation="horizontal"><ui-scroll-area-thumb></ui-scroll-area-thumb></ui-scroll-area-scrollbar>
+                </ui-scroll-area>
 
                 <!-- Kept mounted, so a removed member, an unsaved draft or a sign-out survives a tab switch. -->
                 <ui-tabs-panel value="profile" keep-mounted>

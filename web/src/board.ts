@@ -12,6 +12,7 @@ import { boardPrimitive, keepDragPreviewInside, type BoardColumnSpec, type Board
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/board/board.css"
 import { attr, h, holdRender, isOn, place, uid } from "./dom"
+import { scrollArea } from "./scroll"
 
 type BoardCardData = {
   id: string
@@ -198,6 +199,8 @@ class BoardView {
   private columns = new Map<string, ColumnView>()
   private cards = new Map<string, CardView>()
   private help: HTMLElement
+  private lanes = h("div", { class: "board-lanes" })
+  private area = scrollArea(this.lanes, { axis: "x", frame: { class: "board-frame" }, viewport: { class: "board-scroller", role: "group", "aria-label": "Columns" } }).root
   private instance?: BoardInstance
   private queued = false
 
@@ -206,7 +209,7 @@ class BoardView {
     // A dragged card's copy stays inside the board, keeping its look.
     keepDragPreviewInside(el)
     this.help = h("p", { id: uid("board-help"), hidden: true })
-    el.prepend(this.help)
+    el.prepend(this.help, this.area)
     // These attributes change what's drawn, not the board's state: they draw again here.
     new MutationObserver(() => this.schedule()).observe(el, { attributes: true, attributeFilter: ["today", "addable", "openable", "aria-describedby"] })
   }
@@ -214,6 +217,7 @@ class BoardView {
   attach(instance: BoardInstance) {
     this.instance = instance
     if (!this.help.isConnected) this.el.prepend(this.help)
+    if (!this.area.isConnected) this.help.after(this.area)
     // Properties set together draw once.
     this.schedule()
     // The lanes as drawn follow the draft while a card is carried, at once.
@@ -378,7 +382,7 @@ class BoardView {
       if (full && hadForm && keys.length) el.api?.focusCard(keys.at(-1)!)
       return view.root
     })
-    place(el, roots, (child) => child.classList.contains("board-column"))
+    place(this.lanes, roots, (child) => child.classList.contains("board-column"))
     for (const [key, view] of this.cards) if (!view.part.isConnected) this.cards.delete(key)
   }
 }

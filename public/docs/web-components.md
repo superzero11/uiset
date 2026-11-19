@@ -875,7 +875,15 @@ value turns a quarter of its ring, held still for reduced motion.
 ### Scroll areas
 
 A `ui-scroll-area` fades where its content runs on past an edge. `data-fades="none"` on it
-turns that off, and `--uiset-fade` sets how far the fade reaches.
+turns that off, and `--uiset-fade` sets how far the fade reaches. `data-frame="none"` drops
+its border and padding, for one inside a larger surface, and it fills the space it's given.
+
+The kits and templates scroll in UI SDK's scroll areas too: the chat thread, the terminal,
+the data grid, the schedule, the board, the chart's table, the IDE's files, tabs and code, the
+rich text editor and the agent snapshot. Each one's old scrolling class (like
+`chat-thread-scroller` or `data-grid-scroller`) is on the viewport, the element that scrolls.
+Two keep the browser's own scrolling, since what's inside them is your own markup:
+`<uiset-status-bar>` and `<uiset-pull-refresh>`.
 
 ## Page templates
 

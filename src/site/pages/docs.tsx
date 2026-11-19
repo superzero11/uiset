@@ -302,10 +302,20 @@ const sdkExtras: Record<string, ReactNode> = {
     </li>
   ),
   "scroll-area": (
-    <li>
-      Edge fades: where the content runs on past an edge, it fades out there, across and down, and right to left too, so a reader can see there&rsquo;s more.{" "}
-      <code>data-fades=&quot;none&quot;</code> on the root turns them off, and <code>--uiset-fade</code> sets how far they reach. Keyboard focus rings the whole box, outside the fade.
-    </li>
+    <>
+      <li>
+        Edge fades: where the content runs on past an edge, it fades out there, across and down, and right to left too, so a reader can see there&rsquo;s more.{" "}
+        <code>data-fades=&quot;none&quot;</code> on the root turns them off, and <code>--uiset-fade</code> sets how far they reach. Keyboard focus rings the whole box, outside the fade.
+      </li>
+      <li>
+        <code>ScrollBox</code> puts the parts in place: <code>axis</code> (<code>&quot;y&quot;</code>, <code>&quot;x&quot;</code> or <code>&quot;both&quot;</code>) picks the
+        scrollbars, and <code>viewport</code> takes the props of the element that scrolls, like its role, name, ref and handlers.
+      </li>
+      <li>
+        <code>data-frame=&quot;none&quot;</code> drops the border and padding, for a scroll area inside a larger surface, and it fills the space it&rsquo;s given. Every kit and
+        template scrolls this way: the chat thread, the terminal, the data grid, the schedule, the board, the IDE&rsquo;s files, tabs and code, and the rest.
+      </li>
+    </>
   ),
 }
 

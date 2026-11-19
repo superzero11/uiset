@@ -30,7 +30,12 @@
             <ul class="pricing-plans" aria-label="Plans" id="plans"></ul>
             <section class="pricing-compare" aria-labelledby="pricing-compare-title">
               <h2 id="pricing-compare-title" class="pricing-section-title">Compare plans</h2>
-              <div class="pricing-table-scroller" role="region" aria-labelledby="pricing-compare-title" tabindex="0"><table class="pricing-table" id="compare"></table></div>
+              <ui-scroll-area data-frame="none" class="pricing-table-frame" aria-label="Compare plans">
+                <ui-scroll-area-viewport class="pricing-table-scroller" role="region" aria-labelledby="pricing-compare-title">
+                  <ui-scroll-area-content><table class="pricing-table" id="compare"></table></ui-scroll-area-content>
+                </ui-scroll-area-viewport>
+                <ui-scroll-area-scrollbar orientation="horizontal"><ui-scroll-area-thumb></ui-scroll-area-thumb></ui-scroll-area-scrollbar>
+              </ui-scroll-area>
             </section>
             <section class="pricing-faq" aria-labelledby="pricing-faq-title">
               <h2 id="pricing-faq-title" class="pricing-section-title">Questions</h2>

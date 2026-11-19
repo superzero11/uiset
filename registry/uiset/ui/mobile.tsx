@@ -26,6 +26,7 @@ import {
 } from "./drawer"
 import { Listbox, ListboxItem } from "./listbox"
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "./menu"
+import { ScrollBox } from "./scroll-area"
 import { Icon, type IconName } from "./shell/icons"
 import { swipeList, type SwipeSide } from "./mobile/swipe-list"
 import { keepWheelOnValue } from "./mobile/wheel"
@@ -390,7 +391,9 @@ function Sheet({
           <DrawerTitle className="mobile-sheet-title">{title}</DrawerTitle>
           {description && <DrawerDescription className="mobile-sheet-description">{description}</DrawerDescription>}
         </div>
-        <div className="mobile-sheet-body">{children}</div>
+        <ScrollBox data-frame="none" className="mobile-sheet-frame" viewport={{ className: "mobile-sheet-scroller", role: "group", "aria-label": "Content" }}>
+          <div className="mobile-sheet-body">{children}</div>
+        </ScrollBox>
       </DrawerContent>
     </Drawer>
   )
@@ -651,19 +654,25 @@ function PullToRefresh({
         <span className="mobile-refresh-spinner" />
         {state === "ready" ? words.release : state === "refreshing" ? words.refreshing : words.pull}
       </div>
-      <div
-        ref={scroller}
-        className="mobile-refresh-scroll"
-        data-at-top={atTop ? "" : undefined}
-        onScroll={(event) => setAtTop(event.currentTarget.scrollTop <= 0)}
-        onPointerDown={pointerDown}
+      <ScrollBox
+        data-frame="none"
+        className="mobile-refresh-frame"
+        viewport={{
+          ref: scroller,
+          className: "mobile-refresh-scroll",
+          role: "group",
+          "aria-label": "Content",
+          "data-at-top": atTop ? "" : undefined,
+          onScroll: (event) => setAtTop(event.currentTarget.scrollTop <= 0),
+          onPointerDown: pointerDown,
+        }}
       >
         {/* Disabled while it refreshes, but it keeps focus: no drop to the page. */}
         <Button variant="ghost" className="mobile-refresh-button" onClick={() => void refresh()} disabled={state === "refreshing"} focusableWhenDisabled>
           {words.refresh}
         </Button>
         <div className="mobile-refresh-content">{children}</div>
-      </div>
+      </ScrollBox>
     </div>
   )
 }

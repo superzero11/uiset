@@ -4,14 +4,19 @@
   .board {
     /* The drag preview and the live region sit against the board. */
     position: relative;
+    /* As narrow as its place, however many columns: they scroll inside. */
+    min-inline-size: 0;
+    color: var(--ui-foreground);
+  }
+
+  /* The columns scroll sideways in a UI SDK scroll area; room under them for its scrollbar. */
+  .board-lanes {
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: minmax(15rem, 18rem);
     align-items: start;
     gap: 1rem;
-    overflow-x: auto;
-    padding-block-end: 0.5rem;
-    color: var(--ui-foreground);
+    padding-block-end: 0.875rem;
   }
 
   .board-column {

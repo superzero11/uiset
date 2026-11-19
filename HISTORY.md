@@ -1790,3 +1790,28 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   unit (arm, settle, Escape, blur, timeout, an approved agent's press, a refused one; without
   the agent path and without the settle guard a test fails), Chrome and WebKit in React and
   web, axe in every skin, every skin by eye armed.
+- 2026-11-19 — **Every kit and template scrolls in UI SDK's Scroll Area**, so they get its
+  scrollbars and the edge fades, like the components. `ScrollBox` grew `axis` and `viewport`,
+  and `data-frame="none"` (no specificity, so a kit's own class can add a border back) drops
+  the frame. Each kit's old scrolling class stayed on the viewport, so its logic (stick to
+  the newest message, the grid's virtual rows, the editor's caret) and users' height rules
+  keep working; borders moved to `*-frame` classes. Fades are off where they'd hide
+  something: sticky headers, columns and gutters, the code editor's sides, and the whole rich
+  text editor (the caret sits at the edge as you type; the code editor keeps it two lines
+  clear itself). Kept native: popup lists (UI SDK's command, combobox and trigger menu
+  manage their own scrolling), the wheel picker (scrolling is how it chooses), rich text code
+  blocks (part of the editable document) and the IDE status bar; in Web Components also
+  `<uiset-pull-refresh>`, whose children are the page's own, which can't be moved into a
+  scroll area without breaking the framework that owns them. Tab stops follow UI SDK: a
+  region is one only while it scrolls and holds nothing focusable.
+- 2026-11-19 — **Scroll areas join the agent snapshot**, with no actions, and need a name; a
+  name that contains an actionable component's name makes that name ambiguous ("Shell output"
+  around the terminal "Shell"). So each kit's scroll area has a short name of its own
+  (Output, Rows, Hours, Columns, Files, Tabs, Lines, Panel, Content, Writing area). The web
+  bridge names a scroll area from `ui-scroll-area`, React from the viewport, so the web
+  helper names both (as the web table and code block already did). And `createStickToBottom`
+  anchors the reader's place on the scroller's own children, which a scroll area's content
+  wrapper hides: with it, trimming old terminal lines while scrolled up moved the view by
+  their height. The chat thread and terminal now follow with the scroll area's `stickToEnd`,
+  which leaves the browser's scroll anchoring on (checked: the line being read stays put).
+  Both are worth raising with UI SDK.

@@ -46,16 +46,10 @@
     min-height: 0;
   }
 
+  /* The thread scrolls in a UI SDK scroll area; the viewport is the scroller. */
   .chat-thread-scroller {
     max-height: var(--chat-thread-height, 26rem);
-    overflow-y: auto;
     overscroll-behavior: contain;
-    border-radius: var(--ui-radius, 0px);
-
-    &:focus-visible {
-      outline: 2px solid var(--ui-ring-border);
-      outline-offset: 2px;
-    }
   }
 
   .chat-thread-log {
@@ -387,13 +381,18 @@
       color: var(--ui-muted-foreground);
     }
 
+    .chat-tool-code {
+      border-radius: var(--ui-radius, 0px);
+      background: var(--chat-code-bg);
+
+      & > [data-slot="scroll-area-viewport"] {
+        max-height: 14rem;
+      }
+    }
+
     pre {
       margin: 0;
       padding: 0.5rem;
-      max-height: 14rem;
-      overflow: auto;
-      border-radius: var(--ui-radius, 0px);
-      background: var(--chat-code-bg);
       font-family: var(--ui-font-mono);
       font-size: 0.75rem;
     }
@@ -571,7 +570,6 @@
 
   .chat-table {
     max-width: 100%;
-    overflow-x: auto;
 
     table {
       border-collapse: collapse;
@@ -595,17 +593,11 @@
     pre {
       margin: 0;
       padding: 0.75rem;
-      overflow-x: auto;
       font-family: var(--ui-font-mono);
       font-size: 0.8125rem;
       line-height: 1.6;
       color: var(--shiki-foreground);
       tab-size: 2;
-
-      &:focus-visible {
-        outline: 2px solid var(--ui-ring-border);
-        outline-offset: -2px;
-      }
     }
 
     &[data-wrap] pre {

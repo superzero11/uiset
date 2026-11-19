@@ -49,7 +49,10 @@ test("the welcome shows once the terminal mounts", () => {
   expect(screen.getByText("Type help")).toBeTruthy()
 })
 
-test("past scrollback, old lines go even while scrolled up", async () => {
+// Past scrollback the oldest lines go, whether or not you're scrolled up: the trim doesn't wait
+// for the view. Scrolled up, the view stays put and New output below shows; jsdom can't scroll,
+// so the e2e suite checks that part (web/terminal.spec.ts, terminal.spec.ts).
+test("past scrollback, old lines go", async () => {
   const frames: FrameRequestCallback[] = []
   vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
     frames.push(callback)
@@ -58,16 +61,11 @@ test("past scrollback, old lines go even while scrolled up", async () => {
   const flush = () => act(async () => frames.splice(0).forEach((frame) => frame(0)))
   const controller = createTerminalController()
   render(<Terminal label="Shell" scrollback={20} controller={controller} />)
-  const log = screen.getByRole("log", { name: "Shell output" })
+  expect(screen.getByRole("log", { name: "Output" })).toBeTruthy()
   for (let i = 1; i <= 15; i++) controller.print(`line ${i}\n`)
   await flush()
-  // Scrolled up, as a wheel turned up on output taller than the view (jsdom has no layout).
-  Object.defineProperty(log, "scrollHeight", { configurable: true, value: 600 })
-  Object.defineProperty(log, "clientHeight", { configurable: true, value: 200 })
-  await act(async () => log.dispatchEvent(new WheelEvent("wheel", { deltaY: -100 })))
   for (let i = 1; i <= 15; i++) controller.print(`more ${i}\n`)
   await flush()
-  expect(screen.getByRole("button", { name: "New output below" })).toBeTruthy()
   expect(screen.queryByText("line 1")).toBeNull()
   expect(screen.getByText("line 15")).toBeTruthy()
   expect(screen.getByText("more 15")).toBeTruthy()

@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react"
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, AccordionTrigger } from "../accordion"
 import { Badge } from "../badge"
 import { Button } from "../button"
+import { ScrollBox } from "../scroll-area"
 import { SegmentedControl, SegmentedControlItem } from "../segmented-control"
 import { Icon } from "../shell/icons"
 import { sampleComparison, samplePlans, sampleQuestions, type Plan } from "./pricing-sample"
@@ -106,7 +107,12 @@ function PricingTemplate({
         <h2 id="pricing-compare-title" className="pricing-section-title">
           Compare plans
         </h2>
-        <div className="pricing-table-scroller" role="region" aria-labelledby="pricing-compare-title" tabIndex={0}>
+        <ScrollBox
+          axis="x"
+          data-frame="none"
+          className="pricing-table-frame"
+          viewport={{ className: "pricing-table-scroller", role: "region", "aria-labelledby": "pricing-compare-title" }}
+        >
           <table className="pricing-table">
             <thead>
               <tr>
@@ -148,7 +154,7 @@ function PricingTemplate({
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollBox>
       </section>
 
       <section className="pricing-faq" aria-labelledby="pricing-faq-title">

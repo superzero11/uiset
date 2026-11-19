@@ -1557,7 +1557,15 @@ value turns a quarter of its ring, held still for reduced motion.
 ### Scroll areas
 
 A `ui-scroll-area` fades where its content runs on past an edge. `data-fades="none"` on it
-turns that off, and `--uiset-fade` sets how far the fade reaches.
+turns that off, and `--uiset-fade` sets how far the fade reaches. `data-frame="none"` drops
+its border and padding, for one inside a larger surface, and it fills the space it's given.
+
+The kits and templates scroll in UI SDK's scroll areas too: the chat thread, the terminal,
+the data grid, the schedule, the board, the chart's table, the IDE's files, tabs and code, the
+rich text editor and the agent snapshot. Each one's old scrolling class (like
+`chat-thread-scroller` or `data-grid-scroller`) is on the viewport, the element that scrolls.
+Two keep the browser's own scrolling, since what's inside them is your own markup:
+`<uiset-status-bar>` and `<uiset-pull-refresh>`.
 
 ## Page templates
 
@@ -4709,8 +4717,8 @@ npx shadcn@latest add @uiset/chat @uiset/chat-response \
 Each of the last four brings `chat` with it. `chat-response` also adds `react-markdown`,
 `remark-gfm`, `remend` and `shiki`.
 
-The behavior is UI SDK's. The thread follows new text with `createStickToBottom`; the
-message box brings back what you sent with `createInputHistory`; "/" and "@" are
+The behavior is UI SDK's. The thread is a `ScrollArea` that follows new text with
+`stickToEnd`, and its controller brings you back from Jump to latest; the message box brings back what you sent with `createInputHistory`; "/" and "@" are
 `TriggerMenu`; attachments are `FileInput`; reasoning, tool calls and sources are
 `Collapsible`; the model picker is a `Select`; usage is a `Meter`.
 
@@ -4905,7 +4913,7 @@ one streams a placeholder. It also takes `models`, `commands`, `mentions`, `sugg
 | Shift+Enter             | message box                | A new line                                             |
 | Up, Down                | message box                | What you sent before, when the caret is on the first or last line |
 | "/" at the start, "@"   | message box                | Commands, mentions: arrows move, Enter or Tab choose, Escape closes |
-| Tab                     | thread, code, tables       | One stop each; arrows and Page keys scroll it          |
+| Tab                     | thread, code, tables       | A stop while it scrolls and holds nothing else to press; arrows and Page keys scroll it |
 | Arrows                  | message actions, suggestions | Move along the toolbar (one Tab stop)               |
 | Enter, Space            | reasoning, tool, sources, plan | Open or close it                                   |
 | Enter, Escape           | rename field               | Save, cancel (leaving the field saves too)             |
@@ -5847,8 +5855,8 @@ Every word the parts say is a prop: `SwipeList messages` (`help`, `actionsFor`),
 # Terminal
 
 A terminal for commands your app defines, like a web shell, a dev console or a CLI in the
-browser. Built on UI SDK's `createInputHistory` (Up and Down) and `createStickToBottom`
-(output follows its end unless you scroll up).
+browser. Built on UI SDK's `createInputHistory` (Up and Down) and a `ScrollArea` with
+`stickToEnd` (output follows its end unless you scroll up).
 
 ```bash
 npx shadcn@latest add @uiset/terminal
@@ -5923,7 +5931,8 @@ socket.onmessage = (event) => shell.print(event.data)
 | Ctrl+C            | Stops the running command, or drops the line; with text selected, copies |
 | Ctrl+L            | Clears the screen                                                    |
 
-The output is a `log` region that takes focus for scrolling by keyboard; a click on it puts
+The output is a `log` region in a UI SDK scroll area. Once it scrolls it's a tab stop, so the
+keyboard can scroll it, unless it holds links, which Tab reaches instead. A click on it puts
 the caret in the prompt unless you were selecting text.
 
 ## For agents
@@ -6068,7 +6077,7 @@ UI SDK's agent bridge does. The Agent Console is the human side of that bridge:
 | See every change the agent made             | `createHistory`, `describeEntry`                           | `AgentActivity`              |
 | Undo the agent, keep my own edits           | `history.undoSource("agent")`                              | Undo button                  |
 | See _where_ it changed something            | `observe` + `elementOf`                                    | `highlightAgent()`           |
-| Talk to it                                  | `createStickToBottom`, `createInputHistory`, `isComposing` | `AgentThread`, `AgentPrompt` |
+| Talk to it                                  | `ScrollArea` (`stickToEnd`), `createInputHistory`, `isComposing` | `AgentThread`, `AgentPrompt` |
 | See what it sees                            | `agent.snapshot()`                                         | Page tab                     |
 | Plug in any model                           | `agentTools` (snapshot, query, act)                        | `runAgentTool()`             |
 

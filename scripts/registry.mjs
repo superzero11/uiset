@@ -314,7 +314,7 @@ const components = [
       "shell/shell.css",
       "shell/icons.tsx", "shell/icon-paths.ts",
     ],
-    ["button", "combobox", "field", "menu", "popover", "search-field", "select"],
+    ["button", "combobox", "field", "menu", "popover", "scroll-area", "search-field", "select"],
   ],
   [
     "chart",
@@ -329,7 +329,7 @@ const components = [
       "chart/chart.css",
       "shell/shell.css",
     ],
-    ["segmented-control"],
+    ["scroll-area", "segmented-control"],
   ],
   [
     "line-chart",
@@ -377,7 +377,7 @@ const components = [
     "Board",
     "A kanban board on UI SDK createTransfer: one tab stop, arrows across cards and columns, Space to carry a card, drag with the pointer, column limits, add in place, a details dialog to edit, move or delete, filters, and agent actions.",
     ["board/board.ts", "board/board.css", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
-    ["alert-dialog", "avatar", "badge", "button", "checkbox", "dialog", "field", "label", "search-field", "select", "textarea"],
+    ["alert-dialog", "avatar", "badge", "button", "checkbox", "dialog", "field", "label", "scroll-area", "search-field", "select", "textarea"],
   ],
   [
     "canvas",
@@ -391,7 +391,7 @@ const components = [
     "IDE",
     "A code editor's parts on UI SDK: a file tree on Tree with version control marks and New, Rename, Move and Delete; editor tabs on Tabs; a code editor with syntax colors, indenting and problems; a command palette on Command; problems and a status bar.",
     ["ide/ide.css", "ide/editing.ts", "code/highlight.ts", "code/code.css", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
-    ["alert-dialog", "button", "command", "dialog", "field", "menu", "select", "tabs", "textarea", "tree"],
+    ["alert-dialog", "button", "command", "dialog", "field", "menu", "scroll-area", "select", "tabs", "textarea", "tree"],
     ["shiki"],
   ],
   [
@@ -399,14 +399,14 @@ const components = [
     "Mobile",
     "Phone app parts on UI SDK: rows that swipe aside to actions (createSwipeActions), wheel pickers and a time wheel (bindScrollPicker), bottom sheets and action sheets (Drawer), pull to refresh, an app bar and a tab bar.",
     ["mobile/swipe-list.ts", "mobile/wheel.ts", "mobile/mobile.css", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
-    ["button", "drawer", "listbox", "menu"],
+    ["button", "drawer", "listbox", "menu", "scroll-area"],
   ],
   [
     "terminal",
     "Terminal",
     "A terminal on UI SDK's input history and stick-to-bottom: ANSI colors kept readable in every skin, links, streaming commands with progress lines, Tab completion, Ctrl+C and Ctrl+L, built-in help, clear and history, and agent actions.",
     ["terminal/ansi.ts", "terminal/session.ts", "terminal/terminal.css", "shell/shell.css"],
-    ["button", "field"],
+    ["button", "field", "scroll-area"],
   ],
   [
     "scheduler",
@@ -419,7 +419,7 @@ const components = [
       "shell/shell.css",
       "shell/icons.tsx", "shell/icon-paths.ts",
     ],
-    ["alert-dialog", "button", "calendar", "dialog", "field", "segmented-control", "select"],
+    ["alert-dialog", "button", "calendar", "dialog", "field", "scroll-area", "segmented-control", "select"],
   ],
   [
     "knob",
@@ -451,14 +451,14 @@ const components = [
     "Chat",
     "A conversation built on UI SDK: thread that follows new messages, messages with avatars, actions and versions, suggestions, plans and a thinking shimmer.",
     ["chat/chat.css", "chat/opening.ts"],
-    ["button"],
+    ["button", "scroll-area"],
   ],
   [
     "chat-response",
     "Chat response",
     "Streaming markdown that repairs itself mid-stream and never renders raw HTML, with code blocks highlighted by skin colors.",
     ["chat/chat.css", "code/highlight.ts", "code/code.css"],
-    ["chat", "button"],
+    ["button", "chat", "scroll-area"],
     ["react-markdown", "remark-gfm", "remend", "shiki"],
   ],
   [
@@ -466,7 +466,7 @@ const components = [
     "Chat parts",
     "Reasoning that opens while the model thinks, tool calls with status, input and output, sources, citations and images.",
     ["chat/chat.css"],
-    ["chat"],
+    ["chat", "scroll-area"],
   ],
   [
     "chat-composer",
@@ -497,14 +497,14 @@ const components = [
       "shell/icons.tsx",
       "shell/icon-paths.ts",
     ],
-    ["button", "field", "popover", "select", "toggle", "toolbar", "trigger-menu"],
+    ["button", "field", "popover", "scroll-area", "select", "toggle", "toolbar", "trigger-menu"],
   ],
   [
     "agent-console",
     "Agent Console",
     "The human side of the UI SDK agent bridge: approvals in your app, an activity feed with undo, highlights where the agent changed something, a thread and a prompt.",
     ["agent/approvals.ts", "agent/highlight.ts", "agent/tools.ts", "agent/console.css"],
-    ["button"],
+    ["button", "scroll-area"],
   ],
   [
     "step-sequencer",
@@ -546,14 +546,14 @@ const templates = [
     "settings",
     "Settings page",
     "Profile, security and sessions, notifications, billing with usage and invoices, team with invites and removal, and a danger zone.",
-    ["alert-dialog", "app-shell", "avatar", "badge", "button", "card", "data-grid", "dialog", "field", "item-list", "meter", "page-header", "password-input", "select", "switch", "tabs", "textarea", "toast"],
+    ["alert-dialog", "app-shell", "avatar", "badge", "button", "card", "data-grid", "dialog", "field", "item-list", "meter", "page-header", "password-input", "scroll-area", "select", "switch", "tabs", "textarea", "toast"],
     ["templates/settings-sample.ts"],
   ],
   [
     "admin",
     "Admin records page",
     "A records list with search, filters, columns and export; create and edit in a drawer; inline edits; confirmed bulk delete; an empty state.",
-    ["alert-dialog", "app-shell", "badge", "button", "data-grid", "drawer", "empty-state", "field", "page-header", "select", "toast"],
+    ["alert-dialog", "app-shell", "badge", "button", "data-grid", "drawer", "empty-state", "field", "page-header", "scroll-area", "select", "toast"],
     ["templates/admin-sample.ts"],
   ],
   [
@@ -574,7 +574,7 @@ const templates = [
     "ide-app",
     "IDE page",
     "A code editor in resizable panes: files with version control marks, tabs, an editor with syntax colors, a command palette (files, commands, lines), problems, an outline and a status bar.",
-    ["alert-dialog", "button", "ide", "resizable", "tabs"],
+    ["alert-dialog", "button", "ide", "resizable", "scroll-area", "tabs"],
     ["templates/ide-sample.ts"],
   ],
   [
@@ -595,7 +595,7 @@ const templates = [
     "pricing",
     "Pricing section",
     "Plans with a monthly or yearly switch, a recommended plan, a comparison table and questions.",
-    ["accordion", "badge", "button", "segmented-control"],
+    ["accordion", "badge", "button", "scroll-area", "segmented-control"],
     ["templates/pricing-sample.ts"],
   ],
 ].map(([name, title, description, deps, extra = []]) => ({

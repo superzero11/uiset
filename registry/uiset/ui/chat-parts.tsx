@@ -8,6 +8,7 @@ import {
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ui-sdk/react/hover-card"
 import { useEffect, useRef, useState, type ReactNode } from "react"
 import { ChatShimmer } from "./chat"
+import { ScrollBox } from "./scroll-area"
 import "./chat/chat.css"
 
 // Opens while the model thinks, closes when it's done, unless the person chose.
@@ -108,9 +109,17 @@ function ChatTool({
         {input !== undefined && (
           <section>
             <h4>Input</h4>
-            <pre tabIndex={0} role="region" aria-label={`${title ?? name} input`}>
-              <code translate="no">{json(input)}</code>
-            </pre>
+            <ScrollBox
+              axis="both"
+              data-frame="none"
+              dir="ltr"
+              className="chat-tool-code"
+              viewport={{ role: "region", "aria-label": `${title ?? name} input` }}
+            >
+              <pre>
+                <code translate="no">{json(input)}</code>
+              </pre>
+            </ScrollBox>
           </section>
         )}
         {error ? (
@@ -122,9 +131,17 @@ function ChatTool({
           output !== undefined && (
             <section>
               <h4>Output</h4>
-              <pre tabIndex={0} role="region" aria-label={`${title ?? name} output`}>
-                <code translate="no">{json(output)}</code>
-              </pre>
+              <ScrollBox
+                axis="both"
+                data-frame="none"
+                dir="ltr"
+                className="chat-tool-code"
+                viewport={{ role: "region", "aria-label": `${title ?? name} output` }}
+              >
+                <pre>
+                  <code translate="no">{json(output)}</code>
+                </pre>
+              </ScrollBox>
             </section>
           )
         )}

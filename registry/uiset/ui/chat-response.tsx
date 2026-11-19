@@ -17,6 +17,7 @@ import remend from "remend"
 import { Button } from "./button"
 import { ChatIcon, chatIcons } from "./chat"
 import { tokenize, type Token } from "./code/highlight"
+import { ScrollBox } from "./scroll-area"
 import "./chat/chat.css"
 import "./code/code.css"
 
@@ -71,25 +72,33 @@ function ChatCodeBlock({
           </Button>
         </span>
       </figcaption>
-      <pre tabIndex={0} role="region" aria-label={title}>
-        <code translate="no">
-          {tokens
-            ? tokens.map((line, index) => (
-                <span key={index} className="chat-code-line">
-                  {line.map((token, j) => (
-                    <span
-                      key={j}
-                      style={token.color ? { color: token.color } : undefined}
-                    >
-                      {token.content}
-                    </span>
-                  ))}
-                  {"\n"}
-                </span>
-              ))
-            : code}
-        </code>
-      </pre>
+      <ScrollBox
+        axis="x"
+        data-frame="none"
+        dir="ltr"
+        className="chat-code-scroll"
+        viewport={{ role: "region", "aria-label": title }}
+      >
+        <pre>
+          <code translate="no">
+            {tokens
+              ? tokens.map((line, index) => (
+                  <span key={index} className="chat-code-line">
+                    {line.map((token, j) => (
+                      <span
+                        key={j}
+                        style={token.color ? { color: token.color } : undefined}
+                      >
+                        {token.content}
+                      </span>
+                    ))}
+                    {"\n"}
+                  </span>
+                ))
+              : code}
+          </code>
+        </pre>
+      </ScrollBox>
     </figure>
   )
 }
@@ -119,9 +128,9 @@ const components: Components = {
     )
   },
   table: ({ children }) => (
-    <div className="chat-table" role="region" aria-label="Table" tabIndex={0}>
+    <ScrollBox axis="x" data-frame="none" className="chat-table" viewport={{ role: "region", "aria-label": "Table" }}>
       <table>{children}</table>
-    </div>
+    </ScrollBox>
   ),
 }
 

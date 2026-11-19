@@ -13,8 +13,8 @@ npx shadcn@latest add @uiset/chat @uiset/chat-response \
 Each of the last four brings `chat` with it. `chat-response` also adds `react-markdown`,
 `remark-gfm`, `remend` and `shiki`.
 
-The behavior is UI SDK's. The thread follows new text with `createStickToBottom`; the
-message box brings back what you sent with `createInputHistory`; "/" and "@" are
+The behavior is UI SDK's. The thread is a `ScrollArea` that follows new text with
+`stickToEnd`, and its controller brings you back from Jump to latest; the message box brings back what you sent with `createInputHistory`; "/" and "@" are
 `TriggerMenu`; attachments are `FileInput`; reasoning, tool calls and sources are
 `Collapsible`; the model picker is a `Select`; usage is a `Meter`.
 
@@ -209,7 +209,7 @@ one streams a placeholder. It also takes `models`, `commands`, `mentions`, `sugg
 | Shift+Enter             | message box                | A new line                                             |
 | Up, Down                | message box                | What you sent before, when the caret is on the first or last line |
 | "/" at the start, "@"   | message box                | Commands, mentions: arrows move, Enter or Tab choose, Escape closes |
-| Tab                     | thread, code, tables       | One stop each; arrows and Page keys scroll it          |
+| Tab                     | thread, code, tables       | A stop while it scrolls and holds nothing else to press; arrows and Page keys scroll it |
 | Arrows                  | message actions, suggestions | Move along the toolbar (one Tab stop)               |
 | Enter, Space            | reasoning, tool, sources, plan | Open or close it                                   |
 | Enter, Escape           | rename field               | Save, cancel (leaving the field saves too)             |

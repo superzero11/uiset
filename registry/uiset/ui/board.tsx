@@ -26,6 +26,7 @@ import {
 } from "./dialog"
 import { Field, FieldError, FieldLabel, Input } from "./field"
 import { Label } from "./label"
+import { ScrollBox } from "./scroll-area"
 import { SearchField } from "./search-field"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger } from "./select"
 import { Icon } from "./shell/icons"
@@ -326,71 +327,75 @@ function Board({
               {messages?.help ??
                 "Arrow keys move between cards and columns. Space picks a card up; arrows move it; Space drops it; Escape puts it back. Enter opens a card."}
             </p>
-            {columns.map((column) => {
-              const keys = lists[column.id] ?? []
-              const room = column.limit === undefined ? Infinity : column.limit - keys.length
-              const full = room <= 0
-              const headingId = `${baseId}-${column.id}`
-              return (
-                <div key={column.id} className="board-column" data-full={full ? "" : undefined}>
-                  <div className="board-column-header">
-                    <h3 id={headingId} className="board-column-title">
-                      {column.title}
-                    </h3>
-                    <span className="board-column-count">
-                      <span aria-hidden="true">
-                        {keys.length}
-                        {column.limit !== undefined && ` / ${column.limit}`}
-                      </span>
-                      <span className="uiset-visually-hidden">
-                        {column.limit !== undefined ? `${keys.length} of ${column.limit} cards` : `${keys.length} cards`}
-                      </span>
-                    </span>
-                  </div>
-                  <BoardColumnPart value={column.id} className="board-cards" aria-labelledby={headingId}>
-                    {keys.map((key) => {
-                      const card = cards[key]
-                      if (!card) return null
-                      const descriptionId = `${baseId}-${key}-details`
-                      const description = describeCard ? describeCard(card) : describeCardDefault(card, today)
-                      return (
-                        <BoardCardPart
-                          key={key}
-                          value={key}
-                          className="board-card"
-                          filtered={hiddenSet.has(key)}
-                          aria-label={card.title}
-                          aria-describedby={description ? descriptionId : undefined}
-                        >
-                          {renderCard ? renderCard(card) : <BoardCardFace card={card} today={today} />}
-                          {description && (
-                            <span id={descriptionId} hidden>
-                              {description}
-                            </span>
-                          )}
-                          <span className="board-card-handle" data-board-handle="" aria-hidden="true">
-                            <Icon name="grip" />
+            <ScrollBox axis="x" data-frame="none" className="board-frame" viewport={{ className: "board-scroller", role: "group", "aria-label": "Columns" }}>
+              <div className="board-lanes">
+                {columns.map((column) => {
+                  const keys = lists[column.id] ?? []
+                  const room = column.limit === undefined ? Infinity : column.limit - keys.length
+                  const full = room <= 0
+                  const headingId = `${baseId}-${column.id}`
+                  return (
+                    <div key={column.id} className="board-column" data-full={full ? "" : undefined}>
+                      <div className="board-column-header">
+                        <h3 id={headingId} className="board-column-title">
+                          {column.title}
+                        </h3>
+                        <span className="board-column-count">
+                          <span aria-hidden="true">
+                            {keys.length}
+                            {column.limit !== undefined && ` / ${column.limit}`}
                           </span>
-                        </BoardCardPart>
-                      )
-                    })}
-                  </BoardColumnPart>
-                  {!keys.length && <p className="board-column-empty">{messages?.empty ?? "No cards"}</p>}
-                  {onAddCard && !full && (
-                    <AddCard
-                      column={column.id}
-                      title={column.title}
-                      room={room}
-                      onAdd={(to, text) => handle.api.addCard(to, text)}
-                      onFilled={(key) => {
-                        if (typeof key === "string") handle.api.focusCard(key)
-                      }}
-                    />
-                  )}
-                  {full && <p className="board-column-note">{messages?.full ?? "Full: finish a card to add more."}</p>}
-                </div>
-              )
-            })}
+                          <span className="uiset-visually-hidden">
+                            {column.limit !== undefined ? `${keys.length} of ${column.limit} cards` : `${keys.length} cards`}
+                          </span>
+                        </span>
+                      </div>
+                      <BoardColumnPart value={column.id} className="board-cards" aria-labelledby={headingId}>
+                        {keys.map((key) => {
+                          const card = cards[key]
+                          if (!card) return null
+                          const descriptionId = `${baseId}-${key}-details`
+                          const description = describeCard ? describeCard(card) : describeCardDefault(card, today)
+                          return (
+                            <BoardCardPart
+                              key={key}
+                              value={key}
+                              className="board-card"
+                              filtered={hiddenSet.has(key)}
+                              aria-label={card.title}
+                              aria-describedby={description ? descriptionId : undefined}
+                            >
+                              {renderCard ? renderCard(card) : <BoardCardFace card={card} today={today} />}
+                              {description && (
+                                <span id={descriptionId} hidden>
+                                  {description}
+                                </span>
+                              )}
+                              <span className="board-card-handle" data-board-handle="" aria-hidden="true">
+                                <Icon name="grip" />
+                              </span>
+                            </BoardCardPart>
+                          )
+                        })}
+                      </BoardColumnPart>
+                      {!keys.length && <p className="board-column-empty">{messages?.empty ?? "No cards"}</p>}
+                      {onAddCard && !full && (
+                        <AddCard
+                          column={column.id}
+                          title={column.title}
+                          room={room}
+                          onAdd={(to, text) => handle.api.addCard(to, text)}
+                          onFilled={(key) => {
+                            if (typeof key === "string") handle.api.focusCard(key)
+                          }}
+                        />
+                      )}
+                      {full && <p className="board-column-note">{messages?.full ?? "Full: finish a card to add more."}</p>}
+                    </div>
+                  )
+                })}
+              </div>
+            </ScrollBox>
           </>
         )
       },

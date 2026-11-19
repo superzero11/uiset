@@ -59,7 +59,7 @@ test("the legend isolates a series; single-series charts have no legend", async 
 test("Chart and Table switch to the table twin and back", async ({ page }) => {
   const chart = page.locator("uiset-bar-chart")
   await chart.getByRole("radio", { name: "Table" }).click()
-  const table = chart.getByRole("region", { name: "Signups by region table" })
+  const table = chart.getByRole("group", { name: "Data table" })
   await expect(table.getByRole("row", { name: "North America 4,210" })).toBeVisible()
   await expect(chart.locator(".chart-plot")).toBeHidden()
   await chart.getByRole("radio", { name: "Chart" }).click()
@@ -109,7 +109,7 @@ test("agents select by reading, isolate a series, show the table, and read the d
   expect(missing.error?.message).toContain("Its series: Revenue, Costs")
   const table = await act(page, [{ ref: "Plans", action: "showTable", args: [true] }])
   expect(table.ok, table.error?.message).toBe(true)
-  await expect(page.getByRole("region", { name: "Plans table" })).toBeVisible()
+  await expect(page.getByRole("group", { name: "Data table" })).toBeVisible()
   const items = await page.evaluate(async () => {
     const found = await (window as unknown as { agent: Agent }).agent.query({ within: "Revenue" })
     return found.find((c) => c.label === "Revenue")?.items?.map((i) => i.label)

@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "./dialog"
 import { Field, FieldError, FieldLabel, Input } from "./field"
+import { ScrollBox } from "./scroll-area"
 import { SegmentedControl, SegmentedControlItem } from "./segmented-control"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger } from "./select"
 import { Icon } from "./shell/icons"
@@ -197,89 +198,98 @@ function Schedule({
               Each event is a button. Arrow keys move it, Shift with arrows changes when it
               ends, Delete removes it, and Enter opens it.
             </p>
-            <div className="schedule-head" aria-hidden="true">
-              <span className="schedule-corner" />
-              {axis === "y"
-                ? tracks.map((t) => (
-                    <span key={t.id} className="schedule-track-name" data-today={t.id === today ? "" : undefined}>
-                      {t.short ?? t.label}
-                    </span>
-                  ))
-                : hours.slice(0, -1).map((h) => (
-                    <span key={h} className="schedule-hour-name">
-                      {hourName(h)}
-                    </span>
-                  ))}
-            </div>
-            <div className="schedule-body">
-              <div className="schedule-gutter" aria-hidden="true">
-                {axis === "y"
-                  ? hours.slice(0, -1).map((h) => (
-                      <span key={h} className="schedule-hour-name">
-                        {hourName(h)}
-                      </span>
-                    ))
-                  : tracks.map((t) => (
-                      <span key={t.id} className="schedule-track-name">
-                        {t.short ?? t.label}
-                      </span>
-                    ))}
-              </div>
-              <div className="schedule-tracks">
-                {tracks.map((track) => {
-                  const own = (byTrack.get(track.id) ?? []).sort((a, b) => a.start - b.start)
-                  const lanes = stackSpans(own)
-                  return (
-                    <TrackPart
-                      key={track.id}
-                      value={track.id}
-                      className="schedule-track"
-                      aria-label={track.label}
-                      data-today={track.id === today ? "" : undefined}
-                    >
-                      {track.id === today && nowAt !== null && (
-                        <span
-                          className="schedule-now"
-                          aria-hidden="true"
-                          style={axis === "y" ? { top: `${nowAt * 100}%` } : { insetInlineStart: `${nowAt * 100}%` }}
-                        />
-                      )}
-                      {own.map((event) => (
-                        <EventPart
-                          key={event.id}
-                          value={event.id}
-                          className="schedule-event"
-                          aria-label={nameOf(event)}
-                          aria-describedby={helpId}
-                          data-locked={locked?.(event) ? "" : undefined}
-                          style={
-                            {
-                              ...styleOf(handle.api.spans.spanStyle(event, lanes.get(event.id))),
-                              "--series": series(event.color),
-                            } as CSSProperties
-                          }
-                        >
-                          {renderEvent ? (
-                            renderEvent(event)
-                          ) : (
-                            <>
-                              <span className="schedule-event-title">{event.title}</span>
-                              <span className="schedule-event-time">
-                                {timeLabel(event.start)} – {timeLabel(event.end)}
-                              </span>
-                              {event.location && <span className="schedule-event-place">{event.location}</span>}
-                            </>
-                          )}
-                          {!locked?.(event) && (
-                            <span className="schedule-event-edge" data-span-edge="end" aria-hidden="true" />
-                          )}
-                        </EventPart>
+            <ScrollBox
+              axis="both"
+              data-frame="none"
+              className="schedule-frame"
+              viewport={{ className: "schedule-scroller", role: "group", "aria-label": "Hours" }}
+            >
+              <div className="schedule-grid">
+                <div className="schedule-head" aria-hidden="true">
+                  <span className="schedule-corner" />
+                  {axis === "y"
+                    ? tracks.map((t) => (
+                        <span key={t.id} className="schedule-track-name" data-today={t.id === today ? "" : undefined}>
+                          {t.short ?? t.label}
+                        </span>
+                      ))
+                    : hours.slice(0, -1).map((h) => (
+                        <span key={h} className="schedule-hour-name">
+                          {hourName(h)}
+                        </span>
                       ))}
-                    </TrackPart>
-                  )
-                })}
+                </div>
+                <div className="schedule-body">
+                  <div className="schedule-gutter" aria-hidden="true">
+                    {axis === "y"
+                      ? hours.slice(0, -1).map((h) => (
+                          <span key={h} className="schedule-hour-name">
+                            {hourName(h)}
+                          </span>
+                        ))
+                      : tracks.map((t) => (
+                          <span key={t.id} className="schedule-track-name">
+                            {t.short ?? t.label}
+                          </span>
+                        ))}
+                  </div>
+                  <div className="schedule-tracks">
+                    {tracks.map((track) => {
+                      const own = (byTrack.get(track.id) ?? []).sort((a, b) => a.start - b.start)
+                      const lanes = stackSpans(own)
+                      return (
+                        <TrackPart
+                          key={track.id}
+                          value={track.id}
+                          className="schedule-track"
+                          aria-label={track.label}
+                          data-today={track.id === today ? "" : undefined}
+                        >
+                          {track.id === today && nowAt !== null && (
+                            <span
+                              className="schedule-now"
+                              aria-hidden="true"
+                              style={axis === "y" ? { top: `${nowAt * 100}%` } : { insetInlineStart: `${nowAt * 100}%` }}
+                            />
+                          )}
+                          {own.map((event) => (
+                            <EventPart
+                              key={event.id}
+                              value={event.id}
+                              className="schedule-event"
+                              aria-label={nameOf(event)}
+                              aria-describedby={helpId}
+                              data-locked={locked?.(event) ? "" : undefined}
+                              style={
+                                {
+                                  ...styleOf(handle.api.spans.spanStyle(event, lanes.get(event.id))),
+                                  "--series": series(event.color),
+                                } as CSSProperties
+                              }
+                            >
+                              {renderEvent ? (
+                                renderEvent(event)
+                              ) : (
+                                <>
+                                  <span className="schedule-event-title">{event.title}</span>
+                                  <span className="schedule-event-time">
+                                    {timeLabel(event.start)} – {timeLabel(event.end)}
+                                  </span>
+                                  {event.location && <span className="schedule-event-place">{event.location}</span>}
+                                </>
+                              )}
+                              {!locked?.(event) && (
+                                <span className="schedule-event-edge" data-span-edge="end" aria-hidden="true" />
+                              )}
+                            </EventPart>
+                          ))}
+                        </TrackPart>
+                      )
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
+            </ScrollBox>
           </>
         )
       },

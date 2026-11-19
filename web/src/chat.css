@@ -14,7 +14,7 @@
     grid-template-rows: minmax(0, 1fr);
     min-block-size: 0;
 
-    & > .chat-thread-scroller {
+    & > .chat-thread-frame {
       min-block-size: 0;
     }
   }

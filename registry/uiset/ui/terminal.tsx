@@ -4,7 +4,6 @@ import {
   announce,
   createController,
   createInputHistory,
-  createStickToBottom,
   definePrimitive,
   isComposing,
   matchesShortcut,
@@ -17,13 +16,13 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
   type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from "react"
 import { Button } from "./button"
 import { Input } from "./field"
+import { createScrollAreaController, ScrollBox } from "./scroll-area"
 import { plain, Screen, urlPattern, type Run, type ScreenLine } from "./terminal/ansi"
 import {
   createTerminalController,
@@ -141,13 +140,10 @@ function Terminal({
   const scroller = useRef<HTMLDivElement>(null)
   const lastTab = useRef<string | null>(null)
 
-  const stick = useMemo(() => createStickToBottom({ threshold: 24 }), [])
-  const stuck = useSyncExternalStore(
-    (listener) => stick.subscribe(listener),
-    () => stick.get(),
-    () => stick.get(),
-  )
-  useEffect(() => (scroller.current ? stick.connect(scroller.current) : undefined), [stick])
+  // The scroll area follows the output's end until you scroll up (stickToEnd). Output that
+  // arrives while you read above offers New output below.
+  const [area] = useState(createScrollAreaController)
+  const [unseen, setUnseen] = useState(false)
 
   // Output goes into a screen and the page catches up once a frame, however fast it comes.
   const [, setFrame] = useState(0)
@@ -167,6 +163,7 @@ function Terminal({
         frame.current = null
         // Past scrollback, old lines go even while you're scrolled up: the view stays put.
         made.trim(scrollback)
+        if (!area.isSticking()) setUnseen(true)
         setFrame((n) => n + 1)
       })
     })
@@ -266,7 +263,7 @@ function Terminal({
 
   const handle = usePrimitive(terminalPrimitive, {
     onRun: (line) => {
-      stick.scrollToBottom()
+      area.scrollToEnd()
       void session.execute(line)
     },
     onClear: () => screen.clear(),
@@ -298,26 +295,37 @@ function Terminal({
       },
       children: (
         <>
-          <div
-            ref={scroller}
-            className="terminal-scroll"
-            role="log"
-            aria-label={`${label} output`}
-            // New lines are read out; a line redrawn in place (a progress bar) isn't.
-            aria-relevant="additions"
-            tabIndex={0}
-            translate="no"
+          <ScrollBox
+            data-frame="none"
+            className="terminal-frame"
+            stickToEnd
+            controller={area}
+            viewport={{
+              ref: scroller,
+              onScroll: () => {
+                if (area.isAtEnd()) setUnseen(false)
+              },
+              className: "terminal-scroll",
+              role: "log",
+              // Not "<label> output": that would contain the terminal's own name, and a step naming
+              // the terminal would find both.
+              "aria-label": "Output",
+              // New lines are read out; a line redrawn in place (a progress bar) isn't.
+              "aria-relevant": "additions",
+              translate: "no",
+            }}
           >
             {screen.lines.map((line) => (
               <TerminalLine key={line.id} line={line} version={line.version} prompt={prompt} />
             ))}
-          </div>
-          {stuck.unseen && !stuck.following && (
+          </ScrollBox>
+          {unseen && (
             <Button
               variant="outline"
               className="terminal-jump"
               onClick={() => {
-                stick.scrollToBottom()
+                area.scrollToEnd()
+                setUnseen(false)
                 // The button goes once you're at the end; the prompt takes focus.
                 field.current?.focus({ preventScroll: true })
               }}
@@ -336,7 +344,7 @@ function Terminal({
               }
               history.reset()
               setValue("")
-              stick.scrollToBottom()
+              area.scrollToEnd()
               void session.execute(value)
             }}
           >

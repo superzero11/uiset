@@ -238,7 +238,7 @@ test.describe("on a touch screen", () => {
     }
     await touch("touchEnd")
     await page.waitForTimeout(300)
-    expect(await week.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0)
+    expect(await week.evaluate((el) => el.querySelector(".schedule-scroller")!.scrollLeft)).toBeGreaterThan(0)
     expect(await week.evaluate((el) => el.querySelectorAll(".schedule-event").length)).toBe(before)
     expect(errors).toEqual([])
   })

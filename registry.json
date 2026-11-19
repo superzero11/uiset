@@ -2026,6 +2026,7 @@
         "superzero11/uiset/field",
         "superzero11/uiset/menu",
         "superzero11/uiset/popover",
+        "superzero11/uiset/scroll-area",
         "superzero11/uiset/search-field",
         "superzero11/uiset/select"
       ],
@@ -2084,6 +2085,7 @@
       ],
       "registryDependencies": [
         "superzero11/uiset/uiset",
+        "superzero11/uiset/scroll-area",
         "superzero11/uiset/segmented-control"
       ],
       "files": [
@@ -2330,6 +2332,7 @@
         "superzero11/uiset/dialog",
         "superzero11/uiset/field",
         "superzero11/uiset/label",
+        "superzero11/uiset/scroll-area",
         "superzero11/uiset/search-field",
         "superzero11/uiset/select",
         "superzero11/uiset/textarea"
@@ -2446,6 +2449,7 @@
         "superzero11/uiset/dialog",
         "superzero11/uiset/field",
         "superzero11/uiset/menu",
+        "superzero11/uiset/scroll-area",
         "superzero11/uiset/select",
         "superzero11/uiset/tabs",
         "superzero11/uiset/textarea",
@@ -2509,7 +2513,8 @@
         "superzero11/uiset/button",
         "superzero11/uiset/drawer",
         "superzero11/uiset/listbox",
-        "superzero11/uiset/menu"
+        "superzero11/uiset/menu",
+        "superzero11/uiset/scroll-area"
       ],
       "files": [
         {
@@ -2562,7 +2567,8 @@
       "registryDependencies": [
         "superzero11/uiset/uiset",
         "superzero11/uiset/button",
-        "superzero11/uiset/field"
+        "superzero11/uiset/field",
+        "superzero11/uiset/scroll-area"
       ],
       "files": [
         {
@@ -2609,6 +2615,7 @@
         "superzero11/uiset/calendar",
         "superzero11/uiset/dialog",
         "superzero11/uiset/field",
+        "superzero11/uiset/scroll-area",
         "superzero11/uiset/segmented-control",
         "superzero11/uiset/select"
       ],
@@ -2782,7 +2789,8 @@
       ],
       "registryDependencies": [
         "superzero11/uiset/uiset",
-        "superzero11/uiset/button"
+        "superzero11/uiset/button",
+        "superzero11/uiset/scroll-area"
       ],
       "files": [
         {
@@ -2818,8 +2826,9 @@
       ],
       "registryDependencies": [
         "superzero11/uiset/uiset",
+        "superzero11/uiset/button",
         "superzero11/uiset/chat",
-        "superzero11/uiset/button"
+        "superzero11/uiset/scroll-area"
       ],
       "files": [
         {
@@ -2856,7 +2865,8 @@
       ],
       "registryDependencies": [
         "superzero11/uiset/uiset",
-        "superzero11/uiset/chat"
+        "superzero11/uiset/chat",
+        "superzero11/uiset/scroll-area"
       ],
       "files": [
         {
@@ -2942,6 +2952,7 @@
         "superzero11/uiset/button",
         "superzero11/uiset/field",
         "superzero11/uiset/popover",
+        "superzero11/uiset/scroll-area",
         "superzero11/uiset/select",
         "superzero11/uiset/toggle",
         "superzero11/uiset/toolbar",
@@ -3012,7 +3023,8 @@
       ],
       "registryDependencies": [
         "superzero11/uiset/uiset",
-        "superzero11/uiset/button"
+        "superzero11/uiset/button",
+        "superzero11/uiset/scroll-area"
       ],
       "files": [
         {
@@ -3198,6 +3210,7 @@
         "superzero11/uiset/meter",
         "superzero11/uiset/page-header",
         "superzero11/uiset/password-input",
+        "superzero11/uiset/scroll-area",
         "superzero11/uiset/select",
         "superzero11/uiset/switch",
         "superzero11/uiset/tabs",
@@ -3258,6 +3271,7 @@
         "superzero11/uiset/empty-state",
         "superzero11/uiset/field",
         "superzero11/uiset/page-header",
+        "superzero11/uiset/scroll-area",
         "superzero11/uiset/select",
         "superzero11/uiset/toast"
       ],
@@ -3420,6 +3434,7 @@
         "superzero11/uiset/button",
         "superzero11/uiset/ide",
         "superzero11/uiset/resizable",
+        "superzero11/uiset/scroll-area",
         "superzero11/uiset/tabs"
       ],
       "files": [
@@ -3583,6 +3598,7 @@
         "superzero11/uiset/accordion",
         "superzero11/uiset/badge",
         "superzero11/uiset/button",
+        "superzero11/uiset/scroll-area",
         "superzero11/uiset/segmented-control"
       ],
       "files": [

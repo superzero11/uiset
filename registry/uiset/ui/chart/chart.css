@@ -342,21 +342,23 @@
   }
 
   /* The table twin. */
-  .chart-table-scroller {
-    max-block-size: 22rem;
-    overflow: auto;
+  .chart-table-frame {
     border: 1px solid var(--ui-border);
     border-radius: calc(var(--ui-radius) + 2px);
-
-    &:focus-visible {
-      outline: 2px solid var(--ui-ring-border);
-      outline-offset: 2px;
-    }
   }
 
+  /* The heading row stays put, so no fade under it. */
+  .chart-table-scroller {
+    max-block-size: 22rem;
+    --uiset-fade-block-start: 0px;
+  }
+
+  /* Separate borders: with collapsed ones, the line under the sticky heading row stays with
+     the rows, and a sliver of the row passing under shows through the gap. */
   .chart-table {
     inline-size: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     font-size: 0.8125rem;
 
     th,

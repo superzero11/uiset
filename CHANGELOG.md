@@ -56,6 +56,36 @@ On UI SDK `0.1.0-beta.10`.
   bridge asks the person first (`data-agent-confirm`), and an approved press acts at once, so
   the approval is the second press. Web Components: `<uiset-confirm-button>`.
 
+- **`ScrollBox` takes `axis` and `viewport`.** `axis` ("y", "x" or "both") picks the
+  scrollbars, and `viewport` takes the props of the element that scrolls (its role, name,
+  ref and handlers). `data-frame="none"` on a scroll area drops its border and padding, for
+  one inside a larger surface, and it fills the space it's given. React and Web Components.
+
+### Changed
+
+- **The kits and templates scroll in UI SDK's scroll areas**, with its scrollbars and the
+  fades above: the chat thread, its code, tool input and output and tables; the terminal;
+  the data grid; the schedule; the board; the chart's table; the IDE's files, tabs and code;
+  the rich text editor (no fades there, since the caret sits at the edge as you type); the
+  mobile sheet and pull to refresh; the agent snapshot; and the settings tabs, admin drawer,
+  pricing table and IDE panels. Sticky headers, columns and gutters stay solid. What to do
+  if you styled them: each old scrolling class (like `chat-thread-scroller`,
+  `data-grid-scroller`, `terminal-scroll`) is now on the viewport, the element that scrolls,
+  so heights set there still work; borders and backgrounds moved to a new `*-frame` class on
+  the scroll area (`data-grid-frame`, `chart-table-frame`, `pricing-table-frame`,
+  `ide-tab-strip`). The board's columns are laid out by `.board-lanes` and the schedule's
+  head and body by `.schedule-grid`. A scrolling region is a tab stop only while it scrolls
+  and holds nothing else to press, as UI SDK decides. The kits now install `scroll-area`.
+  Each scroll area has a short name of its own for agents (the terminal's output is
+  "Output", the grid's "Rows", the board's "Columns", the schedule's "Hours", the IDE's
+  "Files", "Tabs" and "Lines"), since one containing its widget's name, like "Shell output"
+  around the terminal "Shell", would make a step by that name find both. The chat thread and
+  the terminal follow their end with the scroll area's `stickToEnd` instead of
+  `createStickToBottom`, so old lines trimmed past `scrollback` leave what you're reading in
+  place; Jump to latest shows whenever the thread is away from its end.
+  Web Components: `<uiset-status-bar>` and `<uiset-pull-refresh>` keep the browser's own
+  scrolling, since what's inside them is your own markup.
+
 ## 0.4.0 (2026-11-19)
 
 On UI SDK `0.1.0-beta.10`. A minor release: what works differently is under **Changed**,

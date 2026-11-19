@@ -1,8 +1,8 @@
 # Terminal
 
 A terminal for commands your app defines, like a web shell, a dev console or a CLI in the
-browser. Built on UI SDK's `createInputHistory` (Up and Down) and `createStickToBottom`
-(output follows its end unless you scroll up).
+browser. Built on UI SDK's `createInputHistory` (Up and Down) and a `ScrollArea` with
+`stickToEnd` (output follows its end unless you scroll up).
 
 ```bash
 npx shadcn@latest add @uiset/terminal
@@ -77,7 +77,8 @@ socket.onmessage = (event) => shell.print(event.data)
 | Ctrl+C            | Stops the running command, or drops the line; with text selected, copies |
 | Ctrl+L            | Clears the screen                                                    |
 
-The output is a `log` region that takes focus for scrolling by keyboard; a click on it puts
+The output is a `log` region in a UI SDK scroll area. Once it scrolls it's a tab stop, so the
+keyboard can scroll it, unless it holds links, which Tab reaches instead. A click on it puts
 the caret in the prompt unless you were selecting text.
 
 ## For agents

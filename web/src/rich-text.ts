@@ -22,6 +22,7 @@ import { createRichTextView, renderDocument, type RichTextMessages, type RichTex
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/shell/shell.css"
 import { attr, defineElement, ElementBase, Evented, h, isOn, keepInputInside, reportInput, uid, upgradeProperties } from "./dom"
+import { scrollArea } from "./scroll"
 import "./rich-text.css"
 
 type Person = { value: string; label: string }
@@ -205,7 +206,9 @@ class UISetRichText extends Evented<UISetRichTextEvents>() {
     const area = h("uiset-rich-text-area") as AreaElement
     const list = h("ui-trigger-menu-list")
     // With nothing matching, the menu closes, so Enter makes a new line as usual.
-    const menu = h("ui-trigger-menu", null, area, h("ui-trigger-menu-content", { class: "rich-text-menu" }, list)) as MenuElement
+    // No fades: the caret often sits at the edge as you type.
+    const scroller = scrollArea(area, { frame: { class: "rich-text-frame", "data-fades": "none" }, viewport: { class: "rich-text-scroller", role: "group", "aria-label": "Writing area" } }).root
+    const menu = h("ui-trigger-menu", null, scroller, h("ui-trigger-menu-content", { class: "rich-text-menu" }, list)) as MenuElement
     const countId = uid("rich-text-count")
     const count = h("p", { class: "rich-text-count", id: countId })
     const input = h("input", { type: "hidden" }) as HTMLInputElement

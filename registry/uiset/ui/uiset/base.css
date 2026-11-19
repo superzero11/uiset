@@ -98,6 +98,27 @@
   outline-offset: -2px;
 }
 
+/* A scroll area inside a larger surface, like a kit's thread, log or grid: data-frame="none"
+   drops its border and padding, and it fills the space it's given. No specificity, so the
+   surface's own class can add a border back. */
+:where([data-uiset] [data-slot="scroll-area"][data-frame="none"]) {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  min-inline-size: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+:where([data-uiset] [data-slot="scroll-area"][data-frame="none"] > [data-slot="scroll-area-viewport"]) {
+  flex: 1 1 auto;
+  min-block-size: 0;
+}
+
+:where([data-uiset] [data-slot="scroll-area"][data-frame="none"] > [data-slot="scroll-area-viewport"] > [data-slot="scroll-area-content"]) {
+  padding: 0;
+}
+
 /* Edge fades: where a scroll area's content runs on past an edge, it fades out there. UI SDK
    marks the edges the view is at (data-at-y-start and the rest); the fade grows in as the view
    leaves one. A mask fades the content itself, so it suits any surface. data-fades="none" on
@@ -167,6 +188,11 @@
 [data-uiset] [data-slot="scroll-area"]:not([data-fades="none"]):has(> [data-slot="scroll-area-viewport"]:focus-visible) {
   outline: 2px solid var(--ui-ring-border);
   outline-offset: 2px;
+
+  /* A frameless one usually meets its surface's edges, where an outer ring would be cut off. */
+  &[data-frame="none"] {
+    outline-offset: -2px;
+  }
 }
 
 /* Radio cards: an option as a card. Its label stretches over the card, so a press anywhere

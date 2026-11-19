@@ -77,6 +77,7 @@ import {
   MenuTrigger,
 } from "./menu"
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "./popover"
+import { ScrollBox } from "./scroll-area"
 import { SearchField } from "./search-field"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger } from "./select"
 import { Icon } from "./shell/icons"
@@ -1165,19 +1166,26 @@ function DataGrid<Row>({
         {children}
         {/* Out of the tab order: the grid's one tab stop is its active cell, and Firefox
             would otherwise stop on any scrolling box as well. */}
-        <div
-          ref={scroller}
-          className="data-grid-scroller"
-          tabIndex={-1}
-          data-stale={deferredQuery !== query || deferredFilters !== filters ? "" : undefined}
-          style={{
-            scrollPaddingInlineStart: stickyWidth,
-            scrollPaddingBlockStart: HEADER_HEIGHT,
+        <ScrollBox
+          axis="both"
+          data-frame="none"
+          className="data-grid-frame"
+          viewport={{
+            ref: scroller,
+            className: "data-grid-scroller",
+            role: "group",
+            "aria-label": "Rows",
+            tabIndex: -1,
+            "data-stale": deferredQuery !== query || deferredFilters !== filters ? "" : undefined,
+            style: {
+              scrollPaddingInlineStart: stickyWidth,
+              scrollPaddingBlockStart: HEADER_HEIGHT,
+            },
           }}
         >
           {table}
           {items.length === 0 && <div className="data-grid-empty">{empty}</div>}
-        </div>
+        </ScrollBox>
         <p id={helpId} hidden>
           Arrow keys move between cells. Enter sorts a column or edits a cell, Escape cancels.
           Shift with arrows selects cells. On a column header, Shift+F10 opens the column

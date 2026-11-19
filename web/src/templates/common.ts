@@ -3,6 +3,7 @@
 import "@ui-sdk/web/button"
 import "@ui-sdk/web/field"
 import "@ui-sdk/web/input"
+import "@ui-sdk/web/scroll-area"
 import { iconElement } from "../uiset"
 import "@/registry/uiset/ui/templates/templates.css"
 

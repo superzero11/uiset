@@ -1,6 +1,6 @@
 "use client"
 
-import { announce, createStickToBottom } from "@ui-sdk/core"
+import { announce } from "@ui-sdk/core"
 import { Avatar, AvatarFallback, AvatarImage } from "@ui-sdk/react/avatar"
 import {
   Collapsible,
@@ -9,9 +9,10 @@ import {
 } from "@ui-sdk/react/collapsible"
 import { Toggle, ToggleGroup } from "@ui-sdk/react/toggle"
 import { Toolbar, ToolbarButton } from "@ui-sdk/react/toolbar"
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import { Button } from "./button"
 import { actionName } from "./chat/opening"
+import { createScrollAreaController, ScrollBox } from "./scroll-area"
 import "./chat/chat.css"
 
 type Role = "user" | "assistant" | "system"
@@ -42,37 +43,34 @@ function ChatThread({
   label?: string
   children: ReactNode
 }) {
-  const scroller = useRef<HTMLDivElement>(null)
-  const stick = useMemo(() => createStickToBottom({ threshold: 32 }), [])
-  const state = useSyncExternalStore(
-    (listener) => stick.subscribe(listener),
-    () => stick.get(),
-    () => stick.get(),
-  )
-
-  useEffect(() => {
-    if (!scroller.current) return
-    return stick.connect(scroller.current)
-  }, [stick])
+  // The scroll area follows new text until you scroll up (stickToEnd); away from the end,
+  // Jump to latest brings you back.
+  const [area] = useState(createScrollAreaController)
+  const [away, setAway] = useState(false)
 
   return (
     <div className="chat-thread">
-      <div
-        ref={scroller}
-        className="chat-thread-scroller"
-        role="region"
-        aria-label={label}
-        tabIndex={0}
+      <ScrollBox
+        data-frame="none"
+        className="chat-thread-frame"
+        stickToEnd
+        controller={area}
+        viewport={{
+          className: "chat-thread-scroller",
+          role: "region",
+          "aria-label": label,
+          onScroll: () => setAway(!area.isAtEnd()),
+        }}
       >
         <div role="log" className="chat-thread-log">
           {children}
         </div>
-      </div>
-      {state.unseen && !state.following && (
+      </ScrollBox>
+      {away && (
         <Button
           variant="outline"
           className="chat-thread-jump"
-          onClick={() => stick.scrollToBottom({ behavior: "smooth" })}
+          onClick={() => area.scrollToEnd({ behavior: "smooth" })}
         >
           Jump to latest
         </Button>

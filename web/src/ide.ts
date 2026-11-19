@@ -23,6 +23,7 @@ import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/code/code.css"
 import "@/registry/uiset/ui/ide/ide.css"
 import { attr, defineElement, ElementBase, Evented, h, isOn, place, reportInput, uid, upgradeProperties } from "./dom"
+import { scrollArea } from "./scroll"
 
 const baseName = (path: string) => path.split("/").pop() ?? path
 const dirName = (path: string) => path.split("/").slice(0, -1).join("/")
@@ -214,7 +215,8 @@ class UISetFileTree extends Evented<UISetFileTreeEvents>() {
       h("ui-alert-dialog-content", { hidden: true }, alertTitle, alertText, h("div", { class: "ide-dialog-actions" }, h("ui-alert-dialog-close", null, h("button", { type: "button" }, "Keep it")), h("ui-alert-dialog-close", null, confirm))),
     ) as DialogElement
     this.classList.add("ide-files")
-    this.replaceChildren(h("section", { class: "ide-files-section", "aria-labelledby": titleId }, h("div", { class: "ide-pane-header" }, title, actions), tree), dialog, alert)
+    const treeArea = scrollArea(tree, { axis: "both", frame: { class: "ide-tree-frame" }, viewport: { class: "ide-tree-scroller", role: "group", "aria-label": "Files" } }).root
+    this.replaceChildren(h("section", { class: "ide-files-section", "aria-labelledby": titleId }, h("div", { class: "ide-pane-header" }, title, actions), treeArea), dialog, alert)
     this.#dom = { title, actions, newFile, newFolder, more, menuContent, tree, dialog, dialogContent, alert, alertTitle, alertText }
   }
 
@@ -510,7 +512,8 @@ class UISetEditorTabs extends Evented<UISetEditorTabsEvents>() {
     upgradeProperties(this, ["files", "value", "renderPanel"])
     if (!this.#dom) {
       const list = h("ui-tabs-list", { class: "ide-tab-list" })
-      const tabs = h("ui-tabs", { class: "ide-tabs" }, list) as HTMLElement & { value?: string | null }
+      const strip = scrollArea(list, { axis: "x", frame: { class: "ide-tab-strip" }, viewport: { class: "ide-tab-scroller", role: "group", "aria-label": "Tabs" } }).root
+      const tabs = h("ui-tabs", { class: "ide-tabs" }, strip) as HTMLElement & { value?: string | null }
       tabs.addEventListener("valuechange", (event) => {
         const value = String((event as CustomEvent<{ value: unknown }>).detail.value)
         this.#value = value
@@ -742,13 +745,14 @@ class UISetCodeEditor extends Evented<UISetCodeEditorEvents>() {
     const colors = h("pre", { class: "ide-code-colors", "aria-hidden": "true" })
     const body = h("div", { class: "ide-code-body" }, bar, colors, field)
     const gutter = h("div", { class: "ide-code-gutter", "aria-hidden": "true" })
-    const scroll = h("div", { class: "ide-code-scroll" }, gutter, body)
+    const area = scrollArea(h("div", { class: "ide-code-lines" }, gutter, body), { axis: "both", frame: { class: "ide-code-frame" }, viewport: { class: "ide-code-scroll", role: "group", "aria-label": "Lines" } })
+    const scroll = area.view
     this.classList.add("ide-code")
     attr(this, "data-readonly", isOn(this, "readonly"))
     // Code reads left to right and isn't translated, whatever the page's language does.
     this.setAttribute("dir", "ltr")
     this.setAttribute("translate", "no")
-    this.replaceChildren(scroll, hint)
+    this.replaceChildren(area.root, hint)
     this.#dom = { scroll, gutter, body, bar, colors, field, input, hint }
   }
 

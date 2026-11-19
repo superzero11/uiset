@@ -6,23 +6,38 @@
     --gutter: 4.25rem;
     --schedule-line: var(--chart-grid, var(--ui-border));
     display: grid;
-    grid-template-rows: auto 1fr;
-    max-block-size: var(--schedule-height, 36rem);
-    overflow: auto;
+    /* As narrow as its place: the week scrolls inside. */
+    min-inline-size: 0;
     border: 1px solid var(--ui-border);
     border-radius: calc(var(--ui-radius) + 6px);
     background: var(--ui-background);
     color: var(--ui-foreground);
     font-size: 0.8125rem;
-    overscroll-behavior: contain;
-    /* Focus scrolls an event clear of the sticky head and gutter. */
-    scroll-padding-block-start: 2.5rem;
-    scroll-padding-inline-start: var(--gutter);
 
     &:focus-visible {
       outline: 2px solid var(--ui-ring-border);
       outline-offset: 2px;
     }
+  }
+
+  /* The week scrolls in a UI SDK scroll area inside the schedule's box. */
+  .schedule-frame {
+    border-radius: calc(var(--ui-radius) + 5px);
+  }
+
+  .schedule-scroller {
+    max-block-size: var(--schedule-height, 36rem);
+    overscroll-behavior: contain;
+    /* Focus scrolls an event clear of the sticky head and gutter, and no fade lies on them. */
+    scroll-padding-block-start: 2.5rem;
+    scroll-padding-inline-start: var(--gutter);
+    --uiset-fade-block-start: 0px;
+    --uiset-fade-inline-start: 0px;
+  }
+
+  .schedule-grid {
+    display: grid;
+    grid-template-rows: auto 1fr;
   }
 
   .schedule-head {

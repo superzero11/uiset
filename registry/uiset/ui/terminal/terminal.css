@@ -35,17 +35,10 @@
     line-height: 1.5;
   }
 
+  /* The output scrolls in a UI SDK scroll area; the viewport is the log. */
   .terminal-scroll {
-    min-block-size: 0;
-    overflow: auto;
     padding: 0.75rem 0.875rem 0.25rem;
-    outline: none;
     overscroll-behavior: contain;
-
-    &:focus-visible {
-      outline: 2px solid var(--ui-ring-border);
-      outline-offset: -2px;
-    }
   }
 
   .terminal-line {

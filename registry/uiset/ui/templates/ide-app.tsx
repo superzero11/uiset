@@ -26,6 +26,7 @@ import {
 } from "../ide"
 import { languageOf } from "../code/highlight"
 import { Resizable, ResizableHandle, ResizablePanel } from "../resizable"
+import { ScrollBox } from "../scroll-area"
 import { Icon } from "../shell/icons"
 import { Tabs, TabsList, TabsPanel, TabsTab } from "../tabs"
 import { sampleLint, sampleProject } from "./ide-sample"
@@ -332,27 +333,31 @@ function IdeTemplate({
                   <TabsTab value="outline">Outline</TabsTab>
                 </TabsList>
                 <TabsPanel value="problems" className="template-ide-panel-body">
-                  <ProblemsList problems={problems} onChoose={(p) => openFile(p.path, { line: p.line, col: p.col })} />
+                  <ScrollBox data-frame="none" className="template-ide-panel-frame" viewport={{ role: "group", "aria-label": "Panel" }}>
+                    <ProblemsList problems={problems} onChoose={(p) => openFile(p.path, { line: p.line, col: p.col })} />
+                  </ScrollBox>
                 </TabsPanel>
                 <TabsPanel value="outline" className="template-ide-panel-body">
-                  {active ? (
-                    <ul className="template-ide-outline">
-                      {(files[active] ?? "")
-                        .split("\n")
-                        .map((line, i) => ({ line: i + 1, match: line.match(/^(?:export\s+)?(?:async\s+)?(?:function|const|class|interface|type)\s+(\w+)/) }))
-                        .filter((entry) => entry.match)
-                        .map((entry) => (
-                          <li key={entry.line}>
-                            <Button variant="ghost" onClick={() => active && editors.current.get(active)?.goTo(entry.line)}>
-                              {entry.match![1]}
-                              <span className="template-ide-line">line {entry.line}</span>
-                            </Button>
-                          </li>
-                        ))}
-                    </ul>
-                  ) : (
-                    <p className="ide-problems-empty">Open a file to see its outline.</p>
-                  )}
+                  <ScrollBox data-frame="none" className="template-ide-panel-frame" viewport={{ role: "group", "aria-label": "Panel" }}>
+                    {active ? (
+                      <ul className="template-ide-outline">
+                        {(files[active] ?? "")
+                          .split("\n")
+                          .map((line, i) => ({ line: i + 1, match: line.match(/^(?:export\s+)?(?:async\s+)?(?:function|const|class|interface|type)\s+(\w+)/) }))
+                          .filter((entry) => entry.match)
+                          .map((entry) => (
+                            <li key={entry.line}>
+                              <Button variant="ghost" onClick={() => active && editors.current.get(active)?.goTo(entry.line)}>
+                                {entry.match![1]}
+                                <span className="template-ide-line">line {entry.line}</span>
+                              </Button>
+                            </li>
+                          ))}
+                      </ul>
+                    ) : (
+                      <p className="ide-problems-empty">Open a file to see its outline.</p>
+                    )}
+                  </ScrollBox>
                 </TabsPanel>
               </Tabs>
             </ResizablePanel>

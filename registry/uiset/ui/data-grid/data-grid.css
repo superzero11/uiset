@@ -79,13 +79,25 @@
 
   /* The scrolling box and the grid inside it */
 
-  .data-grid-scroller {
-    position: relative;
-    max-block-size: var(--data-grid-height, 28rem);
-    overflow: auto;
+  /* The grid scrolls in a UI SDK scroll area: the frame draws the box, the viewport scrolls. */
+  .data-grid-frame {
     border: 1px solid var(--data-grid-line);
     border-radius: calc(var(--ui-radius) + 4px);
     background: var(--ui-background);
+
+    /* The header row and pinned columns stay put, so no fade where they sit. */
+    & > .data-grid-scroller {
+      --uiset-fade-block-start: 0px;
+    }
+
+    &:has(.data-grid-cell[data-pinned]) > .data-grid-scroller {
+      --uiset-fade-inline-start: 0px;
+    }
+  }
+
+  .data-grid-scroller {
+    position: relative;
+    max-block-size: var(--data-grid-height, 28rem);
     overscroll-behavior-inline: contain;
     container-type: inline-size;
   }

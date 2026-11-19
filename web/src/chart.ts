@@ -17,6 +17,7 @@ import { domName, type VChild } from "@/registry/uiset/ui/chart/vnode"
 import "@/registry/uiset/ui/chart/tokens.css"
 import "@/registry/uiset/ui/chart/chart.css"
 import { attr, defineElement, Evented, h, place, uid, upgradeProperties } from "./dom"
+import { nameScrollArea, scrollArea } from "./scroll"
 
 const svgNS = "http://www.w3.org/2000/svg"
 
@@ -110,6 +111,8 @@ class UISetChart<Options extends object> extends Evented<UISetChartEvents>() {
     points: PointsElement
     tooltip: HTMLElement
     table: HTMLElement
+    tableView: HTMLElement
+    tableBox: HTMLElement
   }
   private resize?: ResizeObserver
   private geometry?: ChartGeometry
@@ -222,7 +225,8 @@ class UISetChart<Options extends object> extends Evented<UISetChartEvents>() {
     })
     const tooltip = h("div", { class: "chart-tooltip", "aria-hidden": "true" })
     const plot = h("div", { class: "chart-plot" }, svg, points, tooltip)
-    const table = h("div", { class: "chart-table-scroller", role: "region", tabindex: "0" })
+    const tableArea = scrollArea(null, { axis: "both", frame: { class: "chart-table-frame" }, viewport: { class: "chart-table-scroller", role: "group" } })
+    const table = tableArea.root
     const figure = h(
       "figure",
       { class: "chart", "aria-labelledby": titleId, "data-view": "chart" },
@@ -233,7 +237,7 @@ class UISetChart<Options extends object> extends Evented<UISetChartEvents>() {
     )
     this.replaceChildren(figure)
     this.legendButtons.clear()
-    this.built = { figure, title, description, switcher, legend, plot, svg, points, tooltip, table }
+    this.built = { figure, title, description, switcher, legend, plot, svg, points, tooltip, table, tableView: tableArea.view, tableBox: tableArea.content }
     // A hidden plot (the table is showing) measures 0; the last width stays.
     this.resize ??= new ResizeObserver(() => {
       const box = this.built?.plot
@@ -277,7 +281,7 @@ class UISetChart<Options extends object> extends Evented<UISetChartEvents>() {
     b.switcher.setAttribute("aria-label", `Show ${chartTitle} as`)
     b.legend.setAttribute("aria-label", `${chartTitle} series`)
     b.points.setAttribute("aria-label", chartTitle)
-    b.table.setAttribute("aria-label", `${chartTitle} table`)
+    nameScrollArea(b.table, "Data table")
     return chartTitle
   }
 
@@ -329,7 +333,7 @@ class UISetChart<Options extends object> extends Evented<UISetChartEvents>() {
     this.drawSvg(geometry, context.height)
 
     display(b.table, this.view === "table")
-    if (this.view === "table") b.table.replaceChildren(this.table(frame, chartTitle))
+    if (this.view === "table") b.tableBox.replaceChildren(this.table(frame, chartTitle))
   }
 
   // The legend isolates one series; pressing it again shows them all. Its buttons are kept

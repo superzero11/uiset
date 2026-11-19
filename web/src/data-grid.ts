@@ -33,6 +33,7 @@ import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/shell/shell.css"
 import "@/registry/uiset/ui/data-grid/data-grid.css"
 import { asFlag, attr, defineElement, ElementBase, h, isOn, place, uid, upgradeProperties } from "./dom"
+import { scrollArea } from "./scroll"
 
 type Row = unknown
 type WebColumn<Datum = Row> = GridColumnSpec<Datum> & {
@@ -736,14 +737,16 @@ class UISetDataGrid<Datum = any> extends ElementBase {
     const empty = h("div", { class: "data-grid-empty" })
     // Out of the tab order: the grid's one tab stop is its active cell, and Firefox would
     // otherwise stop on any scrolling box as well.
-    const scroller = h("div", { class: "data-grid-scroller", tabindex: "-1" }, table, empty)
+    const area = scrollArea(null, { axis: "both", frame: { class: "data-grid-frame" }, viewport: { class: "data-grid-scroller", role: "group", "aria-label": "Rows", tabindex: "-1" } })
+    area.content.append(table, empty)
+    const scroller = area.view
     const help = h(
       "p",
       { id: uid("grid-help"), hidden: true },
       "Arrow keys move between cells. Enter sorts a column or edits a cell, Escape cancels. Shift with arrows selects cells. On a column header, Shift+F10 opens the column menu, Alt (Option on a Mac) with Left or Right resizes the column, and adding Shift moves it.",
     )
     const footer = h("div", { class: "data-grid-footer" })
-    this.replaceChildren(toolbar, scroller, help, footer)
+    this.replaceChildren(toolbar, area.root, help, footer)
     this.dom = { toolbar, scroller, table, head, body, empty, help, footer }
     // The tools exist from the start, so your selection actions are on the page for your script.
     if (isOn(this, "toolbar")) this.tools = this.buildTools()

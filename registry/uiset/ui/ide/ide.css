@@ -64,9 +64,8 @@
     font-size: 0.75rem;
   }
 
+  /* The tree scrolls in a UI SDK scroll area under the pane's header. */
   .ide-tree {
-    min-block-size: 0;
-    overflow: auto;
     padding-block-end: 0.5rem;
     font-size: 0.8125rem;
   }
@@ -187,12 +186,19 @@
     min-block-size: 0;
   }
 
-  .ide-tab-list {
-    display: flex;
-    overflow-x: auto;
+  /* The tabs scroll sideways in a UI SDK scroll area, with a thin bar that leaves their names clear. */
+  .ide-tab-strip {
     border-block-end: 1px solid var(--ui-border);
     background: color-mix(in oklch, var(--ui-muted) 50%, var(--ui-background));
-    scrollbar-width: thin;
+
+    & > [data-slot="scroll-area-scrollbar"] {
+      block-size: 0.375rem;
+      padding: 1px;
+    }
+  }
+
+  .ide-tab-list {
+    display: flex;
   }
 
   .ide-tab {
@@ -305,18 +311,29 @@
     color: var(--ui-foreground);
   }
 
+  /* The code scrolls in a UI SDK scroll area. No fade on the sides, where the line numbers
+     stay and the caret meets the edge; the caret keeps two lines clear of the top and bottom. */
   .ide-code-scroll {
     /* Keeps the caret clear of the sticky line numbers when the code scrolls sideways. */
     scroll-padding-inline-start: calc(var(--code-digits, 2) * 1ch + 1.875rem);
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: start;
-    min-block-size: 0;
-    overflow: auto;
     font-family: var(--ui-font-mono);
     font-size: 13px;
     line-height: var(--code-line);
     tab-size: 2;
+    --uiset-fade-inline-start: 0px;
+    --uiset-fade-inline-end: 0px;
+
+    /* The numbers' column runs the full height, however short the file. */
+    & > [data-slot="scroll-area-content"] {
+      display: grid;
+      min-block-size: 100%;
+    }
+  }
+
+  .ide-code-lines {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
   }
 
   .ide-code-gutter {

@@ -82,11 +82,14 @@
 
   /* ------------------------------------------------------------ the text */
 
+  /* The editor's text scrolls in a UI SDK scroll area, up to its most height. */
+  .rich-text-scroller {
+    max-block-size: var(--rich-text-max-height);
+  }
+
   .rich-text-content {
     position: relative;
     min-block-size: var(--rich-text-min-height);
-    max-block-size: var(--rich-text-max-height);
-    overflow-y: auto;
     padding: var(--rich-text-padding-block) var(--rich-text-padding-inline);
     line-height: 1.6;
     overflow-wrap: anywhere;
@@ -120,9 +123,7 @@
   /* Saved text shown read-only: the document's typography, none of the field's box. */
   .rich-text-content.rich-text-static {
     min-block-size: 0;
-    max-block-size: none;
     padding: 0;
-    overflow: visible;
     cursor: auto;
     white-space: normal;
 

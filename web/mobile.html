@@ -46,24 +46,31 @@
                 <ui-drawer-content hidden class="mobile-sheet">
                   <span class="mobile-sheet-handle" aria-hidden="true"></span>
                   <div class="mobile-sheet-head"><ui-drawer-title class="mobile-sheet-title">New alarm</ui-drawer-title></div>
-                  <div class="mobile-sheet-body">
-                    <div class="wheel-group" role="group" aria-label="Alarm time">
-                      <uiset-wheel>
-                        <ui-listbox class="wheel-list" keep-in-view="false" aria-label="Alarm time, hour" default-value="7" id="hour"></ui-listbox>
-                      </uiset-wheel>
-                      <span class="wheel-colon" aria-hidden="true">:</span>
-                      <uiset-wheel>
-                        <ui-listbox class="wheel-list" keep-in-view="false" aria-label="Alarm time, minute" default-value="30" id="minute"></ui-listbox>
-                      </uiset-wheel>
-                      <uiset-wheel>
-                        <ui-listbox class="wheel-list" keep-in-view="false" aria-label="Alarm time, AM or PM" default-value="AM" id="period">
-                          <ui-listbox-item class="wheel-option" value="AM">AM</ui-listbox-item>
-                          <ui-listbox-item class="wheel-option" value="PM">PM</ui-listbox-item>
-                        </ui-listbox>
-                      </uiset-wheel>
-                    </div>
-                    <ui-drawer-close value="save"><button type="button" id="save-alarm">Save alarm</button></ui-drawer-close>
-                  </div>
+                  <ui-scroll-area data-frame="none" class="mobile-sheet-frame" aria-label="Content">
+                    <ui-scroll-area-viewport class="mobile-sheet-scroller" role="group" aria-label="Content">
+                      <ui-scroll-area-content>
+                        <div class="mobile-sheet-body">
+                          <div class="wheel-group" role="group" aria-label="Alarm time">
+                            <uiset-wheel>
+                              <ui-listbox class="wheel-list" keep-in-view="false" aria-label="Alarm time, hour" default-value="7" id="hour"></ui-listbox>
+                            </uiset-wheel>
+                            <span class="wheel-colon" aria-hidden="true">:</span>
+                            <uiset-wheel>
+                              <ui-listbox class="wheel-list" keep-in-view="false" aria-label="Alarm time, minute" default-value="30" id="minute"></ui-listbox>
+                            </uiset-wheel>
+                            <uiset-wheel>
+                              <ui-listbox class="wheel-list" keep-in-view="false" aria-label="Alarm time, AM or PM" default-value="AM" id="period">
+                                <ui-listbox-item class="wheel-option" value="AM">AM</ui-listbox-item>
+                                <ui-listbox-item class="wheel-option" value="PM">PM</ui-listbox-item>
+                              </ui-listbox>
+                            </uiset-wheel>
+                          </div>
+                          <ui-drawer-close value="save"><button type="button" id="save-alarm">Save alarm</button></ui-drawer-close>
+                        </div>
+                      </ui-scroll-area-content>
+                    </ui-scroll-area-viewport>
+                    <ui-scroll-area-scrollbar><ui-scroll-area-thumb></ui-scroll-area-thumb></ui-scroll-area-scrollbar>
+                  </ui-scroll-area>
                 </ui-drawer-content>
               </ui-drawer>
             </div>

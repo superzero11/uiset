@@ -30,6 +30,7 @@ import { Field, FieldDescription, FieldError, FieldLabel, Input } from "../field
 import { Item, ItemList } from "../item-list"
 import { Meter, MeterIndicator, MeterTrack, MeterValue } from "../meter"
 import { PageHeader } from "../page-header"
+import { ScrollBox } from "../scroll-area"
 import { PasswordInput, PasswordInputControl, PasswordInputToggle } from "../password-input"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger } from "../select"
 import { Icon } from "../shell/icons"
@@ -593,13 +594,15 @@ function SettingsTemplate({
       <div className="settings">
         <PageHeader title="Settings" description="Your account, your team and how you pay." />
         <Tabs defaultValue={defaultTab}>
-          <TabsList aria-label="Settings sections" className="settings-tabs">
-            {tabs.map((t) => (
-              <TabsTab key={t.id} value={t.id}>
-                {t.label}
-              </TabsTab>
-            ))}
-          </TabsList>
+          <ScrollBox axis="x" data-frame="none" className="settings-tabs-frame" viewport={{ className: "settings-tabs-scroller", role: "group", "aria-label": "Tabs" }}>
+            <TabsList aria-label="Settings sections" className="settings-tabs">
+              {tabs.map((t) => (
+                <TabsTab key={t.id} value={t.id}>
+                  {t.label}
+                </TabsTab>
+              ))}
+            </TabsList>
+          </ScrollBox>
           {/* Kept mounted, so a removed member, an unsaved draft or a sign-out survives a tab switch. */}
           <TabsPanel value="profile" keepMounted>
             <ProfileTab />
