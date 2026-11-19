@@ -1780,3 +1780,13 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   rules would mislead. Checked: Chrome and WebKit, React and web (marks, words, each
   announcement; without the change announcement the test fails), axe in every skin, every
   skin by eye in three states.
+- 2026-11-19 — **A confirm button**, the last of the roadmap's small ones from UI SDK's
+  showcase. The first press arms (destructive look, the label becomes `confirmLabel`, which is
+  announced), the second acts; Escape, blur and a timeout disarm. Two choices: a second press
+  within 600 ms is ignored, since a double-click or a held key's repeat would otherwise arm
+  and act in one gesture; and an agent's press, which UI SDK's Button reports with `source:
+  "agent"` and the bridge only lets through after the person approves `data-agent-confirm`,
+  acts at once rather than arming, so the person's approval is the second press. Checked:
+  unit (arm, settle, Escape, blur, timeout, an approved agent's press, a refused one; without
+  the agent path and without the settle guard a test fails), Chrome and WebKit in React and
+  web, axe in every skin, every skin by eye armed.

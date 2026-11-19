@@ -786,6 +786,19 @@ invite.send = async (values) => (await sendInvite(values)).problems // shown und
   review; `value` is live for `v-model`, and agents fill it by field name or label while a
   person presses the submit. See [Forms](./forms.md#web-components).
 
+### Confirm button
+
+`<uiset-confirm-button>` is for something hard to undo: the first press arms it and says
+`confirm-label`, the second fires `confirm` with `{ source, waitUntil }`. Escape, leaving it
+or `timeout` (4000 ms) disarms it, and a second press within 600 ms doesn't count. `confirm`
+tells agents what it does: the bridge asks the person first, and an approved press acts.
+
+```html
+<uiset-confirm-button confirm="Deletes the Atlas project" confirm-label="Press again to delete">
+  Delete project
+</uiset-confirm-button>
+```
+
 ### Radio cards
 
 React's `RadioCard` is UI SDK's own elements in UISet's classes: each card is a `ui-field`,

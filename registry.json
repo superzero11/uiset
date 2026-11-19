@@ -90,7 +90,7 @@
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "A button in solid, outline and ghost variants.",
+      "description": "A button in solid, outline and ghost variants, and one that asks for a second press.",
       "dependencies": [
         "@ui-sdk/core@0.1.0-beta.10",
         "@ui-sdk/react@0.1.0-beta.10"

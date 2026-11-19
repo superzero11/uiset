@@ -37,7 +37,7 @@ import type { UISetFileTree, UISetEditorTabs, UISetCodeEditor, UISetCommandPalet
 import type { SwipeListElement, UISetWheel, UISetPullRefresh } from "./mobile"
 import type { UISetRichText, UISetRichTextContent } from "./rich-text"
 import type { ScheduleElement, UISetScheduleMonth } from "./schedule"
-import type { UISetSearchField, UISetCopyButton, UISetStepper, UISetTextareaCount, UISetPasswordRules } from "./shell-parts"
+import type { UISetSearchField, UISetCopyButton, UISetStepper, UISetTextareaCount, UISetPasswordRules, UISetConfirmButton } from "./shell-parts"
 import type { UISetSparkline, UISetStat } from "./stat"
 import type { KnobElement, PatchBayElement } from "./studio"
 import type { UISetAvatarGroup, UISetCodeBlock, UISetCodeTabs, UISetCountBadge, UISetPackageCommand, UISetTable } from "./content"
@@ -163,6 +163,7 @@ declare global {
     "uiset-stepper": UISetStepper
     "uiset-textarea-count": UISetTextareaCount
     "uiset-password-rules": UISetPasswordRules
+    "uiset-confirm-button": UISetConfirmButton
     "uiset-swipe-list": UISetSwipeList
     "uiset-table": UISetTable
     "uiset-terminal": UISetTerminal
@@ -254,6 +255,7 @@ export type {
   UISetStepper,
   UISetTextareaCount,
   UISetPasswordRules,
+  UISetConfirmButton,
   UISetSparkline,
   UISetStat,
 }

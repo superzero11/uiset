@@ -96,7 +96,7 @@ Each of UI SDK's 55 components as its own item, styled by the skin, with UISet's
 
 | Item | What UISet adds | API and keys |
 | --- | --- | --- |
-| `button` | A button in solid, outline and ghost variants. | [UI SDK](https://ui-sdk.dev/docs/components/button) |
+| `button` | A button in solid, outline and ghost variants, and one that asks for a second press. | [UI SDK](https://ui-sdk.dev/docs/components/button) |
 | `switch` | An on and off switch, with its thumb in place. | [UI SDK](https://ui-sdk.dev/docs/components/switch) |
 | `slider` | A range slider whose track, fill and named thumbs render in one line. | [UI SDK](https://ui-sdk.dev/docs/components/slider) |
 | `segmented-control` | One choice among a few, in a row with a moving indicator. | [UI SDK](https://ui-sdk.dev/docs/components/segmented-control) |
@@ -1467,6 +1467,19 @@ invite.send = async (values) => (await sendInvite(values)).problems // shown und
   problems it returns show under their fields. It draws UI SDK's own fields, steps and a
   review; `value` is live for `v-model`, and agents fill it by field name or label while a
   person presses the submit. See [Forms](./forms.md#web-components).
+
+### Confirm button
+
+`<uiset-confirm-button>` is for something hard to undo: the first press arms it and says
+`confirm-label`, the second fires `confirm` with `{ source, waitUntil }`. Escape, leaving it
+or `timeout` (4000 ms) disarms it, and a second press within 600 ms doesn't count. `confirm`
+tells agents what it does: the bridge asks the person first, and an approved press acts.
+
+```html
+<uiset-confirm-button confirm="Deletes the Atlas project" confirm-label="Press again to delete">
+  Delete project
+</uiset-confirm-button>
+```
 
 ### Radio cards
 
@@ -3617,9 +3630,7 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**From UI SDK's showcase, the small ones**, one at a time: scroll edge fades, radio cards,
-a ring meter, a textarea's character count, password rules that tick off as you type, and a
-confirm button (the first press arms it). Each in React and Web Components.
+Nothing in progress; next is the first item below.
 
 ## Next, in order
 
@@ -3690,11 +3701,12 @@ list).
 ## Shipped so far
 
 The root and five skins with sound and haptics; all 55 UI SDK components styled, plus app
-frame, data display and form parts; twelve kits (chat, rich text, data grid, charts, board,
-scheduler, canvas, IDE, mobile, terminal, Studio, Agent Console); ten page templates; Web
-Components for every kit and template; a schema form agents fill by field name;
-[agent-check](./agent-check.md), which scores whether agents can use a page; and the theme
-generator.
+frame, data display and form parts, and the small ones from UI SDK's showcase (scroll edge
+fades, radio cards, rings, a textarea's count, password rules, a confirm button); twelve
+kits (chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal,
+Studio, Agent Console); ten page templates; Web Components for every kit and template; a
+schema form agents fill by field name; [agent-check](./agent-check.md), which scores whether
+agents can use a page; and the theme generator.
 
 ## What we won't do
 

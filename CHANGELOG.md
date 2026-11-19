@@ -49,6 +49,13 @@ On UI SDK `0.1.0-beta.10`.
   once, so typing stays quiet otherwise. Web Components: `<uiset-password-rules>`, with rules
   written as `<li data-min-length>` and `<li data-pattern>`.
 
+- **A confirm button.** `ConfirmButton` is for something hard to undo: the first press arms it
+  and shows and says `confirmLabel` ("Press again to delete"), the second runs `onConfirm`.
+  Escape, leaving it or `timeout` disarms it, and a second press within 600 ms (a
+  double-click, a held key) doesn't count. `confirm` says what it does for agents: UI SDK's
+  bridge asks the person first (`data-agent-confirm`), and an approved press acts at once, so
+  the approval is the second press. Web Components: `<uiset-confirm-button>`.
+
 ## 0.4.0 (2026-11-19)
 
 On UI SDK `0.1.0-beta.10`. A minor release: what works differently is under **Changed**,

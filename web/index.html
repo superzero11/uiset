@@ -92,6 +92,10 @@
               <ui-button><button type="button">Save</button></ui-button>
               <ui-button><button type="button" data-variant="outline">Cancel</button></ui-button>
             </div>
+            <div class="web-row">
+              <uiset-confirm-button id="delete-project" confirm="Deletes the Atlas project and its deploys" confirm-label="Press again to delete">Delete project</uiset-confirm-button>
+              <span role="status" id="delete-status"></span>
+            </div>
             <label class="web-row">
               <ui-switch default-checked><ui-switch-thumb></ui-switch-thumb></ui-switch>
               Email me updates

@@ -258,6 +258,14 @@ function ComponentPage({ page }: { page: DocPage }) {
 
 // Beyond the look: where UISet adds a part or a behavior to a UI SDK component.
 const sdkExtras: Record<string, ReactNode> = {
+  button: (
+    <li>
+      <code>ConfirmButton</code>: for something hard to undo. The first press arms it (<code>confirmLabel</code>, like &ldquo;Press again to delete&rdquo;, shown and
+      said), the second runs <code>onConfirm</code>; Escape, leaving it or <code>timeout</code> disarms it, and a second press within 600&nbsp;ms (a double-click) doesn&rsquo;t
+      count. <code>confirm</code> says what it does for agents: UI SDK&rsquo;s bridge asks the person first, and an approved press acts at once. Web Components:{" "}
+      <code>&lt;uiset-confirm-button&gt;</code>.
+    </li>
+  ),
   meter: (
     <li>
       <code>MeterRing</code>: the meter drawn as a ring filled to its value, with <code>MeterValue</code> in the middle and <code>MeterLabel</code> under it, for a goal or a

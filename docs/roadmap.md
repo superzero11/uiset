@@ -15,9 +15,7 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**From UI SDK's showcase, the small ones**, one at a time: scroll edge fades, radio cards,
-a ring meter, a textarea's character count, password rules that tick off as you type, and a
-confirm button (the first press arms it). Each in React and Web Components.
+Nothing in progress; next is the first item below.
 
 ## Next, in order
 
@@ -88,11 +86,12 @@ list).
 ## Shipped so far
 
 The root and five skins with sound and haptics; all 55 UI SDK components styled, plus app
-frame, data display and form parts; twelve kits (chat, rich text, data grid, charts, board,
-scheduler, canvas, IDE, mobile, terminal, Studio, Agent Console); ten page templates; Web
-Components for every kit and template; a schema form agents fill by field name;
-[agent-check](./agent-check.md), which scores whether agents can use a page; and the theme
-generator.
+frame, data display and form parts, and the small ones from UI SDK's showcase (scroll edge
+fades, radio cards, rings, a textarea's count, password rules, a confirm button); twelve
+kits (chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal,
+Studio, Agent Console); ten page templates; Web Components for every kit and template; a
+schema form agents fill by field name; [agent-check](./agent-check.md), which scores whether
+agents can use a page; and the theme generator.
 
 ## What we won't do
 

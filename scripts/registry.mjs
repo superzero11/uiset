@@ -56,7 +56,7 @@ const support = (path) => ({
 
 // [name, title, description, extra files under ui/, extra registry deps]
 const components = [
-  ["button", "Button", "A button in solid, outline and ghost variants."],
+  ["button", "Button", "A button in solid, outline and ghost variants, and one that asks for a second press."],
   ["switch", "Switch", "An on and off switch, with its thumb in place."],
   [
     "slider",

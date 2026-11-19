@@ -104,7 +104,7 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 
 ## UI SDK components (API and keys: UI SDK's docs)
 
-- `button`: A button in solid, outline and ghost variants.
+- `button`: A button in solid, outline and ghost variants, and one that asks for a second press.
 - `switch`: An on and off switch, with its thumb in place.
 - `slider`: A range slider whose track, fill and named thumbs render in one line.
 - `segmented-control`: One choice among a few, in a row with a moving indicator.

@@ -15,7 +15,7 @@ const groups: [string, ExampleMeta[]][] = [
   [
     "Actions",
     [
-      { slug: "button", title: "Button", parts: "Button", items: ["button"] },
+      { slug: "button", title: "Button", parts: "Button, ConfirmButton", items: ["button"] },
       {
         slug: "toggle",
         title: "Toggle",

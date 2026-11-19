@@ -1,7 +1,8 @@
 // Small parts for Web Components that match their React twins: <uiset-search-field> (an icon,
 // a clear button, and a key that focuses it from anywhere), <uiset-copy-button> (copies and
 // says so), <uiset-stepper> (the steps of a flow, as buttons), <uiset-textarea-count> (a
-// textarea's count of its limit) and <uiset-password-rules> (rules that tick off). They use the same classes as React, so the same styles dress
+// textarea's count of its limit), <uiset-password-rules> (rules that tick off) and
+// <uiset-confirm-button> (asks for a second press). They use the same classes as React, so the same styles dress
 // both.
 import { announce, ariaKeyshortcuts, formatShortcut } from "@ui-sdk/core"
 import { registerShortcut } from "@ui-sdk/core/shortcuts"
@@ -370,15 +371,90 @@ class UISetPasswordRules extends ElementBase {
   }
 }
 
+/** What `<uiset-confirm-button>` fires: `confirm`, on the second press or an approved agent's. */
+type UISetConfirmButtonEvents = { confirm: CustomEvent<{ source: string; waitUntil: (promise: Promise<unknown>) => void }> }
+
+// A second press this soon after arming is a double-click or a held key, not a decision.
+const SETTLE = 600
+
+/**
+ * <uiset-confirm-button confirm="Deletes the Atlas project" confirm-label="Press again to delete"
+ * timeout="4000">Delete project</uiset-confirm-button>: for something hard to undo. The first
+ * press arms it and says so; the second fires `confirm` with `{ source, waitUntil }`. It
+ * disarms on Escape, when focus leaves, or after `timeout`. An agent's press acts at once, but
+ * only once the person approves `confirm` (data-agent-confirm), so that approval is the second press.
+ */
+class UISetConfirmButton extends Evented<UISetConfirmButtonEvents>() {
+  static observedAttributes = ["confirm", "confirm-label"]
+  #button?: HTMLButtonElement
+  #label = ""
+  #armed = false
+  #armedAt = 0
+  #timer?: ReturnType<typeof setTimeout>
+
+  connectedCallback() {
+    if (!this.#button) {
+      this.#label = this.textContent?.trim() ?? ""
+      this.#button = h("button", { type: "button" }) as HTMLButtonElement
+      const host = h("ui-button", null, this.#button)
+      host.addEventListener("action", (event) => this.press(event as CustomEvent<{ source: string; waitUntil: (promise: Promise<unknown>) => void }>))
+      this.#button.addEventListener("keydown", (event) => {
+        if (!this.#armed || event.key !== "Escape") return
+        event.stopPropagation()
+        this.arm(false)
+      })
+      this.#button.addEventListener("blur", () => this.arm(false))
+      this.replaceChildren(host)
+    }
+    this.draw()
+  }
+
+  disconnectedCallback() {
+    clearTimeout(this.#timer)
+  }
+
+  attributeChangedCallback() {
+    if (this.#button) this.draw()
+  }
+
+  private press(event: CustomEvent<{ source: string; waitUntil: (promise: Promise<unknown>) => void }>) {
+    if (event.detail.source === "agent" || (this.#armed && Date.now() - this.#armedAt >= SETTLE)) {
+      this.arm(false)
+      this.dispatchEvent(new CustomEvent("confirm", { detail: event.detail }))
+      return
+    }
+    if (this.#armed) return
+    this.#armedAt = Date.now()
+    this.arm(true)
+    announce(this.getAttribute("confirm-label") ?? "Press again to confirm")
+  }
+
+  private arm(on: boolean) {
+    this.#armed = on
+    clearTimeout(this.#timer)
+    if (on) this.#timer = setTimeout(() => this.arm(false), Number(this.getAttribute("timeout") ?? 4000))
+    this.draw()
+  }
+
+  private draw() {
+    const button = this.#button!
+    button.textContent = this.#armed ? (this.getAttribute("confirm-label") ?? "Press again to confirm") : this.#label
+    button.setAttribute("data-variant", this.#armed ? "destructive" : "outline")
+    attr(button, "data-armed", this.#armed ? "" : null)
+    attr(button, "data-agent-confirm", this.getAttribute("confirm"))
+  }
+}
+
 function defineShellParts() {
   defineElement("uiset-search-field", UISetSearchField)
   defineElement("uiset-copy-button", UISetCopyButton)
   defineElement("uiset-stepper", UISetStepper)
   defineElement("uiset-textarea-count", UISetTextareaCount)
   defineElement("uiset-password-rules", UISetPasswordRules)
+  defineElement("uiset-confirm-button", UISetConfirmButton)
 }
 
 export { defineShellParts }
 export type { Step as StepperStep, UISetPasswordRulesMessages, UISetTextareaCountMessages }
-export { UISetSearchField, UISetCopyButton, UISetStepper, UISetTextareaCount, UISetPasswordRules }
-export type { UISetSearchFieldEvents, UISetStepperEvents }
+export { UISetSearchField, UISetCopyButton, UISetStepper, UISetTextareaCount, UISetPasswordRules, UISetConfirmButton }
+export type { UISetConfirmButtonEvents, UISetSearchFieldEvents, UISetStepperEvents }

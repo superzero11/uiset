@@ -167,6 +167,37 @@ test("password rules tick off as it's typed, and each change is said once", asyn
   await expect(rule("At least 12 characters")).not.toHaveAttribute("data-met")
 })
 
+/* ------------------------------------------------------------------ confirm button */
+
+test("a confirm button arms on the first press, says so, and acts on the second", async ({ page }) => {
+  await open(page)
+  const area = example(page, "Button")
+  await area.scrollIntoViewIfNeeded()
+  const spoken = () => page.evaluate(() => Array.from(document.querySelectorAll("[aria-live]"), (el) => el.textContent ?? "").join(" | "))
+  await area.getByRole("button", { name: "Delete project" }).focus()
+  await page.keyboard.press("Enter")
+  const armed = area.getByRole("button", { name: "Press again to delete" })
+  await expect(armed).toBeFocused()
+  await expect.poll(spoken).toContain("Press again to delete")
+  await page.waitForTimeout(700)
+  await page.keyboard.press("Enter")
+  await expect(area.getByRole("status")).toHaveText("Atlas deleted.")
+})
+
+test("an agent's press on a confirm button waits for the person, and nothing happens meanwhile", async ({ page }) => {
+  await page.goto("/docs/components/button")
+  const area = page.locator(".example[data-ready]")
+  await expect(area.getByRole("button", { name: "Delete project" })).toBeVisible()
+  const target = await page.evaluate(async () => (await (window as unknown as { agent: { query: (q: unknown) => Promise<{ confirm?: string }[]> } }).agent.query({ text: "Delete project" }))[0])
+  expect(target?.confirm).toBe("Deletes the Atlas project and its deploys")
+  await page.evaluate(() => {
+    void (window as unknown as { agent: { act: (x: unknown) => Promise<unknown> } }).agent.act({ steps: [{ ref: "Delete project", action: "press" }] })
+  })
+  await page.waitForTimeout(800)
+  await expect(area.getByRole("button", { name: "Delete project" })).not.toHaveAttribute("data-armed")
+  await expect(area.getByRole("status")).toHaveText("")
+})
+
 /* ------------------------------------------------------------------ table */
 
 test("the table's headings and first column stay put while it scrolls", async ({ page }) => {

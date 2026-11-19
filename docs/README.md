@@ -89,7 +89,7 @@ Each of UI SDK's 55 components as its own item, styled by the skin, with UISet's
 
 | Item | What UISet adds | API and keys |
 | --- | --- | --- |
-| `button` | A button in solid, outline and ghost variants. | [UI SDK](https://ui-sdk.dev/docs/components/button) |
+| `button` | A button in solid, outline and ghost variants, and one that asks for a second press. | [UI SDK](https://ui-sdk.dev/docs/components/button) |
 | `switch` | An on and off switch, with its thumb in place. | [UI SDK](https://ui-sdk.dev/docs/components/switch) |
 | `slider` | A range slider whose track, fill and named thumbs render in one line. | [UI SDK](https://ui-sdk.dev/docs/components/slider) |
 | `segmented-control` | One choice among a few, in a row with a moving indicator. | [UI SDK](https://ui-sdk.dev/docs/components/segmented-control) |

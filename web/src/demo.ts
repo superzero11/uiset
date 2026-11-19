@@ -23,3 +23,7 @@ stepper.steps = [
 
 // An agent bridge, as an app would make one; the tests drive it as an agent would.
 Object.assign(window, { agent: createAgent() })
+
+document.getElementById("delete-project")!.addEventListener("confirm", () => {
+  document.getElementById("delete-status")!.textContent = "Atlas deleted."
+})

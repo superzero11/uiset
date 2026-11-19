@@ -99,6 +99,25 @@ test("password rules tick off as it's typed, and each change is said once", asyn
   await expect.poll(spoken).toContain("Every rule is met")
 })
 
+test("a confirm button arms on the first press, says so, and fires confirm on the second", async ({ page }) => {
+  const spoken = () => page.evaluate(() => Array.from(document.querySelectorAll("[aria-live]"), (el) => el.textContent ?? "").join(" | "))
+  await page.getByRole("button", { name: "Delete project" }).focus()
+  await page.keyboard.press("Enter")
+  const armed = page.getByRole("button", { name: "Press again to delete" })
+  await expect(armed).toBeFocused()
+  await expect(armed).toHaveAttribute("data-agent-confirm", "Deletes the Atlas project and its deploys")
+  await expect.poll(spoken).toContain("Press again to delete")
+  // A quick second press is a double-click, not a decision; Escape disarms.
+  await page.keyboard.press("Enter")
+  await expect(page.locator("#delete-status")).toHaveText("")
+  await page.keyboard.press("Escape")
+  await expect(page.getByRole("button", { name: "Delete project" })).toBeFocused()
+  await page.keyboard.press("Enter")
+  await page.waitForTimeout(700)
+  await page.keyboard.press("Enter")
+  await expect(page.locator("#delete-status")).toHaveText("Atlas deleted.")
+})
+
 test("the UISet knob turns by keyboard, and its readout follows", async ({ page }) => {
   const knob = page.getByRole("slider", { name: "Cutoff" })
   await knob.focus()
