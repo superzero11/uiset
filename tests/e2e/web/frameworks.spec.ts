@@ -343,7 +343,7 @@ test("v-model: each element takes `value` and fires `input` once a change is in"
   await code.press("ControlOrMeta+z")
   await expect(code).toHaveValue("let a = 1")
   expect(await last("code")).toBe("let a = 1")
-  const notes = page.getByRole("textbox", { name: "Notes" })
+  const notes = page.getByRole("textbox", { name: "Notes", exact: true })
   await notes.click()
   await notes.press("End")
   await notes.pressSequentially(" world")

@@ -16,6 +16,9 @@ Element.prototype.getAnimations = () => []
 Element.prototype.scrollIntoView = function () {}
 Element.prototype.checkVisibility = () => true
 Element.prototype.getClientRects = () => [] as unknown as DOMRectList
+// jsdom has no layout for ranges either; the rich text view measures the caret with one.
+Range.prototype.getBoundingClientRect ??= () => new DOMRect()
+Range.prototype.getClientRects ??= () => [] as unknown as DOMRectList
 document.elementFromPoint = () => null
 document.elementsFromPoint = () => []
 globalThis.ResizeObserver ??= class {
