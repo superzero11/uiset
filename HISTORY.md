@@ -1976,4 +1976,9 @@ vercel-labs/ui#905 (2026-11-19).
   the account's Actions are locked over billing (GitHub's message on the last runs,
   2026-11-15), and the owner adds the trusted publisher on npmjs.com. Until then a release is
   `npm login` and `npm publish` from web/, right before publishing.
+- 2026-11-19 — **@uiset/web 0.5.0 on npm**, published by the owner after signing in again
+  (the morning's session had lapsed) and approving the publish with two-step verification;
+  npm answered `+ @uiset/web@0.5.0` and said it would take a few minutes to list. Two first
+  tries ran in the repo root, where npm refused the private root package; the publish runs
+  in web/. Then the push.
 
