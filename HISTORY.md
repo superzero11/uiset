@@ -1965,4 +1965,15 @@ vercel-labs/ui#905 (2026-11-19).
   already be past anything styled on UI SDK. **Every kit and template page, in every skin**
   joins Now beside motion: the day's layout audit covered Base light only, and found seven
   things there. The rest of Next keeps its order, renumbered.
+- 2026-11-19 — **Publishing from GitHub, ready but waiting** (the owner's go-ahead, after
+  the 0.5.0 publish failed). The publish's 404 was an expired sign-in: since npm revoked
+  classic tokens (December 2025), `npm login` gives a session of about two hours, so a
+  morning sign-in is gone by the evening release. `.github/workflows/release.yml` publishes
+  `@uiset/web` on a `web-vX.Y.Z` tag with npm's trusted publishing (OIDC, `id-token: write`,
+  npm 11.5.1 or newer), so nothing secret is stored and npm records provenance. It checks the
+  tag against web/package.json (tried both ways locally), then runs lint, typecheck and the
+  unit tests before `npm publish`, whose prepublishOnly builds the package. It can't run yet:
+  the account's Actions are locked over billing (GitHub's message on the last runs,
+  2026-11-15), and the owner adds the trusted publisher on npmjs.com. Until then a release is
+  `npm login` and `npm publish` from web/, right before publishing.
 

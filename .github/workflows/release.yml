@@ -1,0 +1,51 @@
+name: Release @uiset/web
+
+# Publishes @uiset/web to npm when a tag like web-v0.5.0 is pushed, with npm's trusted
+# publishing: npm trusts this workflow in this repository, so no npm token or sign-in is
+# stored anywhere (an `npm login` session lasts two hours), and npm records provenance, the
+# commit and workflow that built the package.
+#
+# Once, on npmjs.com: @uiset/web → Settings → Trusted publishing → GitHub Actions, with
+# owner superzero11, repository uiset, workflow release.yml and no environment.
+#
+# To release: set the version in web/package.json, date the changelog, commit, push main,
+# then push the tag:  git tag web-v0.5.0 && git push origin web-v0.5.0
+#
+# It only runs once the GitHub account's Actions are unlocked (see ci.yml).
+on:
+  push:
+    tags: ["web-v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # lets npm verify this workflow instead of a token
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - name: The tag names the package's version
+        run: |
+          version="$(node -p 'require("./web/package.json").version')"
+          if [ "$GITHUB_REF_NAME" != "web-v$version" ]; then
+            echo "The tag $GITHUB_REF_NAME doesn't match web/package.json's $version."
+            exit 1
+          fi
+      # Trusted publishing needs npm 11.5.1 or newer.
+      - run: npm install -g npm@11
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      # prepublishOnly builds web/dist and its types first.
+      - run: npm publish
+        working-directory: web
