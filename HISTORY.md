@@ -31,6 +31,7 @@ showed, and Escape puts it back) and #20 (#621: only a script presses that soon)
 (#615, #616) are confirmed and kept open as feature requests; for #12 shadcn suggests
 `viewport.reveal(viewport.rectOf(port))` after `connect.keydown`. #6/#8 (#624) and #25 (#780)
 have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no duplicates).
+#30 and #31 are filed as vercel-labs/ui#887 and #888 (2026-11-19, no duplicates).
 
 1. **Image cropper nests sliders.** The selection is `role="slider"` with handle sliders
    inside it; slider children are presentational, so screen readers may not reach the
@@ -141,6 +142,15 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
     open files, code tabs, the settings template, the rich text demo's output, the gallery).
     Without it five web pages drop below 100 on `agent-check`. Filed as vercel-labs/ui#857
     (2026-11-18); the web Tabs docs name the list, as React's do.
+30. **The web agent bridge names a scroll area from its root, not its viewport.** As in #29: a
+    `<ui-scroll-area>` whose viewport has `aria-label`, as the docs show, has no name for
+    agents; React names it from the viewport. UISet's web `scrollArea()` puts the viewport's
+    name on the root too. Filed as vercel-labs/ui#887 (2026-11-19), from a jsdom repro.
+31. **`createStickToBottom` loses the reader's place when its rows sit in a wrapper.** The fix
+    for vercel-labs/ui#620 anchors on the scroller's own children, so with the rows inside a
+    Scroll Area's content, removing old rows moves the view by their height (row 100 to row
+    150 in Chrome and WebKit). UISet's chat and terminal use Scroll Area's `stickToEnd`,
+    which keeps the place. Filed as vercel-labs/ui#888 (2026-11-19).
 
 ## What shipped
 
