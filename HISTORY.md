@@ -31,7 +31,8 @@ showed, and Escape puts it back) and #20 (#621: only a script presses that soon)
 (#615, #616) are confirmed and kept open as feature requests; for #12 shadcn suggests
 `viewport.reveal(viewport.rectOf(port))` after `connect.keydown`. #6/#8 (#624) and #25 (#780)
 have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no duplicates).
-#30 and #31 are filed as vercel-labs/ui#887 and #888 (2026-11-19, no duplicates).
+#30 and #31 are filed as vercel-labs/ui#887 and #888 (2026-11-19, no duplicates). #32, a feature
+request, is vercel-labs/ui#905 (2026-11-19).
 
 1. **Image cropper nests sliders.** The selection is `role="slider"` with handle sliders
    inside it; slider children are presentational, so screen readers may not reach the
@@ -151,6 +152,12 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
     Scroll Area's content, removing old rows moves the view by their height (row 100 to row
     150 in Chrome and WebKit). UISet's chat and terminal use Scroll Area's `stickToEnd`,
     which keeps the place. Filed as vercel-labs/ui#888 (2026-11-19).
+32. **`createTreeReorder` can't be told which items take children** (a feature request).
+    Right while a row is up, or a drag sideways, nests it under the row above even when
+    that's a leaf, and the default announcement reads the leaf as its parent. UISet's
+    `sortable-tree` refuses those drops in `set`, says why and marks the row meanwhile; an
+    `accepts(key, parent)` like `createTransfer`'s would keep the draft from offering them.
+    Filed as vercel-labs/ui#905 (2026-11-19).
 
 ## What shipped
 

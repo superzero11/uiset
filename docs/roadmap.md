@@ -41,8 +41,8 @@ Nothing in progress; next is the first item below.
 11. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
     import. M
 
-Between these, small ones: an agent migration recipe (UI SDK has none yet), dialogs and
-popovers that open in place (UI SDK's `inline`), tree select, matches marked in combobox
+Between these, small ones: dialogs and popovers that open in place (UI SDK's `inline`), tree
+select, matches marked in combobox
 results, an autocomplete that loads from a server, swiping a toast away, a context menu on
 any area, an Angular guide, and focus that moves in the same task in the 24 places the lint
 still lists.
@@ -70,9 +70,10 @@ UI SDK is in public beta. UISet pins its exact version and moves with each relea
 tests for what the release changes pass. UISet is on 0.1.0-beta.10. Problems we find in UI SDK
 go upstream with a test that shows them. Open now:
 [#780](https://github.com/vercel-labs/ui/issues/780) (a wheel in a drawer in WebKit),
-[#887](https://github.com/vercel-labs/ui/issues/887) (web scroll areas named from their root)
-and [#888](https://github.com/vercel-labs/ui/issues/888) (`createStickToBottom` with its rows in
-a wrapper). Fixed for
+[#887](https://github.com/vercel-labs/ui/issues/887) (web scroll areas named from their root),
+[#888](https://github.com/vercel-labs/ui/issues/888) (`createStickToBottom` with its rows in
+a wrapper) and [#905](https://github.com/vercel-labs/ui/issues/905) (a tree reorder that knows
+which items take children). Fixed for
 the beta after beta.10: [#848](https://github.com/vercel-labs/ui/issues/848) (a `run` action's
 argument read as an item), [#856](https://github.com/vercel-labs/ui/issues/856) (Pagination's
 dev check) and [#857](https://github.com/vercel-labs/ui/issues/857) (web tabs named by their
