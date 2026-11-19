@@ -457,6 +457,19 @@ test("project board: the card dialog edits a card, and New issue adds one", asyn
 
 const week = (page: Page) => frame(page).getByRole("group", { name: "My calendar", exact: true })
 
+test("calendar: a phone starts on one day; at 1440 the week shows all seven days", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 })
+  await open(page, "calendar-app")
+  await expect(frame(page).getByRole("heading", { name: "Monday, November 16" })).toBeVisible()
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await open(page, "calendar-app")
+  await expect(frame(page).getByRole("heading", { name: "Nov 16 – 22, 2026" })).toBeVisible()
+  // Sunday's column ends inside the calendar, beside the site's and the template's sidebars.
+  const sunday = (await week(page).getByText("Sun 22", { exact: true }).boundingBox())!
+  const calendar = (await week(page).boundingBox())!
+  expect(sunday.x + sunday.width).toBeLessThanOrEqual(calendar.x + calendar.width + 1)
+})
+
 test("calendar: unchecking a calendar hides its events, and checking it brings them back", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "calendar-app")

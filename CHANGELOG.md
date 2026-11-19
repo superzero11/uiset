@@ -89,6 +89,13 @@ On UI SDK `0.1.0-beta.10`.
 
 ### Fixed
 
+- **A week fits beside a sidebar, and a phone starts on one day.** The schedule's days
+  share the room down to 5.5rem each (from 7rem), so the Calendar template shows Sunday at
+  1440 instead of cutting it off. A narrow event tall enough for three lines gives two to
+  its title ("Design review", not "Design rev…"). `isNarrowScreen()`, from the scheduler,
+  says when a week won't fit; the Calendar template and the Scheduler kit's demo use it to
+  open on the day view on a phone. React and Web Components.
+
 - **A horizontal bar chart's value labels no longer run together on a narrow screen.** It
   shows as many as fit side by side (at phone width, "0 100k200k300k" became "0" and
   "500k"), and the grid keeps every line. React and Web Components.

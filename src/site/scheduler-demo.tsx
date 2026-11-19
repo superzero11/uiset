@@ -1,10 +1,11 @@
 import { keepFocus } from "@ui-sdk/core"
 import { addDays, startOfWeek } from "@ui-sdk/core/date"
-import { useState } from "react"
+import { useLayoutEffect, useState } from "react"
 import { Button } from "@/registry/uiset/ui/button"
 import {
   createScheduleController,
   EventDialog,
+  isNarrowScreen,
   MonthView,
   Schedule,
   SchedulerToolbar,
@@ -50,6 +51,10 @@ function SchedulerDemo() {
   const [schedule] = useState(createScheduleController)
   const [events, setEvents] = useState(seed)
   const [view, setView] = useState<SchedulerView>("week")
+  // A phone starts on one day: a week of columns doesn't fit.
+  useLayoutEffect(() => {
+    if (isNarrowScreen()) setView("day")
+  }, [])
   const [anchor, setAnchor] = useState(TODAY)
   const [open, setOpen] = useState<EventDraft | null>(null)
 

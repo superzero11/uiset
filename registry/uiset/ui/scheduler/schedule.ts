@@ -341,5 +341,13 @@ const schedulePrimitive = definePrimitive({
   },
 })
 
-export { clock, createScheduleController, schedulePrimitive }
+/**
+ * Whether the screen is too narrow for a week of columns, like a phone's, so an app can start
+ * on one day. Browser only: call it after hydrating, since the server can't know the width.
+ */
+function isNarrowScreen() {
+  return typeof matchMedia === "function" && matchMedia("(max-width: 40rem)").matches
+}
+
+export { clock, createScheduleController, isNarrowScreen, schedulePrimitive }
 export type { ScheduleChange, ScheduleController, ScheduleControllerApi, ScheduleEvent, ScheduleOptions }

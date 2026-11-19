@@ -5687,6 +5687,12 @@ const [schedule] = useState(createScheduleController)
   event's face; `timeLabel` changes how times read (24-hour, other languages);
   `MonthView` takes `locale` and `timeLabel` too.
 - On touch screens a finger scrolls the schedule; a tap makes an event, and events drag.
+- **Narrow screens.** A week's days share the room down to 5.5rem each, so all seven fit
+  beside a sidebar at 1440; narrower than that, the week scrolls sideways. A narrow event
+  with room for three lines gives two to its title. On a phone, start on one day:
+  `isNarrowScreen()` says whether the screen is under 40rem, so set the view after
+  hydrating (`useLayoutEffect(() => { if (isNarrowScreen()) setView("day") }, [])`); the
+  server can't know the width.
 
 ## Keys
 

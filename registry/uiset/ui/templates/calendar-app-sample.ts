@@ -3,7 +3,7 @@
 // React template and the web page show the same weeks. Times are wall-clock minutes in
 // UTC, with a fixed "today", so the sample renders the same everywhere.
 import { addDays, addMonths, startOfWeek } from "@ui-sdk/core/date"
-import { clock, type ScheduleEvent } from "../scheduler/schedule"
+import { clock, isNarrowScreen, type ScheduleEvent } from "../scheduler/schedule"
 
 type CalendarView = "day" | "week" | "month"
 /** A calendar people can show or hide; `color` is a chart slot, 1 to 8. */
@@ -94,6 +94,9 @@ const shortDate = new Intl.DateTimeFormat("en-US", {
 })
 
 /** The days a day or week view shows. A week starts on Monday. */
+/** The view to start on: the week, or one day on a phone. Call it in the browser, after hydrating. */
+const startingView = (): CalendarView => (isNarrowScreen() ? "day" : "week")
+
 function viewDays(view: CalendarView, anchor: string) {
   if (view === "day") return [anchor]
   const start = startOfWeek(anchor, WEEK_STARTS_ON)
@@ -172,6 +175,7 @@ export {
   longDay,
   sampleCalendars,
   sampleEvents,
+  startingView,
   stepView,
   upcoming,
   viewDays,

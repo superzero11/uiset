@@ -45,7 +45,8 @@
     top: 0;
     z-index: 3;
     display: grid;
-    grid-template-columns: var(--gutter) repeat(var(--schedule-tracks), minmax(7rem, 1fr));
+    /* Narrow enough that a week fits beside a sidebar at 1440; wider stages share the room. */
+    grid-template-columns: var(--gutter) repeat(var(--schedule-tracks), minmax(5.5rem, 1fr));
     border-block-end: 1px solid var(--ui-border);
     background: var(--ui-background);
   }
@@ -101,7 +102,7 @@
 
   .schedule-tracks {
     display: grid;
-    grid-template-columns: repeat(var(--schedule-tracks), minmax(7rem, 1fr));
+    grid-template-columns: repeat(var(--schedule-tracks), minmax(5.5rem, 1fr));
     block-size: calc(var(--schedule-hours) * var(--hour));
     background-image: linear-gradient(to bottom, var(--schedule-line) 1px, transparent 1px);
     background-size: 100% var(--hour);
@@ -218,6 +219,24 @@
 
     .schedule-event-time {
       margin-inline-start: 0.375rem;
+    }
+  }
+
+  /* A narrow event with room for three lines gives two to its title, so a week beside a
+     sidebar reads "Design review", not "Design rev…". The place shows when a fourth fits. */
+  @container (width < 9em) and (height >= 3.4em) {
+    .schedule-event-title {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  @container (width < 9em) and (height < 6em) {
+    .schedule-event-place {
+      display: none;
     }
   }
 

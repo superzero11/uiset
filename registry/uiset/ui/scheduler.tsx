@@ -30,6 +30,7 @@ import { Icon } from "./shell/icons"
 import {
   clock,
   createScheduleController,
+  isNarrowScreen,
   schedulePrimitive,
   type ScheduleChange,
   type ScheduleController,
@@ -664,5 +665,5 @@ function EventDialog({
   )
 }
 
-export { EventDialog, MonthView, Schedule, SchedulerToolbar, clock, createScheduleController }
+export { EventDialog, MonthView, Schedule, SchedulerToolbar, clock, createScheduleController, isNarrowScreen }
 export type { EventDraft, ScheduleChange, ScheduleController, ScheduleEvent, ScheduleProps, ScheduleTrack, SchedulerView }

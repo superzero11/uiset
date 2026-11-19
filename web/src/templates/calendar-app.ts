@@ -23,6 +23,7 @@ import {
   longDay,
   sampleCalendars,
   sampleEvents,
+  startingView,
   stepView,
   upcoming,
   viewDays,
@@ -314,5 +315,6 @@ $("confirm-delete-event").addEventListener("click", () => {
   toast(`Deleted “${gone.title}”`, { action: { label: "Undo", onAction: () => restore(gone) } })
 })
 
+setView(startingView())
 render()
 Object.assign(window, { agent: createAgent() })

@@ -1,7 +1,7 @@
 // The Scheduler demo's own script: a team's week in UTC, rooms as a timeline, a month, and
 // an event dialog on UI SDK's dialog, as an app would wire them.
 import { createAgent } from "@ui-sdk/web/agent"
-import type { ScheduleEvent } from "@/registry/uiset/ui/scheduler/schedule"
+import { isNarrowScreen, type ScheduleEvent } from "@/registry/uiset/ui/scheduler/schedule"
 import { iconElement } from "./uiset"
 import type { ScheduleTrack } from "./schedule"
 
@@ -184,5 +184,10 @@ document.getElementById("event-delete")!.addEventListener("click", () => {
 week.create = (span) => ({ ...span, title: "New event", color: 7 })
 roomSchedule.create = (span) => ({ ...span, title: "New booking", color: 7 })
 
+// A phone starts on one day: a week of columns doesn't fit.
+if (isNarrowScreen()) {
+  view = "day"
+  ;(document.getElementById("view") as HTMLElement & { value: string }).value = "day"
+}
 render()
 Object.assign(window, { agent: createAgent() })

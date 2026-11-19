@@ -1,6 +1,6 @@
 "use client"
 
-import { useId, useState, type CSSProperties, type ReactNode } from "react"
+import { useId, useLayoutEffect, useState, type CSSProperties, type ReactNode } from "react"
 import { AppShell } from "../app-shell"
 import { Button } from "../button"
 import { Calendar } from "../calendar"
@@ -30,6 +30,7 @@ import {
   longDay,
   sampleCalendars,
   sampleEvents,
+  startingView,
   stepView,
   upcoming,
   viewDays,
@@ -83,6 +84,8 @@ function CalendarAppTemplate({
   const [events, setEvents] = useState<CalendarEvent[]>([...defaultEvents])
   const [shown, setShown] = useState<string[]>(() => calendars.map((c) => c.id))
   const [view, setView] = useState<CalendarView>("week")
+  // On a phone, one day before the first paint: the server can't know the width.
+  useLayoutEffect(() => setView(startingView()), [])
   const [anchor, setAnchor] = useState(today)
   const [miniMonth, setMiniMonth] = useState(today.slice(0, 7))
   const [open, setOpen] = useState<EventDraft | null>(null)

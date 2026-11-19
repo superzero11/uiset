@@ -1878,4 +1878,14 @@ request, is vercel-labs/ui#905 (2026-11-19).
   spacing at three widths; it fails with the old count). The charts kit put the short
   Traffic sources bar beside the tall heatmap and left the scatter chart alone; Traffic
   sources now spans the row under the figures, and the heatmap and scatter share the last.
+- 2026-11-19 — **Calendars at 1440 and on phones** (from the layout audit). The Calendar
+  template cut Sunday off at 1440: seven 7rem columns plus the gutter didn't fit beside the
+  site's and the template's sidebars. Days now share the room down to 5.5rem, and a narrow
+  event with room for three lines gives two to its title, with the place only when a full
+  line is left for it (a first try showed it cut in half). On a phone the week showed a day
+  and a half; the template and the kit's demo now open on one day there. The width can't
+  be known on the server, so the switch happens before the first paint in a layout effect
+  (React) or at start (Web Components), through `isNarrowScreen()` in the scheduler's core.
+  Two e2e tests (React and web) check the phone's first view and Sunday's column at 1440;
+  each fails with its fix undone.
 
