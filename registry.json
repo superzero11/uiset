@@ -1564,6 +1564,57 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "sortable-tree",
+      "type": "registry:ui",
+      "title": "Sortable tree",
+      "description": "A tree people reorder and nest: drag a row up or down and sideways to change its level, or pick it up with Space and use the arrows. Only branches hold items, a drop elsewhere goes back and says why, and agents move items into branches by name.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.10",
+        "@ui-sdk/react@0.1.0-beta.10"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/sortable-tree.tsx",
+          "type": "registry:ui",
+          "target": "@ui/sortable-tree.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/sortable-tree/sortable-tree.ts",
+          "type": "registry:file",
+          "target": "@ui/sortable-tree/sortable-tree.ts"
+        },
+        {
+          "path": "registry/uiset/ui/sortable-tree/sortable-tree.css",
+          "type": "registry:file",
+          "target": "@ui/sortable-tree/sortable-tree.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/drag-preview.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/drag-preview.ts"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icons.tsx",
+          "type": "registry:file",
+          "target": "@ui/shell/icons.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icon-paths.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/icon-paths.ts"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "schema-form",
       "type": "registry:ui",
       "title": "Schema form",

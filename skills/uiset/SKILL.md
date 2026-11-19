@@ -77,6 +77,7 @@ import { UISet } from "@/components/ui/uiset"
 | Rich text                              | `rich-text` (`RichTextEditor`, `RichTextContent`; Markdown and HTML in and out) |
 | Tables                                 | `data-grid`                                                |
 | A list people put in order            | `sortable-list` (`SortableList`: drag or Space and arrows, `multiple`, `locked`; agents `moveItem`) |
+| A tree people reorder and nest         | `sortable-tree` (`SortableTree`: nested `items`, only branches hold items; agents `moveItem(item, into)`). A file browser is `tree` or the `ide` kit |
 | A region that scrolls                  | `scroll-area`: `ScrollBox` with `axis` and `viewport`; `data-frame="none"` inside a panel. Not `overflow: auto` on a div |
 | Charts                                 | `line-chart`, `bar-chart`, `scatter-chart`, `heatmap`, `segmented-bar`, `sparkline` |
 | Let an agent act in the app            | UI SDK's `createAgent`, plus `agent-console` for approvals and undo |

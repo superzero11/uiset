@@ -202,6 +202,7 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
 | UISet on UI SDK 0.1.0-beta.9                                                                       | done | 2026-11-18: from beta.5. The image cropper's handles beside the selection; agents call the terminal's `runCommand` and a swipe list's `runAction` (vercel-labs/ui#848); agent-check stops counting a closed tooltip; UISet's drop zone rule gone. Chrome and WebKit 1718 + the 149 after the renames; Firefox 844 (2 load-timing failures pass 6/6 alone); 2 mutations caught |
 | UISet's fixes for what UI SDK betas 6–9 fixed are gone                                           | done, not pushed | 2026-11-18: `returnFocus` (UI SDK's `keepFocus` in 8 places), the date picker and tree ring overrides, the wheel's focus-follow (React and web), React's editor tabs' root name; the terminal trims past scrollback while you're scrolled up (new web e2e and React unit tests, mutations caught). Web tabs keep their root name (3c #29). Chrome and WebKit 1734, Firefox 846 (one load-timing test since fixed) |
 | Sortable list (`sortable-list`), React and Web Components                                          | done, not pushed | 2026-11-19: on `createReorder` and `createSelection`, with a guide of its own. 13 unit tests, 8/8 mutations caught |
+| Sortable tree (`sortable-tree`), React and Web Components                                          | done, not pushed | 2026-11-19: on `createTreeReorder`, `createRovingFocus` and `createTypeahead`. 11 unit tests, 11/11 mutations caught |
 
 ## Decision log
 
@@ -1838,3 +1839,15 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   is, so it keeps the skin; that helper moved to `shell/drag-preview.ts`. Options the items
   draw (`multiple`, `orientation`, which keys are locked) are copied into state, as
   `checkServer` asks, so the server's HTML has them.
+- 2026-11-19 — **Sortable tree, built from UI SDK's blocks, not on its Tree.** UI SDK's Tree
+  has no seam for `createTreeReorder`: its rows nest in groups (a row's box holds its
+  children, which a drag can't measure) and its own key handler runs before any of ours.
+  So `sortable-tree` is a primitive of rows drawn flat and indented, with `role="tree"` and
+  `treeitem`s carrying `aria-level`, `aria-posinset` and `aria-setsize`; focus is
+  `createRovingFocus`, names `createTypeahead`, and Right and Left open, close and step in
+  and out as the tree pattern says. Enter opens a branch or runs `onAction`, rather than
+  picking up (Space does), as the board's Enter opens a card. `createTreeReorder` lets an
+  item nest under a leaf and has no `accepts` like `createTransfer`'s, so a drop inside an
+  item that isn't a branch is refused in `set`, read out, and marked while it's carried
+  there (a feature request for UI SDK). The IDE's file tree keeps UI SDK's Tree: files sort
+  by name, so a drag there should move a file into a folder, not set an order.

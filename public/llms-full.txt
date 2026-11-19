@@ -63,6 +63,7 @@ npx shadcn@latest add @uiset/uiset
 | `inline-edit` | Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons. | [Forms](./forms.md) |
 | `upload` | A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use. | [Forms](./forms.md) |
 | `sortable-list` | A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name. | [Lists and trees](./lists.md) |
+| `sortable-tree` | A tree people reorder and nest: drag a row up or down and sideways to change its level, or pick it up with Space and use the arrows. Only branches hold items, a drop elsewhere goes back and says why, and agents move items into branches by name. | [Lists and trees](./lists.md) |
 | `rich-text` | A rich text editor on UI SDK with no editor library: headings, nested and numbered lists, to-dos, quotes, code, links, mentions, dividers and images; a toolbar, Markdown as you type, "/" for blocks and "@" for people (TriggerMenu); safe paste from documents and the web; undo; Markdown and clean HTML out; agents read and write Markdown. | [Rich text](./rich-text.md) |
 | `chat` | A conversation built on UI SDK: thread that follows new messages, messages with avatars, actions and versions, suggestions, plans and a thinking shimmer. | [Chat](./chat.md) |
 | `chat-response` | Streaming markdown that repairs itself mid-stream and never renders raw HTML, with code blocks highlighted by skin colors. | [Chat](./chat.md) |
@@ -203,7 +204,7 @@ the same parts, the same names, the same keyboard and agent support.
 
 | What | How many | What it gives you |
 | ---- | -------- | ----------------- |
-| [Components](/components) | 55, plus 23 app parts | Every UI SDK component, styled; and the app frame, data display, form and list parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, uploads, a sortable list) |
+| [Components](/components) | 55, plus 24 app parts | Every UI SDK component, styled; and the app frame, data display, form and list parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, uploads, a sortable list and tree) |
 | [Kits](/kits) | 12 | Chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal, Studio and the Agent Console |
 | [Templates](/templates) | 10 | Whole pages: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, IDE |
 | [Themes](/themes) | 5 skins | Base, Blueprint, Studio, Phosphor and Ink, plus a [generator](/themes/generator) for your own |
@@ -628,6 +629,7 @@ npx shadcn@latest add @uiset/<item>
 | A stepper or wizard                    | Steps with the current one marked and later ones locked             | `stepper`                  |
 | A kanban board                         | Cards moved by drag or keyboard, column limits, filters             | [`board`](./board.md)      |
 | A sortable list                        | Drag to reorder or use the keyboard; move a selection together      | [`sortable-list`](./lists.md) |
+| A sortable tree                        | Drag rows to reorder and nest them, or use the keyboard             | [`sortable-tree`](./lists.md#sortable-tree) |
 | A timeline                             | Events in order with markers                                        | `timeline`                 |
 | A file tree                            | A tree you expand and select; a file tree with rename and move      | `tree`, [`ide`](./ide.md)  |
 | A spinner and loading states           | A spinner that says what's loading; skeletons                       | `spinner`, `skeleton`      |
@@ -834,7 +836,7 @@ plain elements. UI SDK's own `<ui-*>` elements are typed by `@ui-sdk/web`.
 | `<uiset-table>`, `<uiset-avatar-group>`, `<uiset-count-badge>`       | A scroll area around your table (sticky headings and first column, rows that stack), overlapping avatars with a count, and a count on a button's corner |
 | `<uiset-code-block>`, `<uiset-code-tabs>`, `<uiset-package-command>` | Code in its language's colors with a caption, line numbers, marked lines and copy; tabs of versions; one command for npm, pnpm, yarn and bun |
 | `<uiset-inline-edit>`, `<uiset-upload>`                               | A value that turns into a field when pressed, and a drop zone with a queue of uploads |
-| `<uiset-sortable-list>`                                               | A list people put in order by drag or by keys, with a selection that moves together |
+| `<uiset-sortable-list>`, `<uiset-sortable-tree>`                      | A list people put in order by drag or by keys, with a selection that moves together; a tree they reorder and nest |
 
 ## Studio
 
@@ -1400,7 +1402,8 @@ notes.addEventListener("valuechange", (e) => {
 ## Content and forms
 
 The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
-`inline-edit`, `upload`, `schema-form` and `sortable-list`. `web/content.html` has each of them.
+`inline-edit`, `upload`, `schema-form`, `sortable-list` and `sortable-tree`. `web/content.html` has each
+of them.
 
 ```html
 <uiset-table label="Invoices" stack sticky-header sticky-column max-height="20rem">
@@ -1427,6 +1430,7 @@ The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
 <uiset-upload label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
 <uiset-schema-form confirm="Sends an invite email to the address given" done-message="Invite sent."></uiset-schema-form>
 <uiset-sortable-list label="Playlist" multiple></uiset-sortable-list>
+<uiset-sortable-tree label="Pages" icons></uiset-sortable-tree>
 ```
 
 ```ts
@@ -1440,6 +1444,8 @@ invite.form = defineForm({ name: "invite_teammate", title: "Invite a teammate", 
 invite.send = async (values) => (await sendInvite(values)).problems // shown under their fields
 playlist.items = [{ value: "intro", label: "Intro", locked: true }, { value: "harbor", label: "Harbor Lights" }]
 playlist.addEventListener("valuechange", (e) => save(e.detail.value)) // the keys in their new order
+pages.items = [{ value: "guides", label: "Guides", children: [] }, { value: "faq", label: "FAQ" }]
+pages.addEventListener("itemschange", (e) => save(e.detail.value)) // the items, nested again
 ```
 
 - `<uiset-table>` puts your `<table>` in a scroll area named by `label`. With `stack`, below
@@ -1478,6 +1484,11 @@ playlist.addEventListener("valuechange", (e) => save(e.detail.value)) // the key
   with `locked` stays put, and `numbered` shows places. `value` (the order) and `selected` are
   live; it fires `valuechange` and `selectedchange`, and agents call `moveItem` and
   `selectItems` by its label. See [Sortable lists and trees](./lists.md#web-components).
+- `<uiset-sortable-tree>` is React's `SortableTree` on the same primitive: set nested `items`
+  and drag a row up, down and sideways, or press Space and use the arrows. Only branches
+  hold items; a drop elsewhere goes back and says why. `items` and `expanded` are live; it
+  fires `itemschange`, `expandedchange` and `action`, and agents call `moveItem`,
+  `expandItem` and `collapseItem` by its label.
 
 ### Confirm button
 
@@ -3649,9 +3660,9 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**Sortable lists and trees.** The sortable list is in: drag an item or pick it up with Space,
-and move a selection together. Next, trees that reorder and nest, which the IDE's file tree
-takes on. M
+**Sortable lists and trees.** The sortable list and tree are in: drag or pick up with Space,
+move a selection together, and nest rows by moving them sideways. Next, the IDE's file tree
+lets a file be dragged into a folder. M
 
 ## Next, in order
 
@@ -4579,13 +4590,15 @@ invite.addEventListener("valuechange", (e) => save(e.detail.value)) // preventDe
 
 # Sortable lists and trees
 
-Lists people put in order. `SortableList` is a ranking, a playlist or a set of steps: drag an
-item by its grip, or pick it up with Space and move it with the arrow keys. It's built on UI
-SDK's `createReorder`, so every step is read out, and on `createSelection`, so several items
-can move together.
+Lists and trees people put in order. `SortableList` is a ranking, a playlist or a set of
+steps: drag an item by its grip, or pick it up with Space and move it with the arrow keys.
+It's built on UI SDK's `createReorder`, so every step is read out, and on `createSelection`,
+so several items can move together. `SortableTree` is an outline, a page tree or layers:
+rows move up and down and sideways to change their level, with what's under them, on UI
+SDK's `createTreeReorder`.
 
 ```bash
-npx shadcn@latest add @uiset/sortable-list
+npx shadcn@latest add @uiset/sortable-list @uiset/sortable-tree
 ```
 
 ## Parts
@@ -4595,6 +4608,9 @@ npx shadcn@latest add @uiset/sortable-list
 | `SortableList`                                 | `sortable-list` | A list drawn from `items` that people put in order                 |
 | `SortableListRoot`, `SortableListItemPart`     | `sortable-list` | Its parts, for items drawn your own way                            |
 | `sortableList`                                 | `sortable-list` | The primitive, for another framework                               |
+| `SortableTree`                                 | `sortable-tree` | A tree drawn from nested `items` that people reorder and nest      |
+| `SortableTreeRoot`, `SortableTreeRowPart`      | `sortable-tree` | Its parts, for rows drawn your own way                             |
+| `sortableTree`, `flatten`, `build`             | `sortable-tree` | The primitive, and nested items to rows and back                   |
 
 ## Sortable list
 
@@ -4637,6 +4653,45 @@ item drags from its grip, so a finger elsewhere still scrolls the page.
 Items carry `data-moving` while they're picked up, `data-dragging` while a pointer drags
 them, and `data-selected`. The list has `data-moving` during a move and `data-orientation`.
 
+## Sortable tree
+
+```tsx
+import { SortableTree, type SortableTreeItem } from "@/components/ui/sortable-tree"
+
+const [pages, setPages] = useState<SortableTreeItem[]>([
+  { value: "guides", label: "Guides", children: [{ value: "install", label: "Installation" }] },
+  { value: "api", label: "API", children: [] },
+  { value: "faq", label: "FAQ" },
+])
+
+<SortableTree label="Pages" items={pages} onItemsChange={setPages} defaultExpanded={["guides"]} />
+```
+
+- `label` is required: it names the tree for people and agents.
+- `items` are nested `{ value, label, children?, locked? }`. An item with `children` is a
+  branch, even with none yet (`children: []`); only branches hold other items.
+- `items` with `onItemsChange(items, details)` controls the tree, or `defaultItems` starts
+  it. `onItemsChange` runs once, when a move is dropped, with the items nested again; each
+  keeps its own fields. `details` has `key` (what moved), `parent` (its new branch, or `null`
+  at the top) and `index` (its place there, from 0), and `reason`.
+- `expanded` with `onExpandedChange`, or `defaultExpanded`, holds the open branches. A
+  branch something is dropped into opens, so the row stays in view, and a branch a row is
+  carried into shows open while it's there.
+- A row dropped inside an item that isn't a branch goes back, and the reason is read out;
+  while it's carried there, it's marked in the danger tone. `refusedMessage` words that.
+- `maxDepth` limits how deep an item and those under it go, from 0. `locked` on an item
+  means it can't be picked up.
+- `onAction(key)` runs for Enter or a press on an item that isn't a branch, like opening a
+  page. Branches open and close instead.
+- `icons` adds folder and file icons. `renderItem(item, row)` draws a row's face after its
+  arrow; `row` has `depth`, `branch`, `expanded`, `position`, `size`, `moving`, `dragging`
+  and `invalid`.
+
+Rows are drawn flat, indented `--sortable-tree-indent` (20px) a level, which is also how far
+a drag goes sideways for each level. They carry `data-branch`, `data-moving`,
+`data-dragging` and `data-invalid`; each grip shows on hover and focus, and always on a
+touch screen, where a row drags from it.
+
 ## Keys
 
 | Keys                    | Where                     | Does                                                         |
@@ -4652,9 +4707,19 @@ them, and `data-selected`. The list has `data-moving` during a move and `data-or
 | Shift with the arrows   | a list with `multiple`    | Select the run of items to the one you reach                 |
 | Ctrl+A (Command+A on a Mac) | a list with `multiple` | Select every item that can move, or none                    |
 | Escape                  | a list with a selection   | Let go of the selection                                      |
+| Up, Down, Home, End     | a sortable tree           | Move between the rows that show. The tree is one tab stop    |
+| Right                   | a branch                  | Open it, or go to its first item if it's open                |
+| Left                    | a row                     | Close a branch that's open, or go to the row's branch        |
+| Enter                   | a row                     | Open or close a branch; `onAction` on anything else          |
+| Space                   | a row                     | Pick it up with everything under it, or drop it              |
+| Up, Down                | a row that's picked up    | Move it between the rows that show                           |
+| Left, Right             | a row that's picked up    | Take it out a level, or in one                               |
+| Escape                  | a row that's picked up    | Put it back where it was                                     |
 
 With a pointer: drag an item. With `multiple`, press an item's check, or Shift-click,
 Command-click or Control-click it, to select; dragging a selected item carries the selection.
+In a tree, drag a row up or down, and sideways a level for every 20px; a press on a branch
+opens or closes it. In right-to-left text, Left and Right swap.
 
 ## For agents
 
@@ -4663,11 +4728,16 @@ Command-click or Control-click it, to select; dragging a selected item carries t
   place counted from 1; pass a list of items to move several, in their order.
   `selectItems(items)` sets the selection, with `multiple`. Moving a locked item, or a name
   the list doesn't have, fails and says why.
+- **SortableTree** is listed by its `label`, with each item's level and branch.
+  `moveItem(item, into, position)` moves an item and what's under it into a branch (`null`
+  for the top level), at a place from 1 (the end without one). `expandItem` and
+  `collapseItem` open and close branches, and `openItem` runs `onAction`. A move into an
+  item that isn't a branch, into itself, or of a locked item fails and says why.
 
 ## Web Components
 
-`<uiset-sortable-list>` is in [Web Components](./web-components.md#content-and-forms), on the
-same primitive:
+`<uiset-sortable-list>` and `<uiset-sortable-tree>` are in
+[Web Components](./web-components.md#content-and-forms), on the same primitives:
 
 ```html
 <uiset-sortable-list id="playlist" label="Playlist" multiple></uiset-sortable-list>
@@ -4686,6 +4756,23 @@ playlist.addEventListener("valuechange", (e) => save(e.detail.value)) // prevent
   and setting them fires nothing. Keys a set order leaves out follow it, in `items`' order.
 - `label`, `multiple`, `numbered`, `orientation` and `help` are attributes.
 - It fires `valuechange` and `selectedchange`, and `api` has `moveItem` and `selectItems`.
+
+```html
+<uiset-sortable-tree id="pages" label="Pages" icons></uiset-sortable-tree>
+```
+
+```ts
+const pages = document.querySelector("uiset-sortable-tree")!
+pages.items = [{ value: "guides", label: "Guides", children: [] }, { value: "faq", label: "FAQ" }]
+pages.expanded = ["guides"]
+pages.addEventListener("itemschange", (e) => save(e.detail.value)) // the items, nested again
+```
+
+- `items` and `expanded` are live: after a move, `items` reads the tree as it is. Setting
+  them fires nothing.
+- `label`, `icons`, `max-depth` and `help` are attributes.
+- It fires `itemschange`, `expandedchange` and `action`, and `api` has `moveItem`,
+  `expandItem`, `collapseItem` and `openItem`.
 
 
 <!-- docs/rich-text.md -->

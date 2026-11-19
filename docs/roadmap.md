@@ -15,9 +15,9 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**Sortable lists and trees.** The sortable list is in: drag an item or pick it up with Space,
-and move a selection together. Next, trees that reorder and nest, which the IDE's file tree
-takes on. M
+**Sortable lists and trees.** The sortable list and tree are in: drag or pick up with Space,
+move a selection together, and nest rows by moving them sideways. Next, the IDE's file tree
+lets a file be dragged into a folder. M
 
 ## Next, in order
 

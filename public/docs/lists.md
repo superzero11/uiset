@@ -1,12 +1,14 @@
 # Sortable lists and trees
 
-Lists people put in order. `SortableList` is a ranking, a playlist or a set of steps: drag an
-item by its grip, or pick it up with Space and move it with the arrow keys. It's built on UI
-SDK's `createReorder`, so every step is read out, and on `createSelection`, so several items
-can move together.
+Lists and trees people put in order. `SortableList` is a ranking, a playlist or a set of
+steps: drag an item by its grip, or pick it up with Space and move it with the arrow keys.
+It's built on UI SDK's `createReorder`, so every step is read out, and on `createSelection`,
+so several items can move together. `SortableTree` is an outline, a page tree or layers:
+rows move up and down and sideways to change their level, with what's under them, on UI
+SDK's `createTreeReorder`.
 
 ```bash
-npx shadcn@latest add @uiset/sortable-list
+npx shadcn@latest add @uiset/sortable-list @uiset/sortable-tree
 ```
 
 ## Parts
@@ -16,6 +18,9 @@ npx shadcn@latest add @uiset/sortable-list
 | `SortableList`                                 | `sortable-list` | A list drawn from `items` that people put in order                 |
 | `SortableListRoot`, `SortableListItemPart`     | `sortable-list` | Its parts, for items drawn your own way                            |
 | `sortableList`                                 | `sortable-list` | The primitive, for another framework                               |
+| `SortableTree`                                 | `sortable-tree` | A tree drawn from nested `items` that people reorder and nest      |
+| `SortableTreeRoot`, `SortableTreeRowPart`      | `sortable-tree` | Its parts, for rows drawn your own way                             |
+| `sortableTree`, `flatten`, `build`             | `sortable-tree` | The primitive, and nested items to rows and back                   |
 
 ## Sortable list
 
@@ -58,6 +63,45 @@ item drags from its grip, so a finger elsewhere still scrolls the page.
 Items carry `data-moving` while they're picked up, `data-dragging` while a pointer drags
 them, and `data-selected`. The list has `data-moving` during a move and `data-orientation`.
 
+## Sortable tree
+
+```tsx
+import { SortableTree, type SortableTreeItem } from "@/components/ui/sortable-tree"
+
+const [pages, setPages] = useState<SortableTreeItem[]>([
+  { value: "guides", label: "Guides", children: [{ value: "install", label: "Installation" }] },
+  { value: "api", label: "API", children: [] },
+  { value: "faq", label: "FAQ" },
+])
+
+<SortableTree label="Pages" items={pages} onItemsChange={setPages} defaultExpanded={["guides"]} />
+```
+
+- `label` is required: it names the tree for people and agents.
+- `items` are nested `{ value, label, children?, locked? }`. An item with `children` is a
+  branch, even with none yet (`children: []`); only branches hold other items.
+- `items` with `onItemsChange(items, details)` controls the tree, or `defaultItems` starts
+  it. `onItemsChange` runs once, when a move is dropped, with the items nested again; each
+  keeps its own fields. `details` has `key` (what moved), `parent` (its new branch, or `null`
+  at the top) and `index` (its place there, from 0), and `reason`.
+- `expanded` with `onExpandedChange`, or `defaultExpanded`, holds the open branches. A
+  branch something is dropped into opens, so the row stays in view, and a branch a row is
+  carried into shows open while it's there.
+- A row dropped inside an item that isn't a branch goes back, and the reason is read out;
+  while it's carried there, it's marked in the danger tone. `refusedMessage` words that.
+- `maxDepth` limits how deep an item and those under it go, from 0. `locked` on an item
+  means it can't be picked up.
+- `onAction(key)` runs for Enter or a press on an item that isn't a branch, like opening a
+  page. Branches open and close instead.
+- `icons` adds folder and file icons. `renderItem(item, row)` draws a row's face after its
+  arrow; `row` has `depth`, `branch`, `expanded`, `position`, `size`, `moving`, `dragging`
+  and `invalid`.
+
+Rows are drawn flat, indented `--sortable-tree-indent` (20px) a level, which is also how far
+a drag goes sideways for each level. They carry `data-branch`, `data-moving`,
+`data-dragging` and `data-invalid`; each grip shows on hover and focus, and always on a
+touch screen, where a row drags from it.
+
 ## Keys
 
 | Keys                    | Where                     | Does                                                         |
@@ -73,9 +117,19 @@ them, and `data-selected`. The list has `data-moving` during a move and `data-or
 | Shift with the arrows   | a list with `multiple`    | Select the run of items to the one you reach                 |
 | Ctrl+A (Command+A on a Mac) | a list with `multiple` | Select every item that can move, or none                    |
 | Escape                  | a list with a selection   | Let go of the selection                                      |
+| Up, Down, Home, End     | a sortable tree           | Move between the rows that show. The tree is one tab stop    |
+| Right                   | a branch                  | Open it, or go to its first item if it's open                |
+| Left                    | a row                     | Close a branch that's open, or go to the row's branch        |
+| Enter                   | a row                     | Open or close a branch; `onAction` on anything else          |
+| Space                   | a row                     | Pick it up with everything under it, or drop it              |
+| Up, Down                | a row that's picked up    | Move it between the rows that show                           |
+| Left, Right             | a row that's picked up    | Take it out a level, or in one                               |
+| Escape                  | a row that's picked up    | Put it back where it was                                     |
 
 With a pointer: drag an item. With `multiple`, press an item's check, or Shift-click,
 Command-click or Control-click it, to select; dragging a selected item carries the selection.
+In a tree, drag a row up or down, and sideways a level for every 20px; a press on a branch
+opens or closes it. In right-to-left text, Left and Right swap.
 
 ## For agents
 
@@ -84,11 +138,16 @@ Command-click or Control-click it, to select; dragging a selected item carries t
   place counted from 1; pass a list of items to move several, in their order.
   `selectItems(items)` sets the selection, with `multiple`. Moving a locked item, or a name
   the list doesn't have, fails and says why.
+- **SortableTree** is listed by its `label`, with each item's level and branch.
+  `moveItem(item, into, position)` moves an item and what's under it into a branch (`null`
+  for the top level), at a place from 1 (the end without one). `expandItem` and
+  `collapseItem` open and close branches, and `openItem` runs `onAction`. A move into an
+  item that isn't a branch, into itself, or of a locked item fails and says why.
 
 ## Web Components
 
-`<uiset-sortable-list>` is in [Web Components](./web-components.md#content-and-forms), on the
-same primitive:
+`<uiset-sortable-list>` and `<uiset-sortable-tree>` are in
+[Web Components](./web-components.md#content-and-forms), on the same primitives:
 
 ```html
 <uiset-sortable-list id="playlist" label="Playlist" multiple></uiset-sortable-list>
@@ -107,3 +166,20 @@ playlist.addEventListener("valuechange", (e) => save(e.detail.value)) // prevent
   and setting them fires nothing. Keys a set order leaves out follow it, in `items`' order.
 - `label`, `multiple`, `numbered`, `orientation` and `help` are attributes.
 - It fires `valuechange` and `selectedchange`, and `api` has `moveItem` and `selectItems`.
+
+```html
+<uiset-sortable-tree id="pages" label="Pages" icons></uiset-sortable-tree>
+```
+
+```ts
+const pages = document.querySelector("uiset-sortable-tree")!
+pages.items = [{ value: "guides", label: "Guides", children: [] }, { value: "faq", label: "FAQ" }]
+pages.expanded = ["guides"]
+pages.addEventListener("itemschange", (e) => save(e.detail.value)) // the items, nested again
+```
+
+- `items` and `expanded` are live: after a move, `items` reads the tree as it is. Setting
+  them fires nothing.
+- `label`, `icons`, `max-depth` and `help` are attributes.
+- It fires `itemschange`, `expandedchange` and `action`, and `api` has `moveItem`,
+  `expandItem`, `collapseItem` and `openItem`.

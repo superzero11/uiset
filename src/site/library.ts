@@ -38,10 +38,10 @@ const kitText: Record<string, { headline: string; items: string[]; tag: string; 
   "app-shell": { headline: "The frame of an app, and the parts that show data", items: ["app-shell", "page-header", "stat", "table"], tag: "Structure" },
   forms: { headline: "Forms from a schema, inline edits and uploads", items: ["schema-form", "inline-edit", "upload"], tag: "Inputs" },
   lists: {
-    headline: "Lists people put in order",
-    items: ["sortable-list"],
+    headline: "Lists and trees people put in order",
+    items: ["sortable-list", "sortable-tree"],
     tag: "Inputs",
-    description: "Drag an item by its grip or pick it up with Space, select several to move together, and lock items in place. Every move is read out.",
+    description: "Drag an item or pick it up with Space, move a selection together, and nest rows in a tree by moving them sideways. Every move is read out.",
   },
   chat: {
     headline: "A complete chat kit",

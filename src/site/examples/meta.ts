@@ -479,6 +479,12 @@ const groups: [string, ExampleMeta[]][] = [
         parts: "SortableList (createReorder, createSelection)",
         items: ["sortable-list"],
       },
+      {
+        slug: "sortable-tree",
+        title: "Sortable tree",
+        parts: "SortableTree (createTreeReorder, createRovingFocus)",
+        items: ["sortable-tree"],
+      },
     ],
   ],
   [

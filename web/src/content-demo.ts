@@ -4,6 +4,7 @@ import type { Uploader } from "@/registry/uiset/ui/upload/queue"
 import type { UISetCodeBlock, UISetCodeTabs } from "./content"
 import type { InlineEditElement } from "./inline-edit"
 import type { SortableListElement } from "./sortable-list"
+import type { SortableTreeElement } from "./sortable-tree"
 import type { UISetSchemaForm } from "./schema-form"
 import { defineForm } from "@/registry/uiset/ui/schema-form/schema"
 import type { UISetUpload } from "./upload"
@@ -129,3 +130,25 @@ playlist.items = [
   { value: "salt", label: "Salt and Cedar", description: "5:12" },
   { value: "late", label: "Late Train", description: "3:47" },
 ]
+
+// A file tree people reorder and nest; a file dropped on another file goes back.
+const filesTree = document.getElementById("files-tree") as SortableTreeElement
+filesTree.items = [
+  {
+    value: "src",
+    label: "src",
+    children: [
+      { value: "components", label: "components", children: [{ value: "button", label: "button.tsx" }, { value: "dialog", label: "dialog.tsx" }] },
+      { value: "lib", label: "lib", children: [{ value: "utils", label: "utils.ts" }] },
+      { value: "app", label: "app.tsx" },
+    ],
+  },
+  { value: "public", label: "public", children: [] },
+  { value: "package", label: "package.json" },
+  { value: "readme", label: "README.md", locked: true },
+]
+filesTree.expanded = ["src", "components"]
+filesTree.addEventListener("itemschange", (event) => {
+  const { key, parent } = event.detail
+  document.getElementById("files-tree-moved")!.textContent = `Moved ${key} into ${parent ?? "the top level"}.`
+})

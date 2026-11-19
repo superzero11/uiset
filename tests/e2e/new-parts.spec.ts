@@ -591,9 +591,71 @@ test("Shift+Space and a press on a check select, and Escape lets go", async ({ p
   await expect(list.locator('[aria-selected="true"]')).toHaveCount(0)
 })
 
+/* ------------------------------------------------------------------ sortable tree */
+
+/** The tree's rows that show, indented by level. */
+const outline = (tree: import("@playwright/test").Locator) =>
+  tree.getByRole("treeitem").evaluateAll((els) => els.map((el) => `${"  ".repeat(Number(el.getAttribute("aria-level")) - 1)}${el.getAttribute("aria-label")}`))
+
+async function openTree(page: Page) {
+  await open(page)
+  const area = example(page, "Sortable tree")
+  await area.scrollIntoViewIfNeeded()
+  const tree = area.getByRole("tree", { name: "Project files" })
+  await tree.evaluate((el) => el.scrollIntoView({ block: "center" }))
+  return { area, tree }
+}
+
+test("a sortable tree nests a row with the keys, opens the branch it lands in, and says so", async ({ page }) => {
+  const { area, tree } = await openTree(page)
+  const json = tree.getByRole("treeitem", { name: "package.json" })
+  await json.focus()
+  await page.keyboard.press("Space")
+  await expect(json).toHaveAttribute("data-moving", "")
+  // Up past the empty public folder, then back down and a level in: inside it.
+  await page.keyboard.press("ArrowUp")
+  await page.keyboard.press("ArrowDown")
+  await page.keyboard.press("ArrowRight")
+  await expect(json).toHaveAttribute("aria-level", "2")
+  await page.keyboard.press("Space")
+  await expect(tree.getByRole("treeitem", { name: "public" })).toHaveAttribute("aria-expanded", "true")
+  await expect(json).toBeFocused()
+  await expect(area.getByText("Moved package into public.")).toBeVisible()
+  expect((await outline(tree)).slice(-3)).toEqual(["public", "  package.json", "README.md"])
+})
+
+test("a sortable tree moves a row by drag, a level in for each step sideways", async ({ page }) => {
+  const { tree } = await openTree(page)
+  const from = (await tree.getByRole("treeitem", { name: "package.json" }).boundingBox())!
+  await page.mouse.move(from.x + 140, from.y + from.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(from.x + 140, from.y + from.height / 2 - 6, { steps: 3 })
+  // A level in: under the empty public folder above it.
+  await page.mouse.move(from.x + 164, from.y + from.height / 2 - 4, { steps: 8 })
+  await expect(page.locator("[data-drag-preview]")).toBeVisible()
+  await expect(tree.getByRole("treeitem", { name: "package.json" })).toHaveAttribute("aria-level", "2")
+  await page.mouse.up()
+  expect((await outline(tree)).slice(-3)).toEqual(["public", "  package.json", "README.md"])
+})
+
+test("a row carried inside a file is marked, goes back when dropped, and says why", async ({ page }) => {
+  const { tree } = await openTree(page)
+  const button = tree.getByRole("treeitem", { name: "button.tsx" })
+  await button.focus()
+  await page.keyboard.press("Space")
+  await page.keyboard.press("ArrowDown")
+  await page.keyboard.press("ArrowRight")
+  await expect(button).toHaveAttribute("data-invalid", "")
+  await expect.poll(() => spoken(page)).toContain("dialog.tsx can't hold other items")
+  await page.keyboard.press("Space")
+  await expect.poll(() => spoken(page)).toContain("button.tsx can't go inside dialog.tsx")
+  expect((await outline(tree)).slice(0, 4)).toEqual(["src", "  components", "    button.tsx", "    dialog.tsx"])
+  await expect(button).not.toHaveAttribute("data-invalid")
+})
+
 /* ------------------------------------------------------------------ narrow screens */
 
-const narrow = ["Table", "Avatar group", "Badge", "Code block", "Inline edit", "Upload", "Sortable list"]
+const narrow = ["Table", "Avatar group", "Badge", "Code block", "Inline edit", "Upload", "Sortable list", "Sortable tree"]
 
 test("the new parts fit a phone's width", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 })

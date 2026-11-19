@@ -212,6 +212,13 @@ const components = [
     [],
   ],
   [
+    "sortable-tree",
+    "Sortable tree",
+    "A tree people reorder and nest: drag a row up or down and sideways to change its level, or pick it up with Space and use the arrows. Only branches hold items, a drop elsewhere goes back and says why, and agents move items into branches by name.",
+    ["sortable-tree/sortable-tree.ts", "sortable-tree/sortable-tree.css", "shell/drag-preview.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
+    [],
+  ],
+  [
     "schema-form",
     "Schema form",
     "A form from one definition: its fields with UISet's controls, steps with a review, checks as people type and on submit, and an agent that fills it by field name while a person approves the submit. The same definition is JSON Schema for an agent tool.",

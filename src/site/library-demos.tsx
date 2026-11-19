@@ -9,7 +9,7 @@ const from = <M,>(load: () => Promise<M>, pick: (m: M) => ComponentType): Demo =
 const kitDemos: Record<string, Demo> = {
   "app-shell": from(() => import("./examples/app-shell"), (m) => m.default),
   forms: from(() => import("./examples/schema-form"), (m) => m.default),
-  lists: from(() => import("./examples/sortable-list"), (m) => m.default),
+  lists: from(() => import("./lists-demo"), (m) => m.ListsDemo),
   chat: from(() => import("./chat-demo"), (m) => m.ChatDemo),
   "rich-text": from(() => import("./editor-demo"), (m) => m.EditorDemo),
   "data-grid": from(() => import("./grid-demo"), (m) => m.GridDemo),

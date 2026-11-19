@@ -27,6 +27,7 @@ npx shadcn@latest add @uiset/<item>
 | A stepper or wizard                    | Steps with the current one marked and later ones locked             | `stepper`                  |
 | A kanban board                         | Cards moved by drag or keyboard, column limits, filters             | [`board`](./board.md)      |
 | A sortable list                        | Drag to reorder or use the keyboard; move a selection together      | [`sortable-list`](./lists.md) |
+| A sortable tree                        | Drag rows to reorder and nest them, or use the keyboard             | [`sortable-tree`](./lists.md#sortable-tree) |
 | A timeline                             | Events in order with markers                                        | `timeline`                 |
 | A file tree                            | A tree you expand and select; a file tree with rename and move      | `tree`, [`ide`](./ide.md)  |
 | A spinner and loading states           | A spinner that says what's loading; skeletons                       | `spinner`, `skeleton`      |

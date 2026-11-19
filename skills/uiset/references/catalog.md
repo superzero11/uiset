@@ -39,6 +39,7 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 ## Lists and trees (docs/lists.md)
 
 - `sortable-list`: A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name.
+- `sortable-tree`: A tree people reorder and nest: drag a row up or down and sideways to change its level, or pick it up with Space and use the arrows. Only branches hold items, a drop elsewhere goes back and says why, and agents move items into branches by name.
 
 ## Rich text (docs/rich-text.md)
 

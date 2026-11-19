@@ -1,0 +1,187 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  .sortable-tree {
+    /* How far each level steps in. The drag reads the same distance: 20px a level. */
+    --sortable-tree-indent: 20px;
+    /* The drag preview sits against the tree. */
+    position: relative;
+    display: grid;
+    gap: 1px;
+    min-inline-size: 0;
+    color: var(--ui-foreground);
+    font-size: 0.875rem;
+  }
+
+  .sortable-tree-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-block-size: 2rem;
+    padding-block: 0.25rem;
+    padding-inline: calc(0.25rem + var(--sortable-tree-depth, 0) * var(--sortable-tree-indent)) 0.375rem;
+    border-radius: var(--ui-radius);
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    outline: none;
+
+    &:hover {
+      background: color-mix(in oklch, var(--ui-muted) 70%, transparent);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: -2px;
+    }
+
+    &[aria-disabled="true"] {
+      cursor: default;
+    }
+
+    /* The original stays behind as a ghost where it lands, at its new level, while its copy follows the pointer. */
+    &[data-dragging] {
+      opacity: 0.45;
+    }
+  }
+
+  /* Picked up with the keyboard: tinted and ringed with a dashed outline, apart from mere focus. */
+  [data-uiset] .sortable-tree .sortable-tree-row[data-moving] {
+    background: color-mix(in oklch, var(--ui-primary) 10%, var(--ui-background));
+    outline: 2px dashed var(--ui-primary);
+    outline-offset: -2px;
+  }
+
+  /* Somewhere it can't be dropped: inside an item that isn't a branch. */
+  [data-uiset] .sortable-tree .sortable-tree-row[data-invalid] {
+    outline: 2px dashed var(--tone-danger);
+    outline-offset: -2px;
+    background: color-mix(in oklch, var(--tone-danger) 12%, var(--ui-background));
+    cursor: not-allowed;
+
+    /* Less faded than a ghost that can land, so the warning reads. */
+    &[data-dragging] {
+      opacity: 0.85;
+    }
+  }
+
+  [data-drag-preview].sortable-tree-row {
+    padding-inline-start: 0.25rem;
+    border: 1px solid var(--ui-border);
+    background: var(--ui-background);
+    box-shadow: var(--ui-shadow);
+    cursor: grabbing;
+  }
+
+  .sortable-tree-toggle {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    inline-size: 1rem;
+    block-size: 1rem;
+    color: var(--ui-muted-foreground);
+    cursor: pointer;
+
+    .uiset-icon {
+      inline-size: 0.875rem;
+
+      @media (prefers-reduced-motion: no-preference) {
+        transition: rotate 120ms;
+      }
+    }
+
+    [aria-expanded="true"] > & .uiset-icon {
+      rotate: 90deg;
+    }
+
+    /* In right-to-left text the chevron points left, and turns down the other way. */
+    &:dir(rtl) .uiset-icon {
+      scale: -1 1;
+    }
+
+    [aria-expanded="true"] > &:dir(rtl) .uiset-icon {
+      rotate: -90deg;
+    }
+  }
+
+  .sortable-tree-icon,
+  .sortable-tree-lock {
+    flex: none;
+    color: var(--ui-muted-foreground);
+  }
+
+  .sortable-tree-name {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* A grip to hold, at the row's end: shown on hover and focus, and always for a finger. */
+  .sortable-tree-handle {
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: 1.25rem;
+    block-size: 1.5rem;
+    margin-inline-start: auto;
+    color: var(--ui-muted-foreground);
+    touch-action: none;
+    opacity: 0;
+
+    .uiset-icon {
+      stroke-width: 2.75;
+    }
+
+    :is(:hover, :focus-visible, [data-moving]) > & {
+      opacity: 1;
+    }
+
+    [aria-disabled="true"] > & {
+      visibility: hidden;
+    }
+  }
+
+  /* A row carried somewhere it can't land shows a cross where its grip was, in every skin. */
+  .sortable-tree-refuse {
+    display: none;
+    flex: none;
+    place-items: center;
+    inline-size: 1.25rem;
+    block-size: 1.5rem;
+    margin-inline-start: auto;
+    color: var(--tone-danger);
+
+    .uiset-icon {
+      stroke-width: 2.5;
+    }
+
+    [data-invalid] > & {
+      display: grid;
+    }
+  }
+
+  [data-invalid] > .sortable-tree-handle {
+    display: none;
+  }
+
+  @media (pointer: coarse) {
+    .sortable-tree-row {
+      min-block-size: 2.75rem;
+    }
+
+    .sortable-tree-handle {
+      inline-size: 2.75rem;
+      block-size: 2.75rem;
+      margin-block: -0.25rem;
+      opacity: 1;
+    }
+  }
+
+  @media (forced-colors: active) {
+    [data-uiset] .sortable-tree .sortable-tree-row:is([data-moving], [data-invalid]) {
+      outline-color: Highlight;
+    }
+  }
+}

@@ -46,6 +46,7 @@ const appParts: Record<string, string> = {
   "inline-edit": "/docs/kits/forms#inline-edit",
   upload: "/docs/kits/forms#upload",
   "sortable-list": "/docs/kits/lists#sortable-list",
+  "sortable-tree": "/docs/kits/lists#sortable-tree",
 }
 const items = (registry as { items: Item[] }).items
 const describe = (name: string) => items.find((i) => i.name === name)?.description ?? ""

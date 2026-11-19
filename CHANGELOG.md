@@ -70,6 +70,15 @@ On UI SDK `0.1.0-beta.10`.
   `moveItem` and `selectItems` by name. A new guide, Sortable lists and trees. Web
   Components: `<uiset-sortable-list>`.
 
+- **Sortable tree** (`sortable-tree`), on UI SDK's `createTreeReorder`. Drag a row up or
+  down, and sideways to change its level, with everything under it; or press Space, move it
+  with Up and Down, change its level with Left and Right, and press Space again. Right and
+  Left open and close branches, and typing a name goes to it. Only branches hold items: a
+  row dropped inside anything else goes back and says why, and is marked while it's carried
+  there. A branch something is dropped into opens. `onItemsChange` gets the items nested
+  again, with what moved and where. Agents get `moveItem(item, into, position)`,
+  `expandItem` and `collapseItem`. Web Components: `<uiset-sortable-tree>`.
+
 ### Changed
 
 - **The kits and templates scroll in UI SDK's scroll areas**, with its scrollbars and the

@@ -150,7 +150,7 @@ plain elements. UI SDK's own `<ui-*>` elements are typed by `@ui-sdk/web`.
 | `<uiset-table>`, `<uiset-avatar-group>`, `<uiset-count-badge>`       | A scroll area around your table (sticky headings and first column, rows that stack), overlapping avatars with a count, and a count on a button's corner |
 | `<uiset-code-block>`, `<uiset-code-tabs>`, `<uiset-package-command>` | Code in its language's colors with a caption, line numbers, marked lines and copy; tabs of versions; one command for npm, pnpm, yarn and bun |
 | `<uiset-inline-edit>`, `<uiset-upload>`                               | A value that turns into a field when pressed, and a drop zone with a queue of uploads |
-| `<uiset-sortable-list>`                                               | A list people put in order by drag or by keys, with a selection that moves together |
+| `<uiset-sortable-list>`, `<uiset-sortable-tree>`                      | A list people put in order by drag or by keys, with a selection that moves together; a tree they reorder and nest |
 
 ## Studio
 
@@ -716,7 +716,8 @@ notes.addEventListener("valuechange", (e) => {
 ## Content and forms
 
 The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
-`inline-edit`, `upload`, `schema-form` and `sortable-list`. `web/content.html` has each of them.
+`inline-edit`, `upload`, `schema-form`, `sortable-list` and `sortable-tree`. `web/content.html` has each
+of them.
 
 ```html
 <uiset-table label="Invoices" stack sticky-header sticky-column max-height="20rem">
@@ -743,6 +744,7 @@ The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
 <uiset-upload label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
 <uiset-schema-form confirm="Sends an invite email to the address given" done-message="Invite sent."></uiset-schema-form>
 <uiset-sortable-list label="Playlist" multiple></uiset-sortable-list>
+<uiset-sortable-tree label="Pages" icons></uiset-sortable-tree>
 ```
 
 ```ts
@@ -756,6 +758,8 @@ invite.form = defineForm({ name: "invite_teammate", title: "Invite a teammate", 
 invite.send = async (values) => (await sendInvite(values)).problems // shown under their fields
 playlist.items = [{ value: "intro", label: "Intro", locked: true }, { value: "harbor", label: "Harbor Lights" }]
 playlist.addEventListener("valuechange", (e) => save(e.detail.value)) // the keys in their new order
+pages.items = [{ value: "guides", label: "Guides", children: [] }, { value: "faq", label: "FAQ" }]
+pages.addEventListener("itemschange", (e) => save(e.detail.value)) // the items, nested again
 ```
 
 - `<uiset-table>` puts your `<table>` in a scroll area named by `label`. With `stack`, below
@@ -794,6 +798,11 @@ playlist.addEventListener("valuechange", (e) => save(e.detail.value)) // the key
   with `locked` stays put, and `numbered` shows places. `value` (the order) and `selected` are
   live; it fires `valuechange` and `selectedchange`, and agents call `moveItem` and
   `selectItems` by its label. See [Sortable lists and trees](./lists.md#web-components).
+- `<uiset-sortable-tree>` is React's `SortableTree` on the same primitive: set nested `items`
+  and drag a row up, down and sideways, or press Space and use the arrows. Only branches
+  hold items; a drop elsewhere goes back and says why. `items` and `expanded` are live; it
+  fires `itemschange`, `expandedchange` and `action`, and agents call `moveItem`,
+  `expandItem` and `collapseItem` by its label.
 
 ### Confirm button
 
