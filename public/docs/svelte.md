@@ -627,7 +627,7 @@ What each kit offers agents, approvals and the Agent Console are in
 ## What was tested
 
 On 2026-11-19, the first screen above in a new app, with `@uiset/web` 0.4.0 and UI SDK
-0.1.0-beta.13 from npm (`npm install @uiset/web @ui-sdk/web`), Svelte 5.58.0, Vite 8.3.8 and
+0.1.0-beta.10 from npm (`npm install @uiset/web @ui-sdk/web`), Svelte 5.58.0, Vite 8.3.8 and
 `svelte-check` 4.7.8. It passes `svelte-check` with no errors or warnings, builds, and in
 Chrome its elements upgrade, take the base skin and update Svelte's state. The run through
 every code block on this page, next, was on beta.5.

@@ -1948,4 +1948,14 @@ vercel-labs/ui#905 (2026-11-19).
   declaration files, the built-package spec passes, and a dry run packs 83 files, 291.5 kB
   (still 0.4.0). The install test puts all 117 items into a fresh Vite app, which typechecks
   and builds. Docker was quit afterwards.
+- 2026-11-19 — **Release 0.5.0, prepared** (the owner's go-ahead to close the day).
+  `@uiset/web` goes from 0.4.0 (UI SDK beta.10 peers) to 0.5.0 (beta.13): the day's sortable
+  list and tree, IDE drag into folders, scroll fades, radio cards, rings, the textarea count,
+  password rules and the confirm button, the layout audit's fixes, and the scroll areas. The
+  changelog is dated and names what to act on: the UI SDK pin and the scroll areas' classes.
+  The tarball packs 83 files, 291.5 kB, with 76 type files (the sortable list and tree
+  included), peers on beta.13, and a README that installs beta.13. Preparing it caught a
+  slip in the beta.13 move: a blanket edit had changed the Vue and Svelte guides' "What was
+  tested" record from beta.10 to beta.13; that run was on 0.4.0 with beta.10, and the record
+  says so again. The owner publishes; then the push.
 

@@ -1,6 +1,6 @@
 {
   "name": "@uiset/web",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "UISet's skins, kits and elements for Web Components, Vue, Svelte, Solid and plain HTML, on UI SDK's custom elements.",
   "license": "MIT",
   "type": "module",
