@@ -505,9 +505,95 @@ test("chosen files join the queue, a file that's too large is refused with the r
   await expect(notes).toContainText("Uploaded", { timeout: 10_000 })
 })
 
+/* ------------------------------------------------------------------ sortable list */
+
+const order = (list: import("@playwright/test").Locator) =>
+  list.getByRole("option").evaluateAll((els) => els.map((el) => el.getAttribute("aria-label")))
+const spoken = (page: Page) => page.evaluate(() => Array.from(document.querySelectorAll("[aria-live]"), (el) => el.textContent ?? "").join(" | "))
+
+test("a sortable list moves an item with the keys, says each step, and its places follow", async ({ page }) => {
+  await open(page)
+  const area = example(page, "Sortable list")
+  await area.scrollIntoViewIfNeeded()
+  const list = area.getByRole("listbox", { name: "Priorities" })
+  const item = list.getByRole("option", { name: "Faster search" })
+  await item.focus()
+  await page.keyboard.press("Space")
+  await expect(item).toHaveAttribute("data-moving", "")
+  await expect.poll(() => spoken(page)).toContain("Faster search")
+  await page.keyboard.press("ArrowDown")
+  await page.keyboard.press("ArrowDown")
+  await page.keyboard.press("Space")
+  expect(await order(list)).toEqual(["Offline mode", "Export to PDF", "Faster search", "Single sign-on", "Dark mode"])
+  await expect(item).toBeFocused()
+  await expect(item).not.toHaveAttribute("data-moving")
+  await expect(item.locator(".sortable-list-position")).toHaveText("3")
+  await expect(area.getByText("First: Offline mode")).toBeVisible()
+  // Escape puts a picked-up item back.
+  await page.keyboard.press("Space")
+  await page.keyboard.press("Home")
+  await page.keyboard.press("Escape")
+  expect((await order(list))[2]).toBe("Faster search")
+})
+
+test("a sortable list moves an item by drag, with a copy under the pointer", async ({ page }) => {
+  await open(page)
+  const area = example(page, "Sortable list")
+  await area.scrollIntoViewIfNeeded()
+  const list = area.getByRole("listbox", { name: "Priorities" })
+  const from = (await list.getByRole("option", { name: "Dark mode" }).boundingBox())!
+  const to = (await list.getByRole("option").first().boundingBox())!
+  await page.mouse.move(from.x + 40, from.y + from.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(from.x + 40, from.y - 8, { steps: 4 })
+  await page.mouse.move(to.x + 40, to.y + 4, { steps: 12 })
+  await expect(page.locator("[data-drag-preview]")).toBeVisible()
+  await page.mouse.up()
+  await expect(page.locator("[data-drag-preview]")).toHaveCount(0)
+  expect((await order(list))[0]).toBe("Dark mode")
+})
+
+test("a selection moves together by drag, and its copy says how many it carries", async ({ page }) => {
+  await open(page)
+  const area = example(page, "Sortable list")
+  await area.scrollIntoViewIfNeeded()
+  const list = area.getByRole("listbox", { name: "Playlist" })
+  await expect(list.locator('[aria-selected="true"]')).toHaveCount(2)
+  const from = (await list.getByRole("option", { name: "Paper Planes" }).boundingBox())!
+  const to = (await list.getByRole("option", { name: "Harbor Lights" }).boundingBox())!
+  await page.mouse.move(from.x + 80, from.y + from.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(from.x + 80, from.y - 8, { steps: 4 })
+  await page.mouse.move(to.x + 80, to.y + 4, { steps: 12 })
+  await expect(page.locator("[data-drag-preview]")).toHaveAttribute("data-drag-count", "2")
+  await page.mouse.up()
+  expect(await order(list)).toEqual(["Intro", "Paper Planes", "North Window", "Harbor Lights", "Salt and Cedar", "Late Train"])
+  // The locked first track has no check and can't be picked up.
+  const intro = list.getByRole("option", { name: "Intro" })
+  await expect(intro).toHaveAttribute("aria-disabled", "true")
+  await intro.focus()
+  await page.keyboard.press("Space")
+  await expect(intro).not.toHaveAttribute("data-moving")
+})
+
+test("Shift+Space and a press on a check select, and Escape lets go", async ({ page }) => {
+  await open(page)
+  const area = example(page, "Sortable list")
+  await area.scrollIntoViewIfNeeded()
+  const list = area.getByRole("listbox", { name: "Playlist" })
+  await list.getByRole("option", { name: "Late Train" }).locator("[data-sortable-check]").click()
+  await expect(list.getByRole("option", { name: "Late Train" })).toHaveAttribute("aria-selected", "true")
+  await expect(list.getByRole("option", { name: "Late Train" })).toBeFocused()
+  await page.keyboard.press("ArrowUp")
+  await page.keyboard.press("Shift+Space")
+  await expect(list.locator('[aria-selected="true"]')).toHaveCount(4)
+  await page.keyboard.press("Escape")
+  await expect(list.locator('[aria-selected="true"]')).toHaveCount(0)
+})
+
 /* ------------------------------------------------------------------ narrow screens */
 
-const narrow = ["Table", "Avatar group", "Badge", "Code block", "Inline edit", "Upload"]
+const narrow = ["Table", "Avatar group", "Badge", "Code block", "Inline edit", "Upload", "Sortable list"]
 
 test("the new parts fit a phone's width", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 })

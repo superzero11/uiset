@@ -201,6 +201,7 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
 | Focus after Undo and Add node lands in the same task                                               | done | 2026-11-18: the project board's Undo, the canvas's Add node and Enter to a node's notes put focus off a frame or two, so a quick key could land first and lose its focus. Now the same task as the press, React and web, demos and the canvas example too. 7 tests (Chrome, WebKit, Firefox) that read focus before the next frame; 7/7 mutations caught |
 | UISet on UI SDK 0.1.0-beta.9                                                                       | done | 2026-11-18: from beta.5. The image cropper's handles beside the selection; agents call the terminal's `runCommand` and a swipe list's `runAction` (vercel-labs/ui#848); agent-check stops counting a closed tooltip; UISet's drop zone rule gone. Chrome and WebKit 1718 + the 149 after the renames; Firefox 844 (2 load-timing failures pass 6/6 alone); 2 mutations caught |
 | UISet's fixes for what UI SDK betas 6–9 fixed are gone                                           | done, not pushed | 2026-11-18: `returnFocus` (UI SDK's `keepFocus` in 8 places), the date picker and tree ring overrides, the wheel's focus-follow (React and web), React's editor tabs' root name; the terminal trims past scrollback while you're scrolled up (new web e2e and React unit tests, mutations caught). Web tabs keep their root name (3c #29). Chrome and WebKit 1734, Firefox 846 (one load-timing test since fixed) |
+| Sortable list (`sortable-list`), React and Web Components                                          | done, not pushed | 2026-11-19: on `createReorder` and `createSelection`, with a guide of its own. 13 unit tests, 8/8 mutations caught |
 
 ## Decision log
 
@@ -1825,3 +1826,15 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   their height. The chat thread and terminal now follow with the scroll area's `stickToEnd`,
   which leaves the browser's scroll anchoring on (checked: the line being read stays put).
   Both are worth raising with UI SDK.
+- 2026-11-19 — **Sortable list.** A listbox of options with `aria-roledescription` "sortable
+  list" and "sortable item", as UI SDK's own sortable list demo has it. Space picks an item
+  up rather than selecting it, so UI SDK's `checkPattern(listbox)` doesn't fit (it expects
+  Space to select); the unit test checks the roles, names, help and one tab stop instead.
+  With `multiple`, selection takes Shift+Space (Space is taken), Shift with the arrows,
+  Control or Command+A, and a press on an item's check or a modified click; the check is
+  decoration (`aria-hidden`), since a checkbox inside an option would nest controls, and
+  `aria-selected` carries the selection. Without `multiple`, `aria-selected` marks the
+  picked-up item, as the demo does. The drag copy is kept inside the list, as the board's
+  is, so it keeps the skin; that helper moved to `shell/drag-preview.ts`. Options the items
+  draw (`multiple`, `orientation`, which keys are locked) are copied into state, as
+  `checkServer` asks, so the server's HTML has them.

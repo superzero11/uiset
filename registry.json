@@ -1513,6 +1513,57 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "sortable-list",
+      "type": "registry:ui",
+      "title": "Sortable list",
+      "description": "A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.10",
+        "@ui-sdk/react@0.1.0-beta.10"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/sortable-list.tsx",
+          "type": "registry:ui",
+          "target": "@ui/sortable-list.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/sortable-list/sortable-list.ts",
+          "type": "registry:file",
+          "target": "@ui/sortable-list/sortable-list.ts"
+        },
+        {
+          "path": "registry/uiset/ui/sortable-list/sortable-list.css",
+          "type": "registry:file",
+          "target": "@ui/sortable-list/sortable-list.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/drag-preview.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/drag-preview.ts"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icons.tsx",
+          "type": "registry:file",
+          "target": "@ui/shell/icons.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icon-paths.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/icon-paths.ts"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "schema-form",
       "type": "registry:ui",
       "title": "Schema form",
@@ -2352,6 +2403,11 @@
           "path": "registry/uiset/ui/board/board.css",
           "type": "registry:file",
           "target": "@ui/board/board.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/drag-preview.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/drag-preview.ts"
         },
         {
           "path": "registry/uiset/ui/shell/shell.css",

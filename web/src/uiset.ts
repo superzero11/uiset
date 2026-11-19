@@ -22,6 +22,7 @@ import { defineStat } from "./stat"
 import { defineStudio } from "./studio"
 import { defineContent } from "./content"
 import { defineInlineEdit } from "./inline-edit"
+import { defineSortableList } from "./sortable-list"
 import { defineUpload } from "./upload"
 import { defineSchemaForm } from "./schema-form"
 import { defineTerminal } from "./terminal"
@@ -42,6 +43,7 @@ import type { UISetSparkline, UISetStat } from "./stat"
 import type { KnobElement, PatchBayElement } from "./studio"
 import type { UISetAvatarGroup, UISetCodeBlock, UISetCodeTabs, UISetCountBadge, UISetPackageCommand, UISetTable } from "./content"
 import type { InlineEditElement } from "./inline-edit"
+import type { SortableListElement } from "./sortable-list"
 import type { UISetUpload } from "./upload"
 import type { UISetSchemaForm } from "./schema-form"
 import type { TerminalElement } from "./terminal"
@@ -101,6 +103,7 @@ function define() {
   defineRichText()
   defineContent()
   defineInlineEdit()
+  defineSortableList()
   defineUpload()
   defineSchemaForm()
 }
@@ -157,6 +160,7 @@ declare global {
     "uiset-schedule-month": UISetScheduleMonth
     "uiset-search-field": UISetSearchField
     "uiset-segmented-bar": UISetSegmentedBar
+    "uiset-sortable-list": UISetSortableList
     "uiset-sparkline": UISetSparkline
     "uiset-stat": UISetStat
     "uiset-status-bar": UISetStatusBar
@@ -178,6 +182,7 @@ export type { WebColumn as UISetDataGridColumn } from "./data-grid"
 export type { UISetBoardEvents } from "./board"
 export type { UISetCodeTabsEvents } from "./content"
 export type { UISetInlineEditEvents } from "./inline-edit"
+export type { SortableListItemData as UISetSortableListItem, UISetSortableListEvents } from "./sortable-list"
 export type { UISetUploadEvents, UploadLabels as UISetUploadLabels } from "./upload"
 export type { UISetSchemaFormEvents } from "./schema-form"
 export type { UISetCanvasEvents } from "./canvas"
@@ -200,6 +205,7 @@ type UISetSchedule = ScheduleElement
 type UISetSwipeList = SwipeListElement
 type UISetTerminal = TerminalElement
 type UISetInlineEdit = InlineEditElement
+type UISetSortableList = SortableListElement
 
 export type {
   UISetAvatarGroup,
@@ -207,6 +213,7 @@ export type {
   UISetCodeTabs,
   UISetCountBadge,
   UISetInlineEdit,
+  UISetSortableList,
   UISetPackageCommand,
   UISetTable,
   UISetUpload,

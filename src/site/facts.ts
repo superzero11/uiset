@@ -4,14 +4,14 @@
 const facts = {
   /** UI SDK's own components, each a UISet item. */
   sdkComponents: 55,
-  /** UISet's app frame and data display parts (app shell, page header, badge, stat…). */
-  appParts: 22,
+  /** UISet's own parts: the app frame, data display, forms and lists (app shell, badge, inline edit, sortable list…). */
+  appParts: 23,
   kits: ["Chat", "Rich text", "Data grid", "Charts", "Board", "Scheduler", "Canvas", "IDE", "Mobile", "Terminal", "Studio", "Agent Console"],
   templates: 10,
   skins: 5,
-  registryItems: 115,
-  /** Kit pages in the docs and cards in the library: the kits above, the app frame and forms. */
-  kitPages: 14,
+  registryItems: 116,
+  /** Kit pages in the docs and cards in the library: the kits above, the app frame, forms, and lists and trees. */
+  kitPages: 15,
 } as const
 
 export { facts }

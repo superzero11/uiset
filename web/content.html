@@ -70,6 +70,13 @@
           <uiset-upload id="files" label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
         </section>
 
+        <section aria-labelledby="sortable-heading">
+          <h2 id="sortable-heading">Sortable list</h2>
+          <uiset-sortable-list id="priorities" label="Priorities" numbered></uiset-sortable-list>
+          <p id="priorities-first"></p>
+          <uiset-sortable-list id="playlist" label="Playlist" multiple></uiset-sortable-list>
+        </section>
+
         <section aria-labelledby="schema-form-heading">
           <h2 id="schema-form-heading">Schema form</h2>
           <uiset-schema-form id="invite" heading="3" confirm="Sends an invite email to the address given" done-message="Invite sent."></uiset-schema-form>

@@ -115,6 +115,7 @@ const parts = new Set([
   "uiset-rich-text-area",
   "uiset-schedule-event",
   "uiset-schedule-track",
+  "uiset-sortable-list-item",
   "uiset-swipe-actions",
   "uiset-swipe-content",
   "uiset-swipe-row",

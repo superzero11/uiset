@@ -263,3 +263,38 @@ test("upload: `upload` and `value` set before the element upgrades are kept", as
   })
   expect(result).toEqual({ sent: "early.pdf", files: ["early.pdf"] })
 })
+
+test("the sortable list moves by keys, reports the new order, and an agent moves an item by name", async ({ page }) => {
+  const list = page.locator("#priorities")
+  await list.getByRole("option", { name: "Faster search" }).focus()
+  await page.evaluate(() => {
+    const el = document.getElementById("priorities")!
+    el.addEventListener("valuechange", (e) => ((window as unknown as { changes: unknown[] }).changes ??= []).push((e as CustomEvent).detail.value))
+  })
+  for (const key of ["Space", "ArrowDown", "Space"]) await page.keyboard.press(key)
+  expect(await page.evaluate(() => (window as unknown as { changes: string[][] }).changes)).toEqual([["offline", "search", "export", "sso", "dark"]])
+  await expect(page.locator("#priorities-first")).toHaveText("First: Offline mode")
+  await expect(list.getByRole("option", { name: "Faster search" })).toBeFocused()
+  const result = await act(page, [{ ref: "Priorities", action: "moveItem", args: ["Dark mode", 1] }])
+  expect(result.ok).toBe(true)
+  expect(await list.evaluate((el) => (el as HTMLElement & { value: string[] }).value)).toEqual(["dark", "offline", "search", "export", "sso"])
+  // Setting the order from script fires nothing; keys it leaves out follow, in the items' order.
+  await list.evaluate((el) => ((el as HTMLElement & { value: string[] }).value = ["sso", "dark"]))
+  expect(await list.evaluate((el) => (el as HTMLElement & { value: string[] }).value)).toEqual(["sso", "dark", "search", "offline", "export"])
+  expect(await page.evaluate(() => (window as unknown as { changes: string[][] }).changes)).toHaveLength(2)
+})
+
+test("the playlist moves its selection together, past a locked track that can't be picked up", async ({ page }) => {
+  const list = page.locator("#playlist")
+  await list.getByRole("option", { name: "Salt and Cedar" }).focus()
+  await page.keyboard.press("Shift+Space")
+  await page.keyboard.press("Shift+ArrowDown")
+  expect(await list.evaluate((el) => (el as HTMLElement & { selected: string[] }).selected)).toEqual(["salt", "late"])
+  for (const key of ["Space", "Home", "Space"]) await page.keyboard.press(key)
+  expect(await list.evaluate((el) => (el as HTMLElement & { value: string[] }).value)).toEqual(["salt", "late", "intro", "harbor", "paper", "north"])
+  const intro = list.getByRole("option", { name: "Intro" })
+  await expect(intro).toHaveAttribute("aria-disabled", "true")
+  await intro.focus()
+  await page.keyboard.press("Space")
+  await expect(intro).not.toHaveAttribute("data-moving")
+})

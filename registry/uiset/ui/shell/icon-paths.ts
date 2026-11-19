@@ -58,6 +58,7 @@ const iconPaths = {
   send: "M4 12l16-8-6 16-2-7z",
   card: "M3 6h18v12H3zM3 10h18M7 15h4",
   shield: "M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z",
+  lock: "M7.5 11V8a4.5 4.5 0 0 1 9 0v3M5.5 11h13v9.5h-13z",
   bell: "M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0",
 }
 

@@ -14,6 +14,7 @@ import {
   type TransferMessage,
   type TransferReason,
 } from "@ui-sdk/core"
+import { keepDragPreviewInside } from "../shell/drag-preview"
 
 // A kanban board's behavior: columns of cards, one tab stop for the whole board,
 // arrows between cards and columns, Space to pick a card up and move it (UI SDK's
@@ -371,34 +372,6 @@ const boardPrimitive = definePrimitive({
     items: (api) => api.items(),
   },
 })
-
-/**
- * UI SDK draws a dragged card's copy at the end of <body>, outside the skin's variables and
- * the board's styles, so its labels and avatar lost their look. While a drag that started
- * on this board is under way, its copy moves into the board (it stays position: fixed).
- */
-function keepDragPreviewInside(root: HTMLElement) {
-  const doc = root.ownerDocument
-  let armed = false
-  const arm = () => (armed = true)
-  const disarm = () => (armed = false)
-  const observer = new MutationObserver((records) => {
-    if (!armed) return
-    for (const record of records)
-      for (const node of record.addedNodes)
-        if (node instanceof HTMLElement && node.hasAttribute("data-drag-preview") && node.parentElement === doc.body) root.append(node)
-  })
-  observer.observe(doc.body, { childList: true })
-  root.addEventListener("pointerdown", arm)
-  doc.addEventListener("pointerup", disarm)
-  doc.addEventListener("pointercancel", disarm)
-  return () => {
-    observer.disconnect()
-    root.removeEventListener("pointerdown", arm)
-    doc.removeEventListener("pointerup", disarm)
-    doc.removeEventListener("pointercancel", disarm)
-  }
-}
 
 export { boardPrimitive, createBoardController, keepDragPreviewInside }
 export type { BoardColumnSpec, BoardController, BoardControllerApi, BoardLanesDetails, BoardOptions }

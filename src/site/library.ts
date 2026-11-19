@@ -37,6 +37,12 @@ type Kit = Card & {
 const kitText: Record<string, { headline: string; items: string[]; tag: string; stage?: string; description?: string }> = {
   "app-shell": { headline: "The frame of an app, and the parts that show data", items: ["app-shell", "page-header", "stat", "table"], tag: "Structure" },
   forms: { headline: "Forms from a schema, inline edits and uploads", items: ["schema-form", "inline-edit", "upload"], tag: "Inputs" },
+  lists: {
+    headline: "Lists people put in order",
+    items: ["sortable-list"],
+    tag: "Inputs",
+    description: "Drag an item by its grip or pick it up with Space, select several to move together, and lock items in place. Every move is read out.",
+  },
   chat: {
     headline: "A complete chat kit",
     items: ["chat", "chat-response", "chat-parts", "chat-composer", "chat-sidebar"],

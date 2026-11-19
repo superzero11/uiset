@@ -62,6 +62,7 @@ npx shadcn@latest add @uiset/uiset
 | `schema-form` | A form from one definition: its fields with UISet's controls, steps with a review, checks as people type and on submit, and an agent that fills it by field name while a person approves the submit. The same definition is JSON Schema for an agent tool. | [Forms](./forms.md) |
 | `inline-edit` | Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons. | [Forms](./forms.md) |
 | `upload` | A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use. | [Forms](./forms.md) |
+| `sortable-list` | A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name. | [Lists and trees](./lists.md) |
 | `rich-text` | A rich text editor on UI SDK with no editor library: headings, nested and numbered lists, to-dos, quotes, code, links, mentions, dividers and images; a toolbar, Markdown as you type, "/" for blocks and "@" for people (TriggerMenu); safe paste from documents and the web; undo; Markdown and clean HTML out; agents read and write Markdown. | [Rich text](./rich-text.md) |
 | `chat` | A conversation built on UI SDK: thread that follows new messages, messages with avatars, actions and versions, suggestions, plans and a thinking shimmer. | [Chat](./chat.md) |
 | `chat-response` | Streaming markdown that repairs itself mid-stream and never renders raw HTML, with code blocks highlighted by skin colors. | [Chat](./chat.md) |
@@ -202,7 +203,7 @@ the same parts, the same names, the same keyboard and agent support.
 
 | What | How many | What it gives you |
 | ---- | -------- | ----------------- |
-| [Components](/components) | 55, plus 22 app parts | Every UI SDK component, styled; and the app frame, data display and form parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, uploads) |
+| [Components](/components) | 55, plus 23 app parts | Every UI SDK component, styled; and the app frame, data display, form and list parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, uploads, a sortable list) |
 | [Kits](/kits) | 12 | Chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal, Studio and the Agent Console |
 | [Templates](/templates) | 10 | Whole pages: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, IDE |
 | [Themes](/themes) | 5 skins | Base, Blueprint, Studio, Phosphor and Ink, plus a [generator](/themes/generator) for your own |
@@ -626,6 +627,7 @@ npx shadcn@latest add @uiset/<item>
 | Charts                                 | Line, bar, scatter, heatmap and more, explored by keyboard, with a table view | [charts](./charts.md) |
 | A stepper or wizard                    | Steps with the current one marked and later ones locked             | `stepper`                  |
 | A kanban board                         | Cards moved by drag or keyboard, column limits, filters             | [`board`](./board.md)      |
+| A sortable list                        | Drag to reorder or use the keyboard; move a selection together      | [`sortable-list`](./lists.md) |
 | A timeline                             | Events in order with markers                                        | `timeline`                 |
 | A file tree                            | A tree you expand and select; a file tree with rename and move      | `tree`, [`ide`](./ide.md)  |
 | A spinner and loading states           | A spinner that says what's loading; skeletons                       | `spinner`, `skeleton`      |
@@ -832,6 +834,7 @@ plain elements. UI SDK's own `<ui-*>` elements are typed by `@ui-sdk/web`.
 | `<uiset-table>`, `<uiset-avatar-group>`, `<uiset-count-badge>`       | A scroll area around your table (sticky headings and first column, rows that stack), overlapping avatars with a count, and a count on a button's corner |
 | `<uiset-code-block>`, `<uiset-code-tabs>`, `<uiset-package-command>` | Code in its language's colors with a caption, line numbers, marked lines and copy; tabs of versions; one command for npm, pnpm, yarn and bun |
 | `<uiset-inline-edit>`, `<uiset-upload>`                               | A value that turns into a field when pressed, and a drop zone with a queue of uploads |
+| `<uiset-sortable-list>`                                               | A list people put in order by drag or by keys, with a selection that moves together |
 
 ## Studio
 
@@ -1397,7 +1400,7 @@ notes.addEventListener("valuechange", (e) => {
 ## Content and forms
 
 The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
-`inline-edit`, `upload` and `schema-form`. `web/content.html` has each of them.
+`inline-edit`, `upload`, `schema-form` and `sortable-list`. `web/content.html` has each of them.
 
 ```html
 <uiset-table label="Invoices" stack sticky-header sticky-column max-height="20rem">
@@ -1423,6 +1426,7 @@ The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
 <uiset-inline-edit label="Project name" value="Atlas" actions></uiset-inline-edit>
 <uiset-upload label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
 <uiset-schema-form confirm="Sends an invite email to the address given" done-message="Invite sent."></uiset-schema-form>
+<uiset-sortable-list label="Playlist" multiple></uiset-sortable-list>
 ```
 
 ```ts
@@ -1434,6 +1438,8 @@ files.upload = (file, { signal, onProgress }) => send(file, signal, onProgress) 
 files.addEventListener("uploaded", (e) => attach(e.detail.result))
 invite.form = defineForm({ name: "invite_teammate", title: "Invite a teammate", fields: { … } })
 invite.send = async (values) => (await sendInvite(values)).problems // shown under their fields
+playlist.items = [{ value: "intro", label: "Intro", locked: true }, { value: "harbor", label: "Harbor Lights" }]
+playlist.addEventListener("valuechange", (e) => save(e.detail.value)) // the keys in their new order
 ```
 
 - `<uiset-table>` puts your `<table>` in a scroll area named by `label`. With `stack`, below
@@ -1467,6 +1473,11 @@ invite.send = async (values) => (await sendInvite(values)).problems // shown und
   problems it returns show under their fields. It draws UI SDK's own fields, steps and a
   review; `value` is live for `v-model`, and agents fill it by field name or label while a
   person presses the submit. See [Forms](./forms.md#web-components).
+- `<uiset-sortable-list>` is React's `SortableList` on the same primitive: set `items`, and
+  drag an item or pick it up with Space. `multiple` lets a selection move together, an item
+  with `locked` stays put, and `numbered` shows places. `value` (the order) and `selected` are
+  live; it fires `valuechange` and `selectedchange`, and agents call `moveItem` and
+  `selectItems` by its label. See [Sortable lists and trees](./lists.md#web-components).
 
 ### Confirm button
 
@@ -3638,32 +3649,32 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-Nothing in progress; next is the first item below.
+**Sortable lists and trees.** The sortable list is in: drag an item or pick it up with Space,
+and move a selection together. Next, trees that reorder and nest, which the IDE's file tree
+takes on. M
 
 ## Next, in order
 
-1. **Sortable lists and trees.** Drag a row or pick it up with Space, move several at once,
-   drag sideways to nest; the IDE's file tree and the board take it on. M
-2. **Motion, per skin.** Each skin moves its own way, as it already sounds its own way:
+1. **Motion, per skin.** Each skin moves its own way, as it already sounds its own way:
    openings, moves and state changes, drawn from UI SDK's state, reduced motion respected. M–L
-3. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
+2. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
    number field with a country picker, and input masks for cards, IBANs and currency. M
-4. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
+3. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
    and agents setting a filter by name. M
-5. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
+4. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
    reorder, and a player whose scrubber snaps to chapters, beside Studio. M each
-6. **Locale packs.** Every component's and kit's built-in words translated, with
+5. **Locale packs.** Every component's and kit's built-in words translated, with
    right-to-left tested packs for the main languages. UI SDK ships none. M
-7. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
+6. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
    repair; export to Tailwind `@theme`, Figma variables and DESIGN.md. S
-8. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
+7. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
    paging. M–L
-9. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
+8. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
-10. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
-    and an invoice. S each
-11. **Print skin.** Swiss and letterpress type, from a written design plan first. M
-12. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
+9. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
+   and an invoice. S each
+10. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+11. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
     import. M
 
 Between these, small ones: an agent migration recipe (UI SDK has none yet), dialogs and
@@ -4562,6 +4573,119 @@ invite.addEventListener("valuechange", (e) => save(e.detail.value)) // preventDe
 - It fires `valuechange` and `stepchange`. `api` has `fill`, `goTo`, `next`, `back`,
   `submit` and `reset`, and agents see the same form React's does. `formTool` and
   `registerFormTool` take the element's `form` and your bridge.
+
+
+<!-- docs/lists.md -->
+
+# Sortable lists and trees
+
+Lists people put in order. `SortableList` is a ranking, a playlist or a set of steps: drag an
+item by its grip, or pick it up with Space and move it with the arrow keys. It's built on UI
+SDK's `createReorder`, so every step is read out, and on `createSelection`, so several items
+can move together.
+
+```bash
+npx shadcn@latest add @uiset/sortable-list
+```
+
+## Parts
+
+| Part                                           | Item            | What it is                                                         |
+| ---------------------------------------------- | --------------- | ------------------------------------------------------------------ |
+| `SortableList`                                 | `sortable-list` | A list drawn from `items` that people put in order                 |
+| `SortableListRoot`, `SortableListItemPart`     | `sortable-list` | Its parts, for items drawn your own way                            |
+| `sortableList`                                 | `sortable-list` | The primitive, for another framework                               |
+
+## Sortable list
+
+```tsx
+import { SortableList } from "@/components/ui/sortable-list"
+
+const features = [
+  { value: "search", label: "Faster search" },
+  { value: "offline", label: "Offline mode" },
+  { value: "export", label: "Export to PDF" },
+]
+const [order, setOrder] = useState(features.map((f) => f.value))
+
+<SortableList label="Priorities" items={features} value={order} onValueChange={setOrder} numbered />
+```
+
+- `label` is required: it names the list for people and agents.
+- `items` are `{ value, label, description?, locked? }`. `value` is the key; `label` names
+  the item when it's read out.
+- `value` with `onValueChange(order, details)` controls the order, as the items' keys, or
+  `defaultValue` starts it. Without either, it starts in `items`' order. An item added to
+  `items` joins the end; one taken out leaves the order. `details.reason` is `drag`,
+  `move-key` or `imperative`.
+- `multiple` lets people select several items and move them together. `selected` with
+  `onSelectedChange`, or `defaultSelected`, holds the selection. Each item gets a check to
+  press, and a dragged selection's copy shows how many it carries.
+- `locked` on an item means it can't be picked up or selected, and it shows a lock in place
+  of its grip. Other items can still move past it.
+- `numbered` shows each item's place, 1 first, updated as an item moves.
+- `orientation` is `vertical` (the default), `horizontal` for a row that wraps, like tags,
+  or `grid` for tiles. Set it once.
+- `renderItem(item, state)` draws an item's face in place of its label and description.
+  `state` has `moving`, `dragging`, `selected` and `locked`.
+- `help` replaces the instructions read out with the list.
+
+A dragged item's copy follows the pointer while the item itself shows where it will land,
+and a list in a scroll area scrolls when the copy nears its edge. On a touch screen, an
+item drags from its grip, so a finger elsewhere still scrolls the page.
+
+Items carry `data-moving` while they're picked up, `data-dragging` while a pointer drags
+them, and `data-selected`. The list has `data-moving` during a move and `data-orientation`.
+
+## Keys
+
+| Keys                    | Where                     | Does                                                         |
+| ----------------------- | ------------------------- | ------------------------------------------------------------ |
+| Up, Down (Left, Right in a row) | a sortable list   | Move between items. The list is one tab stop                 |
+| Home, End               | a sortable list           | The first and last item                                      |
+| Letters                 | a sortable list           | The next item whose name starts with them                    |
+| Space, Enter            | an item                   | Pick it up, or drop it where it is                           |
+| Arrows, Home, End       | an item that's picked up  | Move it one place, or to either end                          |
+| Escape                  | an item that's picked up  | Put it back where it was                                     |
+| Tab                     | an item that's picked up  | Put it back, and move on                                     |
+| Shift+Space             | a list with `multiple`    | Select or let go of the item                                 |
+| Shift with the arrows   | a list with `multiple`    | Select the run of items to the one you reach                 |
+| Ctrl+A (Command+A on a Mac) | a list with `multiple` | Select every item that can move, or none                    |
+| Escape                  | a list with a selection   | Let go of the selection                                      |
+
+With a pointer: drag an item. With `multiple`, press an item's check, or Shift-click,
+Command-click or Control-click it, to select; dragging a selected item carries the selection.
+
+## For agents
+
+- **SortableList** is listed by its `label`, with each item as data (`{ value, label,
+  position }`). `moveItem(item, position)` moves an item, by its key or its label, to a
+  place counted from 1; pass a list of items to move several, in their order.
+  `selectItems(items)` sets the selection, with `multiple`. Moving a locked item, or a name
+  the list doesn't have, fails and says why.
+
+## Web Components
+
+`<uiset-sortable-list>` is in [Web Components](./web-components.md#content-and-forms), on the
+same primitive:
+
+```html
+<uiset-sortable-list id="playlist" label="Playlist" multiple></uiset-sortable-list>
+```
+
+```ts
+const playlist = document.querySelector("uiset-sortable-list")! // typed by @uiset/web
+playlist.items = [
+  { value: "intro", label: "Intro", description: "0:48", locked: true },
+  { value: "harbor", label: "Harbor Lights", description: "3:52" },
+]
+playlist.addEventListener("valuechange", (e) => save(e.detail.value)) // preventDefault() refuses
+```
+
+- `items` is a property. `value` (the order) and `selected` are live: reading gives a copy,
+  and setting them fires nothing. Keys a set order leaves out follow it, in `items`' order.
+- `label`, `multiple`, `numbered`, `orientation` and `help` are attributes.
+- It fires `valuechange` and `selectedchange`, and `api` has `moveItem` and `selectItems`.
 
 
 <!-- docs/rich-text.md -->

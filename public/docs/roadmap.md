@@ -15,32 +15,32 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-Nothing in progress; next is the first item below.
+**Sortable lists and trees.** The sortable list is in: drag an item or pick it up with Space,
+and move a selection together. Next, trees that reorder and nest, which the IDE's file tree
+takes on. M
 
 ## Next, in order
 
-1. **Sortable lists and trees.** Drag a row or pick it up with Space, move several at once,
-   drag sideways to nest; the IDE's file tree and the board take it on. M
-2. **Motion, per skin.** Each skin moves its own way, as it already sounds its own way:
+1. **Motion, per skin.** Each skin moves its own way, as it already sounds its own way:
    openings, moves and state changes, drawn from UI SDK's state, reduced motion respected. M–L
-3. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
+2. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
    number field with a country picker, and input masks for cards, IBANs and currency. M
-4. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
+3. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
    and agents setting a filter by name. M
-5. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
+4. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
    reorder, and a player whose scrubber snaps to chapters, beside Studio. M each
-6. **Locale packs.** Every component's and kit's built-in words translated, with
+5. **Locale packs.** Every component's and kit's built-in words translated, with
    right-to-left tested packs for the main languages. UI SDK ships none. M
-7. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
+6. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
    repair; export to Tailwind `@theme`, Figma variables and DESIGN.md. S
-8. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
+7. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
    paging. M–L
-9. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
+8. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
-10. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
-    and an invoice. S each
-11. **Print skin.** Swiss and letterpress type, from a written design plan first. M
-12. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
+9. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
+   and an invoice. S each
+10. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+11. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
     import. M
 
 Between these, small ones: an agent migration recipe (UI SDK has none yet), dialogs and

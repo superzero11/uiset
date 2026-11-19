@@ -61,6 +61,15 @@ On UI SDK `0.1.0-beta.10`.
   ref and handlers). `data-frame="none"` on a scroll area drops its border and padding, for
   one inside a larger surface, and it fills the space it's given. React and Web Components.
 
+- **Sortable list** (`sortable-list`), on UI SDK's `createReorder`. Drag an item by its grip,
+  or focus it, press Space, move it with the arrow keys and press Space again; Escape puts it
+  back, and each step is read out. With `multiple`, Shift+Space, Shift with the arrows, a
+  press on an item's check or a Shift- or Command-click select items, and a selection moves
+  together, its copy showing how many it carries. `locked` keeps an item in place,
+  `numbered` shows places, and `orientation` lays items in a row or a grid. Agents get
+  `moveItem` and `selectItems` by name. A new guide, Sortable lists and trees. Web
+  Components: `<uiset-sortable-list>`.
+
 ### Changed
 
 - **The kits and templates scroll in UI SDK's scroll areas**, with its scrollbars and the

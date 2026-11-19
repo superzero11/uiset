@@ -36,6 +36,10 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 - `inline-edit`: Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons.
 - `upload`: A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use.
 
+## Lists and trees (docs/lists.md)
+
+- `sortable-list`: A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name.
+
 ## Rich text (docs/rich-text.md)
 
 - `rich-text`: A rich text editor on UI SDK with no editor library: headings, nested and numbered lists, to-dos, quotes, code, links, mentions, dividers and images; a toolbar, Markdown as you type, "/" for blocks and "@" for people (TriggerMenu); safe paste from documents and the web; undo; Markdown and clean HTML out; agents read and write Markdown.

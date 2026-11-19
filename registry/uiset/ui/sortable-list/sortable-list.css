@@ -1,0 +1,210 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+@layer uiset.base {
+  .sortable-list {
+    /* The drag preview sits against the list. */
+    position: relative;
+    display: grid;
+    gap: 0.375rem;
+    min-inline-size: 0;
+    color: var(--ui-foreground);
+
+    &[aria-orientation="horizontal"] {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    &[data-orientation="grid"] {
+      grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+      gap: 0.5rem;
+    }
+  }
+
+  .sortable-list-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-block-size: 2.75rem;
+    padding-block: 0.5rem;
+    padding-inline: 0.375rem 0.75rem;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius) + 2px);
+    background: var(--ui-background);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    outline: none;
+
+    &:hover {
+      border-color: color-mix(in oklch, var(--ui-foreground) 25%, var(--ui-border));
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ui-ring-border);
+      outline-offset: 2px;
+    }
+
+    &[data-selected] {
+      border-color: color-mix(in oklch, var(--ui-primary) 55%, var(--ui-border));
+      background: color-mix(in oklch, var(--ui-primary) 9%, var(--ui-background));
+    }
+
+    &[aria-disabled="true"] {
+      cursor: default;
+      background: color-mix(in oklch, var(--ui-muted) 55%, var(--ui-background));
+    }
+
+    /* The original stays behind as a ghost, marking where it lands, while its copy follows the pointer. */
+    &[data-dragging] {
+      opacity: 0.4;
+    }
+  }
+
+  /*
+   * Picked up with the keyboard: lifted, tinted, edged in the accent and ringed with a dashed
+   * outline, so it reads apart from a merely focused item. Specific enough to outrank the
+   * focus ring above, in the same layer.
+   */
+  [data-uiset] .sortable-list .sortable-list-item[data-moving] {
+    border-color: var(--ui-primary);
+    background: color-mix(in oklch, var(--ui-primary) 8%, var(--ui-background));
+    box-shadow: var(--ui-shadow);
+    outline: 2px dashed var(--ui-primary);
+    outline-offset: 3px;
+  }
+
+  [data-drag-preview].sortable-list-item {
+    box-shadow: var(--ui-shadow);
+    cursor: grabbing;
+
+    @media (prefers-reduced-motion: no-preference) {
+      rotate: 1deg;
+    }
+  }
+
+  /* A copy carrying several items says how many. */
+  [data-drag-preview].sortable-list-item[data-drag-count]::after {
+    content: attr(data-drag-count);
+    position: absolute;
+    inset-block-start: -0.5rem;
+    inset-inline-end: -0.5rem;
+    display: grid;
+    place-items: center;
+    min-inline-size: 1.375rem;
+    block-size: 1.375rem;
+    padding-inline: 0.3125rem;
+    border-radius: 999px;
+    background: var(--ui-primary);
+    color: var(--ui-primary-foreground);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sortable-list-handle {
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: 1.5rem;
+    block-size: 1.75rem;
+    color: var(--ui-muted-foreground);
+    /* A finger drags from here; anywhere else on an item it scrolls the page. */
+    touch-action: none;
+
+    /* Dots drawn thicker, so the grip reads as something to hold. */
+    .uiset-icon {
+      stroke-width: 2.75;
+    }
+
+    [aria-disabled="true"] > & {
+      cursor: default;
+    }
+  }
+
+  .sortable-list-check {
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+    border: 1px solid var(--ui-input);
+    border-radius: calc(var(--ui-radius) * 0.5);
+    background: var(--ui-background);
+    cursor: pointer;
+
+    .uiset-icon {
+      inline-size: 0.875rem;
+      block-size: 0.875rem;
+      stroke-width: 2.5;
+      opacity: 0;
+    }
+
+    [data-selected] > & {
+      border-color: var(--ui-primary);
+      background: var(--ui-primary);
+      color: var(--ui-primary-foreground);
+
+      .uiset-icon {
+        opacity: 1;
+      }
+    }
+  }
+
+  /* The copy is drawn once, when the drag starts: its old place would contradict the list's. */
+  [data-drag-preview] .sortable-list-position {
+    visibility: hidden;
+  }
+
+  .sortable-list-position {
+    flex: none;
+    min-inline-size: 1.25rem;
+    color: var(--ui-muted-foreground);
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  .sortable-list-text {
+    display: grid;
+    gap: 0.125rem;
+    min-inline-size: 0;
+  }
+
+  .sortable-list-label {
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+
+  .sortable-list-description {
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+  }
+
+  @media (pointer: coarse) {
+    .sortable-list-handle {
+      inline-size: 2.75rem;
+      block-size: 2.75rem;
+      margin-block: -0.5rem;
+    }
+  }
+
+  @media (forced-colors: active) {
+    [data-uiset] .sortable-list .sortable-list-item[data-moving],
+    .sortable-list-item[data-selected] {
+      border-color: Highlight;
+      outline-color: Highlight;
+    }
+
+    .sortable-list-check {
+      border-color: ButtonText;
+    }
+
+    [data-selected] > .sortable-list-check {
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+}

@@ -15,8 +15,8 @@ haptics, and the larger parts UI SDK doesn't ship. Items install with the shadcn
 - `references/catalog.md` in this skill lists every item, what it is, and its docs page.
 - Each kit has its own skill with its docs (`uiset-chat`, `uiset-data-grid`, `uiset-rich-text`,
   `uiset-charts`, `uiset-scheduler`, `uiset-board`, `uiset-canvas`, `uiset-ide`, `uiset-mobile`,
-  `uiset-terminal`, `uiset-studio`, `uiset-agent-console`, `uiset-app-shell`). Load the one
-  for the kit you're using.
+  `uiset-terminal`, `uiset-studio`, `uiset-agent-console`, `uiset-app-shell`, `uiset-forms`,
+  `uiset-lists`). Load the one for the kit you're using.
 - The docs are in the UISet repo's `docs/` folder and at https://uiset.dev/docs/README.md.
   Read only the page for the item you're using.
 - For a base component's API and keys (select, dialog, menu…), read UI SDK's installed docs:
@@ -76,6 +76,7 @@ import { UISet } from "@/components/ui/uiset"
 | A chat with a model                    | `chat`, `chat-response`, `chat-parts`, `chat-composer`, `chat-sidebar`, or the `chat-app` template |
 | Rich text                              | `rich-text` (`RichTextEditor`, `RichTextContent`; Markdown and HTML in and out) |
 | Tables                                 | `data-grid`                                                |
+| A list people put in order            | `sortable-list` (`SortableList`: drag or Space and arrows, `multiple`, `locked`; agents `moveItem`) |
 | A region that scrolls                  | `scroll-area`: `ScrollBox` with `axis` and `viewport`; `data-frame="none"` inside a panel. Not `overflow: auto` on a div |
 | Charts                                 | `line-chart`, `bar-chart`, `scatter-chart`, `heatmap`, `segmented-bar`, `sparkline` |
 | Let an agent act in the app            | UI SDK's `createAgent`, plus `agent-console` for approvals and undo |

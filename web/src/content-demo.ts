@@ -3,6 +3,7 @@ import { createAgent } from "@ui-sdk/web/agent"
 import type { Uploader } from "@/registry/uiset/ui/upload/queue"
 import type { UISetCodeBlock, UISetCodeTabs } from "./content"
 import type { InlineEditElement } from "./inline-edit"
+import type { SortableListElement } from "./sortable-list"
 import type { UISetSchemaForm } from "./schema-form"
 import { defineForm } from "@/registry/uiset/ui/schema-form/schema"
 import type { UISetUpload } from "./upload"
@@ -104,3 +105,27 @@ inviteForm.send = async (values) => {
 inviteForm.form = invite
 
 Object.assign(window, { agent: createAgent() })
+
+// Two sortable lists: a ranking that says what's first, and a playlist that moves a selection.
+const priorities = document.getElementById("priorities") as SortableListElement
+priorities.items = [
+  { value: "search", label: "Faster search" },
+  { value: "offline", label: "Offline mode" },
+  { value: "export", label: "Export to PDF" },
+  { value: "sso", label: "Single sign-on" },
+  { value: "dark", label: "Dark mode" },
+]
+const first = document.getElementById("priorities-first")!
+const showFirst = () => (first.textContent = `First: ${priorities.items?.find((item) => item.value === priorities.value[0])?.label ?? ""}`)
+priorities.addEventListener("valuechange", () => queueMicrotask(showFirst))
+customElements.whenDefined("uiset-sortable-list").then(showFirst)
+
+const playlist = document.getElementById("playlist") as SortableListElement
+playlist.items = [
+  { value: "intro", label: "Intro", description: "0:48, can't be moved", locked: true },
+  { value: "harbor", label: "Harbor Lights", description: "3:52" },
+  { value: "paper", label: "Paper Planes", description: "4:05" },
+  { value: "north", label: "North Window", description: "3:31" },
+  { value: "salt", label: "Salt and Cedar", description: "5:12" },
+  { value: "late", label: "Late Train", description: "3:47" },
+]

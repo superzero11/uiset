@@ -45,6 +45,7 @@ const appParts: Record<string, string> = {
   "schema-form": "/docs/kits/forms#schema-form",
   "inline-edit": "/docs/kits/forms#inline-edit",
   upload: "/docs/kits/forms#upload",
+  "sortable-list": "/docs/kits/lists#sortable-list",
 }
 const items = (registry as { items: Item[] }).items
 const describe = (name: string) => items.find((i) => i.name === name)?.description ?? ""
@@ -68,6 +69,7 @@ const guides: DocPage[] = [
 const kits: DocPage[] = [
   { slug: "app-shell", title: "App frame and data display", file: "app-shell.md", item: "app-shell" },
   { slug: "forms", title: "Forms: schema form, inline edit and upload", file: "forms.md", item: "schema-form" },
+  { slug: "lists", title: "Sortable lists and trees", file: "lists.md", item: "sortable-list" },
   { slug: "chat", title: "Chat", file: "chat.md", item: "chat" },
   { slug: "rich-text", title: "Rich text", file: "rich-text.md", item: "rich-text" },
   { slug: "data-grid", title: "Data grid", file: "data-grid.md", item: "data-grid" },
