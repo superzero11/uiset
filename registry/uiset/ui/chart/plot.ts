@@ -80,4 +80,12 @@ function focusKey(active: string | null, pinned: string | null, has: (key: strin
 }
 
 export { focusKey, seriesColor, slotOf }
+
+/**
+ * How wide an axis label's character is, for laying out without measuring. It's the widest
+ * skin's: Phosphor's monospace is 6.9px at 11.5px (the others 4.5–5.6px). At 6.6 a long
+ * category like "Middle East and Africa" was clipped there.
+ */
+export const LABEL_CHAR_WIDTH = 7
+
 export type { ChartFrameData, ChartFrameSeries, ChartGeometry, ChartPlotContext, ChartPoint, ChartSeries, ChartTable }

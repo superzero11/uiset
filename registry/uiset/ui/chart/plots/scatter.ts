@@ -1,5 +1,5 @@
 // The scatter chart's geometry: two measures per item, in up to three groups.
-import { seriesColor, focusKey, type ChartFrameData, type ChartGeometry, type ChartPlotContext, type ChartPoint } from "../plot"
+import { LABEL_CHAR_WIDTH, seriesColor, focusKey, type ChartFrameData, type ChartGeometry, type ChartPlotContext, type ChartPoint } from "../plot"
 import { formatValue, linear, numberFormat, tickFormatter } from "../scale"
 import { tooltipRow, v, type VChild } from "../vnode"
 
@@ -26,7 +26,7 @@ type ScatterOptions<Datum> = {
   locale?: string
 }
 
-const charWidth = 6.6
+const charWidth = LABEL_CHAR_WIDTH
 const HIT = 24
 
 function scatterParts<Datum>({ data, x, y, yLabel, series, formatX: fx, formatY: fy, locale }: ScatterOptions<Datum>) {

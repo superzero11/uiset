@@ -108,7 +108,9 @@ On UI SDK `0.1.0-beta.10`.
 
 - **A horizontal bar chart's value labels no longer run together on a narrow screen.** It
   shows as many as fit side by side (at phone width, "0 100k200k300k" became "0" and
-  "500k"), and the grid keeps every line. React and Web Components.
+  "500k"), and the grid keeps every line. Charts also leave room for labels in the widest
+  skin's font: in Phosphor, "Middle East and Africa" was clipped at the left edge. React and
+  Web Components.
 
 ### Changed
 

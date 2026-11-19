@@ -1,5 +1,5 @@
 // The line chart's geometry: lines, areas or stacks over evenly spaced x positions.
-import { seriesColor, focusKey, type ChartFrameData, type ChartGeometry, type ChartPlotContext, type ChartPoint, type ChartSeries } from "../plot"
+import { LABEL_CHAR_WIDTH, seriesColor, focusKey, type ChartFrameData, type ChartGeometry, type ChartPlotContext, type ChartPoint, type ChartSeries } from "../plot"
 import { formatValue, labelIndexes, linear, numberFormat, point, tickFormatter } from "../scale"
 import { tooltipRow, v, type VChild } from "../vnode"
 
@@ -19,7 +19,7 @@ type LineOptions<Datum> = {
 }
 
 const TICK = 12
-const charWidth = 6.6
+const charWidth = LABEL_CHAR_WIDTH
 
 function path(points: readonly ([number, number] | null)[]) {
   let d = ""

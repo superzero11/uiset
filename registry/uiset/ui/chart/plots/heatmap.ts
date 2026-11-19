@@ -1,5 +1,5 @@
 // The heatmap's geometry: magnitude on a grid, in one hue.
-import { focusKey, type ChartFrameData, type ChartGeometry, type ChartPlotContext, type ChartPoint } from "../plot"
+import { LABEL_CHAR_WIDTH, focusKey, type ChartFrameData, type ChartGeometry, type ChartPlotContext, type ChartPoint } from "../plot"
 import { extent, formatValue, numberFormat } from "../scale"
 import { v, type VChild } from "../vnode"
 
@@ -19,7 +19,7 @@ type HeatmapOptions<Datum> = {
 }
 
 const STEPS = 7
-const charWidth = 6.6
+const charWidth = LABEL_CHAR_WIDTH
 
 function heatmapParts<Datum>({ data, row, column, value, format: formatOption, locale }: HeatmapOptions<Datum>) {
   const cells = new Map<string, number | null>()

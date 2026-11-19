@@ -1,5 +1,5 @@
 // The bar chart's geometry: grouped or stacked bars, rising or running sideways.
-import { seriesColor, focusKey, type ChartFrameData, type ChartGeometry, type ChartPlotContext, type ChartPoint, type ChartSeries } from "../plot"
+import { LABEL_CHAR_WIDTH, seriesColor, focusKey, type ChartFrameData, type ChartGeometry, type ChartPlotContext, type ChartPoint, type ChartSeries } from "../plot"
 import { band, formatValue, linear, numberFormat, tickFormatter } from "../scale"
 import { tooltipRow, v as node, type VChild } from "../vnode"
 
@@ -24,7 +24,7 @@ type BarOptions<Datum> = {
 const MAX_THICKNESS = 24
 const GAP = 2
 const RADIUS = 4
-const charWidth = 6.6
+const charWidth = LABEL_CHAR_WIDTH
 
 /** A bar with a 4px rounded data end and a square end at the baseline. */
 function barPath(

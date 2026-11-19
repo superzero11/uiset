@@ -1,7 +1,7 @@
 // The shared chart geometry, without a frame: a pinned or active key the data no longer
 // has draws nothing (no crosshair off the edge, no chart dimmed around nothing).
 import { expect, test } from "vitest"
-import { focusKey, type ChartPlotContext } from "@/registry/uiset/ui/chart/plot"
+import { LABEL_CHAR_WIDTH, focusKey, type ChartPlotContext } from "@/registry/uiset/ui/chart/plot"
 import { barPlot } from "@/registry/uiset/ui/chart/plots/bar"
 import { heatmapPlot } from "@/registry/uiset/ui/chart/plots/heatmap"
 import { linePlot } from "@/registry/uiset/ui/chart/plots/line"
@@ -76,11 +76,27 @@ test("a narrow horizontal bar chart shows only the value labels that fit side by
   for (const width of [330, 520, 900]) {
     const labels = valueLabels(width)
     expect(labels.length).toBeGreaterThanOrEqual(2)
-    // Each label's centre is at least its own width plus a gap from the next (6.6px a character).
+    // Each label's centre is at least its own width plus a gap from the next.
     for (let i = 1; i < labels.length; i++) {
-      const room = Math.max(labels[i]!.text.length, labels[i - 1]!.text.length) * 6.6 + 8
+      const room = Math.max(labels[i]!.text.length, labels[i - 1]!.text.length) * LABEL_CHAR_WIDTH + 8
       expect(labels[i]!.x - labels[i - 1]!.x).toBeGreaterThanOrEqual(room)
     }
   }
   expect(valueLabels(900).length).toBeGreaterThan(valueLabels(330).length)
+})
+
+test("a horizontal bar chart leaves room for its longest category in the widest skin's font", () => {
+  const svg = barPlot(
+    {
+      data: [{ r: "Middle East and Africa", v: 64000 }],
+      x: (d) => d.r,
+      series: [{ key: "v", label: "Revenue", value: (d) => d.v }],
+      orientation: "horizontal",
+    },
+    { width: 330, height: 120, shown: () => true, active: null, selected: null },
+  ).svg
+  const axis = nodes(svg).find((n) => n.attrs["data-axis"] === "category")!
+  const label = nodes(axis.children).find((n) => n.tag === "text")!
+  // Phosphor's monospace measures 6.9px a character at the axis size; the label ends at x.
+  expect(Number(label.attrs.x)).toBeGreaterThanOrEqual("Middle East and Africa".length * 6.9)
 })

@@ -1914,4 +1914,10 @@ request, is vercel-labs/ui#905 (2026-11-19).
   scrolls the board, with the scroll area's edge fade. In the narrower columns "Add a card
   to To do" broke before "do", so the button's label balances its lines. An e2e test (React
   and web) checks Done ends inside the board at 1440; it fails at 13rem.
+- 2026-11-19 — **Chart labels sized for the widest skin's font.** Checking the fixes in all
+  five skins found Phosphor clipping "Middle East and Africa" on a phone: the plots lay out
+  labels without measuring, at 6.6px a character, and Phosphor's monospace is 6.9px at the
+  axis size (the others 4.5–5.6px). One shared `LABEL_CHAR_WIDTH` of 7 now serves the bar,
+  line, scatter and heatmap plots. A unit test checks the room for that label; it fails at
+  6.6.
 
