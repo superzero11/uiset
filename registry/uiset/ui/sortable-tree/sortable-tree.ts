@@ -197,6 +197,7 @@ function computeShown(state: TreeState, rows: readonly TreeReorderRow[]): Sortab
   return shown
 }
 
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const sortableTree = definePrimitive({
   name: "sortable-tree",
   options: {

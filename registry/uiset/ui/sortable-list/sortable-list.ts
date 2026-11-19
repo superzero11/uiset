@@ -98,6 +98,7 @@ function gridMove(event: KeyboardEvent, { from, items, rtl }: RovingFocusMoveCon
   return row[0]?.key
 }
 
+/** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const sortableList = definePrimitive({
   name: "sortable-list",
   options: {

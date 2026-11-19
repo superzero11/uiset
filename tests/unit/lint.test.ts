@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { lint, type FileRule, type RepoContext, type RepoRule } from "../../scripts/lint/core.ts"
-import { exampleFrames, noDeferredFocus, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "../../scripts/lint/rules/code.ts"
+import { exampleFrames, internalPrimitives, noDeferredFocus, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "../../scripts/lint/rules/code.ts"
 import { rules } from "../../scripts/lint/rules/index.ts"
 import { facts } from "../../src/site/facts.ts"
 import pkg from "../../package.json"
@@ -44,6 +44,12 @@ describe("code rules", () => {
     "registry/uiset/ui/uiset/base.css",
     `.a { color: red !important; }`,
     `@media (prefers-reduced-motion: reduce) {\n  .a { animation: none !important; }\n}\n/* not !important here */\n.b { color: red; }`,
+  )
+  fileRule(
+    internalPrimitives,
+    "registry/uiset/ui/sortable-list/sortable-list.ts",
+    `const sortableList = definePrimitive({\n  name: "sortable-list",\n})`,
+    `/** @internal Left out of @uiset/web's declarations. */\nconst sortableList = definePrimitive({\n  name: "sortable-list",\n})`,
   )
   fileRule(
     exampleFrames,

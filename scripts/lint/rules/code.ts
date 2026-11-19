@@ -109,6 +109,19 @@ export const exampleFrames: FileRule = {
       })),
 }
 
+export const internalPrimitives: FileRule = {
+  id: "web/internal-primitives",
+  why: "2026-11-19: the sortable list and tree were defined without @internal, so the end-of-day web build couldn't write @uiset/web's declarations (TS2883: a primitive's type names UI SDK internals). Every definePrimitive in the registry is marked @internal.",
+  appliesTo: (path) => path.startsWith("registry/") && path.endsWith(".ts"),
+  check: (text) =>
+    [...text.matchAll(/^(?:export )?const (\w+) = definePrimitive\(/gm)]
+      .filter((m) => !/\/\*\* @internal[^\n]*\*\/\n$/.test(text.slice(0, m.index!)))
+      .map((m) => ({
+        line: lineOf(text, m.index!),
+        message: `${m[1]} is a primitive without /** @internal … */ above it: its type names UI SDK internals, so @uiset/web's declarations can't be written.`,
+      })),
+}
+
 export const pinUiSdk: FileRule = {
   id: "deps/pin-ui-sdk",
   why: "Project rule: UI SDK is in beta, so UISet pins its exact version and moves only after the whole suite passes on a new one.",
