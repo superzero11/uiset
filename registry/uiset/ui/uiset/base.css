@@ -98,6 +98,77 @@
   outline-offset: -2px;
 }
 
+/* Edge fades: where a scroll area's content runs on past an edge, it fades out there. UI SDK
+   marks the edges the view is at (data-at-y-start and the rest); the fade grows in as the view
+   leaves one. A mask fades the content itself, so it suits any surface. data-fades="none" on
+   the root turns them off; a part can keep one edge solid with its --uiset-fade-* variable, as
+   the table does under a sticky header. (Not UI SDK's overflow variables: the viewport would
+   take them with inherit, and WebKit doesn't restyle it when they change.) */
+@property --uiset-fade-block-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --uiset-fade-block-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --uiset-fade-inline-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --uiset-fade-inline-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+[data-uiset] :where([data-slot="scroll-area"]:not([data-fades="none"])) > [data-slot="scroll-area-viewport"] {
+  --uiset-fade-inline: to right;
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 var(--uiset-fade-block-start), #000 calc(100% - var(--uiset-fade-block-end)), transparent),
+    linear-gradient(var(--uiset-fade-inline), transparent, #000 var(--uiset-fade-inline-start), #000 calc(100% - var(--uiset-fade-inline-end)), transparent);
+  mask-composite: intersect;
+  transition-property: --uiset-fade-block-start, --uiset-fade-block-end, --uiset-fade-inline-start, --uiset-fade-inline-end;
+  transition-duration: var(--uiset-medium);
+  transition-timing-function: var(--uiset-ease);
+
+  &:dir(rtl) {
+    --uiset-fade-inline: to left;
+  }
+
+  /* The mask would fade the viewport's own ring where content runs on, so the frame wears it. */
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+[data-uiset] :where([data-slot="scroll-area"]:not([data-fades="none"], [data-at-y-start])) > [data-slot="scroll-area-viewport"] {
+  --uiset-fade-block-start: var(--uiset-fade);
+}
+
+[data-uiset] :where([data-slot="scroll-area"]:not([data-fades="none"], [data-at-y-end])) > [data-slot="scroll-area-viewport"] {
+  --uiset-fade-block-end: var(--uiset-fade);
+}
+
+[data-uiset] :where([data-slot="scroll-area"]:not([data-fades="none"], [data-at-x-start])) > [data-slot="scroll-area-viewport"] {
+  --uiset-fade-inline-start: var(--uiset-fade);
+}
+
+[data-uiset] :where([data-slot="scroll-area"]:not([data-fades="none"], [data-at-x-end])) > [data-slot="scroll-area-viewport"] {
+  --uiset-fade-inline-end: var(--uiset-fade);
+}
+
+[data-uiset] [data-slot="scroll-area"]:not([data-fades="none"]):has(> [data-slot="scroll-area-viewport"]:focus-visible) {
+  outline: 2px solid var(--ui-ring-border);
+  outline-offset: 2px;
+}
+
 /* A10: in a row of joined controls, the focused one's ring stays above its neighbours. */
 [data-uiset] :is([data-slot="toolbar"], [data-slot="toggle-group"], [data-slot="pagination-list"], [data-slot="segmented-control"]) :focus-visible {
   position: relative;

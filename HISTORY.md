@@ -1729,3 +1729,15 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   SDK closed #856 and #857 as fixed for the beta after beta.10, beside #848, leaving #780
   open. Also from the watch: vercel-labs/ui#867 asks whether Vercel's Public Beta Agreement
   covers the Apache-2.0 `@ui-sdk/*` packages UISet builds on (no answer yet; watching).
+- 2026-11-19 — **Scroll edge fades**, the first of the roadmap's small ones (the owner's go-ahead
+  on the plan). UI SDK documents the pattern and ships no styles, so UISet adds them: a mask on
+  the viewport, both axes, flipped right to left, on by default (`data-fades="none"` off). A
+  mask rather than overlays: overlays need the surface's color, which differs inside cards
+  and panels. First built from UI SDK's overflow variables, taken onto the viewport with
+  `inherit`: WebKit didn't restyle the viewport when they changed (no fades at all). Now the
+  root's `data-at-*` edges switch each fade, and registered `--uiset-fade-*` lengths make it
+  grow in. The viewport's own ring would be masked, so the frame wears it. The table keeps
+  its sticky header and column solid. Only Scroll Area, the code block and the table use UI
+  SDK's scroll area; the kits' own scrollers (chat, IDE, data grid) don't get fades yet.
+  Checked: Chrome and WebKit tests (each fade by edge, the ring, the opt-out; two mutations
+  each fail one), axe in every skin, every skin by eye, the table at 640px.

@@ -256,6 +256,16 @@ function ComponentPage({ page }: { page: DocPage }) {
   )
 }
 
+// Beyond the look: where UISet adds a part or a behavior to a UI SDK component.
+const sdkExtras: Record<string, ReactNode> = {
+  "scroll-area": (
+    <li>
+      Edge fades: where the content runs on past an edge, it fades out there, across and down, and right to left too, so a reader can see there&rsquo;s more.{" "}
+      <code>data-fades=&quot;none&quot;</code> on the root turns them off, and <code>--uiset-fade</code> sets how far they reach. Keyboard focus rings the whole box, outside the fade.
+    </li>
+  ),
+}
+
 /** What UISet adds to a UI SDK component, and UI SDK's own API reference for it. */
 function SdkReference({ item, title }: { item: string; title: string }) {
   const sdk = useMarkdown(sdkDocs[`../docs/sdk/${item}.md`])
@@ -270,6 +280,7 @@ function SdkReference({ item, title }: { item: string; title: string }) {
         <li>Text at 4.5:1 contrast and control edges and focus rings at 3:1, in every skin and theme, checked with axe in tests.</li>
         <li>Haptic cues on phones, and sound cues when you set <code>sound</code> on <code>&lt;UISet&gt;</code>.</li>
         <li>Examples that name every control, so agents can find it (see Agents below).</li>
+        {sdkExtras[item]}
       </ul>
       {sdk === null ? (
         <p className="docs-loading">Loading the API reference…</p>

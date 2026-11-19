@@ -95,6 +95,15 @@
     z-index: 2;
   }
 
+  /* Kept rows and columns stay solid: no fade where they sit. */
+  .table-frame[data-sticky-header] > [data-slot="scroll-area-viewport"] {
+    --uiset-fade-block-start: 0px;
+  }
+
+  .table-frame[data-sticky-column] > [data-slot="scroll-area-viewport"] {
+    --uiset-fade-inline-start: 0px;
+  }
+
   /* An edge on the kept column, once the rest has moved under it. A shadow, because a
      border here would notch the line under each row. */
   .table-frame[data-sticky-column][data-overflow-x]:not([data-at-x-start])

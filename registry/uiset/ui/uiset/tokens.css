@@ -6,6 +6,8 @@
   --uiset-on-key: white;
 
   --uiset-radius: var(--radius, 0.5rem);
+  /* How far a scroll area's content fades where it runs on past an edge. */
+  --uiset-fade: 1.5rem;
   --uiset-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --uiset-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   --uiset-fast: 120ms;

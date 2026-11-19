@@ -14,6 +14,49 @@ async function open(page: Page, query = "") {
   await expect(page.locator(".components-surface")).toBeVisible({ timeout: 20_000 })
 }
 
+/* ------------------------------------------------------------------ scroll area */
+
+// The fades' sizes, read from the mask: [above, below] in px.
+const fades = (viewport: import("@playwright/test").Locator) =>
+  viewport.evaluate((el) => {
+    const mask = getComputedStyle(el).maskImage
+    const block = mask.slice(0, mask.indexOf("linear-gradient", 10))
+    const start = Number(/rgb\(0, 0, 0\) ([\d.]+)px/.exec(block)?.[1] ?? 0)
+    const end = Number(/calc\(100% - ([\d.]+)px\)/.exec(block)?.[1] ?? 0)
+    return [Math.round(start), Math.round(end)]
+  })
+
+test("a scroll area fades where its content runs on, and keyboard focus rings the whole box", async ({ page }) => {
+  await open(page)
+  const area = example(page, "Scroll area")
+  await area.scrollIntoViewIfNeeded()
+  const viewport = area.locator('[data-slot="scroll-area-viewport"]')
+  const fade = await page.evaluate(() => Math.round(parseFloat(getComputedStyle(document.documentElement).fontSize) * 1.5))
+  // At the top, only the bottom fades; in the middle, both; at the end, only the top.
+  await expect.poll(() => fades(viewport)).toEqual([0, fade])
+  await viewport.evaluate((el) => (el.scrollTop = 40))
+  await expect.poll(() => fades(viewport)).toEqual([fade, fade])
+  await viewport.evaluate((el) => (el.scrollTop = el.scrollHeight))
+  await expect.poll(() => fades(viewport)).toEqual([fade, 0])
+  // The mask would fade a ring inside the viewport, so the frame wears it, unmasked.
+  await viewport.focus()
+  await page.keyboard.press("ArrowUp")
+  const rings = await viewport.evaluate((el) => [getComputedStyle(el).outlineStyle, getComputedStyle(el.parentElement!).outlineStyle])
+  expect(rings).toEqual(["none", "solid"])
+})
+
+test("data-fades=none turns the fades off", async ({ page }) => {
+  await open(page)
+  const area = example(page, "Scroll area")
+  await area.scrollIntoViewIfNeeded()
+  const viewport = area.locator('[data-slot="scroll-area-viewport"]')
+  await viewport.evaluate((el) => {
+    el.parentElement!.setAttribute("data-fades", "none")
+    el.scrollTop = 40
+  })
+  await expect.poll(() => viewport.evaluate((el) => getComputedStyle(el).maskImage)).toBe("none")
+})
+
 /* ------------------------------------------------------------------ table */
 
 test("the table's headings and first column stay put while it scrolls", async ({ page }) => {

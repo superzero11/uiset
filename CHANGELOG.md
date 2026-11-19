@@ -8,6 +8,20 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
+## 0.5.0 (unreleased)
+
+On UI SDK `0.1.0-beta.10`.
+
+### Added
+
+- **Scroll areas fade where their content runs on.** Past an edge with more beyond it, the
+  content fades out (down and across, and right to left), so a reader can see there's more;
+  it grows in as you leave an edge. It's a mask, so it suits any surface and every skin.
+  Code blocks and tables get it too; a table's sticky header and first column stay solid.
+  `data-fades="none"` on a scroll area turns it off, and `--uiset-fade` sets how far it
+  reaches. With keyboard focus, the ring goes around the whole box, outside the fade. React
+  and Web Components.
+
 ## 0.4.0 (2026-11-19)
 
 On UI SDK `0.1.0-beta.10`. A minor release: what works differently is under **Changed**,

@@ -15,40 +15,41 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-Nothing in progress; next is the first item below.
+**From UI SDK's showcase, the small ones**, one at a time: scroll edge fades, radio cards,
+a ring meter, a textarea's character count, password rules that tick off as you type, and a
+confirm button (the first press arms it). Each in React and Web Components.
 
 ## Next, in order
 
-1. **From UI SDK's showcase, the small ones.** A confirm button (the first press arms it),
-   password rules that tick off as you type, radio cards, a ring meter, a textarea's
-   character count, scroll edge fades. S each
-2. **Sortable lists and trees.** Drag a row or pick it up with Space, move several at once,
+1. **Sortable lists and trees.** Drag a row or pick it up with Space, move several at once,
    drag sideways to nest; the IDE's file tree and the board take it on. M
-3. **Motion, per skin.** Each skin moves its own way, as it already sounds its own way:
+2. **Motion, per skin.** Each skin moves its own way, as it already sounds its own way:
    openings, moves and state changes, drawn from UI SDK's state, reduced motion respected. M–L
-4. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
+3. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
    number field with a country picker, and input masks for cards, IBANs and currency. M
-5. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
+4. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
    and agents setting a filter by name. M
-6. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
+5. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
    reorder, and a player whose scrubber snaps to chapters, beside Studio. M each
-7. **Locale packs.** Every component's and kit's built-in words translated, with
+6. **Locale packs.** Every component's and kit's built-in words translated, with
    right-to-left tested packs for the main languages. UI SDK ships none. M
-8. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
+7. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
    repair; export to Tailwind `@theme`, Figma variables and DESIGN.md. S
-9. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
+8. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
    paging. M–L
-10. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
-    double sidebar, a top bar. M
-11. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
+9. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
+   double sidebar, a top bar. M
+10. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
     and an invoice. S each
-12. **Print skin.** Swiss and letterpress type, from a written design plan first. M
-13. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
+11. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+12. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
     import. M
 
-Between these, small ones: tree select, matches marked in combobox results, an autocomplete
-that loads from a server, swiping a toast away, a context menu on any area, an Angular guide,
-and focus that moves in the same task in the 24 places the lint still lists.
+Between these, small ones: an agent migration recipe (UI SDK has none yet), dialogs and
+popovers that open in place (UI SDK's `inline`), tree select, matches marked in combobox
+results, an autocomplete that loads from a server, swiping a toast away, a context menu on
+any area, an Angular guide, and focus that moves in the same task in the 24 places the lint
+still lists.
 
 ## Then: motion and developer tools
 
