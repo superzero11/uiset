@@ -1724,3 +1724,8 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   their first screen install with `npm install @uiset/web @ui-sdk/web`, typecheck (vue-tsc
   with and without `strictTemplates`; svelte-check with no warnings), build, and in Chrome
   upgrade, take Base's black-and-white default and update their state.
+- 2026-11-19 — **The roadmap after today's watch.** birobirobiro/awesome-shadcn-ui merged
+  UISet's entry (#772, 2026-11-18), so only bytefer#61 and registry.directory still wait; UI
+  SDK closed #856 and #857 as fixed for the beta after beta.10, beside #848, leaving #780
+  open. Also from the watch: vercel-labs/ui#867 asks whether Vercel's Public Beta Agreement
+  covers the Apache-2.0 `@ui-sdk/*` packages UISet builds on (no answer yet; watching).
