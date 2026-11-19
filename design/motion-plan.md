@@ -5,12 +5,32 @@ each one move like it too: how things open and close, how they move to a new pla
 a state changes. Roadmap item 1, size M–L, in three parts. Revised on 2026-11-19 after a
 review of how other libraries and design systems handle motion (below).
 
+## What UI SDK says
+
+UISet follows UI SDK first, and its docs say how motion should work on its parts:
+
+- **Motion follows state.** CSS transitions run on `data-starting-style` and
+  `data-ending-style`, and UI SDK keeps a part in the page until its exit finishes. Its
+  examples grow popups from `--transform-origin`: 96% to full size, with a fade, in 150 ms.
+- **Reduced motion, part by part.** Tooltips drop the scale and keep the fade. Toasts keep
+  only the fade. The drawer fades instead of sliding, which is built in. Panels, the
+  navigation menu, carousels and scrolling change at once.
+- **The drawer moves itself.** Leave its travel and its backdrop's opacity to UI SDK; style
+  its scale, corners and colours.
+- **Tooltips that open at once** in a group get `data-instant`, so they skip the transition.
+- **Sliding items into new places** is left to CSS, View Transitions or a motion library.
+
+One thing this changes today: UI SDK's drawer fade runs as a script animation, so UISet's
+current reduced-motion reset doesn't stop it. Under reduced motion, UISet's drawers fade
+while everything else snaps. Keeping fades, as this plan proposes, makes them agree.
+
 ## What others do
 
-Four groups were reviewed: Keyframery, the other library on UI SDK; shadcn and the headless
+Five groups were reviewed: Keyframery, the other library on UI SDK; shadcn and the headless
 libraries (Base UI, Radix, React Aria, Headless UI, Ark, Vaul, Sonner, Animate UI, Motion);
-the big design systems (Material 3, Carbon, Fluent, Apple, Atlassian, Primer, Polaris,
-Spectrum, Lightning); and the web platform with WCAG.
+the motion-led kits (AffectUI, Plonk, Once UI, Arc); the big design systems (Material 3,
+Carbon, Fluent, Apple, Atlassian, Primer, Polaris, Spectrum, Lightning); and the web
+platform with WCAG.
 
 Where they agree, and what this plan takes from it:
 
@@ -39,15 +59,21 @@ Where they split:
   off. Apple, MDN, motion specialists and the Motion library keep fades and remove movement.
   WCAG's rule on motion from interaction counts movement, not changes in opacity. This plan
   now proposes keeping fades (decision 3).
-- **Motion per theme.** Nobody ships it. shadcn's eight styles move identically. Keyframery's
-  four presets change only speed and curve, and every popup in it scales and blurs the same
-  way. Material lets a product pick one scheme. Skins that move differently are new, so the
-  shared rules below keep them consistent where it matters.
+- **Motion per theme.** Rare. shadcn's eight styles move identically, and so do AffectUI's
+  two. Keyframery's four presets change only speed and curve, and every popup in it scales
+  and blurs the same way. Once UI makes motion a theme setting (small, large or none), and
+  Material lets a product pick one scheme. Only Plonk, a small React Aria project from
+  November 2026, gives each of its four personalities its own motion: named timings for
+  pressing, entering, leaving and snapping, stepped curves for its retro and arcade looks,
+  and two or three set pieces each. That's the same idea as this plan, and it shows the
+  shape works. The shared rules below keep the skins consistent where it matters.
 
-From Keyframery, this plan leaves out blur on entry (it costs painting, and Apple advises
-against animating blur), springs that overshoot, timings of 380–560 ms and staggered rows.
-It takes one speed setting for the whole app, which Keyframery (`--kf-speed`) and Animate UI
-(`tempo`) both have.
+This plan leaves out what several kits do by default: blur on entry (it costs painting,
+and Apple advises against animating blur), springs that overshoot, timings of 380–800 ms,
+staggered rows, and popups with no exit at all (AffectUI). It takes one speed setting for
+the whole app (Keyframery's `--kf-speed`, Animate UI's `tempo`), timings named for what
+they do (Plonk), a way to turn motion down for one part of a page (Plonk's
+`data-plonk-motion`), and a nudge when a dialog refuses to close (AffectUI).
 
 ## What moves
 
@@ -56,12 +82,14 @@ Three kinds of change, and only these:
 1. **Openings and closings.** Popups (menu, select, popover, tooltip, combobox, hover card),
    dialogs, panels that grow (accordion, collapsible, a tree's branches, navigation menu),
    and toasts, whose stack follows UI SDK's toast variables. A drawer travels on UI SDK's own
-   spring in every skin, since it follows the finger like a system sheet; skins style what
-   follows it, the dimmed page and the sheets stacked behind.
+   spring in every skin, since it follows the finger like a system sheet, and UI SDK sets
+   how dim the page behind it gets. Skins style the rest: the backdrop's colour, and how the
+   sheets stacked behind scale back.
 2. **Moves.** Something goes to a new place: a sortable list's item, a tree's row, a board's
    card, a grid's column, the tab and segmented-control indicators, a switch's thumb.
 3. **State changes.** On and off (checkbox, radio, switch), chosen, an error appearing, a
-   count changing.
+   count changing, and a refusal: an alert dialog that won't close on an outside press
+   nudges, so the press visibly did something.
 
 What doesn't move: focus rings (they appear at once, so keyboard users never wait), hover
 (a colour change), text, tooltips that open at once, the command palette, and anything
@@ -78,8 +106,9 @@ lists, nothing that loops except progress and the caret.
 4. **Interruptible.** A menu closed while it's still opening goes back from where it is.
 5. **Cheap to draw.** Only position, scale and opacity animate, plus clipping for the drawn
    reveals of small parts. No blur, no overshoot.
-6. **One speed setting.** `--uiset-motion-speed`, 1 by default, scales every duration in
-   every skin, for an app that wants motion quicker or slower.
+6. **Two settings for apps.** `--uiset-motion-speed`, 1 by default, scales every duration
+   in every skin. `motion="reduce"` on a UISet root turns motion down for that part of the
+   page, as the system setting does, so an app can offer its own switch.
 
 ## How it's built
 
@@ -87,9 +116,11 @@ lists, nothing that loops except progress and the caret.
   `data-ending-style` while it comes and goes, keeps it in the page until it has left,
   measures panels, and gives popups `--transform-origin`. Motion is CSS transitions on
   those, so it runs for an agent's change as for a person's, the way the sounds do.
-- **Skins set variables, `base.css` draws.** Each skin sets how long, which curve, and where
-  an opening starts from (opacity, scale, a shift, a clip). `base.css` turns them into
-  transitions. A nested skin moves its own way.
+- **Skins set variables, `base.css` draws.** Each skin sets a timing for each purpose
+  (enter, exit, panel, move, toggle: a duration and a curve) and where an opening starts
+  from (opacity, scale, a shift, a clip). `base.css` turns them into transitions. A nested
+  skin moves its own way. Reduced motion swaps the variables, not the rules, so every part
+  follows.
 - **Moves use a small `glide` helper.** UI SDK leaves sliding items into place to the app. The
   helper notes where items were before a reorder and slides them from there, with the
   browser's own animations. The browser's View Transitions were considered and rejected for
@@ -162,9 +193,10 @@ When someone asks for less motion, nothing moves, grows, is drawn or slides, in 
 Things that appear and disappear fade instead, 120 ms in and 90 ms out. Panels, reorders
 and switches change at once. Ink stays instant.
 
-Why fades rather than nothing: WCAG counts movement, not opacity, as the motion people need
-to be able to turn off. Apple's guidance is to replace movement with fades. A fade still
-shows what changed without moving anything. The alternative is everything instant, as
+Why fades rather than nothing: this is what UI SDK itself does and advises (its drawer
+fades, its tooltips and toasts keep their fades, its panels snap). WCAG counts movement,
+not opacity, as the motion people need to be able to turn off. Apple's guidance is to
+replace movement with fades. A fade still shows what changed without moving anything. The alternative is everything instant, as
 UISet does today and as Atlassian, Fluent, Primer and Carbon do.
 
 ## What this plan avoids
@@ -192,9 +224,10 @@ staggered entrances on lists, and long, slow transitions.
 
 ## Parts, in order
 
-1. **Openings and closings** in every skin: the tokens and the speed setting, popups,
+1. **Openings and closings** in every skin: the tokens and the two settings, popups,
    dialogs, panels, toasts, and the drawer's surroundings. S–M
-2. **State changes:** checks, radios, switches, Studio's lamps, errors. S
+2. **State changes:** checks, radios, switches, Studio's lamps, errors, the dismissal
+   nudge. S
 3. **Moves:** the glide helper, then the sortable list and tree, the board, the grid's
    columns, and the indicators. M
 
