@@ -37,7 +37,7 @@ test.beforeEach(async ({ page }) => {
 
 for (const skin of ["Base", "Blueprint", "Studio", "Phosphor", "Ink"]) {
   for (const theme of ["Light", "Dark"]) {
-    test(`passes axe in ${skin} ${theme.toLowerCase()}, with the "/" menu open`, async ({ page }) => {
+    test(`passes axe in ${skin} ${theme.toLowerCase()}, with the "/" menu open`, async ({ page, browserName }) => {
       await choose(page, "Skin", skin)
       await choose(page, "Theme", theme)
       await editor(page).getByText("Before we ship").click()
@@ -45,10 +45,12 @@ for (const skin of ["Base", "Blueprint", "Studio", "Phosphor", "Ink"]) {
       await page.keyboard.press("Enter")
       await page.keyboard.type("/")
       await expect(page.getByRole("option", { name: "Heading 2" })).toBeVisible()
-      const results = await new AxeBuilder({ page })
-        .include(".item-frame")
-        .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
-        .analyze()
+      const axe = new AxeBuilder({ page }).include(".item-frame").withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+      // Firefox's page crashes, now and then, as axe names the block-type select's trigger, most
+      // often after a select has been opened (2026-11-19). Chrome and Safari check it here; its
+      // name has no cycle and no shared id.
+      if (browserName === "firefox") axe.exclude(".item-frame .rich-text-block-type")
+      const results = await axe.analyze()
       expect(results.violations.map((v) => `${v.id}: ${v.nodes.length} node(s)`)).toEqual([])
     })
   }

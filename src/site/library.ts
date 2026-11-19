@@ -104,7 +104,7 @@ const skinPages: { skin: Skin; href: string }[] = [
 ]
 const themeCards: (Card & { skin: Skin })[] = skinPages.map(({ skin, href }) => {
   const what: Record<Skin, string> = {
-    base: "Your shadcn theme, or one built from a single key color.",
+    base: "Your shadcn theme, one built from a key color, or black and white.",
     blueprint: "A technical drawing: cyanotype paper, linework and hatching.",
     studio: "A synth rack: gunmetal panels, rubber pads and amber lamps.",
     phosphor: "A green-screen terminal: intensity, inverse video, scan lines.",

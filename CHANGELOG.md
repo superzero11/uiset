@@ -60,6 +60,15 @@ On UI SDK `0.1.0-beta.10`.
   - Agents can remove one file from a file input by its name.
   - A web drop zone spaces its trigger the way React's does, from UI SDK's own styles; UISet's
     rule for it is gone.
+- **The base skin is black and white by default.** With no shadcn/ui theme on the page and
+  no `keyColor`, its accent was blue (`oklch(0.5 0.19 268)`) and its grays leaned blue; the
+  accent is now near-black (near-white in dark mode) on neutral grays, as in shadcn/ui's
+  default theme and on uiset.dev. To keep blue, pass `keyColor={{ l: 0.5, c: 0.19, h: 268 }}`
+  (Web Components: `data-key` and the three `--uiset-key-*` variables on `<uiset-root>`).
+  Without `keyColor`, text on the accent is your shadcn/ui theme's `--primary-foreground`
+  when there is one, and solid buttons move 10% toward the page's color on hover, as
+  shadcn/ui's do (toward the text, as before, a near-black accent didn't change). Add the
+  root again to take it.
 - **Agents run the terminal's commands with `runCommand` and a swipe list's row actions with
   `runAction`**, where they used `run`. Since UI SDK beta.8, the bridge reads a `run` action's
   first argument as one of the component's items, so `run("ls")` and
@@ -117,6 +126,10 @@ old names:
 
 ### Fixed
 
+- **Rich text keeps your selection after a toolbar button, in Firefox.** Pressing Bold with
+  the pointer focused the button, the redraw collapsed the page's selection, and the editor
+  took that as yours, so Ctrl+I right after Bold made nothing italic. The editor reads the
+  page's selection only while the text has focus. React and Web Components.
 - **The pricing template's comparison table no longer widens a positioned container.** Its
   screen-reader text was placed against the nearest positioned ancestor, so inside one (a card,
   a dialog) the container could scroll sideways by the whole table's width.

@@ -81,6 +81,6 @@ Things shadcn/ui doesn't have: the [chat kit](./chat.md), a
 ## Theme
 
 Nothing to change: the base skin reads `--background`, `--foreground`, `--muted`,
-`--muted-foreground`, `--border`, `--input`, `--primary` and `--radius`. To set the
-accent without a shadcn theme, pass `keyColor`, or try one in the
+`--muted-foreground`, `--border`, `--input`, `--primary`, `--primary-foreground` and
+`--radius`. Without a shadcn theme it's black and white; to set the accent, pass `keyColor`, or try one in the
 [theme generator](https://uiset.dev/themes/generator), which also exports shadcn/ui variables. See [Theming](./theming.md).

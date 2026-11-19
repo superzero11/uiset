@@ -40,6 +40,26 @@ test("skins restyle UI SDK's own elements, with no React on the page", async ({ 
   expect(await page.evaluate(() => "React" in window || !!document.querySelector("[data-reactroot]"))).toBe(false)
 })
 
+// Base with no shadcn/ui theme and no key color is black and white: what uiset.dev shows. It
+// was blue, so an app without a theme got a different look from the site's. A near-black
+// accent hovers toward the page; toward the text, it didn't change.
+test("Base without a theme or key color is black and white, and a solid button's hover shows", async ({ page }) => {
+  const save = page.getByRole("button", { name: "Save" })
+  const colors = () => save.evaluate((el) => [getComputedStyle(el).backgroundColor, getComputedStyle(el).color])
+  await root(page).evaluate((el) => el.setAttribute("theme", "light"))
+  expect(await colors()).toEqual(["oklch(0.205 0 0)", "oklch(0.985 0 0)"])
+  // Lightness is the first number in oklch() and oklab() alike.
+  const lightness = async () => Number(/\(([\d.]+)/.exec((await colors())[0] ?? "")![1])
+  await save.hover()
+  await expect.poll(lightness).toBeGreaterThan(0.25)
+  await page.mouse.move(0, 0)
+  await root(page).evaluate((el) => el.setAttribute("theme", "dark"))
+  await expect.poll(colors).toEqual(["oklch(0.922 0 0)", "oklch(0.205 0 0)"])
+  // A key color still colors it.
+  await root(page).evaluate((el) => (el.setAttribute("data-key", ""), el.setAttribute("style", "--uiset-key-l: 0.5; --uiset-key-c: 0.19; --uiset-key-h: 268")))
+  await expect.poll(async () => (await colors())[0]).toBe("oklch(0.5 0.19 268)")
+})
+
 test("the UISet knob turns by keyboard, and its readout follows", async ({ page }) => {
   const knob = page.getByRole("slider", { name: "Cutoff" })
   await knob.focus()

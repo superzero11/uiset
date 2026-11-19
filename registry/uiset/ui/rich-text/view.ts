@@ -698,8 +698,11 @@ function createRichTextView(root: HTMLElement, options: ViewOptions = {}) {
     if (state.selection && !pressing) writeSelection()
   }
 
+  // The page's selection is the person's only while the text has focus. With a toolbar button
+  // focused, a redraw can collapse it (Firefox), and taking that would lose their selection.
   function onSelectionChange() {
     if (applyingSelection || composing || destroyed) return
+    if (root.ownerDocument.activeElement !== root) return
     const fresh = readSelection()
     if (!fresh) return
     const key = selectionKey(fresh)

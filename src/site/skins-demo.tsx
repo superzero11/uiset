@@ -7,7 +7,7 @@ import { Switch } from "@/registry/uiset/ui/switch"
 import { UISet, type Skin } from "@/registry/uiset/ui/uiset"
 
 const skins: { value: Skin; name: string; what: string }[] = [
-  { value: "base", name: "Base", what: "Takes your shadcn theme, or builds one from a single key color." },
+  { value: "base", name: "Base", what: "Takes your shadcn theme, builds one from a key color, or is black and white." },
   { value: "blueprint", name: "Blueprint", what: "A technical drawing: cyanotype paper, linework and hatching." },
   { value: "studio", name: "Studio", what: "A synth rack: gunmetal panels, rubber pads and amber lamps." },
   { value: "phosphor", name: "Phosphor", what: "A green-screen terminal: intensity, inverse video, scan lines." },

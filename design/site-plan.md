@@ -18,19 +18,25 @@ cards, built from UISet's own components as today.
 | primary (buttons) | 20.5% 0 0, near-black | 94.6% 0 0 |
 | fills | black at 4% (tracks), 5% (hover, current) | white at 5%, 7% |
 
+The frame's grays reach the examples as shadcn/ui variables. Their accent is the base skin's
+own default, black and white (20.5% 0 0, and 92.2% 0 0 in dark), so the site shows what an app
+without a theme gets.
+
 **Type:** Inter, 13px base, line height 1.43. Home h1 56/500/-2px; section h2 28/500/-0.7px;
 docs h1 32/600/-0.8px, h2 20/600/-0.4px, lead 16/24 muted; library h1 24/500/-0.6px.
 
 **Layout:**
 
-- Home and Agent: a top nav in a 1008px column. Logo, Docs, Library (a menu: Build has
+- Home and Agent: a top nav in a 1008px column. Logo, Library (a menu: Build has
   Components, Kits, Themes, Templates; Animate has Illustrations and Motion, coming soon),
-  Agent; search, the System/Light/Dark switch, GitHub on the right.
+  Docs, Agent; search, the skin, the System/Light/Dark switch, GitHub on the right. The skin
+  dresses the whole site.
 - Docs and Library: AppShell. A 256px sidebar on the page gray (logo and collapse, search,
-  Library, Docs, Agent, the skin, then Components, Kits, Templates, Skins), and the page in an
-  inset panel (8px from the edges, 18px radius) whose top bar holds the theme and GitHub. The
+  Library, Docs, Agent, then Components, Kits, Templates, Skins), and the page in an
+  inset panel (8px from the edges, 18px radius) whose top bar holds the skin, the theme and
+  GitHub. The
   footer sits under the panel. Narrow screens get AppShell's drawer.
-- Library: a 24px headline, tabs with counts and the skin at the end, then a 3-column grid of
+- Library: a 24px headline, tabs with counts, then a 3-column grid of
   cards (14px radius, 6px padding, an 8px-radius preview, title, one line, a copy button).
   Previews are live UISet parts, inert and hidden from agents; each card opens its page.
 - Docs pages: an 894px column, breadcrumb, title, lead; a component's Preview and Code in a

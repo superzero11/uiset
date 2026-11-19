@@ -1668,3 +1668,43 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   The Agent page's docs links are the home page's pill buttons. Checked: lint, typecheck,
   unit (536), and the What's new, site and agent-ready specs in Chrome (77 passed). Not
   run: WebKit for these fixes, Firefox, the full suite.
+- 2026-11-19 — **The base skin is black and white by default** (the owner's call). uiset.dev
+  gave its examples a near-black `--primary`, so Base looked black and white there, but an
+  app with no shadcn/ui theme and no `keyColor` got blue (`oklch(0.5 0.19 268)`) with
+  blue-leaning grays: the site showed a look those apps didn't get. Now, with neither, the
+  accent is `light-dark(oklch(0.205 0 0), oklch(0.922 0 0))` (shadcn/ui's default neutral) on
+  neutral grays (the grays' chroma follows the key only under `keyColor`), and the site no
+  longer sets `--primary`, so its examples show the real default. Text on that accent is
+  given (`--primary-foreground`, else near-white or near-black), not worked out from it:
+  Chrome and WebKit resolve `light-dark()` inside relative color, but Firefox wasn't checked
+  for it. Solid buttons without `keyColor` hover 10% toward the page, as shadcn/ui's do; the
+  old mix toward the text left a near-black button unchanged, on uiset.dev too. A test on
+  the Web Components page (no theme there) holds the default, the hover and `keyColor`; with
+  the old blue default, and with the old hover, it failed. Checked: 282 axe and contrast
+  tests on the React and Web Components pages, the theme generator and Tailwind specs.
+- 2026-11-19 — **The roadmap, reordered to stay ahead of UI SDK** (the owner's direction: be
+  ahead of UI SDK should it ship its own component library, and better in features and
+  quality; add animated components, kits and templates and developer tools). The order now
+  says how it's chosen: first what UI SDK's own showcase of styled screens does that UISet
+  doesn't (the gap map of 117 tiles: 73 done, 24 partly, 20 missing), then the most-asked
+  components by votes (tag input +87 and 128 up, phone input 54 and 43 up), then what nobody
+  ships. Motion per skin moved to third: another UI SDK library leads on motion, and it makes
+  the animated components, kits and templates possible. Thirteen items in order; motion and
+  developer tools (an Agent view browser extension, upgrade help, a starter app) follow;
+  the niche sink tiles went to Later.
+- 2026-11-19 — **The full suite after the new site and the black-and-white Base** (the
+  owner asked for Firefox and the full suite before pushing). Chrome and the Web Components
+  pages in Chrome: 889 passed. WebKit: the first run died with the app (a stall: "Navigation
+  cancelled" and timeouts); the re-run passed the WebKit project, but its Web Components half
+  never reached its server (a leftover server from the crash, reused and gone); re-run, 396
+  passed. All 1,778 Chrome and WebKit tests pass, 12 skipped as designed. Firefox: 852 passed,
+  11 failed, all fixed. The gallery link landed 350px past its example: Chrome and Safari keep
+  a link's target in view as cards above it draw, Firefox doesn't, so the gallery holds it
+  until the reader scrolls. Firefox's page crashed in the rich text axe tests, as axe named the
+  block-type select's trigger, most often after a select had been opened: a Firefox bug (no
+  name cycle, no shared id, no single DOM read crashes it); those tests leave that trigger to
+  Chrome and Safari in Firefox (30 of 30 pass). And Ctrl+I after Bold sometimes made nothing
+  italic in Firefox: the editor took a collapsed page selection while the button had focus.
+  It now reads the selection only while the text has focus (a unit test; without the fix it
+  fails), and the test passed 6 of 6 in Firefox. Firefox's rich text and gallery specs re-run
+  after the fixes; the full Firefox suite wasn't re-run.

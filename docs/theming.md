@@ -20,7 +20,7 @@ import { UISet } from "@/components/ui/uiset"
 | Prop       | Default    | What it does                                                                  |
 | ---------- | ---------- | ----------------------------------------------------------------------------- |
 | `skin`     | `"base"`   | `"base"`, `"blueprint"`, `"studio"`, `"phosphor"` or `"ink"`                  |
-| `keyColor` | none       | `{ l, c, h }` in OKLCH: the base skin's accent                                |
+| `keyColor` | none       | `{ l, c, h }` in OKLCH: the base skin's accent (black and white without one)   |
 | `theme`    | `"system"` | `"light"`, `"dark"` or `"system"` (follows the device)                        |
 | `sound`    | `false`    | Short synthesized sounds on interaction, voiced per skin                      |
 | `haptics`  | `true`     | A tap on Android, and the system haptic on iOS 18 Safari, for switches and the like |
@@ -33,7 +33,7 @@ sound>` the same way.
 
 | Skin        | Look                                                                    | Scheme | Faces to load                   |
 | ----------- | ----------------------------------------------------------------------- | ------ | ------------------------------- |
-| `base`      | Your shadcn theme, or one built from `keyColor`                         | both   | none (your app's)               |
+| `base`      | Your shadcn theme, one built from `keyColor`, or black and white        | both   | none (your app's)               |
 | `blueprint` | A technical drawing: cyanotype paper, linework, hatching                | dark   | Barlow Semi Condensed           |
 | `studio`    | A synth rack: gunmetal panels, rubber pads, amber lamps                 | dark   | Saira Semi Condensed            |
 | `phosphor`  | A green-screen terminal: intensity, inverse video, faint scan lines     | dark   | Spline Sans Mono                |
@@ -51,8 +51,12 @@ blindness (`tests/unit/chart-palette.test.ts`).
 ## The key color
 
 The base skin builds its accent from one OKLCH color: solid buttons, checked controls,
-the selected day, focus rings. Text on it picks black or white by lightness, and dark mode
-lifts the ring toward white so it stays visible.
+the selected day, focus rings. Text on it picks black or white by lightness, dark mode
+lifts the ring toward white so it stays visible, and the grays lean slightly toward its hue.
+
+With no `keyColor` and no shadcn theme on the page, the base skin is black and white: a
+near-black accent (near-white in dark mode) on neutral grays, the look of shadcn/ui's
+default theme and of uiset.dev.
 
 ### A whole theme from one color
 
@@ -71,8 +75,9 @@ address keeps every setting, so a link reopens the same theme.
 
 With no `keyColor`, the base skin adopts the shadcn theme already on the page:
 `--background`, `--foreground`, `--muted`, `--muted-foreground`, `--border`, `--input`,
-`--primary` and `--radius`. UISet components then match the rest of your app, and your
-theme switcher keeps working.
+`--primary` and `--radius`, with `--primary-foreground` for text on the accent. UISet
+components then match the rest of your app, solid buttons hover the way shadcn/ui's do,
+and your theme switcher keeps working.
 
 ## Dark mode
 

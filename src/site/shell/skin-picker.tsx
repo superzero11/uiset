@@ -3,7 +3,7 @@ import { SegmentedControl, SegmentedControlItem } from "@/registry/uiset/ui/segm
 import type { Skin } from "@/registry/uiset/ui/uiset"
 
 const skins: { value: Skin; label: string; what: string }[] = [
-  { value: "base", label: "Base", what: "Your shadcn theme, or one built from a single key color." },
+  { value: "base", label: "Base", what: "Your shadcn theme, one built from a key color, or black and white." },
   { value: "blueprint", label: "Blueprint", what: "A technical drawing: cyanotype paper, linework and hatching." },
   { value: "studio", label: "Studio", what: "A synth rack: gunmetal panels, rubber pads and amber lamps." },
   { value: "phosphor", label: "Phosphor", what: "A green-screen terminal: intensity, inverse video, scan lines." },

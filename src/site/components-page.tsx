@@ -1,4 +1,4 @@
-import { Fragment, memo, useCallback, useEffect, useRef, useState, type ComponentType } from "react"
+import { Fragment, memo, useCallback, useEffect, useLayoutEffect, useRef, useState, type ComponentType } from "react"
 import { Toaster } from "@/registry/uiset/ui/toast"
 import { exampleGroups, examples, type ExampleEntry } from "./examples"
 
@@ -91,6 +91,25 @@ function ComponentsGallery() {
   }, [caughtUp, wanted, want])
 
   const complete = ready.size === examples.length
+
+  // A link to an example stays on it as the cards above it draw, until the reader scrolls.
+  // Chrome and Safari hold a link's target on their own; Firefox lets it drift.
+  const pinned = useRef(window.location.hash.startsWith("#example-"))
+  useEffect(() => {
+    if (!pinned.current) return
+    const release = () => void (pinned.current = false)
+    const events = ["wheel", "touchstart", "keydown", "pointerdown"] as const
+    for (const name of events) window.addEventListener(name, release, { once: true, passive: true })
+    return () => {
+      for (const name of events) window.removeEventListener(name, release)
+    }
+  }, [])
+  useLayoutEffect(() => {
+    if (!pinned.current) return
+    document.getElementById(decodeURIComponent(window.location.hash.slice(1)))?.scrollIntoView()
+    if (complete) pinned.current = false
+  }, [ready, complete])
+
   let index = 0
   return (
     <div className="gallery" ref={gallery} data-ready={complete ? "" : undefined}>

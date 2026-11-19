@@ -198,7 +198,7 @@ A skin changes how everything looks, sounds and feels. Behavior never changes: t
 keyboard, focus and screen reader experience in every one. Skins nest, so a panel can wear
 its own.
 
-- **Base:** adopts the shadcn/ui theme on your page, or builds one from a key color. Light and dark.
+- **Base:** adopts the shadcn/ui theme on your page, builds one from a key color, or is black and white. Light and dark.
 - **Blueprint:** a technical drawing, with cyanotype paper, white linework and hatching.
 - **Studio:** a rack of synth modules, gunmetal faceplates and amber lamps. It sounds mechanical.
 - **Phosphor:** a monochrome video terminal, with a faint bloom and scan lines. It beeps.

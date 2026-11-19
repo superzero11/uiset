@@ -43,7 +43,7 @@ export function App() {
 ```
 
 With a shadcn/ui theme on the page, the base skin uses its colors and radius. Without one,
-pass `keyColor={{ l: 0.5, c: 0.19, h: 268 }}` or make a theme in the
+it's black and white; for a color, pass `keyColor={{ l: 0.5, c: 0.19, h: 268 }}` or make a theme in the
 [theme generator](/themes/generator).
 
 ### With Tailwind CSS

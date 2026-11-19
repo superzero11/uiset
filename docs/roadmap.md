@@ -6,48 +6,66 @@ and the decisions behind it in
 [HISTORY.md](https://github.com/superzero11/uiset/blob/main/HISTORY.md). Sizes: S small,
 M medium, L large.
 
+## How we order it
+
+First, what UI SDK's own showcase of styled screens does and UISet doesn't yet: UISet should
+already be past anything styled on UI SDK. Then what developers ask for most, by the votes on
+shadcn/ui and UI SDK threads, then what nobody ships. Each piece has to beat a plainly styled
+version: a kit around it, agents, five skins, sound and motion, and tests in all of them.
+
 ## Now
 
 Nothing in progress; next is the first item below.
 
 ## Next, in order
 
-1. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
+1. **From UI SDK's showcase, the small ones.** A confirm button (the first press arms it),
+   password rules that tick off as you type, radio cards, a ring meter, a textarea's
+   character count, scroll edge fades. S each
+2. **Sortable lists and trees.** Drag a row or pick it up with Space, move several at once,
+   drag sideways to nest; the IDE's file tree and the board take it on. M
+3. **Motion, per skin.** Each skin moves its own way, as it already sounds its own way:
+   openings, moves and state changes, drawn from UI SDK's state, reduced motion respected. M–L
+4. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
+   number field with a country picker, and input masks for cards, IBANs and currency. M
+5. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
    and agents setting a filter by name. M
-2. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
+6. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
+   reorder, and a player whose scrubber snaps to chapters, beside Studio. M each
+7. **Locale packs.** Every component's and kit's built-in words translated, with
+   right-to-left tested packs for the main languages. UI SDK ships none. M
+8. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
+   repair; export to Tailwind `@theme`, Figma variables and DESIGN.md. S
+9. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
    paging. M–L
-3. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
-   double sidebar, a top bar. M
-4. **Print skin.** Swiss and letterpress type, from a written design plan first. M
-5. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
-   import. M
+10. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
+    double sidebar, a top bar. M
+11. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
+    and an invoice. S each
+12. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+13. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
+    import. M
 
-Between these, small ones: a ring meter and circular progress chart, tree select, and an
-Angular guide.
+Between these, small ones: tree select, matches marked in combobox results, an autocomplete
+that loads from a server, swiping a toast away, a context menu on any area, an Angular guide,
+and focus that moves in the same task in the 24 places the lint still lists.
 
-## Added 2026-11-18, not yet in the order
+## Then: motion and developer tools
 
-From UI SDK's own showcase of styled screens, another UI SDK library (Keyframery), and the
-new project lint:
-
-- **Sortable list and tree reordering.** Drag a row, or pick it up with Space; several at
-  once; drag sideways to nest. M
-- **Confirm button.** The first press arms it, the second acts. S
-- **Emoji picker**, for chat reactions and rich text. M
-- **Draggable tabs**, for the IDE kit. S–M
-- **Password rules** that tick off as you type, and **radio cards**. S each
-- **Recipes:** real tasks built from UISet's parts, filtered by part, in every skin. M
-- **Illustrations and Motion**, the Library menu's Animate column: animated scenes, and text,
-  number and transition motion. L each
-- **Same-task focus everywhere.** 24 places still move focus a frame or two late (rich text,
-  IDE, chat, data grid, templates); the lint's baseline lists them. M
+- **Animated components, kits and templates**, built on the motion above: the Library's
+  Animate column, with Illustrations (animated scenes for landing pages) and Motion (text,
+  numbers, transitions), and kits and templates whose movement shows what changed. L
+- **Developer tools:** Agent view as a browser extension for any UI SDK app; upgrade help,
+  a per-item diff when UI SDK moves so your edits survive; a starter app with the templates
+  as routed pages. M each
 
 ## Later
 
-A media player, a map kit, a seat map, a Gantt chart, dragging onto dates and cards, a swipe
-deck and a radial menu for the mobile kit, the Cockpit and Paper skins, a Solid guide, more
-templates (onboarding, an agent-wired settings console, a docs site), and generative UI
-adapters.
+A map kit, a seat map, a Gantt chart, dragging onto dates and cards, a swipe deck and a
+radial menu for the mobile kit, a window manager and resizable panels, sticky notes on the
+canvas, a dashboard grid, a document viewer, voice in chat, the Cockpit and Paper skins, a
+Solid guide, more templates (onboarding, an agent-wired settings console, a docs site), and
+generative UI adapters.
 
 ## Following UI SDK
 

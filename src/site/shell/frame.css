@@ -36,8 +36,9 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* The frame's palette as a shadcn theme, which the base skin adopts: every component, kit and
-   template shown in Base wears the same grays and near-black as the page around it. */
+/* The frame's grays as a shadcn theme, which the base skin adopts: every component, kit and
+   template shown in Base wears the same grays as the page around it. The accent is Base's own
+   default, black and white, so what the site shows is what an app without a theme gets. */
 .site {
   --background: light-dark(oklch(100% 0 0), oklch(21.4% 0.004 286));
   --foreground: light-dark(oklch(14.5% 0 0), oklch(94.6% 0 0));
@@ -48,18 +49,6 @@
   --border: light-dark(oklch(92.2% 0 0), oklch(26.9% 0.004 286));
   /* Control edges at 3:1 against the surface. */
   --input: light-dark(oklch(61.7% 0 0), oklch(58% 0 0));
-  /* Plain values: the key's text color is worked out from it (relative color), per scheme. */
-  --primary: oklch(20.5% 0 0);
-}
-
-.site[data-theme="dark"] {
-  --primary: oklch(94.6% 0 0);
-}
-
-@media (prefers-color-scheme: dark) {
-  .site:not([data-theme="light"]) {
-    --primary: oklch(94.6% 0 0);
-  }
 }
 
 /* In the base skin, the frame's components take the frame's palette. */
