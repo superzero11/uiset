@@ -58,3 +58,29 @@ test("bars, points, cells and parts aren't dimmed around a key that's gone", () 
   expect(has(segmentedBarPlot(parts, context("gone")).svg, "data-dim", "")).toBe(false)
   expect(has(segmentedBarPlot(parts, context("a")).svg, "data-dim", "")).toBe(true)
 })
+
+test("a narrow horizontal bar chart shows only the value labels that fit side by side", () => {
+  const regions = [
+    { r: "North America", v: 412000 },
+    { r: "Europe", v: 318000 },
+    { r: "Middle East and Africa", v: 64000 },
+  ]
+  const valueLabels = (width: number) => {
+    const svg = barPlot(
+      { data: regions, x: (d) => d.r, series: [{ key: "v", label: "Revenue", value: (d) => d.v }], orientation: "horizontal" },
+      { width, height: 200, shown: () => true, active: null, selected: null },
+    ).svg
+    const axis = nodes(svg).find((n) => n.attrs["data-axis"] === "value")!
+    return nodes(axis.children).map((n) => ({ x: Number(n.attrs.x), text: String(n.children?.[0] ?? "") }))
+  }
+  for (const width of [330, 520, 900]) {
+    const labels = valueLabels(width)
+    expect(labels.length).toBeGreaterThanOrEqual(2)
+    // Each label's centre is at least its own width plus a gap from the next (6.6px a character).
+    for (let i = 1; i < labels.length; i++) {
+      const room = Math.max(labels[i]!.text.length, labels[i - 1]!.text.length) * 6.6 + 8
+      expect(labels[i]!.x - labels[i - 1]!.x).toBeGreaterThanOrEqual(room)
+    }
+  }
+  expect(valueLabels(900).length).toBeGreaterThan(valueLabels(330).length)
+})

@@ -103,6 +103,19 @@ function ChartsDemo() {
           format={(n) => money.format(n)}
         />
       </div>
+      <SegmentedBar
+        className="charts-demo-wide"
+        title="Traffic sources"
+        description="Last 30 days, 412,000 visits"
+        parts={[
+          { key: "search", label: "Search", value: 189000 },
+          { key: "direct", label: "Direct", value: 104000 },
+          { key: "social", label: "Social", value: 61000 },
+          { key: "email", label: "Email", value: 38000 },
+          { key: "other", label: "Other", value: 20000 },
+        ]}
+        format={(n) => whole.format(n)}
+      />
       <LineChart
         title="Revenue and costs"
         description="2026, by month"
@@ -170,18 +183,6 @@ function ChartsDemo() {
         ]}
         format={(n) => whole.format(n)}
         layout="stacked"
-      />
-      <SegmentedBar
-        title="Traffic sources"
-        description="Last 30 days, 412,000 visits"
-        parts={[
-          { key: "search", label: "Search", value: 189000 },
-          { key: "direct", label: "Direct", value: 104000 },
-          { key: "social", label: "Social", value: 61000 },
-          { key: "email", label: "Email", value: 38000 },
-          { key: "other", label: "Other", value: 20000 },
-        ]}
-        format={(n) => whole.format(n)}
       />
       <Heatmap
         title="Sessions by day and hour"

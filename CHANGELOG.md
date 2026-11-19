@@ -87,6 +87,12 @@ On UI SDK `0.1.0-beta.10`.
   Move to…, selects the file and says where it went. Built on UI SDK's `bindDrag`,
   `bindDragPreview` and `createAutoScroll` around UI SDK's Tree, which keeps its keys.
 
+### Fixed
+
+- **A horizontal bar chart's value labels no longer run together on a narrow screen.** It
+  shows as many as fit side by side (at phone width, "0 100k200k300k" became "0" and
+  "500k"), and the grid keeps every line. React and Web Components.
+
 ### Changed
 
 - **The kits and templates scroll in UI SDK's scroll areas**, with its scrollbars and the

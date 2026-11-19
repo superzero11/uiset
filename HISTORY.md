@@ -1869,3 +1869,13 @@ request, is vercel-labs/ui#905 (2026-11-19).
   which stays the way to move from the keyboard and on a touch screen, where a finger
   scrolls the tree. A guard against the drop's press counting as a click was dropped:
   mutation testing showed `bindDrag` already swallows that click.
+- 2026-11-19 — **A layout audit of every kit and template page** (the owner asked after
+  finding the lists kit's demos run together). All 15 kit pages and 10 templates, in Base
+  light at 1440 and 390: the automated checks (unstyled helper classes, sideways scroll,
+  page errors) were clean, and by eye seven things were wrong, fixed one commit each. First,
+  charts: the horizontal bar chart's value axis drew five labels whatever its width, so on a
+  phone they ran together; it now fits as many as there's room for (a unit test checks the
+  spacing at three widths; it fails with the old count). The charts kit put the short
+  Traffic sources bar beside the tall heatmap and left the scatter chart alone; Traffic
+  sources now spans the row under the figures, and the heatmap and scatter share the last.
+

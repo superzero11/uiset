@@ -754,8 +754,13 @@ main > section,
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
 }
 
+/* A short chart takes the whole row under the figures, so no row pairs it with a tall one. */
+.charts-demo-wide,
 .charts-demo-stats {
   grid-column: 1 / -1;
+}
+
+.charts-demo-stats {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));

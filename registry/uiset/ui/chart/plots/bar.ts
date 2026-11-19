@@ -122,9 +122,14 @@ function barPlot<Datum>(options: BarOptions<Datum>, { width, height: h, shown, a
   const valueLabelWidth = Math.max(...provisional.ticks.map((t) => tickLabel(t).length)) * charWidth
   const left = horizontal ? categoryWidth : valueLabelWidth + 12
   const right = horizontal ? 48 : 8
+  // Across a narrow chart, only as many value labels as fit side by side (at 390px wide,
+  // five ran together into "0 100k200k300k").
+  const fit = horizontal ? Math.max(2, Math.floor((width - right - left) / (valueLabelWidth + 16))) : 0
   const v = horizontal
-    ? linear(extents, [left, width - right])
+    ? linear(extents, [left, width - right], { count: Math.max(1, Math.min(5, fit - 1)) })
     : linear(extents, [h - bottom, top])
+  const valueLabel = horizontal ? tickFormatter(v.ticks, locale) : tickLabel
+  const every = horizontal ? Math.ceil(v.ticks.length / fit) : 1
   const c = horizontal
     ? band(categories, [top, h - bottom], 0.35)
     : band(categories, [left, width - right], 0.35)
@@ -245,11 +250,13 @@ function barPlot<Datum>(options: BarOptions<Datum>, { width, height: h, shown, a
     node(
       "g",
       { key: "value", className: "chart-axis-labels", "data-axis": "value" },
-      ...v.ticks.map((t) =>
-        horizontal
-          ? node("text", { key: t, x: v(t), y: h - bottom + 16, textAnchor: "middle" }, tickLabel(t))
-          : node("text", { key: t, x: left - 8, y: v(t), dy: "0.32em", textAnchor: "end" }, tickLabel(t)),
-      ),
+      ...v.ticks
+        .filter((_, i) => i % every === 0)
+        .map((t) =>
+          horizontal
+            ? node("text", { key: t, x: v(t), y: h - bottom + 16, textAnchor: "middle" }, valueLabel(t))
+            : node("text", { key: t, x: left - 8, y: v(t), dy: "0.32em", textAnchor: "end" }, valueLabel(t)),
+        ),
     ),
     node(
       "g",
