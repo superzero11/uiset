@@ -1762,3 +1762,12 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   from the value, the name, the turn and its hold; two mutations each fail one), axe in every
   skin (React and web), every skin by eye. Also: radio cards' text takes the skin's size, as
   the web demo showed its price larger than React's.
+- 2026-11-19 — **A textarea's count.** UI SDK's own example derives "n / 160" from the value;
+  `TextareaCount` makes it a part: the field's description (heard with the textarea), and
+  announcements only when the band changes (20 left, then none), since one per key would
+  drown a screen reader. The tone first went on the description itself, and Phosphor's skin
+  rule for every description won; it's on a span inside now. Web: `<uiset-textarea-count>`
+  finds its field's textarea; aligned with `align-self` too, as the web field is flex.
+  Checked: Chrome and WebKit, React and web (the description, the bands, quiet keys between,
+  the cap; without the near announcement the test fails), axe in every skin, every skin by
+  eye in each state.

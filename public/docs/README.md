@@ -119,7 +119,7 @@ Each of UI SDK's 55 components as its own item, styled by the skin, with UISet's
 | `listbox` | An always-visible list to choose from. | [UI SDK](https://ui-sdk.dev/docs/components/listbox) |
 | `menu` | Actions from a button or a right click, with submenus. | [UI SDK](https://ui-sdk.dev/docs/components/menu) |
 | `menubar` | An application menu bar. | [UI SDK](https://ui-sdk.dev/docs/components/menubar) |
-| `meter` | A measurement within a range, ready to use. | [UI SDK](https://ui-sdk.dev/docs/components/meter) |
+| `meter` | A measurement within a range, as a bar or a ring. | [UI SDK](https://ui-sdk.dev/docs/components/meter) |
 | `navigation-menu` | Site navigation with panels. | [UI SDK](https://ui-sdk.dev/docs/components/navigation-menu) |
 | `number-input` | A number field with named step buttons, ready to use. | [UI SDK](https://ui-sdk.dev/docs/components/number-input) |
 | `otp-input` | A one-time code field with a slot per character. | [UI SDK](https://ui-sdk.dev/docs/components/otp-input) |
@@ -127,13 +127,13 @@ Each of UI SDK's 55 components as its own item, styled by the skin, with UISet's
 | `password-input` | A password field with a show toggle. | [UI SDK](https://ui-sdk.dev/docs/components/password-input) |
 | `popover` | A panel beside its trigger. | [UI SDK](https://ui-sdk.dev/docs/components/popover) |
 | `preferences` | User preferences applied as data attributes and saved. | [UI SDK](https://ui-sdk.dev/docs/components/preferences) |
-| `progress` | Progress of a task, ready to use. | [UI SDK](https://ui-sdk.dev/docs/components/progress) |
+| `progress` | Progress of a task, as a bar or a ring. | [UI SDK](https://ui-sdk.dev/docs/components/progress) |
 | `radio` | Radio groups with their dot, and cards that choose an option wherever you press. | [UI SDK](https://ui-sdk.dev/docs/components/radio) |
 | `rating` | A star rating, ready to use. | [UI SDK](https://ui-sdk.dev/docs/components/rating) |
 | `resizable` | Panels you resize by dragging or with the keyboard. | [UI SDK](https://ui-sdk.dev/docs/components/resizable) |
 | `scroll-area` | Styled scrolling, plus ScrollBox with the parts in place. | [UI SDK](https://ui-sdk.dev/docs/components/scroll-area) |
 | `separator` | A line between content. | [UI SDK](https://ui-sdk.dev/docs/components/separator) |
-| `textarea` | Multi-line text that can grow with its content. | [UI SDK](https://ui-sdk.dev/docs/components/textarea) |
+| `textarea` | Multi-line text that can grow with its content, and a count of its limit. | [UI SDK](https://ui-sdk.dev/docs/components/textarea) |
 | `time-input` | A time typed segment by segment. | [UI SDK](https://ui-sdk.dev/docs/components/time-input) |
 | `timeline` | Events in order, with markers and a connecting line. | [UI SDK](https://ui-sdk.dev/docs/components/timeline) |
 | `toast` | Notifications, with a Toaster ready to render once. | [UI SDK](https://ui-sdk.dev/docs/components/toast) |

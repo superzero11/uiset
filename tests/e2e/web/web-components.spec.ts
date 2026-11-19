@@ -69,6 +69,22 @@ test("a radio card chooses its option wherever it's pressed, named by its title 
   await expect(hobby).toBeChecked()
 })
 
+test("a textarea's count follows typing, describes it, and near the limit says what's left once", async ({ page }) => {
+  const notes = page.getByRole("textbox", { name: "Release notes" })
+  const count = page.locator("uiset-textarea-count")
+  await expect(count).toHaveText("39 / 160 characters")
+  await expect(notes).toHaveAccessibleDescription("39 / 160 characters")
+  const spoken = () => page.evaluate(() => Array.from(document.querySelectorAll("[aria-live]"), (el) => el.textContent ?? "").join(" | "))
+  await notes.fill("x".repeat(140))
+  await expect(count).toHaveAttribute("data-near", "")
+  await expect.poll(spoken).toContain("20 characters left")
+  await notes.press("End")
+  await notes.pressSequentially("x".repeat(30))
+  await expect(count).toHaveText("160 / 160 characters")
+  await expect(count).toHaveAttribute("data-full", "")
+  await expect.poll(spoken).toContain("No characters left")
+})
+
 test("the UISet knob turns by keyboard, and its readout follows", async ({ page }) => {
   const knob = page.getByRole("slider", { name: "Cutoff" })
   await knob.focus()

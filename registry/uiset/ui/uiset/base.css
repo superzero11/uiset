@@ -252,6 +252,24 @@
   font-weight: 500;
 }
 
+/* A textarea's count of its limit, at its end. Near the limit it takes the warning tone, and
+   the danger tone at none left: both readable as text in every skin (they come with the shell's
+   styles; without them it keeps its color). */
+[data-uiset] .uiset-textarea-count {
+  /* At the end in a grid field and in a flex one (Web Components' field is flex). */
+  justify-self: end;
+  align-self: end;
+  font-variant-numeric: tabular-nums;
+
+  & > [data-near] {
+    color: var(--tone-warning, currentColor);
+  }
+
+  & > [data-full] {
+    color: var(--tone-danger, currentColor);
+  }
+}
+
 /* Rings: a meter or progress drawn as a ring, on the root's ::before (skins style the bar's
    track, so the ring keeps clear of it). A conic gradient filled up to UI SDK's --meter-value
    (or --progress-value), cut to a ring by a mask; the value sits in the middle, a label under

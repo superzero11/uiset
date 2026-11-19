@@ -36,6 +36,13 @@ On UI SDK `0.1.0-beta.10`.
   value turns a quarter of the ring, held still for reduced motion. Web Components:
   `data-shape="ring"` on `ui-meter` or `ui-progress`.
 
+- **A textarea's count of its limit.** `TextareaCount` shows "42 / 160 characters" as the
+  field's description, so a screen reader hears it with the textarea. Near the limit it says
+  how many are left, once at `warnAt` (20) and once at none, rather than on every key, and
+  takes the warning and danger tones in every skin. Web Components:
+  `<uiset-textarea-count>`, which finds its field's textarea. The `textarea` item now
+  installs `field` with it.
+
 ## 0.4.0 (2026-11-19)
 
 On UI SDK `0.1.0-beta.10`. A minor release: what works differently is under **Changed**,

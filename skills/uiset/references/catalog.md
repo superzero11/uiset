@@ -134,7 +134,7 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 - `listbox`: An always-visible list to choose from.
 - `menu`: Actions from a button or a right click, with submenus.
 - `menubar`: An application menu bar.
-- `meter`: A measurement within a range, ready to use.
+- `meter`: A measurement within a range, as a bar or a ring.
 - `navigation-menu`: Site navigation with panels.
 - `number-input`: A number field with named step buttons, ready to use.
 - `otp-input`: A one-time code field with a slot per character.
@@ -142,13 +142,13 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 - `password-input`: A password field with a show toggle.
 - `popover`: A panel beside its trigger.
 - `preferences`: User preferences applied as data attributes and saved.
-- `progress`: Progress of a task, ready to use.
+- `progress`: Progress of a task, as a bar or a ring.
 - `radio`: Radio groups with their dot, and cards that choose an option wherever you press.
 - `rating`: A star rating, ready to use.
 - `resizable`: Panels you resize by dragging or with the keyboard.
 - `scroll-area`: Styled scrolling, plus ScrollBox with the parts in place.
 - `separator`: A line between content.
-- `textarea`: Multi-line text that can grow with its content.
+- `textarea`: Multi-line text that can grow with its content, and a count of its limit.
 - `time-input`: A time typed segment by segment.
 - `timeline`: Events in order, with markers and a connecting line.
 - `toast`: Notifications, with a Toaster ready to render once.

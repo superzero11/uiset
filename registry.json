@@ -720,7 +720,7 @@
       "name": "meter",
       "type": "registry:ui",
       "title": "Meter",
-      "description": "A measurement within a range, ready to use.",
+      "description": "A measurement within a range, as a bar or a ring.",
       "dependencies": [
         "@ui-sdk/core@0.1.0-beta.10",
         "@ui-sdk/react@0.1.0-beta.10"
@@ -888,7 +888,7 @@
       "name": "progress",
       "type": "registry:ui",
       "title": "Progress",
-      "description": "Progress of a task, ready to use.",
+      "description": "Progress of a task, as a bar or a ring.",
       "dependencies": [
         "@ui-sdk/core@0.1.0-beta.10",
         "@ui-sdk/react@0.1.0-beta.10"
@@ -1015,13 +1015,14 @@
       "name": "textarea",
       "type": "registry:ui",
       "title": "Textarea",
-      "description": "Multi-line text that can grow with its content.",
+      "description": "Multi-line text that can grow with its content, and a count of its limit.",
       "dependencies": [
         "@ui-sdk/core@0.1.0-beta.10",
         "@ui-sdk/react@0.1.0-beta.10"
       ],
       "registryDependencies": [
-        "superzero11/uiset/uiset"
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/field"
       ],
       "files": [
         {

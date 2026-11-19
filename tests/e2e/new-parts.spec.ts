@@ -121,6 +121,30 @@ test("a progress ring with no value turns a quarter, and holds it still for redu
   await expect.poll(() => preparing.evaluate((el) => getComputedStyle(el, "::before").animationName)).toBe("uiset-ring-turn")
 })
 
+/* ------------------------------------------------------------------ textarea count */
+
+test("a textarea's count describes it, and near the limit says what's left, once", async ({ page }) => {
+  await open(page)
+  const area = example(page, "Textarea")
+  await area.scrollIntoViewIfNeeded()
+  const notes = area.getByRole("textbox", { name: "Release notes" })
+  const count = area.locator(".uiset-textarea-count > span")
+  await expect(notes).toHaveAccessibleDescription("39 / 160 characters")
+  const spoken = () => page.evaluate(() => Array.from(document.querySelectorAll("[aria-live]"), (el) => el.textContent ?? "").join(" | "))
+  await notes.fill("x".repeat(140))
+  await expect(count).toHaveAttribute("data-near", "")
+  await expect.poll(spoken).toContain("20 characters left")
+  // More keys near the limit stay quiet; at the limit it says so, and the field stops there.
+  await notes.press("End")
+  await notes.pressSequentially("xxxx")
+  await expect(count).toHaveText("144 / 160 characters")
+  expect(await spoken()).not.toContain("16 characters left")
+  await notes.pressSequentially("x".repeat(20))
+  await expect(count).toHaveText("160 / 160 characters")
+  await expect(count).toHaveAttribute("data-full", "")
+  await expect.poll(spoken).toContain("No characters left")
+})
+
 /* ------------------------------------------------------------------ table */
 
 test("the table's headings and first column stay put while it scrolls", async ({ page }) => {

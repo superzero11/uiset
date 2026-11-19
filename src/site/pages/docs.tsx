@@ -278,6 +278,14 @@ const sdkExtras: Record<string, ReactNode> = {
       <code>RadioGroup</code> with <code>className=&quot;uiset-radio-cards&quot;</code> to lay them out side by side where there&rsquo;s room.
     </li>
   ),
+  textarea: (
+    <li>
+      <code>TextareaCount</code>: how much of the limit is used (&ldquo;42 / 160 characters&rdquo;), as the field&rsquo;s description, so a screen reader hears it with the
+      textarea. Near the limit it says how many are left, once at <code>warnAt</code> and once at none, not on every key, and turns to the warning and danger tones.
+      Pass the textarea&rsquo;s <code>value</code> and <code>max</code>, and give the textarea <code>maxLength</code>. Web Components:{" "}
+      <code>&lt;uiset-textarea-count&gt;</code>.
+    </li>
+  ),
   "scroll-area": (
     <li>
       Edge fades: where the content runs on past an edge, it fades out there, across and down, and right to left too, so a reader can see there&rsquo;s more.{" "}

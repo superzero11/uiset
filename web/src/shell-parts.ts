@@ -1,7 +1,8 @@
-// Three small parts for Web Components that match their React twins: <uiset-search-field>
-// (an icon, a clear button, and a key that focuses it from anywhere), <uiset-copy-button>
-// (copies and says so), and <uiset-stepper> (the steps of a flow, as buttons). They use the
-// same classes as React, so shell.css styles both.
+// Small parts for Web Components that match their React twins: <uiset-search-field> (an icon,
+// a clear button, and a key that focuses it from anywhere), <uiset-copy-button> (copies and
+// says so), <uiset-stepper> (the steps of a flow, as buttons) and <uiset-textarea-count> (a
+// textarea's count of its limit). They use the same classes as React, so the same styles dress
+// both.
 import { announce, ariaKeyshortcuts, formatShortcut } from "@ui-sdk/core"
 import { registerShortcut } from "@ui-sdk/core/shortcuts"
 import "@ui-sdk/web/button"
@@ -244,13 +245,69 @@ class UISetStepper extends Evented<UISetStepperEvents>() {
   }
 }
 
+type UISetTextareaCountMessages = {
+  count: (length: number, max: number) => string
+  left: (left: number) => string
+  full: string
+}
+
+/**
+ * <uiset-textarea-count max="160" warn-at="20"> counts its field's textarea against the limit, as
+ * people type. Put it in the field's `<ui-field-description class="uiset-textarea-count">`, so a
+ * screen reader hears it with the textarea; near the limit it says how many are left, once at
+ * `warn-at` and once at none, not on every key. With no `max` it takes the textarea's maxlength.
+ * `messages` translates its words.
+ */
+class UISetTextareaCount extends ElementBase {
+  static observedAttributes = ["max", "warn-at"]
+  messages: UISetTextareaCountMessages = {
+    count: (length, max) => `${length} / ${max} characters`,
+    left: (left) => `${left} ${left === 1 ? "character" : "characters"} left`,
+    full: "No characters left",
+  }
+  #textarea: HTMLTextAreaElement | null = null
+  #band = "room"
+  #onInput = () => this.draw(true)
+
+  connectedCallback() {
+    upgradeProperties(this, ["messages"])
+    this.#textarea = this.closest("ui-field")?.querySelector("textarea") ?? null
+    this.#textarea?.addEventListener("input", this.#onInput)
+    this.draw(false)
+  }
+
+  disconnectedCallback() {
+    this.#textarea?.removeEventListener("input", this.#onInput)
+  }
+
+  attributeChangedCallback() {
+    if (this.isConnected) this.draw(false)
+  }
+
+  private draw(speak: boolean) {
+    const length = this.#textarea?.value.length ?? 0
+    const max = Number(this.getAttribute("max")) || Math.max(this.#textarea?.maxLength ?? 0, 0)
+    const left = max - length
+    const band = left <= 0 ? "full" : left <= Number(this.getAttribute("warn-at") ?? 20) ? "near" : "room"
+    if (speak && band !== this.#band) {
+      if (band === "near" && this.#band === "room") announce(this.messages.left(left))
+      if (band === "full") announce(this.messages.full)
+    }
+    this.#band = band
+    attr(this, "data-near", band === "room" ? null : "")
+    attr(this, "data-full", band === "full" ? "" : null)
+    this.textContent = this.messages.count(length, max)
+  }
+}
+
 function defineShellParts() {
   defineElement("uiset-search-field", UISetSearchField)
   defineElement("uiset-copy-button", UISetCopyButton)
   defineElement("uiset-stepper", UISetStepper)
+  defineElement("uiset-textarea-count", UISetTextareaCount)
 }
 
 export { defineShellParts }
-export type { Step as StepperStep }
-export { UISetSearchField, UISetCopyButton, UISetStepper }
+export type { Step as StepperStep, UISetTextareaCountMessages }
+export { UISetSearchField, UISetCopyButton, UISetStepper, UISetTextareaCount }
 export type { UISetSearchFieldEvents, UISetStepperEvents }

@@ -808,6 +808,23 @@ anywhere on the card chooses it. `web/index.html` has a set.
 </ui-field>
 ```
 
+### A textarea's count
+
+`<uiset-textarea-count>` counts its field's textarea against the limit as people type. In the
+field's description, a screen reader hears it with the textarea; near the limit it says how
+many are left, once at `warn-at` (20) and once at none. With no `max` it takes the textarea's
+`maxlength`; `messages` translates its words.
+
+```html
+<ui-field>
+  <ui-field-label>Release notes</ui-field-label>
+  <ui-textarea><textarea maxlength="160"></textarea></ui-textarea>
+  <ui-field-description class="uiset-textarea-count">
+    <uiset-textarea-count max="160"></uiset-textarea-count>
+  </ui-field-description>
+</ui-field>
+```
+
 ### Rings
 
 `data-shape="ring"` on a `ui-meter` or `ui-progress` draws it as a ring filled to its value,
