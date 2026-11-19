@@ -8,9 +8,11 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
-## 0.4.0 (unreleased)
+## 0.4.0 (2026-11-19)
 
-On UI SDK `0.1.0-beta.10`.
+On UI SDK `0.1.0-beta.10`. A minor release: what works differently is under **Changed**,
+each with what to do. The ones to act on are the UI SDK pin, the base skin's black-and-white
+default, and agents' `runCommand` and `runAction`.
 
 ### Added
 

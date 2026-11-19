@@ -1708,3 +1708,8 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   It now reads the selection only while the text has focus (a unit test; without the fix it
   fails), and the test passed 6 of 6 in Firefox. Firefox's rich text and gallery specs re-run
   after the fixes; the full Firefox suite wasn't re-run.
+- 2026-11-19 — **Release 0.4.0, prepared** (the owner's go-ahead). `@uiset/web` goes from
+  0.3.0 (UI SDK beta.5 peers) to 0.4.0 (beta.10), carrying the 23 commits to the package since
+  2026-11-17; the changelog is dated and names the three changes to act on. A dry run packs 76
+  files, 268 kB: the module, the stylesheet and 69 type files. The owner publishes; then the
+  install commands and the README badge move from beta.5 to beta.10.
