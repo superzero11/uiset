@@ -93,6 +93,22 @@ export const noImportant: FileRule = {
   },
 }
 
+/** Every frame the site draws an example in: the docs preview, the library card and the kit stage. */
+const EXAMPLE_FRAMES = [".example", ".lib-example", ".item-frame"]
+
+export const exampleFrames: FileRule = {
+  id: "site/example-frames",
+  why: "2026-11-19: .stack was styled only in .example and .lib-example, so on kit pages (.item-frame) the lists demo lost every gap and its three demos ran together; the owner saw it.",
+  appliesTo: (path) => path.startsWith("src/site/") && path.endsWith(".css"),
+  check: (text) =>
+    [...text.matchAll(/:is\(([^)]*\.example[^)]*)\)\s+\.(row|actions|stack)\b/g)]
+      .filter((m) => EXAMPLE_FRAMES.some((frame) => !m[1]!.split(",").map((s) => s.trim()).includes(frame)))
+      .map((m) => ({
+        line: lineOf(text, m.index!),
+        message: `.${m[2]} is styled in only some of the frames examples render in. List all of them: ${EXAMPLE_FRAMES.join(", ")}.`,
+      })),
+}
+
 export const pinUiSdk: FileRule = {
   id: "deps/pin-ui-sdk",
   why: "Project rule: UI SDK is in beta, so UISet pins its exact version and moves only after the whole suite passes on a new one.",

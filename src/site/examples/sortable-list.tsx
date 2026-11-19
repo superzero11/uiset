@@ -18,21 +18,35 @@ const tracks: SortableListItem[] = [
   { value: "late", label: "Late Train", description: "3:47" },
 ]
 
-export default function SortableListExample() {
+/** A ranking whose first place is read back. */
+export function RankingExample() {
   const [order, setOrder] = useState(priorities.map((item) => item.value))
   const top = priorities.find((item) => item.value === order[0])?.label
   return (
+    <div className="stack">
+      <p className="example-strong">Rank what to build next</p>
+      <SortableList label="Priorities" items={priorities} value={order} onValueChange={setOrder} numbered />
+      <p className="example-note">First: {top}</p>
+    </div>
+  )
+}
+
+/** A playlist with a locked first track, where a selection moves together. */
+export function PlaylistExample() {
+  return (
+    <div className="stack">
+      <p className="example-strong">Playlist</p>
+      <SortableList label="Playlist" items={tracks} multiple defaultSelected={["paper", "north"]} />
+      <p className="example-note">Select a few with Shift+Space or their checks, then move them together.</p>
+    </div>
+  )
+}
+
+export default function SortableListExample() {
+  return (
     <div className="stack" style={{ gap: "1.5rem" }}>
-      <div className="stack">
-        <p className="example-strong">Rank what to build next</p>
-        <SortableList label="Priorities" items={priorities} value={order} onValueChange={setOrder} numbered />
-        <p className="example-note">First: {top}</p>
-      </div>
-      <div className="stack">
-        <p className="example-strong">Playlist</p>
-        <SortableList label="Playlist" items={tracks} multiple defaultSelected={["paper", "north"]} />
-        <p className="example-note">Select a few with Shift+Space or their checks, then move them together.</p>
-      </div>
+      <RankingExample />
+      <PlaylistExample />
     </div>
   )
 }

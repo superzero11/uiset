@@ -21,6 +21,7 @@ export default function SortableTreeExample() {
   const [last, setLast] = useState("Nothing moved yet.")
   return (
     <div className="stack">
+      <p className="example-strong">Project files</p>
       <SortableTree
         label="Project files"
         icons

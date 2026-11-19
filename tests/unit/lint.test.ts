@@ -1,7 +1,8 @@
 import { describe, expect, test } from "vitest"
 import { lint, type FileRule, type RepoContext, type RepoRule } from "../../scripts/lint/core.ts"
-import { noDeferredFocus, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "../../scripts/lint/rules/code.ts"
+import { exampleFrames, noDeferredFocus, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "../../scripts/lint/rules/code.ts"
 import { rules } from "../../scripts/lint/rules/index.ts"
+import { facts } from "../../src/site/facts.ts"
 import { currentUiSdk, installVersions, statedCounts } from "../../scripts/lint/rules/facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "../../scripts/lint/rules/plan.ts"
 
@@ -42,6 +43,12 @@ describe("code rules", () => {
     `@media (prefers-reduced-motion: reduce) {\n  .a { animation: none !important; }\n}\n/* not !important here */\n.b { color: red; }`,
   )
   fileRule(
+    exampleFrames,
+    "src/site/site.css",
+    `:is(.example, .lib-example) .stack {\n  display: grid;\n}`,
+    `:is(.example, .lib-example, .item-frame) .stack {\n  display: grid;\n}\n.example-note { margin: 0; }`,
+  )
+  fileRule(
     pinUiSdk,
     "package.json",
     `{\n  "dependencies": {\n    "@ui-sdk/react": "^0.1.0-beta.9"\n  }\n}`,
@@ -49,7 +56,13 @@ describe("code rules", () => {
   )
   // lint-ignore tests/no-only: the sample tests/no-only must catch
   fileRule(noOnly, "tests/e2e/board.spec.ts", `test.only("a card moves", async () => {})`, `test("a card moves", async () => {})`)
-  fileRule(statedCounts, "docs/introduction.md", `| Components | 55, plus 21 app parts |`, `| Components | 55, plus 22 app parts | 5 skins | 100 components on one page |`)
+  // The samples follow the facts, so adding a part doesn't break this test (it did at 23).
+  fileRule(
+    statedCounts,
+    "docs/introduction.md",
+    `| Components | 55, plus ${facts.appParts - 1} app parts |`,
+    `| Components | 55, plus ${facts.appParts} app parts | ${facts.skins} skins | 100 components on one page |`,
+  )
   fileRule(
     installVersions,
     "docs/vue.md",
