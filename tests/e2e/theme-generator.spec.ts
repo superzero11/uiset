@@ -151,6 +151,7 @@ test("the skin downloads under its own name, and the preview uses that name", as
 
   // A name UISet already uses is refused, and the preview keeps a safe one.
   await page.getByRole("textbox", { name: "Skin name" }).fill("ink")
-  await expect(page.getByText("UISet already has a skin called ink.")).toBeVisible()
+  // The field's own error: UI SDK's announcer may say the same words for a moment.
+  await expect(page.locator('[data-slot="field-error"]', { hasText: "UISet already has a skin called ink." })).toBeVisible()
   await expect(preview(page, "Light").locator("[data-uiset]").first()).toHaveAttribute("data-skin", "custom")
 })
