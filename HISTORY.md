@@ -1981,4 +1981,21 @@ vercel-labs/ui#905 (2026-11-19).
   npm answered `+ @uiset/web@0.5.0` and said it would take a few minutes to list. Two first
   tries ran in the repo root, where npm refused the private root package; the publish runs
   in web/. Then the push.
+- 2026-11-20 — **Theme cards, and skins that stop at a nested skin** (the owner found the
+  Themes page's cards wrong). Each card drew its form at a fixed 62% from the stage's
+  corner, under the "Skin" tag and against the edges; it now uses the component cards'
+  fit, below the tag and centred. Checking every site skin then found the page's skin
+  leaking into the cards: skins wrote their decoration as descendant selectors under
+  `[data-uiset][data-skin]`, which reach into a nested root of another skin wherever it
+  leaves a property unset (on a Blueprint page the Ink card had uppercase labels; in Ink,
+  dark, the Base card lost its labels), and the Base card was transparent onto the page's
+  ground. Each skin file is now wrapped in `@scope (its root) to (another skin's root)`; a
+  first try left the root rules bare, which inside `@scope` match only a nested root, so
+  every card but the page's own skin went Base; they start with `:where(:scope)`, keeping
+  every selector's specificity. The Base card is transparent only on a Base page. Popups
+  keep their skin (their portal root is its own scope root), and lightningcss keeps the
+  scopes in the site and `@uiset/web` builds. `@scope` is Baseline since Firefox 146. A lint
+  rule, `css/skin-scope`, holds the wrapper and the root rule, and an e2e test checks the
+  cards on a Blueprint page (each fix undone fails it). The theming guide's claim that
+  nested skins never inherit decoration was the bug; it now shows the scoped pattern.
 

@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated 2026-11-19. What we're building, what comes next, and what we won't do. What
+Updated 2026-11-20. What we're building, what comes next, and what we won't do. What
 shipped is in the [changelog](https://github.com/superzero11/uiset/blob/main/CHANGELOG.md),
 and the decisions behind it in
 [HISTORY.md](https://github.com/superzero11/uiset/blob/main/HISTORY.md). Sizes: S small,

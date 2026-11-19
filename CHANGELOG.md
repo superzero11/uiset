@@ -8,6 +8,19 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
+## 0.5.1 (unreleased)
+
+On UI SDK `0.1.0-beta.13`.
+
+### Fixed
+
+- **A skin nested inside another shows its own look.** A skin's decoration (Blueprint's
+  uppercase labels, Studio's dark fields, Ink's labels) reached into a nested root of
+  another skin, like a Base card on a Blueprint page, wherever the nested skin left that
+  property unset. Each skin is now wrapped in `@scope`, which stops at another skin's root.
+  If you wrote your own skin with decoration selectors, see "Write your own skin" in
+  Theming. React and Web Components.
+
 ## 0.5.0 (2026-11-19)
 
 On UI SDK `0.1.0-beta.13`. A minor release: what works differently is under **Changed**, each

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { lint, type FileRule, type RepoContext, type RepoRule } from "../../scripts/lint/core.ts"
-import { exampleFrames, internalPrimitives, noDeferredFocus, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "../../scripts/lint/rules/code.ts"
+import { exampleFrames, internalPrimitives, noDeferredFocus, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "../../scripts/lint/rules/code.ts"
 import { rules } from "../../scripts/lint/rules/index.ts"
 import { facts } from "../../src/site/facts.ts"
 import pkg from "../../package.json"
@@ -45,6 +45,15 @@ describe("code rules", () => {
     `.a { color: red !important; }`,
     `@media (prefers-reduced-motion: reduce) {\n  .a { animation: none !important; }\n}\n/* not !important here */\n.b { color: red; }`,
   )
+  fileRule(
+    skinScope,
+    "registry/uiset/ui/uiset/skins/print.css",
+    `@scope ([data-uiset][data-skin="print"]) to ([data-uiset]:not([data-skin="print"])) {\n  [data-uiset][data-skin="print"] {\n    --ui-background: white;\n  }\n}`,
+    `@scope ([data-uiset][data-skin="print"]) to ([data-uiset]:not([data-skin="print"])) {\n  :where(:scope)[data-uiset][data-skin="print"] {\n    --ui-background: white;\n  }\n}`,
+  )
+  test("css/skin-scope wants the @scope wrapper", () => {
+    expect(skinScope.check(`[data-uiset][data-skin="print"] {\n  --ui-background: white;\n}`, "registry/uiset/ui/uiset/skins/print.css")).toEqual([expect.objectContaining({ line: 1 })])
+  })
   fileRule(
     internalPrimitives,
     "registry/uiset/ui/sortable-list/sortable-list.ts",

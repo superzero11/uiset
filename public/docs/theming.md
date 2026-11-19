@@ -134,9 +134,31 @@ A skin is a stylesheet in the `uiset.skin` layer that sets variables on its own 
 
 Then `<UISet skin="harbor">`. Keep the contrast rules (text 4.5:1, edges and focus 3:1),
 and check it the way UISet's skins are checked: add it to the skin loops in
-`tests/e2e/components.spec.ts` and run axe. Decoration a variable can't express (a
-texture, a bevel) may use selectors under the same `[data-uiset][data-skin]`, so nested
-skins never inherit it.
+`tests/e2e/components.spec.ts` and run axe.
+
+Variables stay with their skin on their own: a nested skin sets its own. Decoration a
+variable can't express (a texture, a bevel, uppercase labels) needs selectors, and those
+reach into a skin nested inside, like a Base card on a Harbor page. Put them in a scope that
+stops at another skin's root, and start the root rule with `:where(:scope)`, since inside
+`@scope` a bare root selector only matches a nested root:
+
+```css
+@layer uiset.skin {
+  @scope ([data-uiset][data-skin="harbor"]) to ([data-uiset]:not([data-skin="harbor"])) {
+    :where(:scope)[data-uiset][data-skin="harbor"] {
+      --ui-background: oklch(0.97 0.01 220);
+      /* …the variables */
+
+      & [data-slot="field-label"] {
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+```
+
+UISet's five skins are written this way. `@scope` works in every browser UISet supports
+(Chrome 118, Safari 17.4, Firefox 146).
 
 ## Sound and haptics
 

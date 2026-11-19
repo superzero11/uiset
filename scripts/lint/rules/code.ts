@@ -122,6 +122,24 @@ export const internalPrimitives: FileRule = {
       })),
 }
 
+export const skinScope: FileRule = {
+  id: "css/skin-scope",
+  why: "2026-11-20: a skin's rules reached into a nested root of another skin, so on a Blueprint page the Ink theme card had Blueprint's uppercase labels and the Base card lost its labels in Ink; the owner saw the theme cards wrong. Each skin is wrapped in @scope with a lower boundary at other skins' roots, and its root rule names :scope (a bare root selector inside @scope only matches a nested root).",
+  appliesTo: (path) => /^registry\/uiset\/ui\/uiset\/skins\/[\w-]+\.css$/.test(path),
+  check(text, path) {
+    const skin = /skins\/([\w-]+)\.css$/.exec(path)![1]
+    const root = `[data-uiset][data-skin="${skin}"]`
+    const out: Finding[] = []
+    if (!text.includes(`@scope (${root}) to ([data-uiset]:not([data-skin="${skin}"]))`))
+      out.push({ line: 1, message: `Wrap the skin in @scope (${root}) to ([data-uiset]:not([data-skin="${skin}"])) so it stops at a nested skin.` })
+    text.split("\n").forEach((line, i) => {
+      if (/^\s+\[data-uiset\]\[data-skin=/.test(line))
+        out.push({ line: i + 1, message: `Inside @scope, start the root rule with :where(:scope)${root}; a bare root selector only matches a nested root.` })
+    })
+    return out
+  },
+}
+
 export const pinUiSdk: FileRule = {
   id: "deps/pin-ui-sdk",
   why: "Project rule: UI SDK is in beta, so UISet pins its exact version and moves only after the whole suite passes on a new one.",

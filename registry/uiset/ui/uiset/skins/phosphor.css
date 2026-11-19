@@ -5,312 +5,316 @@
   data and status. Design plan: docs/phosphor.md.
 */
 
-[data-uiset][data-skin="phosphor"] {
-  color-scheme: dark;
+/* Everything below stops at a skin root of another skin nested inside this one, so a nested
+   skin shows its own look, not this one's rules for what it leaves unset. */
+@scope ([data-uiset][data-skin="phosphor"]) to ([data-uiset]:not([data-skin="phosphor"])) {
+  :where(:scope)[data-uiset][data-skin="phosphor"] {
+    color-scheme: dark;
 
-  --phosphor-tube: oklch(0.26 0.035 155);
-  --phosphor-raster: oklch(0.3 0.04 155);
-  --phosphor-dim: oklch(0.75 0.11 150);
-  --phosphor-glow: oklch(0.88 0.17 148);
-  --phosphor-glow-high: oklch(0.94 0.12 148);
-  --phosphor-faint: oklch(0.75 0.11 150 / 0.22);
-  --phosphor-amber: oklch(0.84 0.15 75);
-  --phosphor-red: oklch(0.75 0.16 28);
-  --phosphor-white: oklch(0.95 0.02 150);
-  --phosphor-blue: oklch(0.8 0.1 230);
-  /* Bright text blooms in its own color; dim text blooms less. */
-  --phosphor-bloom: 0 0 0.3em color-mix(in oklch, currentColor 38%, transparent);
-  --phosphor-scan: repeating-linear-gradient(
-    to bottom,
-    oklch(0 0 0 / 0.16) 0 1px,
-    transparent 1px 3px
-  );
+    --phosphor-tube: oklch(0.26 0.035 155);
+    --phosphor-raster: oklch(0.3 0.04 155);
+    --phosphor-dim: oklch(0.75 0.11 150);
+    --phosphor-glow: oklch(0.88 0.17 148);
+    --phosphor-glow-high: oklch(0.94 0.12 148);
+    --phosphor-faint: oklch(0.75 0.11 150 / 0.22);
+    --phosphor-amber: oklch(0.84 0.15 75);
+    --phosphor-red: oklch(0.75 0.16 28);
+    --phosphor-white: oklch(0.95 0.02 150);
+    --phosphor-blue: oklch(0.8 0.1 230);
+    /* Bright text blooms in its own color; dim text blooms less. */
+    --phosphor-bloom: 0 0 0.3em color-mix(in oklch, currentColor 38%, transparent);
+    --phosphor-scan: repeating-linear-gradient(
+      to bottom,
+      oklch(0 0 0 / 0.16) 0 1px,
+      transparent 1px 3px
+    );
 
-  --ui-background: var(--phosphor-tube);
-  --ui-foreground: var(--phosphor-glow);
-  --ui-muted: var(--phosphor-raster);
-  --ui-muted-foreground: var(--phosphor-dim);
-  --ui-border: oklch(0.75 0.11 150 / 0.45);
-  --ui-input: var(--phosphor-dim);
-  --ui-primary: var(--phosphor-glow);
-  --ui-primary-foreground: var(--phosphor-tube);
-  --ui-destructive: var(--phosphor-red);
-  --ui-ring: oklch(0.88 0.17 148 / 0.3);
-  --ui-ring-border: var(--phosphor-glow);
-  --ui-radius: 0;
-  --ui-shadow: none;
-  --ui-font-sans: "Spline Sans Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --ui-font-mono: var(--ui-font-sans);
-  --ui-font-size: 0.875rem;
+    --ui-background: var(--phosphor-tube);
+    --ui-foreground: var(--phosphor-glow);
+    --ui-muted: var(--phosphor-raster);
+    --ui-muted-foreground: var(--phosphor-dim);
+    --ui-border: oklch(0.75 0.11 150 / 0.45);
+    --ui-input: var(--phosphor-dim);
+    --ui-primary: var(--phosphor-glow);
+    --ui-primary-foreground: var(--phosphor-tube);
+    --ui-destructive: var(--phosphor-red);
+    --ui-ring: oklch(0.88 0.17 148 / 0.3);
+    --ui-ring-border: var(--phosphor-glow);
+    --ui-radius: 0;
+    --ui-shadow: none;
+    --ui-font-sans: "Spline Sans Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --ui-font-mono: var(--ui-font-sans);
+    --ui-font-size: 0.875rem;
 
-  --uiset-sound: beep;
-  --uiset-solid-bg: var(--phosphor-glow);
-  --uiset-solid-fg: var(--phosphor-tube);
-  --uiset-solid-border: var(--phosphor-glow);
-  --uiset-solid-hover: var(--phosphor-glow-high);
-  --uiset-solid-weight: 600;
-  --uiset-popup-radius: 0;
-  --uiset-switch-thumb-radius: 0;
+    --uiset-sound: beep;
+    --uiset-solid-bg: var(--phosphor-glow);
+    --uiset-solid-fg: var(--phosphor-tube);
+    --uiset-solid-border: var(--phosphor-glow);
+    --uiset-solid-hover: var(--phosphor-glow-high);
+    --uiset-solid-weight: 600;
+    --uiset-popup-radius: 0;
+    --uiset-switch-thumb-radius: 0;
 
-  /* Status in the other phosphors, each 4.5:1 on the tube and on raised surfaces. */
-  --tone-info: var(--phosphor-blue);
-  --tone-success: var(--phosphor-glow);
-  --tone-warning: var(--phosphor-amber);
-  --tone-danger: var(--phosphor-red);
+    /* Status in the other phosphors, each 4.5:1 on the tube and on raised surfaces. */
+    --tone-info: var(--phosphor-blue);
+    --tone-success: var(--phosphor-glow);
+    --tone-warning: var(--phosphor-amber);
+    --tone-danger: var(--phosphor-red);
 
-  --uiset-cable-1: var(--phosphor-amber);
-  --uiset-cable-2: var(--phosphor-blue);
-  --uiset-cable-3: var(--phosphor-red);
-  --uiset-cable-4: var(--phosphor-white);
-  --uiset-cable-5: oklch(0.84 0.11 300);
+    --uiset-cable-1: var(--phosphor-amber);
+    --uiset-cable-2: var(--phosphor-blue);
+    --uiset-cable-3: var(--phosphor-red);
+    --uiset-cable-4: var(--phosphor-white);
+    --uiset-cable-5: oklch(0.84 0.11 300);
 
-  font-family: var(--ui-font-sans);
-  text-shadow: var(--phosphor-bloom);
-  background-color: var(--phosphor-tube);
-  background-image: var(--phosphor-scan);
-  caret-color: var(--phosphor-glow);
-  scrollbar-color: var(--phosphor-dim) transparent;
-
-  & :not(.ide-code-input)::selection {
-    background: var(--phosphor-glow);
-    color: var(--phosphor-tube);
-    text-shadow: none;
-  }
-
-  /* Headings are the same face, heavier; never uppercase. */
-  & :is(h1, h2, h3, h4) {
     font-family: var(--ui-font-sans);
-    letter-spacing: 0;
-  }
+    text-shadow: var(--phosphor-bloom);
+    background-color: var(--phosphor-tube);
+    background-image: var(--phosphor-scan);
+    caret-color: var(--phosphor-glow);
+    scrollbar-color: var(--phosphor-dim) transparent;
 
-  /* Labels in dim intensity, sentence case. */
-  &
-    :is(
-      [data-slot="field-label"],
-      [data-slot="select-label"],
-      [data-slot="combobox-label"],
-      [data-slot="autocomplete-label"],
-      [data-slot="label"]:not(:has(> :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="switch"]))),
-      [data-slot="field-description"]
-    ) {
-    color: var(--phosphor-dim);
-  }
-
-  &
-    :is(
-      [data-slot="field-label"],
-      [data-slot="select-label"],
-      [data-slot="combobox-label"],
-      [data-slot="label"]:not(:has(> :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="switch"]))),
-      [data-slot="autocomplete-label"]
-    ) {
-    font-size: var(--ui-font-size);
-    font-weight: 500;
-  }
-
-  /* Drawn with box characters: one-pixel edges in dim, a glowing edge where it's raised. */
-  &
-    :is(
-      [data-slot="select-content"],
-      [data-slot="popover-content"],
-      [data-slot="menu-content"],
-      [data-slot="combobox-content"],
-      [data-slot="autocomplete-content"],
-      [data-slot="hover-card-content"],
-      [data-slot="date-picker-content"],
-      [data-slot="navigation-menu-viewport"],
-      [data-slot="trigger-menu-content"],
-      [data-slot="dialog-content"],
-      [data-slot="alert-dialog-content"],
-      [data-slot="drawer-content"],
-      [data-slot="preview-card-content"]
-    ) {
-    border: 1px solid var(--phosphor-glow);
-    background: var(--phosphor-raster);
-    box-shadow: none;
-  }
-
-  /* Inverse video: what's chosen or highlighted is drawn glow-on-tube, reversed. */
-  & :is([data-slot$="-item"], [data-slot$="-option"])[data-highlighted],
-  & [data-slot="tabs-tab"][data-selected],
-  & [data-slot="toggle"][data-pressed]:not([data-slot="toolbar"] *),
-  & [data-slot="segmented-control-item"][data-checked] {
-    background: var(--phosphor-glow);
-    color: var(--phosphor-tube);
-    text-shadow: none;
-    /* Inside reversed video, quiet text and chips reverse too (a hint, a count). */
-    --ui-muted: oklch(0.78 0.14 148);
-    --ui-muted-foreground: oklch(0.34 0.06 152);
-  }
-
-  & [data-slot="tabs-indicator"] {
-    display: none;
-  }
-
-  & [data-slot="segmented-control"] {
-    border: 1px solid var(--phosphor-dim);
-    background: transparent;
-  }
-
-  & [data-slot="segmented-control-indicator"] {
-    border-radius: 0;
-    background: var(--phosphor-glow);
-    box-shadow: none;
-  }
-
-  /* Glow-filled things carry tube-colored text, which doesn't bloom. */
-  &
-    :is(
-      :is([data-slot="button"], button[data-slot="tooltip-trigger"]):not([data-variant="outline"], [data-variant="ghost"], [data-variant="link"], [data-variant="destructive"]),
-      [data-slot="badge"],
-      [data-slot="calendar-day"][data-selected],
-      [data-slot="tooltip-content"],
-      [data-slot="kbd"]
-    ) {
-    text-shadow: none;
-  }
-
-  & :is([data-slot="button"], [data-slot="toolbar-button"], [data-slot="toggle"]) {
-    font-weight: 500;
-  }
-
-  /* A toolbar's pressed toggle: reversed too, with its edge kept for the group. */
-  & [data-slot="toolbar"] [data-slot="toggle"][data-pressed] {
-    border-color: var(--phosphor-glow);
-    background: var(--phosphor-glow);
-    color: var(--phosphor-tube);
-    text-shadow: none;
-  }
-
-  & [data-slot="switch"] {
-    border: 1px solid var(--phosphor-dim);
-    background: transparent;
-
-    &[data-checked] {
-      border-color: var(--phosphor-glow);
+    & :not(.ide-code-input)::selection {
       background: var(--phosphor-glow);
+      color: var(--phosphor-tube);
+      text-shadow: none;
     }
-  }
 
-  & [data-slot="switch-thumb"] {
-    background: var(--phosphor-dim);
-    box-shadow: none;
-
-    &[data-checked] {
-      background: var(--phosphor-tube);
+    /* Headings are the same face, heavier; never uppercase. */
+    & :is(h1, h2, h3, h4) {
+      font-family: var(--ui-font-sans);
+      letter-spacing: 0;
     }
-  }
 
-  & [data-slot="checkbox"],
-  & [data-slot="radio"] {
-    border-color: var(--phosphor-dim);
-    background: transparent;
-    box-shadow: none;
+    /* Labels in dim intensity, sentence case. */
+    &
+      :is(
+        [data-slot="field-label"],
+        [data-slot="select-label"],
+        [data-slot="combobox-label"],
+        [data-slot="autocomplete-label"],
+        [data-slot="label"]:not(:has(> :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="switch"]))),
+        [data-slot="field-description"]
+      ) {
+      color: var(--phosphor-dim);
+    }
 
-    &[data-checked],
-    &[data-indeterminate] {
+    &
+      :is(
+        [data-slot="field-label"],
+        [data-slot="select-label"],
+        [data-slot="combobox-label"],
+        [data-slot="label"]:not(:has(> :is([data-slot="checkbox"], [data-slot="radio"], [data-slot="switch"]))),
+        [data-slot="autocomplete-label"]
+      ) {
+      font-size: var(--ui-font-size);
+      font-weight: 500;
+    }
+
+    /* Drawn with box characters: one-pixel edges in dim, a glowing edge where it's raised. */
+    &
+      :is(
+        [data-slot="select-content"],
+        [data-slot="popover-content"],
+        [data-slot="menu-content"],
+        [data-slot="combobox-content"],
+        [data-slot="autocomplete-content"],
+        [data-slot="hover-card-content"],
+        [data-slot="date-picker-content"],
+        [data-slot="navigation-menu-viewport"],
+        [data-slot="trigger-menu-content"],
+        [data-slot="dialog-content"],
+        [data-slot="alert-dialog-content"],
+        [data-slot="drawer-content"],
+        [data-slot="preview-card-content"]
+      ) {
+      border: 1px solid var(--phosphor-glow);
+      background: var(--phosphor-raster);
+      box-shadow: none;
+    }
+
+    /* Inverse video: what's chosen or highlighted is drawn glow-on-tube, reversed. */
+    & :is([data-slot$="-item"], [data-slot$="-option"])[data-highlighted],
+    & [data-slot="tabs-tab"][data-selected],
+    & [data-slot="toggle"][data-pressed]:not([data-slot="toolbar"] *),
+    & [data-slot="segmented-control-item"][data-checked] {
+      background: var(--phosphor-glow);
+      color: var(--phosphor-tube);
+      text-shadow: none;
+      /* Inside reversed video, quiet text and chips reverse too (a hint, a count). */
+      --ui-muted: oklch(0.78 0.14 148);
+      --ui-muted-foreground: oklch(0.34 0.06 152);
+    }
+
+    & [data-slot="tabs-indicator"] {
+      display: none;
+    }
+
+    & [data-slot="segmented-control"] {
+      border: 1px solid var(--phosphor-dim);
+      background: transparent;
+    }
+
+    & [data-slot="segmented-control-indicator"] {
+      border-radius: 0;
+      background: var(--phosphor-glow);
+      box-shadow: none;
+    }
+
+    /* Glow-filled things carry tube-colored text, which doesn't bloom. */
+    &
+      :is(
+        :is([data-slot="button"], button[data-slot="tooltip-trigger"]):not([data-variant="outline"], [data-variant="ghost"], [data-variant="link"], [data-variant="destructive"]),
+        [data-slot="badge"],
+        [data-slot="calendar-day"][data-selected],
+        [data-slot="tooltip-content"],
+        [data-slot="kbd"]
+      ) {
+      text-shadow: none;
+    }
+
+    & :is([data-slot="button"], [data-slot="toolbar-button"], [data-slot="toggle"]) {
+      font-weight: 500;
+    }
+
+    /* A toolbar's pressed toggle: reversed too, with its edge kept for the group. */
+    & [data-slot="toolbar"] [data-slot="toggle"][data-pressed] {
       border-color: var(--phosphor-glow);
       background: var(--phosphor-glow);
       color: var(--phosphor-tube);
+      text-shadow: none;
+    }
+
+    & [data-slot="switch"] {
+      border: 1px solid var(--phosphor-dim);
+      background: transparent;
+
+      &[data-checked] {
+        border-color: var(--phosphor-glow);
+        background: var(--phosphor-glow);
+      }
+    }
+
+    & [data-slot="switch-thumb"] {
+      background: var(--phosphor-dim);
+      box-shadow: none;
+
+      &[data-checked] {
+        background: var(--phosphor-tube);
+      }
+    }
+
+    & [data-slot="checkbox"],
+    & [data-slot="radio"] {
+      border-color: var(--phosphor-dim);
+      background: transparent;
+      box-shadow: none;
+
+      &[data-checked],
+      &[data-indeterminate] {
+        border-color: var(--phosphor-glow);
+        background: var(--phosphor-glow);
+        color: var(--phosphor-tube);
+      }
+    }
+
+    & [data-slot="slider-track"] {
+      background: var(--phosphor-faint);
+    }
+
+    & [data-slot="slider-thumb"] {
+      border: 1px solid var(--phosphor-tube);
+      border-radius: 0;
+      background: var(--phosphor-glow);
+      box-shadow: none;
+    }
+
+    & :is([data-slot="progress-track"], [data-slot="meter-track"]) {
+      border: 1px solid var(--phosphor-dim);
+      background: transparent;
+    }
+
+    /* Fields are boxes drawn in dim; the text box is the tube itself. */
+    &
+      :is(
+        [data-slot="input"],
+        [data-slot="select-trigger"],
+        [data-slot="textarea"],
+        [data-slot="password-input"],
+        [data-slot="date-input"],
+        [data-slot="time-input"],
+        [data-slot="date-picker-input"],
+        [data-slot="combobox-input"],
+        [data-slot="autocomplete-input"],
+        [data-slot="token-input-editor"],
+        [data-slot="color-picker-input"],
+        [data-slot="otp-input-slot"],
+        [data-slot="number-input-group"]
+      ) {
+      background: transparent;
+    }
+
+    & ::placeholder {
+      color: var(--phosphor-dim);
+      opacity: 1;
+    }
+
+    & [data-slot="separator"] {
+      background: var(--phosphor-faint);
+    }
+
+    /* What isn't reached yet is half intensity: an empty star, an upcoming step. */
+    & [data-slot="rating-item"]::before {
+      background: linear-gradient(
+        var(--ui-rating-direction),
+        var(--ui-rating-color) calc(var(--rating-fill, 0) * 100%),
+        oklch(0.75 0.11 150 / 0.45) 0
+      );
+    }
+
+    /* Plain number fields drop the browser's spinner; NumberInput has real buttons. */
+    & input[type="number"] {
+      appearance: textfield;
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        appearance: none;
+        margin: 0;
+      }
+    }
+
+    /* The terminal kit in its own phosphors. */
+    --term-black: var(--phosphor-dim);
+    --term-red: var(--phosphor-red);
+    --term-green: var(--phosphor-glow);
+    --term-yellow: var(--phosphor-amber);
+    --term-blue: var(--phosphor-blue);
+    --term-magenta: oklch(0.84 0.11 300);
+    --term-cyan: oklch(0.9 0.1 195);
+    --term-white: var(--phosphor-white);
+
+    /* Code: glow for names, the other phosphors for kinds of words, dim for comments. */
+    --shiki-token-keyword: var(--phosphor-white);
+    --shiki-token-string: var(--phosphor-amber);
+    --shiki-token-string-expression: var(--phosphor-amber);
+    --shiki-token-function: var(--phosphor-blue);
+    --shiki-token-constant: var(--phosphor-amber);
+    --shiki-token-parameter: var(--phosphor-glow);
+    --shiki-token-comment: var(--phosphor-dim);
+    --shiki-token-link: var(--phosphor-blue);
+  }
+
+  /* Bloom and scan lines are the glass, not the content: they go where they'd get in the way. */
+  @media (forced-colors: active) {
+    :where(:scope)[data-uiset][data-skin="phosphor"] {
+      text-shadow: none;
+      background-image: none;
     }
   }
 
-  & [data-slot="slider-track"] {
-    background: var(--phosphor-faint);
-  }
-
-  & [data-slot="slider-thumb"] {
-    border: 1px solid var(--phosphor-tube);
-    border-radius: 0;
-    background: var(--phosphor-glow);
-    box-shadow: none;
-  }
-
-  & :is([data-slot="progress-track"], [data-slot="meter-track"]) {
-    border: 1px solid var(--phosphor-dim);
-    background: transparent;
-  }
-
-  /* Fields are boxes drawn in dim; the text box is the tube itself. */
-  &
-    :is(
-      [data-slot="input"],
-      [data-slot="select-trigger"],
-      [data-slot="textarea"],
-      [data-slot="password-input"],
-      [data-slot="date-input"],
-      [data-slot="time-input"],
-      [data-slot="date-picker-input"],
-      [data-slot="combobox-input"],
-      [data-slot="autocomplete-input"],
-      [data-slot="token-input-editor"],
-      [data-slot="color-picker-input"],
-      [data-slot="otp-input-slot"],
-      [data-slot="number-input-group"]
-    ) {
-    background: transparent;
-  }
-
-  & ::placeholder {
-    color: var(--phosphor-dim);
-    opacity: 1;
-  }
-
-  & [data-slot="separator"] {
-    background: var(--phosphor-faint);
-  }
-
-  /* What isn't reached yet is half intensity: an empty star, an upcoming step. */
-  & [data-slot="rating-item"]::before {
-    background: linear-gradient(
-      var(--ui-rating-direction),
-      var(--ui-rating-color) calc(var(--rating-fill, 0) * 100%),
-      oklch(0.75 0.11 150 / 0.45) 0
-    );
-  }
-
-  /* Plain number fields drop the browser's spinner; NumberInput has real buttons. */
-  & input[type="number"] {
-    appearance: textfield;
-
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button {
-      appearance: none;
-      margin: 0;
+  @media (prefers-reduced-transparency: reduce) {
+    :where(:scope)[data-uiset][data-skin="phosphor"] {
+      background-image: none;
     }
-  }
-
-  /* The terminal kit in its own phosphors. */
-  --term-black: var(--phosphor-dim);
-  --term-red: var(--phosphor-red);
-  --term-green: var(--phosphor-glow);
-  --term-yellow: var(--phosphor-amber);
-  --term-blue: var(--phosphor-blue);
-  --term-magenta: oklch(0.84 0.11 300);
-  --term-cyan: oklch(0.9 0.1 195);
-  --term-white: var(--phosphor-white);
-
-  /* Code: glow for names, the other phosphors for kinds of words, dim for comments. */
-  --shiki-token-keyword: var(--phosphor-white);
-  --shiki-token-string: var(--phosphor-amber);
-  --shiki-token-string-expression: var(--phosphor-amber);
-  --shiki-token-function: var(--phosphor-blue);
-  --shiki-token-constant: var(--phosphor-amber);
-  --shiki-token-parameter: var(--phosphor-glow);
-  --shiki-token-comment: var(--phosphor-dim);
-  --shiki-token-link: var(--phosphor-blue);
-}
-
-/* Bloom and scan lines are the glass, not the content: they go where they'd get in the way. */
-@media (forced-colors: active) {
-  [data-uiset][data-skin="phosphor"] {
-    text-shadow: none;
-    background-image: none;
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  [data-uiset][data-skin="phosphor"] {
-    background-image: none;
   }
 }

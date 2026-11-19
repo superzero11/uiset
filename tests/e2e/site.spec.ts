@@ -195,6 +195,34 @@ test("the Studio rack's meter stands named beside its fader, and the agent's req
   expect(edge).not.toBe("rgba(0, 0, 0, 0)")
 })
 
+// The owner found the theme cards' forms under their tag and against the edges (2026-11-20), and
+// a check in other skins found the page's skin leaking into them: on a Blueprint page the Ink
+// card had Blueprint's uppercase labels and the Base card took the blue around it.
+test("theme cards show each skin on its own, fitted below the tag, on a page in another skin", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("uiset-site-skin", "blueprint"))
+  await page.goto("/themes")
+  const card = (skin: string) => page.locator(`.lib-card-skin[data-skin="${skin}"]`)
+  await expect(card("ink").locator("form")).toBeVisible()
+  const style = (skin: string) =>
+    card(skin).evaluate((el) => ({
+      ground: getComputedStyle(el).backgroundColor,
+      label: getComputedStyle(el.querySelector('[data-slot="field-label"]')!).textTransform,
+    }))
+  const [base, blueprint, ink] = [await style("base"), await style("blueprint"), await style("ink")]
+  expect(blueprint.label).toBe("uppercase")
+  expect(ink.label).toBe("none")
+  expect(base.label).toBe("none")
+  expect(base.ground).not.toBe(blueprint.ground)
+  for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
+    const stage = page.locator(".lib-card-stage").filter({ has: card(skin) })
+    const [box, form, tag] = [await stage.boundingBox(), await card(skin).locator("form").boundingBox(), await stage.locator(".lib-card-tag").boundingBox()]
+    expect(form!.y, skin).toBeGreaterThanOrEqual(tag!.y + tag!.height)
+    expect(form!.x, skin).toBeGreaterThan(box!.x + 8)
+    expect(form!.x + form!.width, skin).toBeLessThan(box!.x + box!.width - 8)
+    expect(form!.y + form!.height, skin).toBeLessThanOrEqual(box!.y + box!.height)
+  }
+})
+
 // The Studio kit follows the page's skin like every other kit (it was once pinned to its own
 // skin while the page showed Base), and its stage paints no Studio-only surface in other skins
 // (it once left Blueprint, Phosphor and Ink text at about 1.1:1 on the page behind it).

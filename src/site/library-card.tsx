@@ -210,10 +210,11 @@ function previewOf(kind: Kind, card: Card): (skin: Skin) => ReactNode {
     const view: View = ({ inbox: { width: 820 } } as Record<string, View>)[card.id] ?? { width: 640 }
     return () => (Demo ? <Scaled {...view}>{<Demo />}</Scaled> : null)
   }
+  // A theme shows the gallery's small form in its skin, fitted below the tag like an example.
   return () => (
-    <div className="lib-skin-sample">
+    <Fit>
       <SkinSample />
-    </div>
+    </Fit>
   )
 }
 

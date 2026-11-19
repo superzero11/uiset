@@ -1,5 +1,5 @@
 import type { Rule } from "../core.ts"
-import { exampleFrames, internalPrimitives, noDeferredFocus, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "./code.ts"
+import { exampleFrames, internalPrimitives, noDeferredFocus, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "./code.ts"
 import { currentUiSdk, installVersions, statedCounts } from "./facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "./plan.ts"
 
@@ -15,6 +15,7 @@ export const rules: Rule[] = [
   noImportant,
   exampleFrames,
   internalPrimitives,
+  skinScope,
   pinUiSdk,
   noOnly,
   statedCounts,

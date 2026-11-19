@@ -1081,15 +1081,16 @@
   pointer-events: none;
 }
 
-/* The preview's skin root fills the stage. In Base it lets the stage's gray show; the other
-   skins paint their own ground. */
+/* The preview's skin root fills the stage. In Base, on a Base page, it lets the stage's gray
+   show; otherwise it paints its own ground, so a Base theme card on a Blueprint page shows
+   Base, not the blue around it. */
 .lib-card-skin {
   position: absolute;
   inset: 0;
+}
 
-  &[data-skin="base"] {
-    background: transparent;
-  }
+.site[data-skin="base"] .lib-card-skin[data-skin="base"] {
+  background: transparent;
 }
 
 /* A component's example: in the stage below the tag, scaled to fill it (library-card.tsx). It
@@ -1125,17 +1126,6 @@
   --auth-height: 400px;
   padding: 14px;
   overflow: hidden;
-}
-
-.lib-skin-sample {
-  width: 380px;
-  zoom: 0.62;
-
-  & form {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-  }
 }
 
 .lib-card-tag {
