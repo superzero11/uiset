@@ -1934,4 +1934,18 @@ vercel-labs/ui#905 (2026-11-19).
   samples pinned to a version or a count now read package.json and the site facts, after
   both went stale today. Unit tests all pass in strict mode; the web agent and affected
   specs ran; the full suite waits for the end-of-day check.
+- 2026-11-19 — **The end-of-day check on UI SDK beta.13** (the owner asked for it, and for
+  Firefox). Lint, typecheck and 571 unit tests pass. Chrome (React and web): 928 passed, 1
+  failed: the chart hover test aimed at the kit's first plot, now the Traffic sources bar;
+  it finds the line chart by name. WebKit: 916 passed, 12 skipped as designed, 1 failed: the
+  theme generator's refused-name message was also in UI SDK's announcer for a moment; the
+  check reads the field's error (3 of 3 before the change, 18 of 18 after in both engines).
+  Firefox in Docker: 898 passed, 25 skipped, 6 failed, all in rich text and all passing run
+  alone (27 of 27): five waited 5s for the editor to load under the full run; the wait is
+  15s, as in the templates spec. The web build first failed to write @uiset/web's
+  declarations: the sortable list and tree primitives weren't marked @internal (TS2883); they
+  are, and a lint rule, `web/internal-primitives`, catches the next one. The build writes 76
+  declaration files, the built-package spec passes, and a dry run packs 83 files, 291.5 kB
+  (still 0.4.0). The install test puts all 117 items into a fresh Vite app, which typechecks
+  and builds. Docker was quit afterwards.
 
