@@ -353,10 +353,24 @@ main > section,
   text-transform: uppercase;
 }
 
+/* The meter stands up beside the fader, as tall as its travel, with its name under it like
+   the fader's, so it doesn't read as a stray scrollbar. */
+.rack-meter-box {
+  position: relative;
+  block-size: var(--fader-height, 8.5rem);
+  inline-size: 0.625rem;
+}
+
+/* Laid out flat, then centred on the box and turned upright about its own centre. */
 .rack-meter {
   --level-width: 6.5rem;
-  align-self: center;
-  margin-inline: -2.6rem;
+  /* UI SDK's styles give a meter a 12rem minimum; this one is as long as its bar. */
+  min-inline-size: 0;
+  inline-size: var(--level-width);
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  translate: -50% -50%;
   rotate: -90deg;
 }
 
@@ -371,7 +385,9 @@ main > section,
 }
 
 .agent-panel[data-compact] .agent-script ul {
-  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .visually-hidden {

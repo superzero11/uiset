@@ -1888,4 +1888,16 @@ request, is vercel-labs/ui#905 (2026-11-19).
   (React) or at start (Web Components), through `isNarrowScreen()` in the scheduler's core.
   Two e2e tests (React and web) check the phone's first view and Sunday's column at 1440;
   each fails with its fix undone.
+- 2026-11-19 — **Studio's meter and the agent's requests** (from the layout audit). The
+  Signal meter had no visible name and, turned upright with negative margins, sat apart from
+  the Output module like a stray scrollbar. It now stands in a box as tall as the fader's
+  travel with "Signal" under it, lined up with "Master". Two snags on the way: UI SDK's
+  styles give every meter a 12rem minimum width, which beat the meter's own width, so the
+  turned bar was pushed onto its label until `min-inline-size: 0`; and a live reading under
+  the bar was dropped, since the bar already shows it and a number changing many times a
+  second adds noise. The agent panel's requests under a demo were ghost buttons, with no edge
+  or fill in Base, so they read as plain text; under a demo they're now outlined and flow as
+  a row. The Web Components page's meter got its name too. An e2e test checks the bar stands
+  upright above its name, inside the module, and that the requests have an edge; it fails
+  with either fix undone.
 

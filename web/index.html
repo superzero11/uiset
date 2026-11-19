@@ -262,9 +262,12 @@
                 </ui-slider>
                 <span class="fader-label" aria-hidden="true">Level</span>
               </div>
-              <ui-meter class="level-meter" value="62" aria-label="Signal">
-                <ui-meter-track><ui-meter-indicator></ui-meter-indicator></ui-meter-track>
-              </ui-meter>
+              <div class="fader-field">
+                <ui-meter class="level-meter" value="62" aria-label="Signal">
+                  <ui-meter-track><ui-meter-indicator></ui-meter-indicator></ui-meter-track>
+                </ui-meter>
+                <span class="fader-label" aria-hidden="true">Signal</span>
+              </div>
             </div>
             <ui-toggle-group multiple class="step-sequencer" aria-label="Steps" default-value="1,3,5,7" style="--steps: 8">
               <ui-toggle value="1"><button aria-label="Step 1" data-downbeat></button></ui-toggle>

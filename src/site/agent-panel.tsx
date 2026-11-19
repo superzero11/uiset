@@ -114,7 +114,8 @@ function AgentPanel({ within, script, showSnapshot = true, beforeRun }: AgentPan
         <ul>
           {script.map((line) => (
             <li key={line.say}>
-              <Button variant="ghost" disabled={running} onClick={() => run(line)}>
+              {/* Set out under a demo, a request reads as a button, not as a line of text. */}
+              <Button variant={showSnapshot ? "ghost" : "outline"} disabled={running} onClick={() => run(line)}>
                 {line.say}
               </Button>
             </li>

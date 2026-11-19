@@ -177,6 +177,24 @@ test("the switch thumb travels the other way in right-to-left", async ({ page })
   expect(await thumbX()).toBeLessThan(rtlOff)
 })
 
+// The layout audit (2026-11-19) found the Signal meter with no visible name, lying apart from
+// the Output module like a stray scrollbar, and the agent's requests drawn as plain text.
+test("the Studio rack's meter stands named beside its fader, and the agent's requests look pressable", async ({ page }) => {
+  await page.goto("/docs/kits/studio")
+  const output = page.locator(".rack-module").filter({ has: page.getByRole("heading", { name: "Output" }) })
+  const meter = output.getByRole("meter", { name: "Signal" })
+  const bar = (await meter.locator('[data-slot="meter-track"]').boundingBox())!
+  const name = (await output.getByText("Signal", { exact: true }).boundingBox())!
+  const module = (await output.boundingBox())!
+  expect(bar.height).toBeGreaterThan(bar.width * 4)
+  expect(bar.y + bar.height).toBeLessThanOrEqual(name.y)
+  expect(Math.abs(bar.x + bar.width / 2 - (name.x + name.width / 2))).toBeLessThan(6)
+  expect(bar.x + bar.width).toBeLessThanOrEqual(module.x + module.width)
+  const request = page.getByRole("button", { name: "Start the beat" })
+  const edge = await request.evaluate((el) => getComputedStyle(el).borderTopColor)
+  expect(edge).not.toBe("rgba(0, 0, 0, 0)")
+})
+
 // The Studio kit follows the page's skin like every other kit (it was once pinned to its own
 // skin while the page showed Base), and its stage paints no Studio-only surface in other skins
 // (it once left Blueprint, Phosphor and Ink text at about 1.1:1 on the page behind it).

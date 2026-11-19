@@ -230,7 +230,14 @@ function StudioDevice() {
               value={level}
               onValueChange={(v) => setLevel(v as number)}
             />
-            <LevelMeter label="Signal" value={signal} className="rack-meter" />
+            <div className="fader-field">
+              <div className="rack-meter-box">
+                <LevelMeter label="Signal" value={signal} className="rack-meter" />
+              </div>
+              <span className="fader-label" aria-hidden="true">
+                Signal
+              </span>
+            </div>
           </div>
           <div className="rack-jacks">
             <Jack port="level:in" />
