@@ -32,7 +32,9 @@ async function clear(page: Page) {
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto("/docs/kits/rich-text")
-  await expect(editor(page).getByRole("heading", { name: "Release 2.4" })).toBeVisible()
+  // The editor loads with the kit's page; under a full parallel run that takes a while (in
+  // Firefox in Docker on 2026-11-19, five tests failed here and all passed run alone).
+  await expect(editor(page).getByRole("heading", { name: "Release 2.4" })).toBeVisible({ timeout: 15000 })
 })
 
 for (const skin of ["Base", "Blueprint", "Studio", "Phosphor", "Ink"]) {
