@@ -128,7 +128,7 @@ Each of UI SDK's 55 components as its own item, styled by the skin, with UISet's
 | `popover` | A panel beside its trigger. | [UI SDK](https://ui-sdk.dev/docs/components/popover) |
 | `preferences` | User preferences applied as data attributes and saved. | [UI SDK](https://ui-sdk.dev/docs/components/preferences) |
 | `progress` | Progress of a task, ready to use. | [UI SDK](https://ui-sdk.dev/docs/components/progress) |
-| `radio` | Radio groups with their dot. | [UI SDK](https://ui-sdk.dev/docs/components/radio) |
+| `radio` | Radio groups with their dot, and cards that choose an option wherever you press. | [UI SDK](https://ui-sdk.dev/docs/components/radio) |
 | `rating` | A star rating, ready to use. | [UI SDK](https://ui-sdk.dev/docs/components/rating) |
 | `resizable` | Panels you resize by dragging or with the keyboard. | [UI SDK](https://ui-sdk.dev/docs/components/resizable) |
 | `scroll-area` | Styled scrolling, plus ScrollBox with the parts in place. | [UI SDK](https://ui-sdk.dev/docs/components/scroll-area) |

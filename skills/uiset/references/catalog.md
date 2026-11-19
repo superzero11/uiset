@@ -143,7 +143,7 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 - `popover`: A panel beside its trigger.
 - `preferences`: User preferences applied as data attributes and saved.
 - `progress`: Progress of a task, ready to use.
-- `radio`: Radio groups with their dot.
+- `radio`: Radio groups with their dot, and cards that choose an option wherever you press.
 - `rating`: A star rating, ready to use.
 - `resizable`: Panels you resize by dragging or with the keyboard.
 - `scroll-area`: Styled scrolling, plus ScrollBox with the parts in place.

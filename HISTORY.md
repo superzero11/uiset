@@ -1741,3 +1741,24 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   SDK's scroll area; the kits' own scrollers (chat, IDE, data grid) don't get fades yet.
   Checked: Chrome and WebKit tests (each fade by edge, the ring, the opt-out; two mutations
   each fail one), axe in every skin, every skin by eye, the table at 640px.
+- 2026-11-19 — **Radio cards.** UI SDK's "Choice Card" wraps the whole card in the label, which
+  makes the radio's name the card's every word; its "Description" pattern puts each radio in
+  its own Field. `RadioCard` takes both: a Field per card (name: the title; description: the
+  line), and the label's `::after` stretched over the card so a press anywhere chooses it.
+  The card, not the dot, wears the ring. Agents see the group ("Plan") with `setValue`, so
+  they choose by value. Web: UI SDK's `ui-field`, whose label chooses its radio the same way,
+  in the same classes, now on `web/index.html`. Checked: Chrome and WebKit (press on the line
+  and the price, arrow keys, the ring, an agent's `setValue`, web in both; without the
+  stretched label the press test fails), axe in every skin (React and web), every skin by
+  eye, 390px, the library card. No template used radios, so none changed.
+- 2026-11-19 — **Rings for meters and progress.** UI SDK puts the reading in `--meter-value`
+  and `--progress-value`, so a conic gradient cut to a ring by a mask needs no SVG. First drawn
+  on the track: Phosphor, Ink and Studio style the bar's track (a border, a dotted fill,
+  stripes) in the later skin layer, and broke it. Drawn on the root's `::before` instead,
+  which no skin styles; the ring form leaves the track out. The unfilled part uses
+  `--ui-border`, not the bar's `--ui-muted`, which nearly vanished on a light page. An
+  endless turn cut to no length by the reduced-motion reset stopped at a random angle, so the
+  turn is off there and the quarter rests at the top. Checked: Chrome and WebKit (the fill
+  from the value, the name, the turn and its hold; two mutations each fail one), axe in every
+  skin (React and web), every skin by eye. Also: radio cards' text takes the skin's size, as
+  the web demo showed its price larger than React's.

@@ -127,7 +127,7 @@ const components = [
     "User preferences applied as data attributes and saved.",
   ],
   ["progress", "Progress", "Progress of a task, ready to use."],
-  ["radio", "Radio", "Radio groups with their dot."],
+  ["radio", "Radio", "Radio groups with their dot, and cards that choose an option wherever you press.", [], ["field"]],
   ["rating", "Rating", "A star rating, ready to use."],
   ["resizable", "Resizable", "Panels you resize by dragging or with the keyboard."],
   [

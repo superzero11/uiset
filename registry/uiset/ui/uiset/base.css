@@ -169,6 +169,161 @@
   outline-offset: 2px;
 }
 
+/* Radio cards: an option as a card. Its label stretches over the card, so a press anywhere
+   chooses it; the card wears the ring and the checked edge, and the radio keeps its dot. */
+[data-uiset] .uiset-radio-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: calc(var(--ui-spacing) * 3);
+}
+
+[data-uiset] .uiset-radio-card {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: calc(var(--ui-spacing) * 3);
+  padding: calc(var(--ui-spacing) * 4);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 1.5);
+  background: var(--ui-background);
+  font-size: var(--ui-font-size);
+  transition-property: border-color, background-color, box-shadow;
+  transition-duration: var(--uiset-fast);
+
+  & > [data-slot="radio"] {
+    flex: none;
+    margin-block-start: 0.125rem;
+  }
+
+  & [data-slot="field-label"] {
+    font-weight: 500;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      cursor: pointer;
+    }
+  }
+
+  & [data-slot="field-description"] {
+    margin-block-start: calc(var(--ui-spacing) * 0.5);
+  }
+
+  & > [data-slot="radio"]:focus-visible {
+    outline: none;
+  }
+
+  &:hover:not([data-disabled]) {
+    border-color: var(--ui-input);
+  }
+
+  &:has(> [data-slot="radio"][data-checked]) {
+    border-color: var(--ui-primary);
+    box-shadow: inset 0 0 0 1px var(--ui-primary);
+    background: color-mix(in oklab, var(--ui-primary) 5%, var(--ui-background));
+  }
+
+  &:has(> [data-slot="radio"]:focus-visible) {
+    outline: 2px solid var(--ui-ring-border);
+    outline-offset: 2px;
+  }
+
+  &[data-disabled] {
+    opacity: 0.55;
+
+    & [data-slot="field-label"]::after {
+      cursor: not-allowed;
+    }
+  }
+}
+
+[data-uiset] .uiset-radio-card-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+[data-uiset] .uiset-radio-card-aside {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* Rings: a meter or progress drawn as a ring, on the root's ::before (skins style the bar's
+   track, so the ring keeps clear of it). A conic gradient filled up to UI SDK's --meter-value
+   (or --progress-value), cut to a ring by a mask; the value sits in the middle, a label under
+   it. --uiset-ring-size and --uiset-ring-width size it. */
+[data-uiset] :is([data-slot="meter"], [data-slot="progress"])[data-shape="ring"] {
+  --uiset-ring-size: 5rem;
+  --uiset-ring-width: 0.5rem;
+  display: inline-grid;
+  grid-template-columns: auto;
+  justify-items: center;
+  align-content: start;
+  gap: calc(var(--ui-spacing) * 2);
+  width: auto;
+  min-width: 0;
+
+  &::before {
+    content: "";
+    grid-area: 1 / 1;
+    width: var(--uiset-ring-size);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: conic-gradient(var(--ui-primary) var(--uiset-ring-fill), var(--ui-border) 0);
+    mask: radial-gradient(farthest-side, transparent calc(100% - var(--uiset-ring-width) - 0.5px), #000 calc(100% - var(--uiset-ring-width)));
+  }
+
+  & > :is([data-slot="meter-track"], [data-slot="progress-track"]) {
+    display: none;
+  }
+
+  & > :is([data-slot="meter-value"], [data-slot="progress-value"]) {
+    grid-area: 1 / 1;
+    align-self: center;
+    color: var(--ui-foreground);
+    font-size: max(0.75rem, calc(var(--uiset-ring-size) * 0.2));
+    font-weight: 600;
+  }
+
+  & > :is([data-slot="meter-label"], [data-slot="progress-label"]) {
+    grid-area: 2 / 1;
+    text-align: center;
+  }
+}
+
+[data-uiset] [data-slot="meter"][data-shape="ring"] {
+  --uiset-ring-fill: var(--meter-value, 0%);
+}
+
+[data-uiset] [data-slot="progress"][data-shape="ring"] {
+  --uiset-ring-fill: var(--progress-value, 0%);
+
+  &[data-indeterminate] {
+    --uiset-ring-fill: 25%;
+
+    &::before {
+      animation: uiset-ring-turn 1s linear infinite;
+    }
+  }
+}
+
+/* An endless turn cut to no length stops anywhere; still, it rests at the top. */
+@media (prefers-reduced-motion: reduce) {
+  [data-uiset] [data-slot="progress"][data-shape="ring"][data-indeterminate]::before {
+    animation: none;
+  }
+}
+
+@keyframes uiset-ring-turn {
+  to {
+    rotate: 1turn;
+  }
+}
+
 /* A10: in a row of joined controls, the focused one's ring stays above its neighbours. */
 [data-uiset] :is([data-slot="toolbar"], [data-slot="toggle-group"], [data-slot="pagination-list"], [data-slot="segmented-control"]) :focus-visible {
   position: relative;
@@ -432,6 +587,11 @@
 
 /* Windows high contrast drops shadows and fills, so state must survive as borders. */
 @media (forced-colors: active) {
+  [data-uiset] :is([data-slot="meter"], [data-slot="progress"])[data-shape="ring"]::before {
+    forced-color-adjust: none;
+    background: conic-gradient(Highlight var(--uiset-ring-fill), GrayText 0);
+  }
+
   [data-uiset] [data-slot]:focus-visible,
   [data-uiset] [data-slot="slider-thumb"]:has(:focus-visible),
   [data-uiset] [data-slot="tree-item"]:focus-visible > [data-slot="tree-label"] {

@@ -22,6 +22,20 @@ On UI SDK `0.1.0-beta.10`.
   reaches. With keyboard focus, the ring goes around the whole box, outside the fade. React
   and Web Components.
 
+- **Radio cards.** `RadioCard` puts an option on a card that a press anywhere on chooses, with
+  a `description` under its title and an `aside` at its end, like a price. Its radio is named
+  by the title alone and described by the line, so screen readers and agents hear "Pro", not
+  the whole card. The card wears the focus ring and a checked edge in every skin;
+  `className="uiset-radio-cards"` on the `RadioGroup` lays cards side by side where there's
+  room. Web Components: UI SDK's `ui-field` and `ui-radio` in the same classes. The `radio`
+  item now installs `field` with it.
+
+- **Rings for meters and progress.** `MeterRing` and `ProgressRing` draw the reading as a ring
+  filled to its value, with the value in the middle and the label under it, in every skin's
+  colors; `--uiset-ring-size` and `--uiset-ring-width` size it. A progress ring with no
+  value turns a quarter of the ring, held still for reduced motion. Web Components:
+  `data-shape="ring"` on `ui-meter` or `ui-progress`.
+
 ## 0.4.0 (2026-11-19)
 
 On UI SDK `0.1.0-beta.10`. A minor release: what works differently is under **Changed**,

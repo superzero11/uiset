@@ -1,18 +1,25 @@
-import { Label } from "@/registry/uiset/ui/field"
-import { Radio, RadioGroup } from "@/registry/uiset/ui/radio"
+import { Field, FieldLabel, Label } from "@/registry/uiset/ui/field"
+import { Radio, RadioCard, RadioGroup } from "@/registry/uiset/ui/radio"
 
 export default function RadioExample() {
   return (
-    <RadioGroup aria-label="Plan" defaultValue="pro" className="stack">
-      <Label className="row">
-        <Radio value="hobby" /> Hobby
-      </Label>
-      <Label className="row">
-        <Radio value="pro" /> Pro
-      </Label>
-      <Label className="row">
-        <Radio value="team" /> Team
-      </Label>
-    </RadioGroup>
+    <div className="stack radio-demo">
+      <Field>
+        <FieldLabel>Plan</FieldLabel>
+        <RadioGroup defaultValue="pro" className="uiset-radio-cards">
+          <RadioCard value="hobby" label="Hobby" description="For personal projects." aside="Free" />
+          <RadioCard value="pro" label="Pro" description="Per month, for growing teams." aside="$20" />
+          <RadioCard value="team" label="Team" description="Per month, for whole companies." aside="$45" />
+        </RadioGroup>
+      </Field>
+      <RadioGroup aria-label="Billing" defaultValue="monthly" className="row">
+        <Label className="row">
+          <Radio value="monthly" /> Monthly
+        </Label>
+        <Label className="row">
+          <Radio value="yearly" /> Yearly
+        </Label>
+      </RadioGroup>
+    </div>
   )
 }

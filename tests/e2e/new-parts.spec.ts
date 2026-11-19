@@ -57,6 +57,70 @@ test("data-fades=none turns the fades off", async ({ page }) => {
   await expect.poll(() => viewport.evaluate((el) => getComputedStyle(el).maskImage)).toBe("none")
 })
 
+/* ------------------------------------------------------------------ radio cards */
+
+test("a radio card chooses its option wherever it's pressed, named by its title alone", async ({ page }) => {
+  await open(page)
+  const radio = example(page, "Radio")
+  await radio.scrollIntoViewIfNeeded()
+  const team = radio.getByRole("radio", { name: "Team", exact: true })
+  const pro = radio.getByRole("radio", { name: "Pro", exact: true })
+  await expect(team).toHaveAccessibleDescription("Per month, for whole companies.")
+  // A press on the card's line or its price chooses it, not only on the dot. The label covers
+  // the card, so the press lands on it: press where the text is, as a person would.
+  const press = async (text: string) => {
+    const box = (await radio.getByText(text, { exact: true }).boundingBox())!
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
+  }
+  await press("Per month, for whole companies.")
+  await expect(team).toBeChecked()
+  await press("$20")
+  await expect(pro).toBeChecked()
+  // Arrow keys move between cards, and the card wears the ring, not the dot.
+  await pro.focus()
+  await page.keyboard.press("ArrowDown")
+  await expect(team).toBeChecked()
+  await expect(team).toBeFocused()
+  const rings = await team.evaluate((el) => [getComputedStyle(el).outlineStyle, getComputedStyle(el.closest(".uiset-radio-card")!).outlineStyle])
+  expect(rings).toEqual(["none", "solid"])
+})
+
+test("an agent chooses a radio card's option by the group's name", async ({ page }) => {
+  await page.goto("/docs/components/radio")
+  const radio = page.locator(".example[data-ready]")
+  await expect(radio.getByRole("radio", { name: "Pro", exact: true })).toBeChecked()
+  const done = await page.evaluate(() =>
+    (window as unknown as { agent: { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> } }).agent.act({
+      steps: [{ ref: "Plan", action: "setValue", args: ["hobby"] }],
+    }),
+  )
+  expect(done.ok, done.error?.message).toBe(true)
+  await expect(radio.getByRole("radio", { name: "Hobby", exact: true })).toBeChecked()
+})
+
+/* ------------------------------------------------------------------ rings */
+
+test("a ring meter fills to its value, and its label names it", async ({ page }) => {
+  await open(page)
+  const meter = example(page, "Meter").getByRole("meter", { name: "Reading goal" })
+  await meter.scrollIntoViewIfNeeded()
+  await expect(meter).toHaveAttribute("aria-valuenow", "62")
+  const ring = await meter.evaluate((el) => getComputedStyle(el, "::before").backgroundImage)
+  expect(ring).toMatch(/^conic-gradient\(.* 62%, /)
+})
+
+test("a progress ring with no value turns a quarter, and holds it still for reduced motion", async ({ page }) => {
+  await open(page)
+  const preparing = example(page, "Progress").getByRole("progressbar", { name: "Preparing" })
+  await preparing.scrollIntoViewIfNeeded()
+  await expect(preparing).not.toHaveAttribute("aria-valuenow")
+  const still = await preparing.evaluate((el) => [getComputedStyle(el, "::before").animationName, getComputedStyle(el, "::before").backgroundImage])
+  expect(still[0]).toBe("none")
+  expect(still[1]).toContain("25%")
+  await page.emulateMedia({ reducedMotion: "no-preference" })
+  await expect.poll(() => preparing.evaluate((el) => getComputedStyle(el, "::before").animationName)).toBe("uiset-ring-turn")
+})
+
 /* ------------------------------------------------------------------ table */
 
 test("the table's headings and first column stay put while it scrolls", async ({ page }) => {

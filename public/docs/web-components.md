@@ -786,6 +786,46 @@ invite.send = async (values) => (await sendInvite(values)).problems // shown und
   review; `value` is live for `v-model`, and agents fill it by field name or label while a
   person presses the submit. See [Forms](./forms.md#web-components).
 
+### Radio cards
+
+React's `RadioCard` is UI SDK's own elements in UISet's classes: each card is a `ui-field`,
+so its radio is named by the title alone and described by the line under it, and a press
+anywhere on the card chooses it. `web/index.html` has a set.
+
+```html
+<ui-field>
+  <ui-field-label>Plan</ui-field-label>
+  <ui-radio-group class="uiset-radio-cards" default-value="pro">
+    <ui-field class="uiset-radio-card">
+      <ui-radio value="pro"><ui-radio-indicator></ui-radio-indicator></ui-radio>
+      <span class="uiset-radio-card-text">
+        <ui-field-label>Pro</ui-field-label>
+        <ui-field-description>Per month, for growing teams.</ui-field-description>
+      </span>
+      <span class="uiset-radio-card-aside">$20</span>
+    </ui-field>
+  </ui-radio-group>
+</ui-field>
+```
+
+### Rings
+
+`data-shape="ring"` on a `ui-meter` or `ui-progress` draws it as a ring filled to its value,
+with `ui-meter-value` in the middle and `ui-meter-label` under it. A `ui-progress` with no
+value turns a quarter of its ring, held still for reduced motion.
+
+```html
+<ui-meter data-shape="ring" value="62">
+  <ui-meter-value></ui-meter-value>
+  <ui-meter-label>Reading goal</ui-meter-label>
+</ui-meter>
+```
+
+### Scroll areas
+
+A `ui-scroll-area` fades where its content runs on past an edge. `data-fades="none"` on it
+turns that off, and `--uiset-fade` sets how far the fade reaches.
+
 ## Page templates
 
 Every React page template is a web page too, in `web/templates/`, built only from UI SDK's

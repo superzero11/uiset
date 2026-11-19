@@ -258,6 +258,26 @@ function ComponentPage({ page }: { page: DocPage }) {
 
 // Beyond the look: where UISet adds a part or a behavior to a UI SDK component.
 const sdkExtras: Record<string, ReactNode> = {
+  meter: (
+    <li>
+      <code>MeterRing</code>: the meter drawn as a ring filled to its value, with <code>MeterValue</code> in the middle and <code>MeterLabel</code> under it, for a goal or a
+      quota on a dashboard. <code>--uiset-ring-size</code> and <code>--uiset-ring-width</code> size it. Web Components: <code>data-shape=&quot;ring&quot;</code> on{" "}
+      <code>ui-meter</code>.
+    </li>
+  ),
+  progress: (
+    <li>
+      <code>ProgressRing</code>: progress drawn as a ring, with the value in the middle. With no value it turns a quarter of the ring, held still for reduced motion.
+      Web Components: <code>data-shape=&quot;ring&quot;</code> on <code>ui-progress</code>.
+    </li>
+  ),
+  radio: (
+    <li>
+      <code>RadioCard</code>: an option as a card that a press anywhere on chooses, with a <code>description</code> under its title and an <code>aside</code> at its end (a
+      price). Its radio is named by the title alone and described by the line, so screen readers and agents hear &ldquo;Pro&rdquo;, not the whole card. Put cards in a{" "}
+      <code>RadioGroup</code> with <code>className=&quot;uiset-radio-cards&quot;</code> to lay them out side by side where there&rsquo;s room.
+    </li>
+  ),
   "scroll-area": (
     <li>
       Edge fades: where the content runs on past an edge, it fades out there, across and down, and right to left too, so a reader can see there&rsquo;s more.{" "}

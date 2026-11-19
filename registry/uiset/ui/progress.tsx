@@ -21,4 +21,15 @@ function Progress({ children, ...props }: React.ComponentProps<typeof ProgressRo
   )
 }
 
-export { Progress, ProgressIndicator, ProgressLabel, ProgressTrack, ProgressValue }
+// Progress drawn as a ring, filled to its value, with the value in the middle. With no value
+// (unknown), a quarter of it turns, and holds still for reduced motion. Its children are
+// ProgressValue (the default) and ProgressLabel.
+function ProgressRing({ children, ...props }: React.ComponentProps<typeof ProgressRoot>) {
+  return (
+    <ProgressRoot data-shape="ring" {...props}>
+      {children ?? <ProgressValue />}
+    </ProgressRoot>
+  )
+}
+
+export { Progress, ProgressIndicator, ProgressLabel, ProgressRing, ProgressTrack, ProgressValue }

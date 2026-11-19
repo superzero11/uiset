@@ -904,6 +904,7 @@ main > section,
 
 :is(.example, .lib-example) .row {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
@@ -955,6 +956,15 @@ main > section,
 
 .scroll-demo {
   height: 8rem;
+}
+
+.ring-demo {
+  gap: 1.5rem;
+}
+
+.radio-demo {
+  width: 38rem;
+  max-width: 100%;
 }
 
 .command-demo {

@@ -20,6 +20,7 @@
       import "@ui-sdk/web/segmented-control"
       import "@ui-sdk/web/progress"
       import "@ui-sdk/web/field"
+      import "@ui-sdk/web/radio"
       import "@ui-sdk/web/meter"
       import "@ui-sdk/web/toggle"
       import "./src/uiset.ts"
@@ -113,6 +114,41 @@
             <ui-progress value="62" aria-label="Upload">
               <ui-progress-track><ui-progress-indicator></ui-progress-indicator></ui-progress-track>
             </ui-progress>
+            <div class="web-demo-rings">
+              <ui-meter data-shape="ring" value="62">
+                <ui-meter-value></ui-meter-value>
+                <ui-meter-label>Reading goal</ui-meter-label>
+              </ui-meter>
+              <ui-progress data-shape="ring" value="40">
+                <ui-progress-value></ui-progress-value>
+                <ui-progress-label>Import</ui-progress-label>
+              </ui-progress>
+            </div>
+          </article>
+
+          <article>
+            <h2>Radio cards</h2>
+            <ui-field>
+              <ui-field-label>Plan</ui-field-label>
+              <ui-radio-group class="uiset-radio-cards" default-value="pro">
+                <ui-field class="uiset-radio-card">
+                  <ui-radio value="hobby"><ui-radio-indicator></ui-radio-indicator></ui-radio>
+                  <span class="uiset-radio-card-text">
+                    <ui-field-label>Hobby</ui-field-label>
+                    <ui-field-description>For personal projects.</ui-field-description>
+                  </span>
+                  <span class="uiset-radio-card-aside">Free</span>
+                </ui-field>
+                <ui-field class="uiset-radio-card">
+                  <ui-radio value="pro"><ui-radio-indicator></ui-radio-indicator></ui-radio>
+                  <span class="uiset-radio-card-text">
+                    <ui-field-label>Pro</ui-field-label>
+                    <ui-field-description>Per month, for growing teams.</ui-field-description>
+                  </span>
+                  <span class="uiset-radio-card-aside">$20</span>
+                </ui-field>
+              </ui-radio-group>
+            </ui-field>
           </article>
 
           <article>

@@ -909,13 +909,14 @@
       "name": "radio",
       "type": "registry:ui",
       "title": "Radio",
-      "description": "Radio groups with their dot.",
+      "description": "Radio groups with their dot, and cards that choose an option wherever you press.",
       "dependencies": [
         "@ui-sdk/core@0.1.0-beta.10",
         "@ui-sdk/react@0.1.0-beta.10"
       ],
       "registryDependencies": [
-        "superzero11/uiset/uiset"
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/field"
       ],
       "files": [
         {

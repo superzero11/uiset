@@ -532,3 +532,9 @@ body {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+.web-demo-rings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}

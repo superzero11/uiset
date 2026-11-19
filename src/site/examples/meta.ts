@@ -79,7 +79,7 @@ const groups: [string, ExampleMeta[]][] = [
       {
         slug: "radio",
         title: "Radio",
-        parts: "RadioGroup, Radio, RadioIndicator",
+        parts: "RadioGroup, Radio, RadioCard",
         items: ["radio"],
       },
       {

@@ -60,6 +60,15 @@ test("Base without a theme or key color is black and white, and a solid button's
   await expect.poll(async () => (await colors())[0]).toBe("oklch(0.5 0.19 268)")
 })
 
+test("a radio card chooses its option wherever it's pressed, named by its title alone", async ({ page }) => {
+  const cards = page.getByRole("radiogroup", { name: "Plan" })
+  const hobby = cards.getByRole("radio", { name: "Hobby", exact: true })
+  await expect(hobby).toHaveAccessibleDescription("For personal projects.")
+  const box = (await cards.getByText("For personal projects.").boundingBox())!
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
+  await expect(hobby).toBeChecked()
+})
+
 test("the UISet knob turns by keyboard, and its readout follows", async ({ page }) => {
   const knob = page.getByRole("slider", { name: "Cutoff" })
   await knob.focus()
