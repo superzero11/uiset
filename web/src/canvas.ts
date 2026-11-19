@@ -33,6 +33,7 @@ type CanvasChange = { reason: string; type: "move" | "add" | "remove" | "edit" }
 
 type CanvasApi = {
   fitView: () => boolean
+  fitOnOpen: () => boolean
   zoomIn: () => boolean
   zoomOut: () => boolean
   resetZoom: () => boolean
@@ -351,7 +352,7 @@ class CanvasView {
       if (!view || view.right - view.left <= 0 || !(this.el.nodes ?? []).length) return false
       this.fitted = true
       this.resize?.disconnect()
-      this.instance!.api.fitView()
+      this.instance!.api.fitOnOpen()
       return true
     }
     if (tryFit()) return

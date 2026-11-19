@@ -1900,4 +1900,12 @@ request, is vercel-labs/ui#905 (2026-11-19).
   a row. The Web Components page's meter got its name too. An e2e test checks the bar stands
   upright above its name, inside the module, and that the requests have an edge; it fails
   with either fix undone.
+- 2026-11-19 — **Canvases open at a readable zoom** (from the layout audit). `fitView`
+  fitted every node on first show at any zoom: the Canvas kit opened at 66% at 1440 and 25%
+  on a phone, with 11–13px node text drawn at 3–9px. The first view is now `fitOnOpen`: fit
+  if that keeps 80% or more, else 80% from the graph's top-left (centred vertically when it
+  fits). Zoom to fit keeps fitting everything, since asking for it is the person's choice.
+  The gallery's narrow card now opens with Reply past its edge, so the port-drag test zooms
+  to fit first, as a person would. A phone test checks 80% and the first node in view; it
+  fails with the old fit.
 

@@ -95,6 +95,8 @@ test("C starts a wire from the keyboard: arrows choose an input, Enter connects"
 })
 
 test("drag from an output port to an input port to wire them", async ({ page }) => {
+  // The gallery's card opens at a readable zoom, which leaves Reply past its edge.
+  await canvas(page).getByRole("button", { name: "Zoom to fit" }).click()
   await canvas(page).locator('g[data-slot="canvas-unwire"]').last().click()
   await expect(canvas(page).locator('path[data-slot="canvas-wire"]')).toHaveCount(4)
   const from = (await canvas(page).locator('[data-slot="canvas-port"][data-canvas-port="out"]').nth(3).boundingBox())!
@@ -105,6 +107,16 @@ test("drag from an output port to an input port to wire them", async ({ page }) 
   await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 4 })
   await page.mouse.up()
   await expect(canvas(page).locator('path[data-slot="canvas-wire"]')).toHaveCount(5)
+})
+
+// The layout audit (2026-11-19): fitting the workflow into a phone opened it at 25%, with 12px
+// titles drawn at 3px. It opens no smaller than 80%, from where the graph starts.
+test("a canvas opens at a readable zoom on a phone, starting with the first node", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto("/docs/kits/canvas")
+  const readout = canvas(page).locator("[data-canvas-zoom]")
+  await expect(readout).toHaveAttribute("data-zoom", "80%")
+  await expect(node(page, /^User question/)).toBeInViewport()
 })
 
 test("zoom with the buttons and keys, pan by dragging empty space", async ({ page }) => {

@@ -36,6 +36,9 @@ import {
   type Point,
 } from "./geometry"
 
+/** The least zoom a canvas opens at: node titles stay about 10px. */
+const READABLE_ZOOM = 0.8
+
 // A node editor's behavior, composed from UI SDK: createViewport pans and zooms,
 // createMove drags nodes (Alt with arrows by keyboard), createSelection and createLasso
 // choose them, spatialMove sends focus to the nearest node in an arrow's direction, and
@@ -48,6 +51,8 @@ type CanvasNodeKind = { id: string; label: string }
 /** What code outside the canvas can do: a toolbar, an inspector, or your own buttons. */
 type CanvasControllerApi = {
   fitView(): boolean
+  /** Frames every node on first show, but no smaller than a readable zoom. */
+  fitOnOpen(): boolean
   zoomIn(): boolean
   zoomOut(): boolean
   resetZoom(): boolean
@@ -284,6 +289,22 @@ const canvasPrimitive = definePrimitive({
       const all = boundsOf(rects())
       return all ? viewport.fit(all, { padding: 48, maxZoom: 1 }, { reason: "imperative" }) : false
     }
+    /**
+     * The first view: every node if that keeps text readable, else a readable zoom that starts
+     * where the graph does (the minimap and Zoom to fit show the rest). Fitting a workflow into
+     * a phone once opened it at 25%, with 12px titles drawn at 3px.
+     */
+    const fitOnOpen = () => {
+      const all = boundsOf(rects())
+      const el = context.element("root")
+      if (!all || !el) return false
+      fitView()
+      if (get().viewport.zoom >= READABLE_ZOOM) return true
+      const zoom = READABLE_ZOOM
+      const tall = (all.bottom - all.top) * zoom + 96
+      const y = tall <= el.clientHeight ? (el.clientHeight - (all.bottom - all.top) * zoom) / 2 - all.top * zoom : 48 - all.top * zoom
+      return viewport.setViewport({ x: 48 - all.left * zoom, y, zoom }, { reason: "imperative" })
+    }
 
     const nodeElement = (id: string) => context.element("node", id) ?? undefined
     // After nodes go, focus the one nearest where they were; else the canvas itself.
@@ -398,6 +419,7 @@ const canvasPrimitive = definePrimitive({
       },
       open: (id: string) => opts().onOpen?.(id),
       fitView,
+      fitOnOpen,
       zoomIn: () => viewport.zoomBy(zoomStep, undefined, { reason: "imperative" }),
       zoomOut: () => viewport.zoomBy(1 / zoomStep, undefined, { reason: "imperative" }),
       resetZoom: () => viewport.zoomTo(1, undefined, { reason: "imperative" }),

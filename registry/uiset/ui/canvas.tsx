@@ -228,7 +228,7 @@ function Canvas({
     const el = handle.api.viewport.visible()
     if (el.right - el.left <= 0) return
     fitted.current = true
-    handle.api.fitView()
+    handle.api.fitOnOpen()
   })
 
   return usePart(

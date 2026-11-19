@@ -89,6 +89,11 @@ On UI SDK `0.1.0-beta.10`.
 
 ### Fixed
 
+- **A canvas opens at a size you can read.** With `fitView`, it used to fit every node
+  whatever the zoom, so a workflow on a phone opened at 25%, its 12px titles drawn at 3px.
+  It now opens no smaller than 80%, starting where the graph does; Zoom to fit and the
+  minimap still show all of it. React and Web Components (`fit-view`).
+
 - **A week fits beside a sidebar, and a phone starts on one day.** The schedule's days
   share the room down to 5.5rem each (from 7rem), so the Calendar template shows Sunday at
   1440 instead of cutting it off. A narrow event tall enough for three lines gives two to
