@@ -1958,4 +1958,11 @@ vercel-labs/ui#905 (2026-11-19).
   slip in the beta.13 move: a blanket edit had changed the Vue and Svelte guides' "What was
   tested" record from beta.10 to beta.13; that run was on 0.4.0 with beta.10, and the record
   says so again. The owner publishes; then the push.
+- 2026-11-19 — **Two items onto the roadmap** (the owner's go-ahead on the day's
+  suggestions). **Agent parts for AI apps** goes first in Next: another library on UI SDK
+  (Kind UI, started 2026-11-14) ships approvals, checkpoints, a task queue, a context meter,
+  subagent runs and an AI SDK adapter, and the roadmap's first rule is that UISet should
+  already be past anything styled on UI SDK. **Every kit and template page, in every skin**
+  joins Now beside motion: the day's layout audit covered Base light only, and found seven
+  things there. The rest of Next keeps its order, renumbered.
 
