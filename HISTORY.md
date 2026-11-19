@@ -1771,3 +1771,12 @@ have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no dup
   Checked: Chrome and WebKit, React and web (the description, the bands, quiet keys between,
   the cap; without the near announcement the test fails), axe in every skin, every skin by
   eye in each state.
+- 2026-11-19 — **Password rules.** UI SDK's "New Password" example derives a checklist with
+  hidden "Done:" and "To do:" words; `PasswordRules` makes it a part and adds the one thing
+  the example leaves out: saying a rule that changes, once, gathered into one message ("Every
+  rule is met" when the last one goes). Web: rules as `<li data-min-length>` and
+  `<li data-pattern>`, so a page writes its policy in HTML. The auth template kept its
+  strength meter and no rules: its form enforces only a length, and a list of unenforced
+  rules would mislead. Checked: Chrome and WebKit, React and web (marks, words, each
+  announcement; without the change announcement the test fails), axe in every skin, every
+  skin by eye in three states.

@@ -22,6 +22,7 @@
       import "@ui-sdk/web/field"
       import "@ui-sdk/web/radio"
       import "@ui-sdk/web/textarea"
+      import "@ui-sdk/web/password-input"
       import "@ui-sdk/web/meter"
       import "@ui-sdk/web/toggle"
       import "./src/uiset.ts"
@@ -158,6 +159,22 @@
               <ui-field-label>Release notes</ui-field-label>
               <ui-textarea><textarea maxlength="160">Faster search, and a new export to CSV.</textarea></ui-textarea>
               <ui-field-description class="uiset-textarea-count"><uiset-textarea-count max="160"></uiset-textarea-count></ui-field-description>
+            </ui-field>
+          </article>
+
+          <article>
+            <h2>Password rules</h2>
+            <ui-field>
+              <ui-field-label>Create a password</ui-field-label>
+              <ui-password-input>
+                <input autocomplete="new-password" />
+                <ui-password-input-toggle><button aria-label="Show password"></button></ui-password-input-toggle>
+              </ui-password-input>
+              <uiset-password-rules>
+                <li data-min-length="12">At least 12 characters</li>
+                <li data-pattern="\d">A number</li>
+                <li data-pattern="(?=.*[a-z])(?=.*[A-Z])">An uppercase and a lowercase letter</li>
+              </uiset-password-rules>
             </ui-field>
           </article>
 

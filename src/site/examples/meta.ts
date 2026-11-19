@@ -61,7 +61,7 @@ const groups: [string, ExampleMeta[]][] = [
       {
         slug: "password-input",
         title: "Password input",
-        parts: "PasswordInput, PasswordInputControl, PasswordInputToggle",
+        parts: "PasswordInput, PasswordInputControl, PasswordInputToggle, PasswordRules",
         items: ["password-input"],
       },
       {

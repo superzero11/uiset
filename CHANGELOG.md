@@ -43,6 +43,12 @@ On UI SDK `0.1.0-beta.10`.
   `<uiset-textarea-count>`, which finds its field's textarea. The `textarea` item now
   installs `field` with it.
 
+- **Password rules that tick off as you type.** `PasswordRules` lists the rules a new
+  password has to meet, each a `label` and a `test`; a met one takes a check and the success
+  tone, and screen readers hear "Done" or "To do" before it. A rule that changes is announced
+  once, so typing stays quiet otherwise. Web Components: `<uiset-password-rules>`, with rules
+  written as `<li data-min-length>` and `<li data-pattern>`.
+
 ## 0.4.0 (2026-11-19)
 
 On UI SDK `0.1.0-beta.10`. A minor release: what works differently is under **Changed**,

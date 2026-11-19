@@ -85,6 +85,20 @@ test("a textarea's count follows typing, describes it, and near the limit says w
   await expect.poll(spoken).toContain("No characters left")
 })
 
+test("password rules tick off as it's typed, and each change is said once", async ({ page }) => {
+  const rules = page.getByRole("list", { name: "Password rules" })
+  const rule = (name: string) => rules.getByRole("listitem").filter({ hasText: name })
+  const password = page.locator("ui-password-input input")
+  const spoken = () => page.evaluate(() => Array.from(document.querySelectorAll("[aria-live]"), (el) => el.textContent ?? "").join(" | "))
+  await expect(rule("A number")).toHaveText("To do: A number")
+  await password.fill("hello1")
+  await expect(rule("A number")).toHaveAttribute("data-met", "")
+  await expect(rule("A number")).toHaveText("Done: A number")
+  await expect.poll(spoken).toContain("Done: A number")
+  await password.fill("Hello1world!")
+  await expect.poll(spoken).toContain("Every rule is met")
+})
+
 test("the UISet knob turns by keyboard, and its readout follows", async ({ page }) => {
   const knob = page.getByRole("slider", { name: "Cutoff" })
   await knob.focus()

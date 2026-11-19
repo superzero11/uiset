@@ -265,6 +265,13 @@ const sdkExtras: Record<string, ReactNode> = {
       <code>ui-meter</code>.
     </li>
   ),
+  "password-input": (
+    <li>
+      <code>PasswordRules</code>: the rules a new password has to meet, ticking off as it&rsquo;s typed. Each rule is a <code>label</code> and a <code>test</code>; a met
+      one takes a check and the success tone, and screen readers hear &ldquo;Done&rdquo; or &ldquo;To do&rdquo; before it. When one changes it&rsquo;s announced once,
+      so typing stays quiet otherwise. The rules are yours: UI SDK imposes no password policy. Web Components: <code>&lt;uiset-password-rules&gt;</code>.
+    </li>
+  ),
   progress: (
     <li>
       <code>ProgressRing</code>: progress drawn as a ring, with the value in the middle. With no value it turns a quarter of the ring, held still for reduced motion.

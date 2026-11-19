@@ -1,7 +1,7 @@
 // Small parts for Web Components that match their React twins: <uiset-search-field> (an icon,
 // a clear button, and a key that focuses it from anywhere), <uiset-copy-button> (copies and
-// says so), <uiset-stepper> (the steps of a flow, as buttons) and <uiset-textarea-count> (a
-// textarea's count of its limit). They use the same classes as React, so the same styles dress
+// says so), <uiset-stepper> (the steps of a flow, as buttons), <uiset-textarea-count> (a
+// textarea's count of its limit) and <uiset-password-rules> (rules that tick off). They use the same classes as React, so the same styles dress
 // both.
 import { announce, ariaKeyshortcuts, formatShortcut } from "@ui-sdk/core"
 import { registerShortcut } from "@ui-sdk/core/shortcuts"
@@ -300,14 +300,85 @@ class UISetTextareaCount extends ElementBase {
   }
 }
 
+type UISetPasswordRulesMessages = { met: string; unmet: string; allMet: string }
+
+const SVG = "http://www.w3.org/2000/svg"
+/** React's PasswordRules marks: a check for a met rule, a dot for one to do. */
+const ruleMark = (met: boolean) => {
+  const svg = document.createElementNS(SVG, "svg")
+  svg.setAttribute("viewBox", "0 0 16 16")
+  svg.setAttribute("aria-hidden", "true")
+  const mark = document.createElementNS(SVG, met ? "path" : "circle")
+  if (met) mark.setAttribute("d", "M3.5 8.5 6.5 11.5 12.5 4.5")
+  else for (const [name, value] of [["cx", "8"], ["cy", "8"], ["r", "2.5"]] as const) mark.setAttribute(name, value)
+  svg.append(mark)
+  return svg
+}
+
+/**
+ * <uiset-password-rules label="Password rules"> lists the rules a new password has to meet, as
+ * `<li>` children with `data-min-length="12"`, `data-pattern="\d"` (a regular expression) or
+ * both. It reads its field's password input as people type, marks each rule `data-met`, says
+ * "Done" or "To do" to screen readers, and announces a rule that changes, once.
+ * `messages` translates its words.
+ */
+class UISetPasswordRules extends ElementBase {
+  messages: UISetPasswordRulesMessages = { met: "Done", unmet: "To do", allMet: "Every rule is met" }
+  #input: HTMLInputElement | null = null
+  #key = ""
+  #onInput = () => this.draw(true)
+
+  connectedCallback() {
+    upgradeProperties(this, ["messages"])
+    this.classList.add("uiset-password-rules")
+    this.setAttribute("role", "list")
+    this.setAttribute("aria-label", this.getAttribute("label") ?? "Password rules")
+    const field = this.closest("ui-field")
+    this.#input = field?.querySelector("ui-password-input input") ?? field?.querySelector('input[type="password"]') ?? null
+    this.#input?.addEventListener("input", this.#onInput)
+    this.draw(false)
+  }
+
+  disconnectedCallback() {
+    this.#input?.removeEventListener("input", this.#onInput)
+  }
+
+  private draw(speak: boolean) {
+    const value = this.#input?.value ?? ""
+    const rules = Array.from(this.querySelectorAll<HTMLLIElement>(":scope > li"))
+    const met = rules.map((li) => {
+      li.dataset.rule ??= li.textContent?.trim() ?? ""
+      const pattern = li.dataset.pattern
+      return value.length >= Number(li.dataset.minLength ?? 0) && (!pattern || new RegExp(pattern).test(value))
+    })
+    rules.forEach((li, i) => {
+      li.setAttribute("role", "listitem")
+      attr(li, "data-met", met[i] ? "" : null)
+      li.replaceChildren(ruleMark(met[i]!), h("span", { class: "uiset-password-rules-state" }, `${met[i] ? this.messages.met : this.messages.unmet}: `), li.dataset.rule ?? "")
+    })
+    const key = met.map(Number).join("")
+    const before = this.#key
+    this.#key = key
+    if (!speak || before === key) return
+    if (!key.includes("0")) return announce(this.messages.allMet)
+    announce(
+      rules
+        .filter((_, i) => before[i] !== key[i])
+        .map((li) => `${key[rules.indexOf(li)] === "1" ? this.messages.met : this.messages.unmet}: ${li.dataset.rule}`)
+        .join(". "),
+    )
+  }
+}
+
 function defineShellParts() {
   defineElement("uiset-search-field", UISetSearchField)
   defineElement("uiset-copy-button", UISetCopyButton)
   defineElement("uiset-stepper", UISetStepper)
   defineElement("uiset-textarea-count", UISetTextareaCount)
+  defineElement("uiset-password-rules", UISetPasswordRules)
 }
 
 export { defineShellParts }
-export type { Step as StepperStep, UISetTextareaCountMessages }
-export { UISetSearchField, UISetCopyButton, UISetStepper, UISetTextareaCount }
+export type { Step as StepperStep, UISetPasswordRulesMessages, UISetTextareaCountMessages }
+export { UISetSearchField, UISetCopyButton, UISetStepper, UISetTextareaCount, UISetPasswordRules }
 export type { UISetSearchFieldEvents, UISetStepperEvents }

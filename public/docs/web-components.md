@@ -825,6 +825,27 @@ many are left, once at `warn-at` (20) and once at none. With no `max` it takes t
 </ui-field>
 ```
 
+### Password rules
+
+`<uiset-password-rules>` lists the rules a new password has to meet as `<li>` children, each
+with `data-min-length`, `data-pattern` (a regular expression) or both. It reads its field's
+password input as people type, ticks off each rule, says "Done" or "To do" to screen readers,
+and announces a rule that changes, once. `label` names the list ("Password rules").
+
+```html
+<ui-field>
+  <ui-field-label>Create a password</ui-field-label>
+  <ui-password-input>
+    <input autocomplete="new-password" />
+    <ui-password-input-toggle><button aria-label="Show password"></button></ui-password-input-toggle>
+  </ui-password-input>
+  <uiset-password-rules>
+    <li data-min-length="12">At least 12 characters</li>
+    <li data-pattern="\d">A number</li>
+  </uiset-password-rules>
+</ui-field>
+```
+
 ### Rings
 
 `data-shape="ring"` on a `ui-meter` or `ui-progress` draws it as a ring filled to its value,

@@ -145,6 +145,28 @@ test("a textarea's count describes it, and near the limit says what's left, once
   await expect.poll(spoken).toContain("No characters left")
 })
 
+/* ------------------------------------------------------------------ password rules */
+
+test("password rules tick off as it's typed, and each change is said once", async ({ page }) => {
+  await open(page)
+  const area = example(page, "Password input")
+  await area.scrollIntoViewIfNeeded()
+  const password = area.locator("input").first()
+  const rules = area.getByRole("list", { name: "Password rules" })
+  const rule = (name: string) => rules.getByRole("listitem").filter({ hasText: name })
+  const spoken = () => page.evaluate(() => Array.from(document.querySelectorAll("[aria-live]"), (el) => el.textContent ?? "").join(" | "))
+  await expect(rule("A number")).toHaveText("To do: A number")
+  await password.fill("hello1")
+  await expect(rule("A number")).toHaveText("Done: A number")
+  await expect(rule("A number")).toHaveAttribute("data-met", "")
+  await expect.poll(spoken).toContain("Done: A number")
+  await password.fill("Hello1world!")
+  await expect.poll(spoken).toContain("Every rule is met")
+  await password.fill("hello")
+  await expect.poll(spoken).toContain("To do: A number")
+  await expect(rule("At least 12 characters")).not.toHaveAttribute("data-met")
+})
+
 /* ------------------------------------------------------------------ table */
 
 test("the table's headings and first column stay put while it scrolls", async ({ page }) => {
