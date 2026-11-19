@@ -34,10 +34,10 @@ const whatsNew = [
     what: "On every component, kit and template page, see what an agent reads from the example as you use it, and run its actions from there.",
   },
   {
-    date: "2026-11-18",
-    title: "On UI SDK beta.10",
+    date: "2026-11-19",
+    title: "On UI SDK beta.13",
     href: "/docs/installation",
-    what: "Every item pins UI SDK 0.1.0-beta.10: a date picker opens on its selected date, and focus moves on when a dialog’s action removes what opened it.",
+    what: "Every item pins UI SDK 0.1.0-beta.13: a menu keeps focus on the item you point at as it opens, a carousel behind a dialog goes inert, and agents name Web Components’ tabs and scroll areas as they do in React.",
   },
 ]
 

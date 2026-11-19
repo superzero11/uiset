@@ -10,7 +10,7 @@ again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 
 ## 0.5.0 (unreleased)
 
-On UI SDK `0.1.0-beta.10`.
+On UI SDK `0.1.0-beta.13`.
 
 ### Added
 
@@ -113,6 +113,15 @@ On UI SDK `0.1.0-beta.10`.
   Web Components.
 
 ### Changed
+
+- **UI SDK 0.1.0-beta.13** (from beta.10). For people: a menu keeps focus on the item the
+  pointer reaches right after opening it, a carousel behind a modal dialog or drawer is
+  inert, and a drawer with long content opens faster. For agents: Web Components' tabs and
+  scroll areas are named by their list and viewport, as in React, so UISet's web elements
+  no longer repeat those names on the root (if you read `aria-label` off a `<ui-tabs>` or
+  `<ui-scroll-area>` that UISet built, read it from the list or viewport). Pagination no
+  longer warns in development. Install `@ui-sdk/core` and `@ui-sdk/web` (or your
+  framework's package) at `0.1.0-beta.13` beside this release.
 
 - **The kits and templates scroll in UI SDK's scroll areas**, with its scrollbars and the
   fades above: the chat thread, its code, tool input and output and tables; the terminal;

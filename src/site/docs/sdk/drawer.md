@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.10, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.13, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -284,6 +284,7 @@ Runs in React, Vue and web components.
 - Side="start" comes from the right in a right-to-left layout.
 - Side="end" comes from the left in a right-to-left layout.
 - A drag toward the start edge closes it in a right-to-left layout.
+- Side="top" stays at the top in a right-to-left layout.
 
 Runs in React, Vue and web components.
 

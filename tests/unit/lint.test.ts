@@ -3,6 +3,9 @@ import { lint, type FileRule, type RepoContext, type RepoRule } from "../../scri
 import { exampleFrames, noDeferredFocus, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "../../scripts/lint/rules/code.ts"
 import { rules } from "../../scripts/lint/rules/index.ts"
 import { facts } from "../../src/site/facts.ts"
+import pkg from "../../package.json"
+
+const pinned = pkg.dependencies["@ui-sdk/react"]
 import { currentUiSdk, installVersions, statedCounts } from "../../scripts/lint/rules/facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "../../scripts/lint/rules/plan.ts"
 
@@ -63,11 +66,12 @@ describe("code rules", () => {
     `| Components | 55, plus ${facts.appParts - 1} app parts |`,
     `| Components | 55, plus ${facts.appParts} app parts | ${facts.skins} skins | 100 components on one page |`,
   )
+  // The good sample follows package.json's pin, so moving the pin doesn't break this test (it did at beta.13).
   fileRule(
     installVersions,
     "docs/vue.md",
     "pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.5 @ui-sdk/core@0.1.0-beta.5",
-    "pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.10 @ui-sdk/core@0.1.0-beta.10\n`@ui-sdk/vue` 0.1.0-beta.5, on Node 24.21 (what was tested then)",
+    `pnpm add @uiset/web @ui-sdk/web@${pinned} @ui-sdk/core@${pinned}\n\`@ui-sdk/vue\` 0.1.0-beta.5, on Node 24.21 (what was tested then)`,
   )
   test("content/current-ui-sdk catches a stale UI SDK version on the site and lets the pinned one through", () => {
     const pkg = `{ "dependencies": { "@ui-sdk/react": "0.1.0-beta.10" } }`

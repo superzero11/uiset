@@ -7,7 +7,7 @@ stylesheet, and UISet's own primitives register as `<uiset-*>` elements. [Vue](.
 [Svelte](./svelte.md) have guides of their own, each tested in a real app.
 
 ```bash
-npm install @uiset/web @ui-sdk/web@0.1.0-beta.10 @ui-sdk/core@0.1.0-beta.10
+npm install @uiset/web @ui-sdk/web@0.1.0-beta.13 @ui-sdk/core@0.1.0-beta.13
 ```
 
 The package is one module (`@uiset/web`), one stylesheet (`@uiset/web/uiset.css`) and

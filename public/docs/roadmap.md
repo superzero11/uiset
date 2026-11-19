@@ -68,17 +68,16 @@ generative UI adapters.
 ## Following UI SDK
 
 UI SDK is in public beta. UISet pins its exact version and moves with each release once the
-tests for what the release changes pass. UISet is on 0.1.0-beta.10. Problems we find in UI SDK
+tests for what the release changes pass. UISet is on 0.1.0-beta.13. Problems we find in UI SDK
 go upstream with a test that shows them. Open now:
-[#780](https://github.com/vercel-labs/ui/issues/780) (a wheel in a drawer in WebKit),
-[#887](https://github.com/vercel-labs/ui/issues/887) (web scroll areas named from their root),
-[#888](https://github.com/vercel-labs/ui/issues/888) (`createStickToBottom` with its rows in
-a wrapper) and [#905](https://github.com/vercel-labs/ui/issues/905) (a tree reorder that knows
-which items take children). Fixed for
-the beta after beta.10: [#848](https://github.com/vercel-labs/ui/issues/848) (a `run` action's
-argument read as an item), [#856](https://github.com/vercel-labs/ui/issues/856) (Pagination's
-dev check) and [#857](https://github.com/vercel-labs/ui/issues/857) (web tabs named by their
-list).
+[#780](https://github.com/vercel-labs/ui/issues/780) (a wheel in a drawer in WebKit) and
+[#905](https://github.com/vercel-labs/ui/issues/905) (a tree reorder that knows which items
+take children). Fixed in beta.12 and beta.13, and UISet's workarounds gone:
+[#848](https://github.com/vercel-labs/ui/issues/848), [#856](https://github.com/vercel-labs/ui/issues/856)
+(Pagination's dev check), [#857](https://github.com/vercel-labs/ui/issues/857) and
+[#887](https://github.com/vercel-labs/ui/issues/887) (web tabs and scroll areas named as in
+React) and [#888](https://github.com/vercel-labs/ui/issues/888) (`createStickToBottom` with
+its rows in a wrapper).
 
 ## Waiting on others
 

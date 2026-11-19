@@ -89,8 +89,6 @@ class UISetTable extends ElementBase {
     // Anything put straight into the element (innerHTML, `append`) joins the table.
     for (const node of [...this.childNodes]) if (node !== frame) content.appendChild(node)
     attr(view, "aria-label", this.getAttribute("label") ?? "Table")
-    // On the root too: the web agent bridge names a scroll area from it, not its viewport.
-    attr(frame, "aria-label", this.getAttribute("label") ?? "Table")
     const stack = isOn(this, "stack")
     attr(frame, "data-stack", stack)
     attr(frame, "data-sticky-header", isOn(this, "sticky-header"))
@@ -271,8 +269,6 @@ class CodeLines {
   draw(code: string, label: string, options: LineOptions) {
     // A group, not a region: a page of code blocks shouldn't be a page of landmarks.
     attr(this.#view, "aria-label", label)
-    // On the root too: the web agent bridge names a scroll area from it, not its viewport.
-    attr(this.el, "aria-label", label)
     attr(this.el, "data-line-numbers", options.lineNumbers)
     attr(this.el, "data-wrap", options.wrap)
     this.el.style.setProperty("--code-block-max-height", options.maxHeight)
@@ -428,8 +424,6 @@ class UISetCodeTabs extends Evented<UISetCodeTabsEvents>() {
   private draw() {
     const { tabs, head, list, copy, panels } = this.#dom!
     attr(list, "aria-label", this.getAttribute("label") ?? "Versions")
-    // On the root too: the web agent bridge names tabs from it, not their list.
-    attr(tabs, "aria-label", this.getAttribute("label") ?? "Versions")
     const keep = new Set(this.#items.map((item) => item.value))
     for (const [value, view] of panels) {
       if (keep.has(value)) continue

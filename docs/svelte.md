@@ -15,12 +15,12 @@ This page describes `@uiset/web` 0.3.0 or later.
 npm install @uiset/web @ui-sdk/web
 ```
 
-With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.10`, the exact
+With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.13`, the exact
 version UISet pins. pnpm takes UI SDK's `latest` tag, the same beta today, which moves on with
 UI SDK's next one, so name the versions:
 
 ```bash
-pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.10 @ui-sdk/core@0.1.0-beta.10
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.13 @ui-sdk/core@0.1.0-beta.13
 ```
 
 `shiki` is optional: with it, code in chats is colored; without it the app still builds and
@@ -458,7 +458,7 @@ stylesheet: they render the same parts with the same `data-slot` and state attri
 `uiset.css` styles those attributes. Install the version UISet pins:
 
 ```bash
-npm install @ui-sdk/svelte@0.1.0-beta.10
+npm install @ui-sdk/svelte@0.1.0-beta.13
 ```
 
 ```svelte
@@ -627,7 +627,7 @@ What each kit offers agents, approvals and the Agent Console are in
 ## What was tested
 
 On 2026-11-19, the first screen above in a new app, with `@uiset/web` 0.4.0 and UI SDK
-0.1.0-beta.10 from npm (`npm install @uiset/web @ui-sdk/web`), Svelte 5.58.0, Vite 8.3.8 and
+0.1.0-beta.13 from npm (`npm install @uiset/web @ui-sdk/web`), Svelte 5.58.0, Vite 8.3.8 and
 `svelte-check` 4.7.8. It passes `svelte-check` with no errors or warnings, builds, and in
 Chrome its elements upgrade, take the base skin and update Svelte's state. The run through
 every code block on this page, next, was on beta.5.

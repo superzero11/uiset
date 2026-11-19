@@ -30,9 +30,10 @@ page text, so steps that must land use a ref), #10 (#613: the card lands where i
 showed, and Escape puts it back) and #20 (#621: only a script presses that soon). #12 and #13
 (#615, #616) are confirmed and kept open as feature requests; for #12 shadcn suggests
 `viewport.reveal(viewport.rectOf(port))` after `connect.keydown`. #6/#8 (#624) and #25 (#780)
-have no answer yet. #28 and #29 are filed as vercel-labs/ui#856 and #857 (no duplicates).
-#30 and #31 are filed as vercel-labs/ui#887 and #888 (2026-11-19, no duplicates). #32, a feature
-request, is vercel-labs/ui#905 (2026-11-19).
+have no answer yet. #28 and #29 (vercel-labs/ui#856, #857) shipped fixed in beta.12, #30
+(#887) in beta.12 and #31 (#888) in beta.13, both filed and fixed on 2026-11-19; UISet moved
+to beta.13 that day and dropped its workarounds. #32, a feature request, is
+vercel-labs/ui#905 (2026-11-19).
 
 1. **Image cropper nests sliders.** The selection is `role="slider"` with handle sliders
    inside it; slider children are presentational, so screen readers may not reach the
@@ -136,22 +137,25 @@ request, is vercel-labs/ui#905 (2026-11-19).
     is a link, which takes focus, so its slot needs focus`. A console warning in a
     development build; with `__UI_SDK_STRICT__` it throws on import. UISet's unit setup loads
     Pagination before turning strict mode on. Filed as vercel-labs/ui#856 (2026-11-18): the
-    `link` slot lists `roles: ["link"]` without `focus`; beta.8 on.
+    `link` slot lists `roles: ["link"]` without `focus`; beta.8 on. Fixed in beta.12; the unit
+    setup's early import is gone.
 29. **The web agent bridge names tabs from their root, not their list.** A `<ui-tabs>` whose
     `<ui-tabs-list>` has `aria-label` is "tabs c1 has no name" to agents; React names it
     from the list. UISet's web code and pages put the list's name on the root too (the IDE's
     open files, code tabs, the settings template, the rich text demo's output, the gallery).
     Without it five web pages drop below 100 on `agent-check`. Filed as vercel-labs/ui#857
-    (2026-11-18); the web Tabs docs name the list, as React's do.
+    (2026-11-18); the web Tabs docs name the list, as React's do. Fixed in beta.12; the names on
+    the roots are gone.
 30. **The web agent bridge names a scroll area from its root, not its viewport.** As in #29: a
     `<ui-scroll-area>` whose viewport has `aria-label`, as the docs show, has no name for
     agents; React names it from the viewport. UISet's web `scrollArea()` puts the viewport's
-    name on the root too. Filed as vercel-labs/ui#887 (2026-11-19), from a jsdom repro.
+    name on the root too. Filed as vercel-labs/ui#887 (2026-11-19), from a jsdom repro. Already
+    fixed in beta.12 by #29's change; the names on the roots are gone.
 31. **`createStickToBottom` loses the reader's place when its rows sit in a wrapper.** The fix
     for vercel-labs/ui#620 anchors on the scroller's own children, so with the rows inside a
     Scroll Area's content, removing old rows moves the view by their height (row 100 to row
     150 in Chrome and WebKit). UISet's chat and terminal use Scroll Area's `stickToEnd`,
-    which keeps the place. Filed as vercel-labs/ui#888 (2026-11-19).
+    which keeps the place. Filed as vercel-labs/ui#888 (2026-11-19); fixed in beta.13.
 32. **`createTreeReorder` can't be told which items take children** (a feature request).
     Right while a row is up, or a drag sideways, nests it under the row above even when
     that's a leaf, and the default announcement reads the leaf as its parent. UISet's
@@ -1920,4 +1924,14 @@ request, is vercel-labs/ui#905 (2026-11-19).
   axis size (the others 4.5–5.6px). One shared `LABEL_CHAR_WIDTH` of 7 now serves the bar,
   line, scatter and heatmap plots. A unit test checks the room for that label; it fails at
   6.6.
+- 2026-11-19 — **UI SDK 0.1.0-beta.13** (the owner asked: two betas came out today and fixed
+  four of our issues). Pins moved in package.json and web/package.json (peers too, so
+  `@uiset/web` 0.5.0 must publish with the push). Dropped: the unit setup's early Pagination
+  import (#856), the web roots' repeated names for tabs (#857: the IDE's open files, code
+  block versions, the gallery, settings and rich text pages) and for scroll areas (#887:
+  `scrollArea()`, `nameScrollArea`, the data table and code block, five pages). #888 needed
+  nothing: UISet's chat and terminal used Scroll Area's `stickToEnd` already. The two lint
+  samples pinned to a version or a count now read package.json and the site facts, after
+  both went stale today. Unit tests all pass in strict mode; the web agent and affected
+  specs ran; the full suite waits for the end-of-day check.
 

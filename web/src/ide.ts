@@ -578,8 +578,6 @@ class UISetEditorTabs extends Evented<UISetEditorTabsEvents>() {
     dom.empty.style.display = files.length ? "none" : ""
     dom.tabs.style.display = files.length ? "" : "none"
     attr(dom.list, "aria-label", this.getAttribute("label") ?? "Open files")
-    // On the root too: the web agent bridge names tabs from it, not their list.
-    attr(dom.tabs, "aria-label", this.getAttribute("label") ?? "Open files")
     const open = new Set(files.map((f) => f.path))
     for (const [path, view] of this.#views) if (!open.has(path)) (view.wrap.remove(), view.panel.remove(), this.#views.delete(path))
     const wraps: HTMLElement[] = []
