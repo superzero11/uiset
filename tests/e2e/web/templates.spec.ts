@@ -345,6 +345,14 @@ const issueBoard = (page: Page) => frame(page).getByRole("group", { name: "Issue
 const issueColumn = (page: Page, name: string) => issueBoard(page).getByRole("listbox", { name })
 const undoButton = (page: Page) => page.getByRole("region", { name: "Notifications" }).getByRole("button", { name: "Undo", exact: true })
 
+test("project board: at 1440 all four columns fit beside the sidebars", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await open(page, "project-board")
+  const done = (await issueBoard(page).getByRole("listbox", { name: "Done" }).boundingBox())!
+  const board = (await issueBoard(page).boundingBox())!
+  expect(done.x + done.width).toBeLessThanOrEqual(board.x + board.width + 1)
+})
+
 test("project board: a card moves by keyboard, the progress follows, and Undo puts it back", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "project-board")

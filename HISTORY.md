@@ -1908,4 +1908,10 @@ request, is vercel-labs/ui#905 (2026-11-19).
   The gallery's narrow card now opens with Reply past its edge, so the port-drag test zooms
   to fit first, as a person would. A phone test checks 80% and the first node in view; it
   fails with the old fit.
+- 2026-11-19 — **The Project board fits at 1440** (from the layout audit, the last of its
+  seven). Four 13rem columns needed 880px where the board had 812, so Done was cut off with
+  nothing to say it scrolled. They now go down to 11.5rem each; a narrower page still
+  scrolls the board, with the scroll area's edge fade. In the narrower columns "Add a card
+  to To do" broke before "do", so the button's label balances its lines. An e2e test (React
+  and web) checks Done ends inside the board at 1440; it fails at 13rem.
 

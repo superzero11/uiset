@@ -1081,9 +1081,11 @@
     min-width: 0;
   }
 
-  /* Four columns share a wide page instead of scrolling it; narrower ones scroll the board. */
+  /* Four columns share a wide page instead of scrolling it, down to 11.5rem each so they fit
+     beside the site's and the template's sidebars at 1440 (at 13rem, Done was cut off);
+     narrower pages scroll the board. */
   .project .board-lanes {
-    grid-auto-columns: minmax(13rem, 1fr);
+    grid-auto-columns: minmax(11.5rem, 1fr);
   }
 
   .project-overdue {

@@ -212,6 +212,8 @@
     min-block-size: calc(var(--ui-spacing) * 8);
     padding-block: 0.375rem;
     white-space: normal;
+    /* In a narrow column, "Add a card to To do" breaks evenly, not before the last word. */
+    text-wrap: balance;
     text-align: start;
     color: var(--ui-muted-foreground);
   }

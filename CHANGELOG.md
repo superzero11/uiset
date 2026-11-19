@@ -89,6 +89,11 @@ On UI SDK `0.1.0-beta.10`.
 
 ### Fixed
 
+- **The Project board template's four columns fit at 1440.** They share the room down to
+  11.5rem each (from 13rem), so Done is no longer cut off beside the sidebars; narrower
+  pages still scroll the board. A column's "Add a card to …" breaks evenly in a narrow
+  column. React and Web Components.
+
 - **A canvas opens at a size you can read.** With `fitView`, it used to fit every node
   whatever the zoom, so a workflow on a phone opened at 25%, its 12px titles drawn at 3px.
   It now opens no smaller than 80%, starting where the graph does; Zoom to fit and the
