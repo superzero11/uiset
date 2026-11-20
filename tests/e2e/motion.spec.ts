@@ -128,11 +128,11 @@ const timing = (page: Page) =>
     return [style.transitionDuration.split(", ")[0], style.transitionDelay.split(", ")[0]]
   })
 
-// Base eases, Blueprint keeps an even pace, Studio's lamp warms fast and cools slowly,
-// Phosphor's inverse video and Ink change at once.
+// Base eases, Studio's lamp warms fast and cools slowly, Phosphor's inverse video and Ink
+// change at once. Blueprint's box fills at once so its check is seen being drawn (below).
 const toggles: Record<string, { on: string; off: string }> = {
   base: { on: "0.15s", off: "0.15s" },
-  blueprint: { on: "0.16s", off: "0.16s" },
+  blueprint: { on: "0s", off: "0s" },
   studio: { on: "0.06s", off: "0.3s" },
   phosphor: { on: "0s", off: "0s" },
   ink: { on: "0s", off: "0s" },
@@ -161,12 +161,16 @@ test("under reduced motion, a checkbox turns on at once", async ({ page }) => {
   expect((await timing(page))[0]).toBe("0s")
 })
 
-test("Blueprint inks a check in from the start of the line", async ({ page }) => {
+// The owner saw Blueprint's check fade like Base's (2026-11-20): its box's fill faded in with
+// it and hid the stroke. The box now fills at once and the check is drawn on it.
+test("Blueprint inks a check in from the start of the line, on a box already filled", async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("uiset-site-skin", "blueprint"))
   await page.goto("/docs/components/checkbox")
   const box = page.locator(".example [data-slot=checkbox]").first()
   if ((await box.getAttribute("data-checked")) !== null) await box.click()
   await expect(box).not.toHaveAttribute("data-checked")
+  // Until the check has been taken back, ticking again reverses from where it is.
+  await expect(box.locator("[data-slot=checkbox-indicator]")).toHaveCount(0)
   const check = { path: "/docs/components/checkbox", trigger: ".example [data-slot=checkbox]", part: "[data-slot=checkbox-indicator]" }
   const ran = await page.evaluate(async ({ trigger, part }) => {
     ;(document.querySelector(trigger) as HTMLElement).click()
@@ -175,7 +179,7 @@ test("Blueprint inks a check in from the start of the line", async ({ page }) =>
       await new Promise((resolve) => requestAnimationFrame(resolve))
       for (const a of document.getAnimations()) {
         const effect = a.effect as KeyframeEffect | null
-        if (a instanceof CSSTransition && effect?.target?.matches(part)) seen[a.transitionProperty] = String(effect.getKeyframes()[0]?.clipPath ?? "")
+        if (a instanceof CSSTransition && effect?.target?.matches(part)) seen[a.transitionProperty] ??= String(effect.getKeyframes()[0]?.clipPath ?? "")
       }
     }
     return seen

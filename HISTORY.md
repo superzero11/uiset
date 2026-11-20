@@ -2104,4 +2104,11 @@ vercel-labs/ui#905 (2026-11-19).
   The item being dragged is left alone, and so is a drag's copy. The data grid's columns
   aren't included: each column is cells in every row. With motion done, the next planned
   item, agent parts for AI apps, is Now on the roadmap.
+- 2026-11-20 — The owner found Blueprint's check looked the same as Base's. Slowed down, it
+  was being drawn left to right, but the box's light fill faded in with it, so the dark
+  stroke hardly showed until the end and the whole thing read as a fade. Blueprint's box
+  now fills at once and the check is drawn on it, over 200ms instead of 160. The tests
+  check the box changes at once in Blueprint and the check is clipped from the start of the
+  line. No lint rule fits a perceptual miss like this; filmstrips are now taken slowed down
+  and zoomed (research/motion/check-slow.mjs) as well as at full speed.
 

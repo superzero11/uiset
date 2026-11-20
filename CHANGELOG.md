@@ -26,9 +26,10 @@ On UI SDK `0.1.0-beta.13`.
   `--uiset-motion-speed` scales every duration. See Theming, Motion. React and Web
   Components.
 - **Each skin turns things on and off its own way.** A switch, checkbox, radio or pressed
-  toggle eases in Base (its check grows in), keeps an even pace in Blueprint (its check is
-  inked in from the start of the line), lights like a lamp in Studio (on in 60 ms, off in
-  300), and changes at once in Phosphor and Ink. A field's error appears on the same timing.
+  toggle eases in Base (its check grows in), is drawn in Blueprint (the box fills at once
+  and its check is inked in from the start of the line, 200 ms), lights like a lamp in
+  Studio (on in 60 ms, off in 300), and changes at once in Phosphor and Ink. A field's error
+  appears on the same timing.
   An alert dialog pressed outside, which it never closes on, nudges in the skin's way, so
   the press visibly did something. Skins set `--uiset-toggle-*`, `--uiset-check-scale` and
   `--uiset-nudge-*`. React and Web Components.

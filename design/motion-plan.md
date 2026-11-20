@@ -146,7 +146,7 @@ lists, nothing that loops except progress and the caret.
 | Closing | Fades and shrinks, 100 ms | Erased back toward the trigger, 140 ms | Lifts out, 90 ms | Fades like phosphor cooling, 280 ms | Disappears |
 | Panel | Eases open, 200 ms | Extends at an even pace, 200 ms | Opens with a hard stop, 130 ms | Opens a line at a time, 100 ms | Redraws |
 | Move | Glides, 200 ms | Slides in a straight line, even speed, 220 ms | Snaps to a detent, 140 ms | Jumps a row at a time, 120 ms | Jumps |
-| On and off | Eased, 150 ms | Even pace, 160 ms; a check is inked in | Hard stop, 90 ms; the lamp warms in 60 ms, cools in 300 ms | Inverse video at once | At once |
+| On and off | Eased, 150 ms | The box fills at once and the check is inked in, 200 ms | Hard stop, 90 ms; the lamp warms in 60 ms, cools in 300 ms | Inverse video at once | At once |
 
 Dialogs take each skin's opening a little longer (Base 200 ms, Blueprint 240, Studio 150,
 Phosphor 120), as they're bigger. Built, they close at once: while a modal dialog is still

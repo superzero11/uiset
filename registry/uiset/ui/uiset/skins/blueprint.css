@@ -51,8 +51,8 @@
     --uiset-panel-close-duration: 140ms;
     --uiset-panel-ease: linear;
     /* A check is inked in, left to right, at the same even pace (the clip in base.css). */
-    --uiset-toggle-duration: 160ms;
-    --uiset-toggle-off-duration: 160ms;
+    --uiset-toggle-duration: 200ms;
+    --uiset-toggle-off-duration: 200ms;
     --uiset-toggle-ease: linear;
     --uiset-check-scale: 1;
     /* A refusal jogs the drawing sideways, at an even pace. */
@@ -405,6 +405,12 @@
         &[data-side="left"]:is([data-starting-style], [data-ending-style]) {
           clip-path: inset(-8px -8px -8px 100%);
         }
+      }
+
+      /* The box fills at once and the check is drawn on it: a fill fading in with the check
+         hid the pen, and it read as a plain fade. */
+      & :is([data-slot="checkbox"], [data-slot="radio"]):not([data-motion="reduce"] *) {
+        transition-duration: 0s;
       }
 
       /* A check or a dot is inked in from the start of the line, and taken back the same way. */

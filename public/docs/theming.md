@@ -194,7 +194,7 @@ open, doesn't animate.
 | Skin        | On and off (switch, checkbox, radio, toggle)              | A press an alert dialog refuses        |
 | ----------- | --------------------------------------------------------- | -------------------------------------- |
 | `base`      | Eases, 150 ms; the check grows in                         | The dialog swells a little and settles |
-| `blueprint` | Even pace, 160 ms; the check is inked in from the start of the line | A jog aside at an even pace   |
+| `blueprint` | The box fills at once and the check is inked in from the start of the line, 200 ms | A jog aside at an even pace |
 | `studio`    | A lamp: warms in 60 ms, cools in 300 ms                   | A jolt in the rack that stops dead     |
 | `phosphor`  | At once, like inverse video                               | A step aside and back                  |
 | `ink`       | At once                                                   | Nothing moves                          |
