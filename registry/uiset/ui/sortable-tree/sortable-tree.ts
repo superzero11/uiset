@@ -256,7 +256,9 @@ const sortableTree = definePrimitive({
         // Uncontrolled, the rows follow the items now; controlled, they follow when the items come back.
         if (opts().items === undefined) context.store.set({ rows })
         // The branch it went into opens, so it stays in view.
-        if (parent) setExpanded(parent, true, "drop", event)
+        // UI SDK's "drop" reason carries a pointer or drag event; a keyboard drop's keydown
+        // fails its development check, so that one goes without its event.
+        if (parent) setExpanded(parent, true, "drop", event instanceof KeyboardEvent ? undefined : event)
         return true
       },
       indent: () => 20,

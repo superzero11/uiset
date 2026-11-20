@@ -2089,3 +2089,9 @@ vercel-labs/ui#905 (2026-11-19).
   The refusal nudge needs no UI SDK event: an alert dialog never closes on an outside press,
   so a press outside an open one is the refusal. A count changing waits for a part that
   shows one.
+- 2026-11-20 — The unit run exited 1 since UI SDK beta.13: its development check refuses
+  the `drop` reason with a keyboard event, and the sortable tree passed a keyboard drop's
+  keydown when it opened the folder it dropped into. The tests passed, so only the exit
+  code showed it, and the summary line hid it. The folder now opens with no event for a
+  keyboard drop; the unit run exits 0. Check the exit code, not only the counts.
+

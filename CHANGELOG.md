@@ -44,6 +44,9 @@ On UI SDK `0.1.0-beta.13`.
 
 ### Fixed
 
+- **A keyboard drop into a folder no longer warns in development.** The sortable tree opened
+  the folder with UI SDK's `drop` reason and the drop's keydown, which UI SDK's development
+  check refuses for that reason (it threw in the unit tests). React and Web Components.
 - **A canvas on a desktop opens with the whole graph in view.** Opening no smaller than 80%
   left the last node past the edge where the whole graph fit at about 70%. A graph that fits
   at 60% or more now opens fitted; a bigger one still opens at 80%, where it starts.
