@@ -36,6 +36,22 @@ On UI SDK `0.1.0-beta.13`.
 
 ### Fixed
 
+- **A canvas on a desktop opens with the whole graph in view.** Opening no smaller than 80%
+  left the last node past the edge where the whole graph fit at about 70%. A graph that fits
+  at 60% or more now opens fitted; a bigger one still opens at 80%, where it starts.
+- **The data grid's row checkboxes look like the skin's checkboxes.** The browser drew
+  them, light grey in dark skins. They stay native checkboxes (the grid keeps its keys) but
+  carry `data-slot="checkbox"` and its state, so every skin draws them. React and Web
+  Components.
+- **Studio's LED meter lights its colours where they sit on the whole scale.** The green to
+  red ladder was squeezed into the lit part, so a meter at 40% already showed red.
+- **Base's slider, meter and progress tracks hold 3:1 against the page.** The muted trough
+  alone was 1.1:1, so a meter's empty part and a fader's travel didn't show; tracks now have
+  an inner edge in `--ui-input`, the colour Base keeps at 3:1 for fields.
+- **Ink underlines the chosen tab in a phone's tab bar**, which differed by shade alone.
+- **The chat's suggestion chips, citations and attachments are square in square skins**
+  (Blueprint, Phosphor) and round elsewhere.
+
 - **A chat or terminal keeps following new output after a wheel at its end.** When the
   content's height ended between two pixels, a wheel at the bottom settled a pixel up, UI
   SDK's `stickToEnd` read that as scrolling up and let go, and nothing re-armed it: the next

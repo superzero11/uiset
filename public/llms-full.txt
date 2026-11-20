@@ -3738,10 +3738,6 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 openings, moves and state changes, drawn from UI SDK's state, reduced motion respected.
 Openings and closings are built (in 0.6.0); state changes and then moves come next. M–L
 
-**Every kit and template page, in every skin.** The layout audit covered Base light at
-desktop and phone width and fixed seven things; the other four skins, light and dark, get
-the same look by eye before motion lands on them. S
-
 ## Next, in order
 
 1. **Agent parts for AI apps.** Approvals that wait for a person, checkpoints to roll
@@ -5413,7 +5409,9 @@ applies to both.
 - The primary sort column carries `aria-sort`. Group cells carry `aria-expanded` (a grid
   row may not; only a treegrid's can).
 - Row checkboxes are real checkboxes that never take focus; the cell keeps it, so the
-  arrows keep working after a click. Shift-click ranges follow the rows on screen.
+  arrows keep working after a click. Shift-click ranges follow the rows on screen. They
+  carry `data-slot="checkbox"` and its state, so each skin draws them like its other
+  checkboxes.
 - The editor covers its cell, says what's wrong with `aria-invalid` and a message, and
   announces it.
 - Range outlines follow the reading direction, and the focused cell's ring is an outline,
@@ -5868,9 +5866,9 @@ const [selected, setSelected] = useState<string[]>([])
 - `CanvasToolbar`'s `label` is its own name, "Canvas tools" by default. Keep the canvas's
   name out of it: agents find components by names that contain what they ask for.
 - `grid` is where dropped nodes snap and how far Alt with an arrow moves them (8).
-- `locked(node)` keeps a node in place. `fitView` frames every node on first show, but no
-  smaller than 80%, so node titles stay readable: a graph too big for that opens where it
-  starts, and Zoom to fit shows all of it. `controls` and `minimap` turn the corner parts off.
+- `locked(node)` keeps a node in place. `fitView` frames every node on first show when they
+  fit at 60% or more. A graph too big for that opens at 80%, where it starts, so node titles
+  stay readable, and Zoom to fit shows all of it. `controls` and `minimap` turn the corner parts off.
 - Ports are drawn from fixed sizes (a 36px header and 28px rows, in canvas units), so wires
   never wait on measuring. Keep custom styles to those sizes.
 

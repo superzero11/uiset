@@ -343,6 +343,12 @@
       outline-width: 3px;
     }
 
+    /* Ink on grey can't tell the chosen tab by colour: its name is underlined too. */
+    & .mobile-tab[aria-current="page"] .mobile-tab-label {
+      text-decoration: underline 2px;
+      text-underline-offset: 3px;
+    }
+
     & input[type="number"] {
       appearance: textfield;
 

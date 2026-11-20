@@ -273,3 +273,12 @@ test.describe("on a touch screen", () => {
     await expect(row(page, "Katherine Johnson")).toBeVisible()
   })
 })
+
+// The skins audit (2026-11-20): in Ink the chosen tab differed from the others by shade alone.
+test("in Ink, the chosen tab's name is underlined, not only darker", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("uiset-site-skin", "ink"))
+  await page.goto("/docs/kits/mobile")
+  const label = (name: RegExp) => page.locator(".mobile-tab").filter({ hasText: name }).first().locator(".mobile-tab-label")
+  await expect(label(/Inbox/)).toHaveCSS("text-decoration-line", "underline")
+  await expect(label(/Settings|Search|Calls|Profile/)).toHaveCSS("text-decoration-line", "none")
+})

@@ -63,9 +63,9 @@ const [selected, setSelected] = useState<string[]>([])
 - `CanvasToolbar`'s `label` is its own name, "Canvas tools" by default. Keep the canvas's
   name out of it: agents find components by names that contain what they ask for.
 - `grid` is where dropped nodes snap and how far Alt with an arrow moves them (8).
-- `locked(node)` keeps a node in place. `fitView` frames every node on first show, but no
-  smaller than 80%, so node titles stay readable: a graph too big for that opens where it
-  starts, and Zoom to fit shows all of it. `controls` and `minimap` turn the corner parts off.
+- `locked(node)` keeps a node in place. `fitView` frames every node on first show when they
+  fit at 60% or more. A graph too big for that opens at 80%, where it starts, so node titles
+  stay readable, and Zoom to fit shows all of it. `controls` and `minimap` turn the corner parts off.
 - Ports are drawn from fixed sizes (a 36px header and 28px rows, in canvas units), so wires
   never wait on measuring. Keep custom styles to those sizes.
 

@@ -36,8 +36,11 @@ import {
   type Point,
 } from "./geometry"
 
-/** The least zoom a canvas opens at: node titles stay about 10px. */
+/** The zoom a graph too big to show whole opens at: node titles stay about 10px. */
 const READABLE_ZOOM = 0.8
+/** The least zoom a whole graph is shown at on opening. Above it, all of the graph beats
+ *  larger text with a node past the edge. */
+const WHOLE_ZOOM = 0.6
 
 // A node editor's behavior, composed from UI SDK: createViewport pans and zooms,
 // createMove drags nodes (Alt with arrows by keyboard), createSelection and createLasso
@@ -51,7 +54,7 @@ type CanvasNodeKind = { id: string; label: string }
 /** What code outside the canvas can do: a toolbar, an inspector, or your own buttons. */
 type CanvasControllerApi = {
   fitView(): boolean
-  /** Frames every node on first show, but no smaller than a readable zoom. */
+  /** Frames every node on first show if they fit at 60% or more, else opens at 80%. */
   fitOnOpen(): boolean
   zoomIn(): boolean
   zoomOut(): boolean
@@ -290,16 +293,17 @@ const canvasPrimitive = definePrimitive({
       return all ? viewport.fit(all, { padding: 48, maxZoom: 1 }, { reason: "imperative" }) : false
     }
     /**
-     * The first view: every node if that keeps text readable, else a readable zoom that starts
-     * where the graph does (the minimap and Zoom to fit show the rest). Fitting a workflow into
-     * a phone once opened it at 25%, with 12px titles drawn at 3px.
+     * The first view: every node if that keeps text legible (60% or more), else a readable
+     * zoom that starts where the graph does (the minimap and Zoom to fit show the rest).
+     * Fitting a workflow into a phone once opened it at 25%, with 12px titles drawn at 3px;
+     * then opening no smaller than 80% left Reply past the edge on a desktop.
      */
     const fitOnOpen = () => {
       const all = boundsOf(rects())
       const el = context.element("root")
       if (!all || !el) return false
       fitView()
-      if (get().viewport.zoom >= READABLE_ZOOM) return true
+      if (get().viewport.zoom >= WHOLE_ZOOM) return true
       const zoom = READABLE_ZOOM
       const tall = (all.bottom - all.top) * zoom + 96
       const y = tall <= el.clientHeight ? (el.clientHeight - (all.bottom - all.top) * zoom) / 2 - all.top * zoom : 48 - all.top * zoom

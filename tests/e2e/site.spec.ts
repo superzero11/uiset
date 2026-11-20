@@ -195,6 +195,17 @@ test("the Studio rack's meter stands named beside its fader, and the agent's req
   expect(edge).not.toBe("rgba(0, 0, 0, 0)")
 })
 
+// The skins audit (2026-11-20): Studio's LED ladder squeezed green to red into the lit part,
+// so a meter at 40% already showed red. The ladder spans the whole track.
+test("Studio's meter lights the ladder's colours where they sit on the whole scale", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("uiset-site-skin", "studio"))
+  await page.goto("/docs/components/meter")
+  const track = page.locator('.example [data-slot="meter-track"]').first()
+  const width = (await track.evaluate((el) => el.clientWidth))
+  const ladder = await track.locator('[data-slot="meter-indicator"]').evaluate((el) => getComputedStyle(el).backgroundSize.split(",")[1]!.trim())
+  expect(Math.abs(parseFloat(ladder) - width)).toBeLessThanOrEqual(1)
+})
+
 // The owner found the theme cards' forms under their tag and against the edges (2026-11-20), and
 // a check in other skins found the page's skin leaking into them: on a Blueprint page the Ink
 // card had Blueprint's uppercase labels and the Base card took the blue around it.
@@ -336,6 +347,47 @@ test.describe("Studio", () => {
       [],
     )
   })
+
+  // The skins audit (2026-11-20): in Base the Signal meter's and Master fader's tracks were a
+  // muted trough at 1.1:1, so the meter's empty part and the fader's travel didn't show.
+  for (const theme of ["light", "dark"] as const) {
+    test(`in Base ${theme}, the meter's and fader's tracks hold 3:1 against the rack`, async ({ page }) => {
+      await page.goto(`/docs/kits/studio?theme=${theme}`)
+      await expect(page.getByRole("meter", { name: "Signal" })).toBeVisible()
+      const ratios = await page.evaluate(() => {
+        const ctx = document.createElement("canvas").getContext("2d", { willReadFrequently: true })!
+        const rgba = (color: string) => {
+          ctx.clearRect(0, 0, 1, 1)
+          ctx.fillStyle = color
+          ctx.fillRect(0, 0, 1, 1)
+          return [...ctx.getImageData(0, 0, 1, 1).data]
+        }
+        const luminance = (c: number[]) => {
+          const [r, g, b] = c.slice(0, 3).map((v) => {
+            const s = v / 255
+            return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4
+          })
+          return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!
+        }
+        const behind = (el: Element) => {
+          for (let e = el.parentElement; e; e = e.parentElement) {
+            const bg = getComputedStyle(e).backgroundColor
+            if (rgba(bg)[3]! > 0) return bg
+          }
+          return "white"
+        }
+        const tracks = document.querySelectorAll('.level-meter [data-slot="meter-track"], .fader-field [data-slot="slider-track"]')
+        return [...tracks].map((track) => {
+          const edge = /^(\S+\(.*?\)|#\w+|\w+)/.exec(getComputedStyle(track).boxShadow)?.[1] ?? "transparent"
+          const a = luminance(rgba(edge))
+          const b = luminance(rgba(behind(track)))
+          return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+        })
+      })
+      expect(ratios.length).toBeGreaterThanOrEqual(2)
+      for (const ratio of ratios) expect(ratio).toBeGreaterThanOrEqual(3)
+    })
+  }
 
   test("a knob steps with arrows, Page keys, Home and End", async ({ page }) => {
     const cutoff = page.getByRole("slider", { name: "Cutoff" })
@@ -608,6 +660,17 @@ test.describe("Chat kit", () => {
 
   const chat = (page: Page) => page.locator(".item-frame")
   const box = (page: Page) => chat(page).getByRole("textbox", { name: "Message" })
+
+  // The skins audit (2026-11-20): suggestion chips were pills in Phosphor, where every corner is square.
+  test("suggestion chips are round in Base and square in Phosphor", async ({ page }) => {
+    const chip = () => chat(page).locator('.chat-suggestions [data-slot="toolbar-button"]').first()
+    await chat(page).getByRole("button", { name: "New chat" }).click()
+    expect(parseFloat(await chip().evaluate((el) => getComputedStyle(el).borderTopLeftRadius))).toBeGreaterThan(8)
+    await page.evaluate(() => localStorage.setItem("uiset-site-skin", "phosphor"))
+    await page.reload()
+    await chat(page).getByRole("button", { name: "New chat" }).click()
+    await expect(chip()).toHaveCSS("border-top-left-radius", "0px")
+  })
 
   // A wheel at the end of a thread whose content ends between two pixels settled a pixel up and
   // let go of following, and nothing re-armed it, so the next answer arrived out of view

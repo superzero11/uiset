@@ -220,13 +220,14 @@
     }
   }
 
-  /* Suggestions are chips you can press: an outline, and a fill on hover. */
+  /* Suggestions are chips you can press: an outline, and a fill on hover. Round in a skin
+     with rounded corners, square in a square one (Blueprint, Phosphor). */
   .chat-suggestions [data-slot="toolbar-button"] {
     height: auto;
     min-height: 2rem;
     padding: 0.375rem 0.875rem;
     border: 1px solid var(--ui-border);
-    border-radius: 999px;
+    border-radius: min(999px, calc(var(--ui-radius) * 999));
     background: var(--ui-background);
     color: var(--ui-foreground);
     text-align: start;
@@ -430,7 +431,7 @@
     height: 1.25rem;
     margin-inline: 0.125rem;
     padding-inline: 0.25rem;
-    border-radius: 999px;
+    border-radius: min(999px, calc(var(--ui-radius) * 999));
     background: var(--ui-muted);
     color: var(--ui-foreground);
     font-size: 0.6875rem;
@@ -721,7 +722,7 @@
     max-width: 16rem;
     padding: 0.25rem 0.25rem 0.25rem 0.625rem;
     border: 1px solid var(--ui-border);
-    border-radius: 999px;
+    border-radius: min(999px, calc(var(--ui-radius) * 999));
     background: var(--ui-muted);
     font-size: 0.75rem;
 

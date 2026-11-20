@@ -451,6 +451,19 @@ test("clicking a row checkbox selects its row and keeps the arrows working", asy
   await expect(grid(page).getByRole("checkbox").nth(2)).toBeChecked()
 })
 
+// The skins audit (2026-11-20): the browser drew the row checkboxes, light grey in dark skins.
+test("row checkboxes are drawn by the skin, not the browser, and show their check", async ({ page }) => {
+  const box = grid(page).getByRole("checkbox").nth(1)
+  await expect(box).toHaveCSS("appearance", "none")
+  const unchecked = await box.evaluate((el) => getComputedStyle(el).backgroundColor)
+  expect(await box.evaluate((el) => getComputedStyle(el, "::before").visibility)).toBe("hidden")
+  await box.click()
+  await expect(box).toHaveAttribute("data-checked", "")
+  await expect.poll(() => box.evaluate((el) => getComputedStyle(el).backgroundColor)).not.toBe(unchecked)
+  expect(await box.evaluate((el) => getComputedStyle(el, "::before").visibility)).toBe("visible")
+  await expect(grid(page).getByRole("checkbox", { name: "Select all rows" })).toHaveAttribute("data-indeterminate", "")
+})
+
 test("a refused edit's message stays with that cell", async ({ page }) => {
   await moveTo(page, 2, 6)
   await page.keyboard.press("Enter")

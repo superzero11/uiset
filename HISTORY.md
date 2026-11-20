@@ -216,6 +216,7 @@ vercel-labs/ui#905 (2026-11-19).
 | Sortable tree (`sortable-tree`), React and Web Components                                          | done, not pushed | 2026-11-19: on `createTreeReorder`, `createRovingFocus` and `createTypeahead`. 11 unit tests, 11/11 mutations caught |
 | IDE file tree: drag a file or folder into a folder, React and Web Components                    | done, not pushed | 2026-11-19: `ide/file-drag.ts`, shared. 3 e2e tests each in React and web, also in WebKit; 6/6 mutations caught |
 | Motion part 1: openings, closings and panels per skin, `motion="reduce"`, React and Web Components | done, not pushed | 2026-11-20: tokens in `tokens.css` and each skin, drawn by `base.css`; Blueprint and Phosphor clip in their own files. 13 e2e tests in `motion.spec.ts` and 1 web, each mutation-checked. Filmstrips of popover, dialog, toast and accordion in every skin. |
+| Every kit and template page in every skin: the audit and its fixes, React and Web Components | done, not pushed | 2026-11-20: five skins × two themes, kits and templates, reviewed by eye. Fixed: canvas opening fit, grid checkboxes, Studio meter ladder, Base track edges, Ink tab cue, square chips. Each with a test, mutation-checked. |
 
 ## Decision log
 
@@ -2029,3 +2030,13 @@ vercel-labs/ui#905 (2026-11-19).
   both. A filmstrip (pause `document.getAnimations()` and step `currentTime`) checked each
   skin frame by frame. The tests count transitions that change something visible: Chrome
   starts a transition from `scale: 1` to `none`, which moves nothing.
+- 2026-11-20 — The skins audit (every kit and template page, each skin and theme) found four
+  clear defects and some minor ones. A canvas opening no smaller than 80% cut Reply off on a
+  desktop: it now fits when the whole graph fits at 60% or more. The grid's row checkboxes
+  were the browser's: they stay native, for the grid's keys, and wear the checkbox slot so
+  skins draw them. Studio's meter ladder was sized to the lit part: it's sized to the track
+  with container units. Base's tracks were 1.1:1: an inner edge in `--ui-input`. Ink's tab
+  cue and the chat's chips in square skins were cheap to fix. Left as they are: the kit
+  frame's 16px corners are the site's frame, the same in every skin; calendar events drop
+  their place when the title wraps, by design. Still open for a look: Blueprint's event
+  fills and disabled Send, Ink's coloured canvas stripes, Phosphor's near-white code.

@@ -19,10 +19,6 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 openings, moves and state changes, drawn from UI SDK's state, reduced motion respected.
 Openings and closings are built (in 0.6.0); state changes and then moves come next. M–L
 
-**Every kit and template page, in every skin.** The layout audit covered Base light at
-desktop and phone width and fixed seven things; the other four skins, light and dark, get
-the same look by eye before motion lands on them. S
-
 ## Next, in order
 
 1. **Agent parts for AI apps.** Approvals that wait for a person, checkpoints to roll

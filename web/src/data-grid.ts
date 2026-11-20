@@ -849,9 +849,10 @@ class UISetDataGrid<Datum = any> extends ElementBase {
   }
 
   /** A native checkbox the cell owns. It never takes focus, which stays on the cell (the
-      grid's one tab stop), and Space on the cell toggles it the same as a click. */
+      grid's one tab stop), and Space on the cell toggles it the same as a click. It wears
+      the checkbox slot and its state, so each skin draws it like its other checkboxes. */
   private checkbox(onToggle: (box: HTMLInputElement, shift: boolean) => void) {
-    const box = h("input", { type: "checkbox", class: "data-grid-checkbox", tabindex: "-1" }) as HTMLInputElement
+    const box = h("input", { type: "checkbox", class: "data-grid-checkbox", "data-slot": "checkbox", tabindex: "-1" }) as HTMLInputElement
     box.addEventListener("mousedown", (event) => event.preventDefault())
     // The box toggles itself; the grid's state then sets it right (back, if the page
     // refused the change).
@@ -865,6 +866,8 @@ class UISetDataGrid<Datum = any> extends ElementBase {
   private updateCheckbox(box: HTMLInputElement, checked: boolean, label: string, mixed = false) {
     box.checked = checked
     box.indeterminate = mixed
+    attr(box, "data-checked", checked && !mixed)
+    attr(box, "data-indeterminate", mixed)
     attr(box, "aria-label", label)
   }
 

@@ -389,8 +389,10 @@ test("the grid keeps a tab stop when its active cell's row or column goes away",
 
 test("clicking row checkboxes and Select all selects; Shift-click selects the rows between", async ({ page }) => {
   const boxes = grid(page).getByRole("checkbox")
+  await expect(boxes.nth(1)).toHaveCSS("appearance", "none")
   await boxes.nth(1).click()
   await expect(grid(page).getByRole("row").nth(1)).toHaveAttribute("aria-selected", "true")
+  await expect(boxes.nth(1)).toHaveAttribute("data-checked", "")
   await boxes.nth(3).click({ modifiers: ["Shift"] })
   await expect(footer(page)).toContainText("3 selected")
   await expect(boxes.nth(2)).toBeChecked()

@@ -327,11 +327,15 @@ function Checkbox({
   onToggle: (shift: boolean) => void
 }) {
   // A native checkbox the cell owns. It never takes focus, which stays on the cell (the
-  // grid's one tab stop), and Space on the cell toggles it the same as a click.
+  // grid's one tab stop), and Space on the cell toggles it the same as a click. It wears
+  // the checkbox slot and its state, so each skin draws it like its other checkboxes.
   return (
     <input
       type="checkbox"
       className="data-grid-checkbox"
+      data-slot="checkbox"
+      data-checked={checked && !mixed ? "" : undefined}
+      data-indeterminate={mixed ? "" : undefined}
       tabIndex={-1}
       aria-label={label}
       checked={checked}

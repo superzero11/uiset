@@ -151,7 +151,9 @@ applies to both.
 - The primary sort column carries `aria-sort`. Group cells carry `aria-expanded` (a grid
   row may not; only a treegrid's can).
 - Row checkboxes are real checkboxes that never take focus; the cell keeps it, so the
-  arrows keep working after a click. Shift-click ranges follow the rows on screen.
+  arrows keep working after a click. Shift-click ranges follow the rows on screen. They
+  carry `data-slot="checkbox"` and its state, so each skin draws them like its other
+  checkboxes.
 - The editor covers its cell, says what's wrong with `aria-invalid` and a message, and
   announces it.
 - Range outlines follow the reading direction, and the focused cell's ring is an outline,

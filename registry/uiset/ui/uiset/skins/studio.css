@@ -368,8 +368,10 @@
       }
     }
 
-    /* Meter: an LED ladder */
+    /* Meter: an LED ladder. The track is the container, so the lit part shows the ladder's
+       colours where they sit on the whole scale: green low, amber, red only near the top. */
     & [data-slot="meter-track"] {
+      container-type: inline-size;
       border: 1px solid oklch(0 0 0 / 0.5);
       background: repeating-linear-gradient(
         90deg,
@@ -389,7 +391,19 @@
         );
       background-size:
         auto,
-        var(--meter-full, 100%) 100%;
+        100cqi 100%;
+
+      &:dir(rtl) {
+        background-position: right;
+        background-image:
+          repeating-linear-gradient(270deg, transparent 0 6px, oklch(0.12 0 0) 6px 8px),
+          linear-gradient(
+            270deg,
+            oklch(0.74 0.17 150) 0 60%,
+            var(--studio-lamp) 60% 85%,
+            oklch(0.62 0.21 27) 85%
+          );
+      }
     }
 
     /* Steps */

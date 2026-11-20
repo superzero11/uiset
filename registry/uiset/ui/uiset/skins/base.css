@@ -63,6 +63,12 @@
       0 1px 2px light-dark(oklch(0.2 calc(0.02 * var(--uiset-tint)) var(--uiset-key-h) / 0.08), oklch(0 0 0 / 0.5)),
       0 12px 32px -12px
         light-dark(oklch(0.2 calc(0.04 * var(--uiset-tint)) var(--uiset-key-h) / 0.22), oklch(0 0 0 / 0.7));
+
+    /* A track's edge holds 3:1 against the page, like a field's (WCAG 1.4.11). The muted
+       trough alone was 1.1:1: a meter's empty part and a fader's travel didn't show. */
+    & :is([data-slot="slider-track"], [data-slot="meter-track"], [data-slot="progress-track"]) {
+      box-shadow: inset 0 0 0 1px var(--ui-input);
+    }
   }
 
   /* No keyColor: the app's shadcn/ui theme, or black and white. The text on the accent is

@@ -373,12 +373,32 @@
     padding: 0;
   }
 
+  /* Native, so the grid keeps its keys, but drawn by the skin's checkbox rules (the slot):
+     the browser's own box stayed light grey in dark skins. */
   .data-grid-checkbox {
+    appearance: none;
     inline-size: 1rem;
     block-size: 1rem;
     margin: 0;
-    accent-color: var(--ui-primary);
     cursor: pointer;
+
+    &::before {
+      content: "";
+      inline-size: 0.75rem;
+      block-size: 0.75rem;
+      background: currentColor;
+      mask: var(--ui-icon-check) center / contain no-repeat;
+      visibility: hidden;
+    }
+
+    &:checked::before,
+    &:indeterminate::before {
+      visibility: visible;
+    }
+
+    &:indeterminate::before {
+      mask-image: var(--ui-icon-minus);
+    }
   }
 
   .data-grid-group-row {
