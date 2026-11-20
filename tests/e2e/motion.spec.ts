@@ -50,6 +50,17 @@ for (const [skin, ran] of Object.entries(skins)) {
   })
 }
 
+// A disabled toolbar button that came on faded in under reduced motion, and axe read it
+// mid-fade (2026-11-20): only what appears and disappears fades.
+test("under reduced motion, a control changes at once while a popup fades", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" })
+  await page.goto(popover.path)
+  const trigger = page.locator(popover.trigger).first()
+  const durations = await trigger.evaluate((el) => getComputedStyle(el).transitionDuration.split(", "))
+  expect(new Set(durations)).toEqual(new Set(["0s"]))
+  expect(await opening(page, "base", popover)).toEqual({ opacity: 120 })
+})
+
 test("Ink opens a popover at once, with or without reduced motion", async ({ page }) => {
   expect(await opening(page, "ink", popover)).toEqual({})
   await page.emulateMedia({ reducedMotion: "reduce" })
@@ -90,3 +101,20 @@ test("Blueprint's drawn popup keeps its offset shadow once it's open", async ({ 
   // Once drawn, the clip reaches past the shadow's 6px.
   await expect.poll(() => popup.evaluate((el) => getComputedStyle(el).clipPath)).toBe("inset(-8px)")
 })
+
+// While a modal dialog is still on the page, UI SDK takes a press outside it for one outside
+// an open dialog and swallows the click (2026-11-20: the inbox's Sent link, right after
+// sending). So a dialog leaves at once, and the next click lands.
+for (const skin of ["base", "phosphor"]) {
+  test(`in ${skin}, a click on the page lands right after a dialog closes`, async ({ page }) => {
+    await page.addInitScript((s) => localStorage.setItem("uiset-site-skin", s), skin)
+    await page.goto("/docs/components/dialog")
+    await page.locator(".example [data-slot=dialog-trigger]").first().click()
+    await expect(page.locator("[data-slot=dialog-content]")).toBeVisible()
+    await page.evaluate(() => document.addEventListener("click", () => ((window as unknown as { landed: boolean }).landed = true)))
+    await page.keyboard.press("Escape")
+    await page.locator("h1").first().click()
+    expect(await page.evaluate(() => (window as unknown as { landed?: boolean }).landed)).toBe(true)
+  })
+}
+

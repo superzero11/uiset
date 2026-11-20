@@ -145,7 +145,9 @@ lists, nothing that loops except progress and the caret.
 | On and off | Eased, 150 ms | Even pace, 160 ms; a check is inked in | Hard stop, 90 ms; the lamp warms in 60 ms, cools in 300 ms | Inverse video at once | At once |
 
 Dialogs take each skin's opening a little longer (Base 200 ms, Blueprint 240, Studio 150,
-Phosphor 120), as they're bigger.
+Phosphor 120), as they're bigger. Built, they close at once: while a modal dialog is still
+leaving, UI SDK swallows a click on the page (HISTORY.md, UI SDK issue #34), which breaks
+rule 2.
 
 ### Base
 

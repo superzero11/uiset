@@ -162,6 +162,17 @@ vercel-labs/ui#905 (2026-11-19).
     `sortable-tree` refuses those drops in `set`, says why and marks the row meanwhile; an
     `accepts(key, parent)` like `createTransfer`'s would keep the draft from offering them.
     Filed as vercel-labs/ui#905 (2026-11-19).
+33. **Scroll Area's `stickToEnd` lets go after a sub-pixel move up at the end.** Content
+    whose height ends between two pixels rounds the end; a wheel there settles a pixel up,
+    which reads as scrolling up, and no later wheel or key at the end re-arms it (the same
+    as shadcn-ui/ui#12766). UISet's `shell/rearm-end.ts` re-arms it. Not filed yet: the
+    owner decides (2026-11-20).
+34. **A closing modal dialog swallows clicks on the page.** While the content and backdrop
+    have `data-ending-style`, a press outside is taken for one outside an open dialog: its
+    pointerdown is prevented and its click stopped, so the next click on the page (a link
+    under where the dialog was) is lost for as long as the exit transition lasts. Popovers
+    let the click through. UISet closes dialogs at once until it's fixed. Not filed yet
+    (2026-11-20).
 
 ## What shipped
 
@@ -2055,3 +2066,12 @@ vercel-labs/ui#905 (2026-11-19).
   indent; the rules are back as they were, and every other removal of the day was checked
   line by line. Since then, a replacement in a shared file is checked with `git diff` for
   removed lines before it's committed.
+- 2026-11-20 — Dialogs close at once, in every skin. The full suite found the web inbox's
+  Sent link and the project board's New issue doing nothing right after a dialog closed: UI
+  SDK swallows a press outside a modal dialog while it's still leaving (UI SDK issue #34).
+  The motion plan's rule is that a part that's leaving never catches a click, so a dialog
+  and its backdrop now leave at once and keep their opening motion; popovers, menus and
+  toasts, which let the click through, keep their closings. An e2e test clicks the page
+  right after Escape and fails with a 200ms close. In the same run, reduced motion let
+  every opacity change ease, not only what appears and disappears; a toolbar button that
+  came on was read by axe mid-fade. Now only popups, dialogs, toasts and backdrops fade.

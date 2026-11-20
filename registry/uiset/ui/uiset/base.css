@@ -706,10 +706,19 @@
   &[data-ending-style] {
     opacity: 0;
   }
+}
 
-  &[data-ending-style] {
-    transition-duration: calc(var(--uiset-r-exit, var(--uiset-exit-duration)) * var(--uiset-dialog-time) * var(--uiset-motion-speed, 1));
-  }
+/* A modal dialog leaves at once. While it's still on the page, UI SDK takes a press outside
+   it for one outside an open dialog and swallows the click, so a person's next click (on
+   the page the dialog was covering) would be lost for as long as the closing lasted. */
+[data-uiset]
+  :is(
+    [data-slot="dialog-content"],
+    [data-slot="alert-dialog-content"],
+    [data-slot="dialog-backdrop"],
+    [data-slot="alert-dialog-backdrop"]
+  )[data-ending-style] {
+  transition-duration: 0s;
 }
 
 /* Panels grow from UI SDK's measured height. Clipped while they grow; the margin keeps the
@@ -741,8 +750,8 @@
 
 /* Less motion, asked for by the system or by motion="reduce" on a root: what appears and
    disappears fades (120ms in, 90ms out), nothing moves, grows or is drawn, and panels snap.
-   Only opacity changes over time (WCAG doesn't count it as motion); everything else, colour
-   included, changes at once. Ink stays instant either way. */
+   Only those fade (WCAG doesn't count opacity as motion); everything else, colour and a
+   disabled control's dimming included, changes at once. Ink stays instant either way. */
 @media (prefers-reduced-motion: reduce) {
   [data-uiset] {
     --uiset-r-enter: 120ms;
@@ -758,6 +767,28 @@
   [data-uiset] * {
     transition-property: opacity !important;
     animation-duration: 0s !important;
+  }
+
+  /* Only what appears and disappears fades; everything else changes at once. */
+  [data-uiset],
+  [data-uiset]
+    *:not(
+      [data-slot="select-content"],
+      [data-slot="popover-content"],
+      [data-slot="menu-content"],
+      [data-slot="tooltip-content"],
+      [data-slot="combobox-content"],
+      [data-slot="autocomplete-content"],
+      [data-slot="hover-card-content"],
+      [data-slot="trigger-menu-content"],
+      [data-slot="date-picker-content"],
+      [data-slot="dialog-content"],
+      [data-slot="alert-dialog-content"],
+      [data-slot="toast"],
+      [data-slot="dialog-backdrop"],
+      [data-slot="alert-dialog-backdrop"]
+    ) {
+    transition-duration: 0s !important;
   }
 
   [data-uiset] [data-slot]:active {
@@ -779,6 +810,27 @@
 [data-uiset][data-motion="reduce"] * {
   transition-property: opacity !important;
   animation-duration: 0s !important;
+}
+
+[data-uiset][data-motion="reduce"],
+[data-uiset][data-motion="reduce"]
+  *:not(
+    [data-slot="select-content"],
+    [data-slot="popover-content"],
+    [data-slot="menu-content"],
+    [data-slot="tooltip-content"],
+    [data-slot="combobox-content"],
+    [data-slot="autocomplete-content"],
+    [data-slot="hover-card-content"],
+    [data-slot="trigger-menu-content"],
+    [data-slot="date-picker-content"],
+    [data-slot="dialog-content"],
+    [data-slot="alert-dialog-content"],
+    [data-slot="toast"],
+    [data-slot="dialog-backdrop"],
+    [data-slot="alert-dialog-backdrop"]
+  ) {
+  transition-duration: 0s !important;
 }
 
 [data-uiset][data-motion="reduce"] [data-slot]:active {

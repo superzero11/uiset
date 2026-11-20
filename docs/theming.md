@@ -184,8 +184,10 @@ person's does, and nothing waits for it: focus moves and announcements happen at
 
 Popovers, menus, select and combobox lists, tooltips, hover cards, date pickers, dialogs and
 toasts take part, and accordion and collapsible panels grow from their measured height.
-Dialogs take a little longer (Base 200 ms, Blueprint 240, Studio 150, Phosphor 120). The
-drawer keeps UI SDK's own spring. A tooltip that opens at once, because another was just
+Dialogs take a little longer to open (Base 200 ms, Blueprint 240, Studio 150, Phosphor 120)
+and close at once: while a modal dialog is still leaving, UI SDK takes a press outside it for
+one outside an open dialog, and the click would be lost. The drawer keeps UI SDK's own
+spring. A tooltip that opens at once, because another was just
 open, doesn't animate.
 
 **Less motion.** Under the system's `prefers-reduced-motion`, or inside
