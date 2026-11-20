@@ -40,6 +40,15 @@ On UI SDK `0.1.0-beta.13`.
   a segmented control's indicator move on the same timing (the thumb no longer overshoots).
   Skins set `--uiset-move-duration` and `--uiset-move-ease`; the list, tree and board items
   bring `shell/glide.ts`. React and Web Components.
+- **Motion pieces: `number-ticker`, `text-reveal`, `thinking` and `crossfade`**, for the
+  Library's Animate → Motion, each skin its own way. A number moves to its new value (Base
+  rolls its digits, Blueprint counts at an even pace, Studio steps and glows, Phosphor types
+  it, Ink redraws) and can count up once when first seen; text reveals as it streams, a word
+  or a letter at a time; Thinking is a wait (a shimmer, moving hatching, an LED chase,
+  printing dots or still dots) said once to screen readers; a crossfade swaps content in
+  place while the box moves to its size. Under reduced motion nothing moves, and people and
+  agents read the real value. React and Web Components (`<uiset-number-ticker>`,
+  `<uiset-text-reveal>`, `<uiset-thinking>`, `<uiset-crossfade>`).
 - **`motion="reduce"` on `<UISet>` and `<uiset-root>`** quiets that part of the page,
   whatever the system setting says, so an app can offer its own switch.
 

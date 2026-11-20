@@ -26,9 +26,9 @@ const build = [
   { href: "/templates", title: "Templates", count: facts.templates, what: "Whole pages, ready to wire up" },
 ]
 
-const animate = [
+const animate: { title: string; what: string; href?: string }[] = [
+  { title: "Motion", what: "Numbers, text, waits and swaps", href: "/docs/kits/motion" },
   { title: "Illustrations", what: "Animated scenes for landing pages" },
-  { title: "Motion", what: "Text, numbers, transitions, loaders" },
 ]
 
 const inLibrary = (pathname: string) => build.some((b) => pathname === b.href || pathname.startsWith(`${b.href}/`))
@@ -56,15 +56,24 @@ function LibraryMenu() {
         <div>
           <p className="site-libmenu-head">Animate</p>
           <ul>
-            {animate.map((a) => (
-              <li key={a.title} className="site-libmenu-soon">
-                <span className="site-libmenu-title">
-                  {a.title}
-                  <Badge>Coming soon</Badge>
-                </span>
-                <span className="site-libmenu-what">{a.what}</span>
-              </li>
-            ))}
+            {animate.map((a) =>
+              a.href ? (
+                <li key={a.title}>
+                  <NavigationMenuLink href={a.href} className="site-libmenu-link">
+                    <span className="site-libmenu-title">{a.title}</span>
+                    <span className="site-libmenu-what">{a.what}</span>
+                  </NavigationMenuLink>
+                </li>
+              ) : (
+                <li key={a.title} className="site-libmenu-soon">
+                  <span className="site-libmenu-title">
+                    {a.title}
+                    <Badge>Coming soon</Badge>
+                  </span>
+                  <span className="site-libmenu-what">{a.what}</span>
+                </li>
+              ),
+            )}
           </ul>
         </div>
       </div>

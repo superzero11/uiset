@@ -1451,3 +1451,35 @@ main > section,
     margin: 0;
   }
 }
+
+/* The Motion kit page: the four pieces side by side when there's room. */
+.motion-demo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 2.5rem 2rem;
+  align-items: start;
+}
+
+.motion-figure {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.motion-answer {
+  margin: 0;
+  max-inline-size: 42ch;
+  min-block-size: 7lh;
+}
+
+.motion-plan-card {
+  padding: 1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+
+  & ul {
+    margin: 0.5rem 0 0;
+    padding-inline-start: 1.25rem;
+  }
+}

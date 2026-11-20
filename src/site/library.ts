@@ -37,6 +37,12 @@ type Kit = Card & {
 const kitText: Record<string, { headline: string; items: string[]; tag: string; stage?: string; description?: string }> = {
   "app-shell": { headline: "The frame of an app, and the parts that show data", items: ["app-shell", "page-header", "stat", "table"], tag: "Structure" },
   forms: { headline: "Forms from a schema, inline edits and uploads", items: ["schema-form", "inline-edit", "upload"], tag: "Inputs" },
+  motion: {
+    headline: "Numbers, text and content that move, each skin its own way",
+    items: ["number-ticker", "text-reveal", "thinking", "crossfade"],
+    tag: "Motion",
+    description: "A number that rolls, counts or types to its new value, text that reveals as it streams, a wait, and content swapped in place. Reduced motion respected; people and agents read the real value.",
+  },
   lists: {
     headline: "Lists and trees people put in order",
     items: ["sortable-list", "sortable-tree"],

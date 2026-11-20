@@ -76,6 +76,7 @@ import { UISet } from "@/components/ui/uiset"
 | A form                                 | `field` (Field, FieldLabel, Input, FieldError), `select`, `checkbox`, `switch`, `button`; native `<form>` |
 | An app frame                           | `app-shell` (sidebar that collapses, drawer on phones), `page-header`, `breadcrumbs` |
 | Status and data display                | `badge`, `stat`, `alert`, `empty-state`, `skeleton`, `description-list`, `item-list` |
+| A number that moves, streamed text, a wait, content swapped in place | `number-ticker`, `text-reveal`, `thinking`, `crossfade` (each skin moves its own way; don't hand-roll counters or typewriters) |
 | A chat with a model                    | `chat`, `chat-response`, `chat-parts`, `chat-composer`, `chat-sidebar`, or the `chat-app` template |
 | Rich text                              | `rich-text` (`RichTextEditor`, `RichTextContent`; Markdown and HTML in and out) |
 | Tables                                 | `data-grid`                                                |

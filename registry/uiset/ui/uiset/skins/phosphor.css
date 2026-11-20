@@ -75,6 +75,20 @@
     /* A move jumps in whole steps, as a terminal moves text. */
     --uiset-move-duration: 120ms;
     --uiset-move-ease: steps(3, jump-end);
+    /* Motion pieces: numbers and text are typed, with a caret; swapped content is scanned in
+       top to bottom. */
+    --uiset-ticker-mode: type;
+    --uiset-ticker-duration: 360ms;
+    --uiset-reveal-by: letter;
+    --uiset-reveal-caret: on;
+    --uiset-reveal-duration: 1ms;
+    --uiset-reveal-stagger: 14ms;
+    --uiset-reveal-ease: steps(1, jump-start);
+    --uiset-reveal-shift: 0px;
+    --uiset-swap-duration: 120ms;
+    --uiset-swap-ease: steps(4, jump-start);
+    --uiset-swap-in-opacity: 1;
+    --uiset-swap-in-clip: inset(0 0 100% 0);
     --uiset-solid-bg: var(--phosphor-glow);
     --uiset-solid-fg: var(--phosphor-tube);
     --uiset-solid-border: var(--phosphor-glow);
@@ -381,4 +395,50 @@
       }
     }
   }
+
+  /* Thinking: dots print one by one after the words, and start again. */
+  :where(:scope)[data-uiset][data-skin="phosphor"] {
+    & .thinking-label {
+      background: none;
+      color: inherit;
+      animation: none;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      & .thinking-mark:not([data-motion="reduce"] *) {
+        display: inline-flex;
+        gap: 0.25em;
+
+        & > span {
+          border-radius: 0;
+          inline-size: 0.35em;
+          block-size: 0.35em;
+          animation: uiset-phosphor-print-1 1.2s linear infinite;
+        }
+
+        & > span:nth-child(2) {
+          animation-name: uiset-phosphor-print-2;
+        }
+
+        & > span:nth-child(3) {
+          animation-name: uiset-phosphor-print-3;
+        }
+      }
+    }
+  }
+}
+
+@keyframes uiset-phosphor-print-1 {
+  0%, 24% { opacity: 0; }
+  25%, 100% { opacity: 1; }
+}
+
+@keyframes uiset-phosphor-print-2 {
+  0%, 49% { opacity: 0; }
+  50%, 100% { opacity: 1; }
+}
+
+@keyframes uiset-phosphor-print-3 {
+  0%, 74% { opacity: 0; }
+  75%, 100% { opacity: 1; }
 }

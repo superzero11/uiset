@@ -51,6 +51,30 @@
      thumb and a segmented control's indicator. Base's glide. */
   --uiset-move-duration: 200ms;
   --uiset-move-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  /* Motion pieces (design/motion-pieces-plan.md), read by motion/*.ts and motion.css. A
+     number ticker rolls, counts, types or doesn't move; Base's digits roll like an odometer. */
+  --uiset-ticker-mode: roll;
+  --uiset-ticker-duration: 700ms;
+  --uiset-ticker-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  /* Text reveal: by word or letter, each piece arriving from this opacity, shift, clip and
+     colour, one every stagger. */
+  --uiset-reveal-by: word;
+  --uiset-reveal-duration: 360ms;
+  --uiset-reveal-stagger: 40ms;
+  --uiset-reveal-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --uiset-reveal-opacity: 0;
+  --uiset-reveal-shift: 0.35em;
+  --uiset-reveal-clip: inset(-0.2em -0.1em);
+  --uiset-reveal-color: currentColor;
+  --uiset-reveal-caret: off;
+  /* Crossfade: how the new content arrives and the old one leaves; the box moves to its new
+     size on the move timing. */
+  --uiset-swap-duration: 220ms;
+  --uiset-swap-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --uiset-swap-in-opacity: 0;
+  --uiset-swap-in-clip: inset(0);
+  --uiset-swap-out-opacity: 0;
+  --uiset-swap-out-clip: inset(0);
 
   --uiset-sound: soft;
   --uiset-sound-volume: 0.6;

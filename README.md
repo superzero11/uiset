@@ -49,7 +49,7 @@ where UISet starts.
     <td valign="top">
       <ul>
         <li><b>Looks:</b> five skins, a theme generator, sound and haptics</li>
-        <li><b>55 styled components</b> and 24 app parts</li>
+        <li><b>55 styled components</b> and 28 app parts</li>
         <li><b>12 kits:</b> chat, rich text, data grid, charts, scheduler and more</li>
         <li><b>10 page templates</b> to start from</li>
         <li><b>Web Components</b> for Vue, Svelte, Solid and HTML</li>

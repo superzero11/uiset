@@ -471,6 +471,15 @@ const groups: [string, ExampleMeta[]][] = [
     ],
   ],
   [
+    "Motion",
+    [
+      { slug: "number-ticker", title: "Number ticker", parts: "NumberTicker", items: ["number-ticker"] },
+      { slug: "text-reveal", title: "Text reveal", parts: "TextReveal", items: ["text-reveal"] },
+      { slug: "thinking", title: "Thinking", parts: "Thinking", items: ["thinking"] },
+      { slug: "crossfade", title: "Crossfade", parts: "Crossfade", items: ["crossfade"] },
+    ],
+  ],
+  [
     "Lists and trees",
     [
       {

@@ -74,6 +74,17 @@
     /* A move snaps to its place as a stepped knob snaps to a detent. */
     --uiset-move-duration: 140ms;
     --uiset-move-ease: cubic-bezier(0.3, 0.6, 0.7, 0.85);
+    /* Motion pieces: numbers switch in hard steps, words light up amber and cool, a swap is a
+       hard cut. */
+    --uiset-ticker-mode: count;
+    --uiset-ticker-duration: 480ms;
+    --uiset-ticker-ease: steps(8);
+    --uiset-reveal-duration: 320ms;
+    --uiset-reveal-stagger: 45ms;
+    --uiset-reveal-ease: cubic-bezier(0, 0, 0.2, 1);
+    --uiset-reveal-shift: 0px;
+    --uiset-reveal-color: var(--studio-lamp);
+    --uiset-swap-duration: 0ms;
     --uiset-solid-bg: var(--studio-lamp);
     --uiset-solid-fg: oklch(0.2 0.02 70);
     --uiset-solid-border: oklch(0.7 0.13 70);
@@ -478,5 +489,51 @@
     & [data-slot="toolbar"] :is([data-slot="toolbar-button"], [data-slot="toggle"], [data-slot="button"], [data-slot="menu-trigger"], [data-slot="popover-trigger"], [data-slot="select-trigger"])[data-slot][data-slot] {
       border-radius: 3px;
     }
+  }
+
+  /* Thinking: three LEDs light in turn, a chase. A counting number glows like a lit display. */
+  :where(:scope)[data-uiset][data-skin="studio"] {
+    & .number-ticker-face[data-counting] {
+      color: var(--studio-lamp);
+      text-shadow: 0 0 6px var(--studio-lamp-glow);
+    }
+
+    & .thinking-label {
+      background: none;
+      color: var(--studio-legend-dim);
+      animation: none;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      & .thinking-mark:not([data-motion="reduce"] *) {
+        display: inline-flex;
+
+        & > span {
+          background: var(--studio-slot);
+          box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.5);
+          animation: uiset-studio-led 0.9s steps(1, end) infinite;
+        }
+
+        & > span:nth-child(2) {
+          animation-delay: 0.3s;
+        }
+
+        & > span:nth-child(3) {
+          animation-delay: 0.6s;
+        }
+      }
+    }
+  }
+}
+
+@keyframes uiset-studio-led {
+  0% {
+    background: var(--studio-lamp);
+    box-shadow: 0 0 6px var(--studio-lamp-glow);
+  }
+
+  33% {
+    background: var(--studio-slot);
+    box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.5);
   }
 }

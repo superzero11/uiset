@@ -1,0 +1,184 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/* Motion pieces (design/motion-pieces-plan.md): a number ticker, a text reveal, Thinking and a
+   crossfade, drawn from each skin's --uiset-ticker-*, --uiset-reveal-*, --uiset-swap-* and
+   move tokens. Skins that draw Thinking their own way do it in their own files. */
+@layer uiset.base {
+  /* ---------------------------------------------------------------- number ticker */
+  [data-slot="number-ticker"] {
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .number-ticker-face {
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .number-ticker-digit {
+    display: inline-block;
+    height: 1.2em;
+    line-height: 1.2em;
+    overflow: clip;
+    vertical-align: bottom;
+  }
+
+  .number-ticker-reel {
+    display: flex;
+    flex-direction: column;
+    translate: 0 calc(var(--digit, 0) * -1.2em);
+    transition: translate calc(var(--uiset-ticker-duration) * var(--uiset-motion-speed, 1)) var(--uiset-ticker-ease);
+
+    & > span {
+      height: 1.2em;
+    }
+  }
+
+  .number-ticker-caret,
+  .text-reveal-caret {
+    display: inline-block;
+    inline-size: 0.6ch;
+    block-size: 1em;
+    margin-inline-start: 0.1ch;
+    vertical-align: -0.1em;
+    background: currentColor;
+  }
+
+  /* ---------------------------------------------------------------- text reveal */
+  [data-slot="text-reveal"] .text-reveal-piece {
+    display: inline-block;
+  }
+
+  /* Letters stay inline, so words still wrap as words. */
+  [data-slot="text-reveal"][data-by="letter"] .text-reveal-piece {
+    display: inline;
+  }
+
+  .text-reveal-piece[data-new] {
+    animation: uiset-reveal calc(var(--uiset-reveal-duration) * var(--uiset-motion-speed, 1)) var(--uiset-reveal-ease)
+      calc(var(--i, 0) * var(--uiset-reveal-stagger) * var(--uiset-motion-speed, 1)) backwards;
+  }
+
+  @keyframes uiset-reveal {
+    from {
+      opacity: var(--uiset-reveal-opacity);
+      translate: 0 var(--uiset-reveal-shift);
+      clip-path: var(--uiset-reveal-clip);
+      color: var(--uiset-reveal-color);
+    }
+
+    to {
+      clip-path: inset(-0.2em -0.1em);
+    }
+  }
+
+  /* ---------------------------------------------------------------- thinking */
+  [data-slot="thinking"] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--ui-muted-foreground);
+  }
+
+  /* Base: a soft light sweeps across the words. */
+  .thinking-label {
+    background: linear-gradient(90deg, var(--ui-muted-foreground) 0 40%, var(--ui-foreground) 50%, var(--ui-muted-foreground) 60% 100%) 0 0 / 300% 100%;
+    background-clip: text;
+    color: transparent;
+    animation: uiset-thinking-sweep 1.8s linear infinite;
+  }
+
+  .thinking-mark {
+    display: none;
+    gap: 0.3em;
+    align-items: center;
+
+    & > span {
+      inline-size: 0.4em;
+      block-size: 0.4em;
+      border-radius: 50%;
+      background: currentColor;
+    }
+  }
+
+  @keyframes uiset-thinking-sweep {
+    from {
+      background-position: 100% 0;
+    }
+
+    to {
+      background-position: 0 0;
+    }
+  }
+
+  /* ---------------------------------------------------------------- crossfade */
+  [data-slot="crossfade"] {
+    display: grid;
+
+    & > * {
+      grid-area: 1 / 1;
+      min-inline-size: 0;
+    }
+
+    &[data-swapping] {
+      overflow: clip;
+      transition: height calc(var(--uiset-move-duration) * var(--uiset-motion-speed, 1)) var(--uiset-move-ease);
+    }
+
+    & > [data-entering] {
+      animation: uiset-swap-in calc(var(--uiset-swap-duration) * var(--uiset-motion-speed, 1)) var(--uiset-swap-ease) both;
+    }
+
+    & > [data-leaving] {
+      animation: uiset-swap-out calc(var(--uiset-swap-duration) * var(--uiset-motion-speed, 1)) var(--uiset-swap-ease) both;
+      pointer-events: none;
+    }
+  }
+
+  @keyframes uiset-swap-in {
+    from {
+      opacity: var(--uiset-swap-in-opacity);
+      clip-path: var(--uiset-swap-in-clip);
+    }
+
+    to {
+      clip-path: inset(0);
+    }
+  }
+
+  @keyframes uiset-swap-out {
+    from {
+      clip-path: inset(0);
+    }
+
+    to {
+      opacity: var(--uiset-swap-out-opacity);
+      clip-path: var(--uiset-swap-out-clip);
+    }
+  }
+}
+
+/* Less motion: Thinking says so in still words and dots. (The ticker, reveal and crossfade
+   check the setting themselves.) */
+@layer uiset.base {
+  @media (prefers-reduced-motion: reduce) {
+    .thinking-label {
+      background: none;
+      color: inherit;
+    }
+
+    .thinking-mark {
+      display: none;
+    }
+  }
+
+  [data-motion="reduce"] .thinking-label {
+    background: none;
+    color: inherit;
+  }
+
+  [data-motion="reduce"] .thinking-mark {
+    display: none;
+  }
+}

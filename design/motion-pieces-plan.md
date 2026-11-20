@@ -1,6 +1,6 @@
 # Motion pieces: the plan
 
-Planned on 2026-11-20 for 2026-11-21, as the owner chose. Today's motion (`design/motion-plan.md`)
+Planned and built on 2026-11-20, for 0.6.0 (the owner moved it up from the next day). Today's motion (`design/motion-plan.md`)
 is how every part moves. These are pieces a page puts on purpose: the Library menu's
 **Animate → Motion** ("Text, numbers, transitions, loaders"), now marked Coming soon.
 Illustrations (animated scenes for landing pages) stay Coming soon; they come after.

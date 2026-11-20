@@ -44,6 +44,8 @@
     --uiset-sound: paper;
     /* A move is a redraw: items jump to their new places (shell/glide.ts reads this). */
     --uiset-move-duration: 0ms;
+    --uiset-ticker-mode: none;
+    --uiset-swap-duration: 0ms;
     --uiset-solid-bg: var(--ink-ink);
     --uiset-solid-fg: var(--ink-screen);
     --uiset-solid-border: var(--ink-ink);
@@ -359,6 +361,19 @@
         appearance: none;
         margin: 0;
       }
+    }
+  }
+
+  /* Thinking: the words and three still dots. Nothing moves on e-paper. */
+  :where(:scope)[data-uiset][data-skin="ink"] {
+    & .thinking-label {
+      background: none;
+      color: inherit;
+      animation: none;
+    }
+
+    & .thinking-mark {
+      display: inline-flex;
     }
   }
 }

@@ -8,6 +8,7 @@ import type { SortableTreeElement } from "./sortable-tree"
 import type { UISetSchemaForm } from "./schema-form"
 import { defineForm } from "@/registry/uiset/ui/schema-form/schema"
 import type { UISetUpload } from "./upload"
+import type { UISetCrossfade, UISetNumberTicker, UISetTextReveal } from "./motion"
 
 const invoices = [
   ["INV-001", "Acme Corp", "Paid", "$2,500.00"],
@@ -152,3 +153,25 @@ filesTree.addEventListener("itemschange", (event) => {
   const { key, parent } = event.detail
   document.getElementById("files-tree-moved")!.textContent = `Moved ${key} into ${parent ?? "the top level"}.`
 })
+
+// Motion: a sale moves the figure, an answer streams in, a plan swaps in place.
+const revenue = document.getElementById("revenue") as UISetNumberTicker
+revenue.format = { style: "currency", currency: "USD", currencyDisplay: "narrowSymbol", maximumFractionDigits: 0 }
+document.getElementById("add-sale")!.addEventListener("click", () => (revenue.value += 1290))
+const answer = document.getElementById("answer") as UISetTextReveal
+const fullAnswer = answer.text
+let streaming: ReturnType<typeof setInterval> | undefined
+document.getElementById("stream-answer")!.addEventListener("click", () => {
+  clearInterval(streaming)
+  const words = fullAnswer.split(" ")
+  let count = 0
+  answer.text = ""
+  streaming = setInterval(() => {
+    count = Math.min(words.length, count + 3)
+    answer.text = words.slice(0, count).join(" ")
+    if (count >= words.length) clearInterval(streaming)
+  }, 220)
+})
+const plan = document.getElementById("plan") as UISetCrossfade
+for (const button of document.querySelectorAll<HTMLButtonElement>("[data-plan]")) button.addEventListener("click", () => (plan.value = button.dataset.plan!))
+

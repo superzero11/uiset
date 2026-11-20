@@ -1630,6 +1630,130 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "number-ticker",
+      "type": "registry:ui",
+      "title": "Number ticker",
+      "description": "A number that moves to its new value, each skin its own way: Base rolls its digits, Blueprint counts, Studio steps, Phosphor types it, Ink redraws. It can count up once when first seen. People and agents read the value itself.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.13",
+        "@ui-sdk/react@0.1.0-beta.13"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/number-ticker.tsx",
+          "type": "registry:ui",
+          "target": "@ui/number-ticker.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/motion/ticker.ts",
+          "type": "registry:file",
+          "target": "@ui/motion/ticker.ts"
+        },
+        {
+          "path": "registry/uiset/ui/motion/motion.css",
+          "type": "registry:file",
+          "target": "@ui/motion/motion.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "text-reveal",
+      "type": "registry:ui",
+      "title": "Text reveal",
+      "description": "Text that arrives a word or a letter at a time, each skin its own way, and reveals only what's new as a streamed answer grows. The whole text is in the page from the start, for screen readers and agents.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.13",
+        "@ui-sdk/react@0.1.0-beta.13"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/text-reveal.tsx",
+          "type": "registry:ui",
+          "target": "@ui/text-reveal.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/motion/reveal.ts",
+          "type": "registry:file",
+          "target": "@ui/motion/reveal.ts"
+        },
+        {
+          "path": "registry/uiset/ui/motion/motion.css",
+          "type": "registry:file",
+          "target": "@ui/motion/motion.css"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "thinking",
+      "type": "registry:ui",
+      "title": "Thinking",
+      "description": "A wait, each skin its own way: words that shimmer, moving hatching, an LED chase, printing dots, or still dots. A status, so screen readers hear it once.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.13",
+        "@ui-sdk/react@0.1.0-beta.13"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/thinking.tsx",
+          "type": "registry:ui",
+          "target": "@ui/thinking.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/motion/motion.css",
+          "type": "registry:file",
+          "target": "@ui/motion/motion.css"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "crossfade",
+      "type": "registry:ui",
+      "title": "Crossfade",
+      "description": "Content swapped in place, each skin its own way, while the box moves to the new content's size. The leaving content can't be reached or read.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.13",
+        "@ui-sdk/react@0.1.0-beta.13"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/crossfade.tsx",
+          "type": "registry:ui",
+          "target": "@ui/crossfade.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/motion/crossfade.ts",
+          "type": "registry:file",
+          "target": "@ui/motion/crossfade.ts"
+        },
+        {
+          "path": "registry/uiset/ui/motion/motion.css",
+          "type": "registry:file",
+          "target": "@ui/motion/motion.css"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "schema-form",
       "type": "registry:ui",
       "title": "Schema form",

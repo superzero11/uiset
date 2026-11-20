@@ -235,6 +235,7 @@ vercel-labs/ui#905 (2026-11-19).
 | Motion part 1: openings, closings and panels per skin, `motion="reduce"`, React and Web Components | done, not pushed | 2026-11-20: tokens in `tokens.css` and each skin, drawn by `base.css`; Blueprint and Phosphor clip in their own files. 13 e2e tests in `motion.spec.ts` and 1 web, each mutation-checked. Filmstrips of popover, dialog, toast and accordion in every skin. |
 | Motion part 2: on and off, checks, errors and a refused press per skin, React and Web Components | done, not pushed | 2026-11-20: `--uiset-toggle-*`, `--uiset-check-scale` and `--uiset-nudge-*` per skin, drawn by `base.css`; Blueprint's inked check in its file; the nudge set by `feedback.ts`. 11 e2e tests in `motion.spec.ts`, each mutation-checked; filmstrips of a check and a nudge in every skin. |
 | Motion part 3: moves per skin, `shell/glide.ts` for the sortable list, tree and board, React and Web Components | done, not pushed | 2026-11-20: `--uiset-move-*` per skin; the switch thumb and segmented indicator use them. 9 e2e tests (8 in `motion.spec.ts`, 1 web), mutation-checked; the list, tree, board and template specs (286) pass with items sliding. |
+| Motion pieces: `number-ticker`, `text-reveal`, `thinking`, `crossfade`, React and Web Components | done, not pushed | 2026-11-20: per-skin tokens and Thinking styles in the skins, helpers in `motion/`, a Motion kit page and the menu's Motion live. 15 e2e tests in `motion-pieces.spec.ts` and 1 web, mutation-checked; axe in the gallery in every skin and theme. |
 | Every kit and template page in every skin: the audit and its fixes, React and Web Components | done, not pushed | 2026-11-20: five skins × two themes, kits and templates, reviewed by eye. Fixed: canvas opening fit, grid checkboxes, Studio meter ladder, Base track edges, Ink tab cue, square chips. Each with a test, mutation-checked. |
 
 ## Decision log
@@ -2123,4 +2124,12 @@ vercel-labs/ui#905 (2026-11-19).
   text reveal, Thinking and a crossfade, each per skin, are Now on the roadmap
   (`design/motion-pieces-plan.md`); agent parts are first in Next and will use them.
   Illustrations stay with the later Animate item.
+- 2026-11-20 — The owner asked to build the Motion pieces today and release everything at
+  9 PM, so they joined 0.6.0 with a 17:30 cutoff (a piece not solid by then would wait). All
+  four made it: each a DOM helper in `motion/` that React and Web Components share, so the
+  skins behave the same in both, and skins choose a ticker's mode (roll, count, type or none)
+  and a reveal's unit from CSS variables. The ticker's moving face is hidden from screen
+  readers and agents, which read the final value; the reveal keeps the whole text in the
+  page. Under reduced motion the helpers don't animate at all rather than rely on the CSS
+  reset. Chat and stat don't use them yet: that's with the agent parts, which are Now again.
 

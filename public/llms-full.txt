@@ -64,6 +64,10 @@ npx shadcn@latest add @uiset/uiset
 | `upload` | A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use. | [Forms](./forms.md) |
 | `sortable-list` | A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name. | [Lists and trees](./lists.md) |
 | `sortable-tree` | A tree people reorder and nest: drag a row up or down and sideways to change its level, or pick it up with Space and use the arrows. Only branches hold items, a drop elsewhere goes back and says why, and agents move items into branches by name. | [Lists and trees](./lists.md) |
+| `number-ticker` | A number that moves to its new value, each skin its own way: Base rolls its digits, Blueprint counts, Studio steps, Phosphor types it, Ink redraws. It can count up once when first seen. People and agents read the value itself. | [Motion](./motion.md) |
+| `text-reveal` | Text that arrives a word or a letter at a time, each skin its own way, and reveals only what's new as a streamed answer grows. The whole text is in the page from the start, for screen readers and agents. | [Motion](./motion.md) |
+| `thinking` | A wait, each skin its own way: words that shimmer, moving hatching, an LED chase, printing dots, or still dots. A status, so screen readers hear it once. | [Motion](./motion.md) |
+| `crossfade` | Content swapped in place, each skin its own way, while the box moves to the new content's size. The leaving content can't be reached or read. | [Motion](./motion.md) |
 | `rich-text` | A rich text editor on UI SDK with no editor library: headings, nested and numbered lists, to-dos, quotes, code, links, mentions, dividers and images; a toolbar, Markdown as you type, "/" for blocks and "@" for people (TriggerMenu); safe paste from documents and the web; undo; Markdown and clean HTML out; agents read and write Markdown. | [Rich text](./rich-text.md) |
 | `chat` | A conversation built on UI SDK: thread that follows new messages, messages with avatars, actions and versions, suggestions, plans and a thinking shimmer. | [Chat](./chat.md) |
 | `chat-response` | Streaming markdown that repairs itself mid-stream and never renders raw HTML, with code blocks highlighted by skin colors. | [Chat](./chat.md) |
@@ -204,7 +208,7 @@ the same parts, the same names, the same keyboard and agent support.
 
 | What | How many | What it gives you |
 | ---- | -------- | ----------------- |
-| [Components](/components) | 55, plus 24 app parts | Every UI SDK component, styled; and the app frame, data display, form and list parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, uploads, a sortable list and tree) |
+| [Components](/components) | 55, plus 28 app parts | Every UI SDK component, styled; and the app frame, data display, form, list and motion parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, uploads, a sortable list and tree, a number ticker, a text reveal, Thinking, a crossfade) |
 | [Kits](/kits) | 12 | Chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal, Studio and the Agent Console |
 | [Templates](/templates) | 10 | Whole pages: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, IDE |
 | [Themes](/themes) | 5 skins | Base, Blueprint, Studio, Phosphor and Ink, plus a [generator](/themes/generator) for your own |
@@ -3770,33 +3774,30 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**Motion pieces.** A number ticker, text that reveals as it streams, a Thinking state
-and a crossfade, each skin its own way, for the Library's Animate → Motion. Plan:
-`design/motion-pieces-plan.md`. M
+**Agent parts for AI apps.** Approvals that wait for a person, checkpoints to roll
+back to, a task queue, a context meter, subagent runs and an adapter from Vercel's AI SDK
+messages, in the chat kit and the Agent Console, with skins, sound and agents. M
 
 ## Next, in order
 
-1. **Agent parts for AI apps.** Approvals that wait for a person, checkpoints to roll
-   back to, a task queue, a context meter, subagent runs and an adapter from Vercel's AI SDK
-   messages, in the chat kit and the Agent Console, with skins, sound and agents. M
-2. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
+1. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
    number field with a country picker, and input masks for cards, IBANs and currency. M
-3. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
+2. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
    and agents setting a filter by name. M
-4. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
+3. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
    reorder, and a player whose scrubber snaps to chapters, beside Studio. M each
-5. **Locale packs.** Every component's and kit's built-in words translated, with
+4. **Locale packs.** Every component's and kit's built-in words translated, with
    right-to-left tested packs for the main languages. UI SDK ships none. M
-6. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
+5. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
    repair; export to Tailwind `@theme`, Figma variables and DESIGN.md. S
-7. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
+6. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
    paging. M–L
-8. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
+7. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
-9. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
+8. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
    and an invoice. S each
-10. **Print skin.** Swiss and letterpress type, from a written design plan first. M
-11. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
+9. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+10. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
     import. M
 
 Between these, small ones: dialogs and popovers that open in place (UI SDK's `inline`), tree
@@ -4888,6 +4889,133 @@ pages.addEventListener("itemschange", (e) => save(e.detail.value)) // the items,
 - `label`, `icons`, `max-depth` and `help` are attributes.
 - It fires `itemschange`, `expandedchange` and `action`, and `api` has `moveItem`,
   `expandItem`, `collapseItem` and `openItem`.
+
+
+<!-- docs/motion.md -->
+
+# Motion
+
+Pieces a page puts on purpose, that move each skin its own way: a number that moves to its
+new value, text that arrives as it streams, a wait, and content swapped in place. They're
+built on the same per-skin timings as the rest of UISet (see Theming, Motion), so a Studio page
+counts like a synth and a Phosphor page types like a terminal.
+
+```bash
+npx shadcn@latest add @uiset/number-ticker @uiset/text-reveal @uiset/thinking @uiset/crossfade
+```
+
+## Parts
+
+| Part           | Item            | What it is                                                         |
+| -------------- | --------------- | ------------------------------------------------------------------ |
+| `NumberTicker` | `number-ticker` | A number that moves to its new value                               |
+| `TextReveal`   | `text-reveal`   | Text that arrives a word or a letter at a time                     |
+| `Thinking`     | `thinking`      | A wait, said once to screen readers                                |
+| `Crossfade`    | `crossfade`     | Content swapped in place, the box moving to the new size           |
+
+## Each skin
+
+| Skin        | Number ticker                          | Text reveal                         | Thinking                   | Crossfade                              |
+| ----------- | -------------------------------------- | ----------------------------------- | -------------------------- | -------------------------------------- |
+| `base`      | Digits roll like an odometer           | Words rise a little and fade in     | The words shimmer          | Fades across while the box glides      |
+| `blueprint` | Counts at an even pace                 | Each word is drawn left to right    | Hatching moves along a bar | Wiped across from the start of the line |
+| `studio`    | Switches in hard steps                 | Words light up amber and cool       | Three LEDs chase           | A hard cut; the box snaps to size      |
+| `phosphor`  | Typed in from the left, with a caret   | Typed a letter at a time, with a caret | Dots print one by one   | Scanned in top to bottom               |
+| `ink`       | Redraws                                | Appears                             | Still dots                 | Redraws                                |
+
+Under reduced motion, or inside `<UISet motion="reduce">`, nothing moves: a ticker shows its
+new value, text appears whole, Thinking is still words, and a crossfade swaps at once.
+
+## Number ticker
+
+```tsx
+import { NumberTicker } from "@/components/ui/number-ticker"
+
+<NumberTicker value={revenue} format={{ style: "currency", currency: "USD" }} />
+<NumberTicker value={1284} from={0} />
+```
+
+- It moves when `value` changes. `from` counts up from that number once, when the ticker first
+  scrolls into view; leave it out and it simply shows the value.
+- `format` is `Intl.NumberFormat` options, or your own `(value) => string`; `locale` picks the
+  language.
+- Screen readers and agents read the value itself: the moving digits are hidden from them.
+  Put it in a sentence or next to a label ("Revenue this month") so the number has a name.
+
+## Text reveal
+
+```tsx
+import { TextReveal } from "@/components/ui/text-reveal"
+
+<p>
+  <TextReveal>{answer}</TextReveal>
+</p>
+```
+
+- `children` is the text, a string. When it grows, as a streamed answer does, only what's new
+  is revealed; when it changes otherwise, all of it is.
+- `by` is `"word"` or `"letter"`; by default the skin chooses (Phosphor types letters).
+- The whole text is in the page from the start, so screen readers, copy and agents get all of
+  it. Wrap it in your own `p` or heading.
+
+## Thinking
+
+```tsx
+import { Thinking } from "@/components/ui/thinking"
+
+<Thinking />
+<Thinking>Searching the docs…</Thinking>
+```
+
+- It's a `status`: screen readers hear its words once, not each frame. Remove it when the
+  wait is over.
+- It's the one piece that keeps moving, as progress does; under reduced motion it's still.
+
+## Crossfade
+
+```tsx
+import { Crossfade } from "@/components/ui/crossfade"
+
+<Crossfade value={plan}>
+  <PlanDetails plan={plan} />
+</Crossfade>
+```
+
+- When `value` changes, the new content takes the old one's place, and the box moves to the
+  new content's height on the skin's move timing.
+- The leaving content is inert and hidden from screen readers while it goes.
+
+## Web Components
+
+```html
+<uiset-number-ticker value="12840" locale="en-US"></uiset-number-ticker>
+<uiset-text-reveal text="An answer, a word at a time."></uiset-text-reveal>
+<uiset-thinking>Searching the docs…</uiset-thinking>
+<uiset-crossfade value="pro">
+  <div data-value="free">…</div>
+  <div data-value="pro">…</div>
+</uiset-crossfade>
+```
+
+Set `value` or `text` (attribute or property) to move them. A ticker's `format` property takes
+`Intl.NumberFormat` options or a function, and `from` counts up once when it's seen.
+
+## Your own skin
+
+The pieces read these from the skin's root (Base's values shown):
+
+```css
+--uiset-ticker-mode: roll; /* roll, count, type or none */
+--uiset-ticker-duration: 700ms;
+--uiset-ticker-ease: cubic-bezier(0.23, 1, 0.32, 1); /* linear, an ease or steps(n) when counting */
+--uiset-reveal-by: word;
+--uiset-reveal-duration: 360ms;
+--uiset-reveal-stagger: 40ms;
+--uiset-reveal-opacity: 0; /* and -shift, -clip, -color: where each piece starts from */
+--uiset-reveal-caret: off;
+--uiset-swap-duration: 220ms;
+--uiset-swap-in-opacity: 0; /* and -in-clip, -out-opacity, -out-clip */
+```
 
 
 <!-- docs/rich-text.md -->

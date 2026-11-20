@@ -22,6 +22,7 @@ const groups = [
   },
   { title: "Forms", names: ["schema-form", "inline-edit", "upload"], doc: "forms.md" },
   { title: "Lists and trees", names: ["sortable-list", "sortable-tree"], doc: "lists.md" },
+  { title: "Motion", names: ["number-ticker", "text-reveal", "thinking", "crossfade"], doc: "motion.md" },
   { title: "Rich text", names: ["rich-text"], doc: "rich-text.md" },
   { title: "Chat", names: ["chat", "chat-response", "chat-parts", "chat-composer", "chat-sidebar"], doc: "chat.md" },
   { title: "Data grid", names: ["data-grid"], doc: "data-grid.md" },

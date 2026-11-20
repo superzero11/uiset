@@ -79,6 +79,29 @@
           <uiset-sortable-list id="playlist" label="Playlist" multiple></uiset-sortable-list>
         </section>
 
+        <section aria-labelledby="motion-heading">
+          <h2 id="motion-heading">Motion</h2>
+          <h3>Revenue this month</h3>
+          <p class="motion-figure"><uiset-number-ticker id="revenue" value="12840" locale="en-US"></uiset-number-ticker></p>
+          <p><ui-button><button type="button" id="add-sale" data-variant="outline">Add a sale</button></ui-button></p>
+          <h3>An answer as it streams</h3>
+          <p><uiset-text-reveal id="answer" text="Abort a fetch with an AbortController: pass its signal to fetch, then call abort() when the reader leaves."></uiset-text-reveal></p>
+          <p><ui-button><button type="button" id="stream-answer" data-variant="outline">Stream the answer</button></ui-button></p>
+          <h3>While it works</h3>
+          <p><uiset-thinking>Searching the docs…</uiset-thinking></p>
+          <h3>Compare plans</h3>
+          <p>
+            <ui-button><button type="button" data-plan="free" data-variant="outline">Free</button></ui-button>
+            <ui-button><button type="button" data-plan="pro" data-variant="outline">Pro</button></ui-button>
+            <ui-button><button type="button" data-plan="team" data-variant="outline">Team</button></ui-button>
+          </p>
+          <uiset-crossfade id="plan" value="pro">
+            <div data-value="free"><p><b>Free</b>: one project and community support.</p></div>
+            <div data-value="pro"><p><b>Pro</b>: unlimited projects, email support, version history and custom domains.</p></div>
+            <div data-value="team"><p><b>Team</b>: everything in Pro, with shared workspaces, and roles and permissions for everyone on the team.</p></div>
+          </uiset-crossfade>
+        </section>
+
         <section aria-labelledby="sortable-tree-heading">
           <h2 id="sortable-tree-heading">Sortable tree</h2>
           <uiset-sortable-tree id="files-tree" label="Project files" icons></uiset-sortable-tree>

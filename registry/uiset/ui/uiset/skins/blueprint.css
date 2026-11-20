@@ -63,6 +63,22 @@
     /* A move slides in a straight line at an even speed, like a parallel rule. */
     --uiset-move-duration: 220ms;
     --uiset-move-ease: linear;
+    /* Motion pieces: numbers count at an even pace, text and swapped content are drawn in
+       from the start of the line. */
+    --uiset-ticker-mode: count;
+    --uiset-ticker-ease: linear;
+    --uiset-reveal-duration: 220ms;
+    --uiset-reveal-stagger: 60ms;
+    --uiset-reveal-ease: linear;
+    --uiset-reveal-opacity: 1;
+    --uiset-reveal-shift: 0px;
+    --uiset-reveal-clip: inset(-0.2em 100% -0.2em -0.1em);
+    --uiset-swap-duration: 260ms;
+    --uiset-swap-ease: linear;
+    --uiset-swap-in-opacity: 1;
+    --uiset-swap-in-clip: inset(0 100% 0 0);
+    --uiset-swap-out-opacity: 1;
+    --uiset-swap-out-clip: inset(0 0 0 100%);
     --uiset-solid-bg: var(--blueprint-line);
     --uiset-solid-fg: var(--blueprint-paper);
     --uiset-solid-border: var(--blueprint-line);
@@ -427,5 +443,35 @@
         }
       }
     }
+  }
+
+  /* Thinking: the words stay still and hatching moves along a drawn bar. */
+  :where(:scope)[data-uiset][data-skin="blueprint"] {
+    & .thinking-label {
+      background: none;
+      color: inherit;
+      animation: none;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      & .thinking-mark:not([data-motion="reduce"] *) {
+        display: inline-block;
+        inline-size: 2.5em;
+        block-size: 0.6em;
+        border: 1.5px solid var(--blueprint-line);
+        background: repeating-linear-gradient(-45deg, var(--blueprint-line) 0 1.5px, transparent 1.5px 6px) 0 0 / 8.49px 100%;
+        animation: uiset-blueprint-hatch 0.8s linear infinite;
+
+        & > span {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+@keyframes uiset-blueprint-hatch {
+  to {
+    background-position: 8.49px 0;
   }
 }

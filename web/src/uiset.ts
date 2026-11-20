@@ -24,6 +24,7 @@ import { defineContent } from "./content"
 import { defineInlineEdit } from "./inline-edit"
 import { defineSortableList } from "./sortable-list"
 import { defineSortableTree } from "./sortable-tree"
+import { defineMotion, type UISetCrossfade, type UISetNumberTicker, type UISetTextReveal, type UISetThinking } from "./motion"
 import { defineUpload } from "./upload"
 import { defineSchemaForm } from "./schema-form"
 import { defineTerminal } from "./terminal"
@@ -110,6 +111,7 @@ function define() {
   defineInlineEdit()
   defineSortableList()
   defineSortableTree()
+  defineMotion()
   defineUpload()
   defineSchemaForm()
 }
@@ -168,6 +170,10 @@ declare global {
     "uiset-segmented-bar": UISetSegmentedBar
     "uiset-sortable-list": UISetSortableList
     "uiset-sortable-tree": UISetSortableTree
+    "uiset-number-ticker": UISetNumberTicker
+    "uiset-text-reveal": UISetTextReveal
+    "uiset-thinking": UISetThinking
+    "uiset-crossfade": UISetCrossfade
     "uiset-sparkline": UISetSparkline
     "uiset-stat": UISetStat
     "uiset-status-bar": UISetStatusBar
@@ -218,6 +224,10 @@ type UISetSortableTree = SortableTreeElement
 
 export type {
   UISetAvatarGroup,
+  UISetCrossfade,
+  UISetNumberTicker,
+  UISetTextReveal,
+  UISetThinking,
   UISetCodeBlock,
   UISetCodeTabs,
   UISetCountBadge,

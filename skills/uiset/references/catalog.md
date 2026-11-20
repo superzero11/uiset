@@ -41,6 +41,13 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 - `sortable-list`: A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name.
 - `sortable-tree`: A tree people reorder and nest: drag a row up or down and sideways to change its level, or pick it up with Space and use the arrows. Only branches hold items, a drop elsewhere goes back and says why, and agents move items into branches by name.
 
+## Motion (docs/motion.md)
+
+- `number-ticker`: A number that moves to its new value, each skin its own way: Base rolls its digits, Blueprint counts, Studio steps, Phosphor types it, Ink redraws. It can count up once when first seen. People and agents read the value itself.
+- `text-reveal`: Text that arrives a word or a letter at a time, each skin its own way, and reveals only what's new as a streamed answer grows. The whole text is in the page from the start, for screen readers and agents.
+- `thinking`: A wait, each skin its own way: words that shimmer, moving hatching, an LED chase, printing dots, or still dots. A status, so screen readers hear it once.
+- `crossfade`: Content swapped in place, each skin its own way, while the box moves to the new content's size. The leaving content can't be reached or read.
+
 ## Rich text (docs/rich-text.md)
 
 - `rich-text`: A rich text editor on UI SDK with no editor library: headings, nested and numbered lists, to-dos, quotes, code, links, mentions, dividers and images; a toolbar, Markdown as you type, "/" for blocks and "@" for people (TriggerMenu); safe paste from documents and the web; undo; Markdown and clean HTML out; agents read and write Markdown.
