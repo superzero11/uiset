@@ -9,7 +9,7 @@ const facts = {
   kits: ["Chat", "Rich text", "Data grid", "Charts", "Board", "Scheduler", "Canvas", "IDE", "Mobile", "Terminal", "Studio", "Agent Console"],
   templates: 10,
   skins: 5,
-  registryItems: 121,
+  registryItems: 122,
   /** Kit pages in the docs and cards in the library: the kits above, the app frame, forms, lists and trees, and motion. */
   kitPages: 16,
 } as const

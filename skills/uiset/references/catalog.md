@@ -56,8 +56,9 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 
 - `chat`: A conversation built on UI SDK: thread that follows new messages, messages with avatars, actions and versions, suggestions, plans and a thinking shimmer.
 - `chat-response`: Streaming markdown that repairs itself mid-stream and never renders raw HTML, with code blocks highlighted by skin colors.
-- `chat-parts`: Reasoning that opens while the model thinks, tool calls with status, input and output, sources, citations and images.
-- `chat-composer`: The message box: Enter to send, history with ArrowUp, slash commands and mentions, attachments by drop, paste or picker, a model picker and a usage meter.
+- `chat-parts`: Reasoning that opens while the model thinks, tool calls with status, input and output and Allow or Deny when one waits for approval, subagent runs with their own steps, checkpoints to restore, sources, citations and images.
+- `chat-message-parts`: Draws a Vercel AI SDK message's parts with the chat kit: Markdown text that completes while it streams, reasoning, tool calls in every state with approvals, sources, files, a plan, checkpoints and subagent runs. No dependency on the ai package.
+- `chat-composer`: The message box: Enter to send, history with ArrowUp, slash commands and mentions, attachments by drop, paste or picker, a model picker, a usage meter, and the messages queued while the agent works.
 - `chat-sidebar`: A list of chats with rename and confirmed delete, and a floating assistant launcher.
 
 ## Data grid (docs/data-grid.md)

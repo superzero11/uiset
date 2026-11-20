@@ -9,6 +9,7 @@ import type { UISetSchemaForm } from "./schema-form"
 import { defineForm } from "@/registry/uiset/ui/schema-form/schema"
 import type { UISetUpload } from "./upload"
 import type { UISetCrossfade, UISetNumberTicker, UISetTextReveal } from "./motion"
+import type { ChatPart, UISetChat, UISetChatQueue } from "./chat"
 
 const invoices = [
   ["INV-001", "Acme Corp", "Paid", "$2,500.00"],
@@ -174,4 +175,46 @@ document.getElementById("stream-answer")!.addEventListener("click", () => {
 })
 const plan = document.getElementById("plan") as UISetCrossfade
 for (const button of document.querySelectorAll<HTMLButtonElement>("[data-plan]")) button.addEventListener("click", () => (plan.value = button.dataset.plan!))
+
+// Agent parts: a run with a checkpoint, a subagent's steps and a tool waiting for approval;
+// and messages queued meanwhile.
+const agentRun = document.getElementById("agent-run") as UISetChat
+const agentNote = document.getElementById("agent-note")!
+const runParts: ChatPart[] = [
+  { type: "checkpoint", id: "cp-1", label: "Checkpoint", time: "2026-11-20T14:14:00Z" },
+  {
+    type: "subagent",
+    id: "sub-1",
+    name: "Researcher",
+    task: "Find where the date format comes from",
+    status: "done",
+    seconds: 12,
+    parts: [
+      { type: "tool-searchCode", title: "Search code", state: "output-available", input: { query: "toLocaleDateString" }, output: { files: ["src/date.ts"] } },
+      { type: "text", text: "It's `formatDate` in `src/date.ts`, which ignores the locale." },
+    ],
+  },
+  { type: "tool-deployPreview", title: "Deploy preview", state: "approval-requested", input: { branch: "fix/date-locale" } },
+]
+const showRun = (parts: ChatPart[]) => (agentRun.messages = [{ id: "run", role: "assistant", parts }])
+showRun(runParts)
+agentRun.addEventListener("approve", (event) => {
+  const allowed = event.detail.value
+  showRun(runParts.map((p, i) => (i === event.detail.part ? { ...p, state: allowed ? "output-available" : "output-denied", output: allowed ? { url: "https://preview.example.com/fix-date-locale" } : undefined } : p)))
+  agentNote.textContent = allowed ? "Allowed: the preview is deployed." : "Denied: the preview wasn't deployed."
+})
+agentRun.addEventListener("restore", () => {
+  showRun(runParts)
+  agentNote.textContent = "Restored to the checkpoint."
+})
+const queue = document.getElementById("queue") as UISetChatQueue
+queue.items = [
+  { id: "q-1", text: "Also check the French locale" },
+  { id: "q-2", text: "Then open a pull request" },
+]
+queue.addEventListener("remove", (event) => (queue.items = queue.items.filter((m) => m.id !== event.detail.value)))
+queue.addEventListener("send", (event) => {
+  queue.items = queue.items.filter((m) => m.id !== event.detail.value)
+  agentNote.textContent = "Sent now."
+})
 

@@ -34,7 +34,7 @@ import type { UISetAppShell, UISetPageHeader, UISetEmptyState } from "./app-shel
 import type { BoardElement } from "./board"
 import type { CanvasElement, UISetCanvasToolbar, UISetCanvasInspector } from "./canvas"
 import type { UISetBarChart, UISetHeatmap, UISetLineChart, UISetScatterChart, UISetSegmentedBar } from "./chart"
-import type { UISetChat, UISetChatComposer, UISetChatThreads, UISetChatModelPicker, UISetChatUsage } from "./chat"
+import type { UISetChat, UISetChatComposer, UISetChatThreads, UISetChatModelPicker, UISetChatQueue, UISetChatUsage } from "./chat"
 import type { UISetDataGrid } from "./data-grid"
 import type { UISetFileTree, UISetEditorTabs, UISetCodeEditor, UISetCommandPalette, UISetProblems, UISetStatusBar } from "./ide"
 import type { SwipeListElement, UISetWheel, UISetPullRefresh } from "./mobile"
@@ -141,6 +141,7 @@ declare global {
     "uiset-chat-model-picker": UISetChatModelPicker
     "uiset-chat-threads": UISetChatThreads
     "uiset-chat-usage": UISetChatUsage
+    "uiset-chat-queue": UISetChatQueue
     "uiset-code-block": UISetCodeBlock
     "uiset-code-editor": UISetCodeEditor
     "uiset-code-tabs": UISetCodeTabs
@@ -201,7 +202,7 @@ export type { UISetUploadEvents, UploadLabels as UISetUploadLabels } from "./upl
 export type { UISetSchemaFormEvents } from "./schema-form"
 export type { UISetCanvasEvents } from "./canvas"
 export type { UISetChartEvents } from "./chart"
-export type { UISetChatEvents, UISetChatComposerEvents, UISetChatModelPickerEvents, UISetChatThreadsEvents } from "./chat"
+export type { ChatQueuedMessage, UISetChatEvents, UISetChatComposerEvents, UISetChatModelPickerEvents, UISetChatQueueEvents, UISetChatThreadsEvents } from "./chat"
 export type { UISetDataGridEvents } from "./data-grid"
 export type { UISetCodeEditorEvents, UISetCommandPaletteEvents, UISetEditorTabsEvents, UISetFileTreeEvents, UISetProblemsEvents } from "./ide"
 export type { UISetPullRefreshEvents, UISetSwipeListEvents } from "./mobile"
@@ -264,6 +265,7 @@ export type {
   UISetChatComposer,
   UISetChatThreads,
   UISetChatModelPicker,
+  UISetChatQueue,
   UISetChatUsage,
   UISetDataGrid,
   UISetFileTree,

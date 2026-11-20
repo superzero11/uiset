@@ -7,6 +7,7 @@ import {
 } from "@ui-sdk/react/collapsible"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ui-sdk/react/hover-card"
 import { useEffect, useRef, useState, type ReactNode } from "react"
+import { Button } from "./button"
 import { ChatShimmer } from "./chat"
 import { ScrollBox } from "./scroll-area"
 import "./chat/chat.css"
@@ -80,6 +81,7 @@ function ChatTool({
   output,
   error,
   defaultOpen,
+  onApprove,
   children,
 }: {
   name: string
@@ -89,6 +91,8 @@ function ChatTool({
   output?: unknown
   error?: string
   defaultOpen?: boolean
+  /** With status "approval": Deny and Allow, each calling this with the answer. */
+  onApprove?: (approved: boolean) => void
   children?: ReactNode
 }) {
   return (
@@ -145,8 +149,95 @@ function ChatTool({
             </section>
           )
         )}
+        {status === "approval" && onApprove && (
+          <div className="chat-dialog-actions">
+            <Button variant="outline" onClick={() => onApprove(false)}>
+              Deny
+            </Button>
+            {/* An agent asks a person before it lets a tool run. */}
+            <Button data-agent-confirm={`Runs ${title ?? name}`} onClick={() => onApprove(true)}>
+              Allow
+            </Button>
+          </div>
+        )}
         {children}
       </CollapsiblePanel>
+    </Collapsible>
+  )
+}
+
+const clock = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" })
+
+/**
+ * A point the conversation can go back to: "Checkpoint, 2:14 PM" and Restore. Restoring asks
+ * an agent to check with a person first.
+ */
+function ChatCheckpoint({ label = "Checkpoint", time, onRestore }: { label?: string; time?: Date; onRestore?: () => void }) {
+  const when = time ? clock.format(time) : undefined
+  return (
+    <div className="chat-checkpoint" data-slot="chat-checkpoint">
+      <span className="chat-checkpoint-text">
+        {label}
+        {time && (
+          <>
+            , <time dateTime={time.toISOString()}>{when}</time>
+          </>
+        )}
+      </span>
+      {onRestore && (
+        <Button
+          variant="ghost"
+          aria-label={`Restore ${label}${when ? `, ${when}` : ""}`}
+          data-agent-confirm="Puts the conversation back to this checkpoint"
+          onClick={onRestore}
+        >
+          Restore
+        </Button>
+      )}
+    </div>
+  )
+}
+
+type SubagentStatus = "running" | "done" | "failed"
+
+/**
+ * A run the agent handed off: its name, task and status, opening to its own steps. Working
+ * while it runs, then "Done in 12s" or "Failed" (open, so the reason shows).
+ */
+function ChatSubagent({
+  name,
+  task,
+  status,
+  seconds,
+  defaultOpen,
+  children,
+}: {
+  name: string
+  task?: string
+  status: SubagentStatus
+  seconds?: number
+  defaultOpen?: boolean
+  children?: ReactNode
+}) {
+  return (
+    <Collapsible className="chat-subagent" data-status={status} defaultOpen={defaultOpen ?? status === "failed"}>
+      <CollapsibleTrigger className="chat-disclosure">
+        <span className="chat-tool-name">
+          <span className="chat-tool-mark" aria-hidden="true" />
+          <span>{name}</span>
+        </span>
+        {task && (
+          <>
+            <span className="chat-visually-hidden">, </span>
+            <span className="chat-subagent-task">{task}</span>
+          </>
+        )}
+        <span className="chat-visually-hidden">, </span>
+        <span className="chat-tool-status">
+          {status === "running" ? <ChatShimmer>Working…</ChatShimmer> : status === "failed" ? "Failed" : seconds ? `Done in ${Math.max(1, Math.round(seconds))}s` : "Done"}
+        </span>
+      </CollapsibleTrigger>
+      <CollapsiblePanel className="chat-subagent-panel">{children}</CollapsiblePanel>
     </Collapsible>
   )
 }
@@ -234,5 +325,5 @@ function ChatImage({
   )
 }
 
-export { ChatCitation, ChatImage, ChatReasoning, ChatSources, ChatTool }
-export type { Source as ChatSource, ToolStatus as ChatToolStatus }
+export { ChatCheckpoint, ChatCitation, ChatImage, ChatReasoning, ChatSources, ChatSubagent, ChatTool }
+export type { Source as ChatSource, SubagentStatus as ChatSubagentStatus, ToolStatus as ChatToolStatus }

@@ -23,12 +23,6 @@ import { Specimen } from "../specimen"
 // it scrolls. A release that adds something adds its entry here (lint: content/whats-new).
 const whatsNew = [
   {
-    date: "2026-11-19",
-    title: "Sortable lists and trees",
-    href: "/docs/kits/lists",
-    what: "Lists and trees people put in order: drag an item, or pick it up with Space and move it with the arrows. A selection moves together, and every move is read out.",
-  },
-  {
     date: "2026-11-20",
     title: "Motion, per skin",
     href: "/docs/theming#motion",
@@ -39,6 +33,12 @@ const whatsNew = [
     title: "Motion pieces",
     href: "/docs/kits/motion",
     what: "A number ticker, text that reveals as it streams, a Thinking state and a crossfade, each skin its own way. People and agents read the real value.",
+  },
+  {
+    date: "2026-11-20",
+    title: "Agent parts",
+    href: "/docs/kits/chat#agent-parts",
+    what: "Tools that wait for your approval, subagent runs with their own steps, checkpoints to restore, a queue, and Vercel AI SDK messages drawn as they are.",
   },
 ]
 

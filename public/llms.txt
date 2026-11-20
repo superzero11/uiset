@@ -36,7 +36,7 @@ Rules for agents building with UISet:
 - [Lists and trees](https://uiset.dev/docs/lists.md): `sortable-list`, `sortable-tree`
 - [Motion](https://uiset.dev/docs/motion.md): `number-ticker`, `text-reveal`, `thinking`, `crossfade`
 - [Rich text](https://uiset.dev/docs/rich-text.md): `rich-text`
-- [Chat](https://uiset.dev/docs/chat.md): `chat`, `chat-response`, `chat-parts`, `chat-composer`, `chat-sidebar`
+- [Chat](https://uiset.dev/docs/chat.md): `chat`, `chat-response`, `chat-parts`, `chat-message-parts`, `chat-composer`, `chat-sidebar`
 - [Data grid](https://uiset.dev/docs/data-grid.md): `data-grid`
 - [Charts](https://uiset.dev/docs/charts.md): `chart`, `line-chart`, `bar-chart`, `scatter-chart`, `heatmap`, `segmented-bar`, `sparkline`
 - [Board](https://uiset.dev/docs/board.md): `board`

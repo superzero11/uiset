@@ -49,6 +49,15 @@ On UI SDK `0.1.0-beta.13`.
   place while the box moves to its size. Under reduced motion nothing moves, and people and
   agents read the real value. React and Web Components (`<uiset-number-ticker>`,
   `<uiset-text-reveal>`, `<uiset-thinking>`, `<uiset-crossfade>`).
+- **Agent parts for AI apps, in the chat kit.** `ChatMessageParts` draws a Vercel AI SDK
+  message's parts as they are (text, reasoning, tool calls in every state, sources, files),
+  with no dependency on the `ai` package. A tool waiting for approval shows Deny and Allow
+  (Allow makes an agent ask a person first). `ChatSubagent` is a run the agent handed off,
+  with its own steps inside; `ChatCheckpoint` is a point to restore, which asks an agent to
+  check with a person; `ChatQueue` holds what a person typed while the agent worked, with
+  Remove and Send now. React and Web Components (`checkpoint` and `subagent` parts and a
+  `restore` event on `<uiset-chat>`, and `<uiset-chat-queue>`); the new item is
+  `chat-message-parts`.
 - **`motion="reduce"` on `<UISet>` and `<uiset-root>`** quiets that part of the page,
   whatever the system setting says, so an app can offer its own switch.
 

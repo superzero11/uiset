@@ -24,7 +24,7 @@ const groups = [
   { title: "Lists and trees", names: ["sortable-list", "sortable-tree"], doc: "lists.md" },
   { title: "Motion", names: ["number-ticker", "text-reveal", "thinking", "crossfade"], doc: "motion.md" },
   { title: "Rich text", names: ["rich-text"], doc: "rich-text.md" },
-  { title: "Chat", names: ["chat", "chat-response", "chat-parts", "chat-composer", "chat-sidebar"], doc: "chat.md" },
+  { title: "Chat", names: ["chat", "chat-response", "chat-parts", "chat-message-parts", "chat-composer", "chat-sidebar"], doc: "chat.md" },
   { title: "Data grid", names: ["data-grid"], doc: "data-grid.md" },
   { title: "Charts", names: ["chart", "line-chart", "bar-chart", "scatter-chart", "heatmap", "segmented-bar", "sparkline"], doc: "charts.md" },
   { title: "Board", names: ["board"], doc: "board.md" },

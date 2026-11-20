@@ -315,7 +315,7 @@
     font-size: 0.75rem;
   }
 
-  :is(.chat-reasoning, .chat-tool, .chat-sources, .chat-tasks)
+  :is(.chat-reasoning, .chat-tool, .chat-sources, .chat-tasks, .chat-subagent)
     [data-slot="collapsible-panel"] {
     padding: 0.625rem;
     border: 1px solid var(--ui-border);
@@ -328,6 +328,88 @@
   .chat-reasoning-panel {
     color: var(--ui-muted-foreground);
     white-space: pre-wrap;
+  }
+
+  /* A subagent's run: its steps, the same parts, nested in its panel. */
+  .chat-subagent-panel {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .chat-subagent-task {
+    overflow: hidden;
+    color: var(--ui-muted-foreground);
+    font-size: 0.75rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chat-subagent[data-status="done"] .chat-tool-mark {
+    background: currentColor;
+  }
+
+  .chat-subagent[data-status="failed"] .chat-tool-mark {
+    border-radius: 1px;
+    background: var(--tone-danger, currentColor);
+    border-color: var(--tone-danger, currentColor);
+  }
+
+  /* A checkpoint: a line across the thread with its time and Restore. */
+  .chat-checkpoint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--ui-muted-foreground);
+    font-size: 0.75rem;
+
+    &::before,
+    &::after {
+      content: "";
+      flex: 1 1 auto;
+      border-top: 1px dashed var(--ui-input);
+    }
+  }
+
+  /* Messages waiting their turn, above the composer. */
+  .chat-queue {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.5rem 0.625rem;
+    border: 1px solid var(--ui-border);
+    border-radius: calc(var(--ui-radius, 0px) + 4px);
+    font-size: 0.8125rem;
+  }
+
+  .chat-queue-head {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .chat-queue-note {
+    color: var(--ui-muted-foreground);
+    font-weight: 400;
+  }
+
+  .chat-queue-list {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .chat-queue-text {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .chat-tool-name {

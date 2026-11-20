@@ -33,11 +33,15 @@ one-pixel rounding), and its controller brings you back from Jump to latest; the
 | `ChatResponse`                        | `chat-response` | The model's Markdown, completed while it streams; raw HTML never renders |
 | `ChatCodeBlock`                       | `chat-response` | Highlighted code with Wrap and Copy (`ChatResponse` uses it for fenced code) |
 | `ChatReasoning`                       | `chat-parts`    | The model's thinking: open while it streams, then "Thought for 4s" |
-| `ChatTool`                            | `chat-parts`    | A tool call: its status in words, input, output or error       |
+| `ChatTool`                            | `chat-parts`    | A tool call: its status in words, input, output or error, and Allow or Deny when it waits |
+| `ChatSubagent`                        | `chat-parts`    | A run the agent handed off: name, task, status, and its own steps inside |
+| `ChatCheckpoint`                      | `chat-parts`    | "Checkpoint, 2:14 PM" with Restore                              |
+| `ChatMessageParts`                    | `chat-message-parts` | A Vercel AI SDK message's parts, drawn with the parts above |
 | `ChatSources`, `ChatCitation`         | `chat-parts`    | "Used 2 sources", and a numbered link with a hover card        |
 | `ChatImage`                           | `chat-parts`    | An image with its size reserved and an optional caption        |
 | `ChatComposer`                        | `chat-composer` | The message box: Enter sends, commands, mentions, attachments, a toolbar |
 | `ChatModelPicker`, `ChatUsage`        | `chat-composer` | A model `Select`, and a meter that reads "18.4K of 200K tokens" |
+| `ChatQueue`                           | `chat-composer` | Messages written while the agent works: "2 queued", Remove, Send now |
 | `ChatThreadList`                      | `chat-sidebar`  | The chats: choose one, New chat, Rename, Delete (asks first)   |
 | `ChatLauncher`                        | `chat-sidebar`  | A floating button that opens the assistant in a panel          |
 
@@ -137,13 +141,50 @@ one-pixel rounding), and its controller brings you back from Jump to latest; the
   itself for `approval` and `error` unless you pass `defaultOpen`. `title` replaces
   `name` in the header; `input` and `output` show as JSON (strings as they are); `error`
   shows in place of the output.
-- `ChatTool` has no Allow or Deny buttons of its own. Put yours in its `children`, which
-  render in the panel, and give Allow a `data-agent-confirm` (the web element does).
+- With `status="approval"` and `onApprove(approved)`, `ChatTool` shows Deny and Allow.
+  Allow carries `data-agent-confirm`, so an agent asks a person before it lets a tool run.
 - `ChatSources` takes `sources` (`{ href, title, description? }`) and renders nothing for
   an empty list. `ChatCitation` takes `index` and one `source`: a link named "Source 1:
   title" whose hover card shows the title, host and description.
 - `ChatImage` needs `src`, `alt`, `width` and `height`, so the space is held before it
   loads; `caption` is optional.
+
+## Agent parts
+
+An agent's work, as AI apps show it: tools that wait for a person, runs handed to
+subagents, points to go back to, and what a person typed meanwhile.
+
+```tsx
+import { ChatMessageParts } from "@/components/ui/chat-message-parts"
+import { ChatQueue } from "@/components/ui/chat-composer"
+
+// With the AI SDK's useChat: messages, addToolApprovalResponse.
+{messages.map((message) => (
+  <ChatMessage key={message.id} from={message.role}>
+    <ChatMessageParts
+      parts={message.parts}
+      onApprove={(part, approved) => addToolApprovalResponse({ id: part.approval!.id, approved })}
+      onRestore={(checkpoint) => restoreTo(checkpoint.id)}
+    />
+  </ChatMessage>
+))}
+<ChatQueue items={queued} onRemove={unqueue} onSendNow={sendNow} />
+```
+
+- `ChatMessageParts` draws `text` (Markdown, completed while it streams), `reasoning`,
+  `tool-*` and `dynamic-tool` in every state from `input-streaming` to `output-denied`
+  (approvals included), `source-url` (once the answer is complete), `file` (`data:` and
+  `blob:` images; other files are links), and the kit's own `tasks`, `checkpoint` and
+  `subagent`. It doesn't depend on the `ai` package: the part types are written out.
+- A `checkpoint` part is `{ type: "checkpoint", id, label?, time? }`. Restore asks an agent
+  to check with a person first; what it restores is yours to decide.
+- A `subagent` part is `{ type: "subagent", id, name, task?, status, seconds?, parts }`: its
+  status reads Working while it runs, then "Done in 12s" or Failed (open, so the reason
+  shows), and its `parts` are drawn inside it, the same way.
+- `ChatQueue` takes `items` (`{ id, text }`), `onRemove(id)` and, for Send now on the
+  first, `onSendNow(id)`. It renders nothing when the queue is empty. Each button names its
+  message ("Remove from queue: Then open a pull request").
+- The context meter is `ChatUsage`, and a plan is `ChatTasks`.
 
 ## The composer
 
@@ -252,7 +293,9 @@ the refs; retry with a ref. Nothing in the kit is `data-agent-hidden`.
 ## Web Components
 
 `<uiset-chat>`, `<uiset-chat-composer>`, `<uiset-chat-threads>`,
-`<uiset-chat-model-picker>` and `<uiset-chat-usage>` are the kit as custom elements.
-`<uiset-chat>` draws a whole conversation from AI SDK's `messages` shape, with Allow and
-Deny on tool calls that wait for approval. The launcher has no element. See
+`<uiset-chat-model-picker>`, `<uiset-chat-usage>` and `<uiset-chat-queue>` are the kit as
+custom elements. `<uiset-chat>` draws a whole conversation from AI SDK's `messages` shape,
+with Allow and Deny on tool calls that wait for approval (an `approve` event), and the
+`checkpoint` and `subagent` parts (Restore fires `restore`). `<uiset-chat-queue>` takes
+`items` and fires `remove` and, with `send-now`, `send`. The launcher has no element. See
 [Web Components](./web-components.md#chat).

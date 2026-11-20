@@ -471,6 +471,18 @@ const groups: [string, ExampleMeta[]][] = [
     ],
   ],
   [
+    "AI",
+    [
+      {
+        slug: "chat-agent",
+        title: "Agent parts",
+        parts: "ChatMessageParts (AI SDK messages), ChatTool approvals, ChatSubagent, ChatCheckpoint, ChatQueue",
+        items: ["chat-message-parts", "chat-parts", "chat-composer"],
+        wide: true,
+      },
+    ],
+  ],
+  [
     "Motion",
     [
       { slug: "number-ticker", title: "Number ticker", parts: "NumberTicker", items: ["number-ticker"] },

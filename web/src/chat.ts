@@ -49,6 +49,8 @@ type ChatPart =
   | { type: "source-document"; title: string; filename?: string; mediaType?: string }
   | { type: "file"; mediaType: string; url: string; filename?: string }
   | { type: "tasks"; title?: string; tasks: { id: string; title: string; status: TaskStatus; detail?: string }[] }
+  | { type: "checkpoint"; id: string; label?: string; time?: string | Date }
+  | { type: "subagent"; id: string; name: string; task?: string; status: "running" | "done" | "failed"; seconds?: number; parts: ChatPart[] }
   | { type: string; toolName?: string; title?: string; state?: ToolState | string; input?: unknown; output?: unknown; errorText?: string }
 
 type ChatMessage = {
@@ -196,6 +198,8 @@ const toolWords: Record<string, [status: string, words: string]> = {
   "output-denied": ["denied", "Not allowed"],
 }
 
+const clock = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" })
+
 function json(value: unknown) {
   if (typeof value === "string") return value
   try {
@@ -247,6 +251,8 @@ type UISetChatEvents = {
   suggestion: CustomEvent<{ value: string }>
   /** Allow or Deny on a tool call that needs approval. */
   approve: CustomEvent<{ value: boolean; id: string; part: number }>
+  /** Restore on a checkpoint: `value` is the checkpoint's id, `id` its message's. */
+  restore: CustomEvent<{ value: string; id: string; part: number }>
   feedbackchange: CustomEvent<{ value: Feedback | null; id: string }>
   /** Edit on a user's message, with `editable`. */
   edit: CustomEvent<{ value: string }>
@@ -603,6 +609,48 @@ class UISetChat extends Evented<UISetChatEvents>() {
           ],
         ),
       }
+    }
+    if (part.type === "checkpoint") {
+      const checkpoint = part as { id: string; label?: string; time?: string | Date }
+      const label = checkpoint.label ?? "Checkpoint"
+      const time = checkpoint.time === undefined ? null : new Date(checkpoint.time)
+      const when = time ? clock.format(time) : ""
+      const restore = h(
+        "button",
+        { type: "button", "data-variant": "ghost", "aria-label": `Restore ${label}${when ? `, ${when}` : ""}`, "data-agent-confirm": "Puts the conversation back to this checkpoint", "data-focus-key": `${key}:restore` },
+        "Restore",
+      )
+      restore.addEventListener("click", () => this.emit("restore", { value: checkpoint.id, id: message.id, part: index }))
+      return {
+        node: h(
+          "div",
+          { class: "chat-checkpoint", "data-slot": "chat-checkpoint" },
+          h("span", { class: "chat-checkpoint-text" }, label, time ? ", " : null, time ? h("time", { datetime: time.toISOString() }, when) : null),
+          h("ui-button", null, restore),
+        ),
+      }
+    }
+    if (part.type === "subagent") {
+      const run = part as { name: string; task?: string; status: "running" | "done" | "failed"; seconds?: number; parts: ChatPart[] }
+      const status =
+        run.status === "running" ? h("span", { class: "chat-shimmer" }, "Working…") : run.status === "failed" ? "Failed" : run.seconds ? `Done in ${Math.max(1, Math.round(run.seconds))}s` : "Done"
+      // The run's steps are the same parts, drawn inside it.
+      const steps = run.parts.map((inner, i) => this.partNode(message, inner, i, streaming && run.status === "running", ordinal, `${key}:${i}`)?.node).filter((n): n is HTMLElement => !!n)
+      const node = this.disclosure(
+        key,
+        "chat-subagent",
+        run.status === "failed",
+        [
+          h("span", { class: "chat-tool-name" }, h("span", { class: "chat-tool-mark", "aria-hidden": "true" }), h("span", null, run.name)),
+          ...(run.task ? [hidden(", "), h("span", { class: "chat-subagent-task" }, run.task)] : []),
+          hidden(", "),
+          h("span", { class: "chat-tool-status" }, status),
+        ],
+        steps,
+        "chat-subagent-panel",
+      )
+      node.dataset.status = run.status
+      return { node }
     }
     if (isTool(part)) return { node: this.drawTool(message, part as { type: string; toolName?: string; title?: string; state?: string; input?: unknown; output?: unknown; errorText?: string }, index, key, ordinal) }
     return null
@@ -1019,6 +1067,71 @@ class UISetChatModelPicker extends Evented<UISetChatModelPickerEvents>() {
 const compact = new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 })
 
 /** <uiset-chat-usage used="1200" limit="200000" label="Context used" unit="tokens">: how full the context is. */
+type QueuedMessage = { id: string; text: string }
+/** What `<uiset-chat-queue>` fires, naming the message by its `id`. */
+type UISetChatQueueEvents = {
+  remove: CustomEvent<{ value: string }>
+  /** Send now, on the first message, with `send-now`. */
+  send: CustomEvent<{ value: string }>
+}
+
+/**
+ * <uiset-chat-queue items send-now>: messages a person wrote while the agent was still working,
+ * sent in turn when it's done. "2 queued", each with Remove, and Send now for the first.
+ */
+class UISetChatQueue extends Evented<UISetChatQueueEvents>() {
+  static observedAttributes = ["label", "send-now"]
+  #items: QueuedMessage[] = []
+
+  get items() {
+    return this.#items
+  }
+  set items(v: QueuedMessage[]) {
+    this.#items = v
+    this.render()
+  }
+
+  connectedCallback() {
+    upgradeProperties(this, ["items"])
+    this.render()
+  }
+  attributeChangedCallback() {
+    this.render()
+  }
+
+  private render() {
+    if (!this.isConnected) return
+    this.hidden = this.#items.length === 0
+    this.setAttribute("role", "region")
+    this.setAttribute("aria-label", this.getAttribute("label") ?? "Queued messages")
+    this.classList.add("chat-queue")
+    // The slot makes `hidden` win over the queue's own display, as for every UISet part.
+    this.dataset.slot = "chat-queue"
+    const sendNow = isOn(this, "send-now")
+    const button = (label: string, name: string, content: Node | string, onClick: () => void) => {
+      const b = h("button", { type: "button", "data-variant": "ghost", "aria-label": label, class: name }, content)
+      b.addEventListener("click", onClick)
+      return h("ui-button", null, b)
+    }
+    this.replaceChildren(
+      h("p", { class: "chat-queue-head" }, `${this.#items.length} queued`, h("span", { class: "chat-queue-note" }, ", sent when the answer is done")),
+      h(
+        "ol",
+        { class: "chat-queue-list" },
+        ...this.#items.map((item, index) =>
+          h(
+            "li",
+            null,
+            h("span", { class: "chat-queue-text" }, item.text),
+            index === 0 && sendNow ? button(`Send now: ${item.text}`, "", "Send now", () => this.dispatchEvent(new CustomEvent("send", { detail: { value: item.id } }))) : null,
+            button(`Remove from queue: ${item.text}`, "chat-queue-remove", icon(icons.remove), () => this.dispatchEvent(new CustomEvent("remove", { detail: { value: item.id } }))),
+          ),
+        ),
+      ),
+    )
+  }
+}
+
 class UISetChatUsage extends ElementBase {
   static observedAttributes = ["used", "limit", "label", "unit"]
   #dom?: { meter: MeterElement; text: HTMLElement }
@@ -1264,8 +1377,9 @@ function defineChat() {
   defineElement("uiset-chat-threads", UISetChatThreads)
   defineElement("uiset-chat-model-picker", UISetChatModelPicker)
   defineElement("uiset-chat-usage", UISetChatUsage)
+  defineElement("uiset-chat-queue", UISetChatQueue)
 }
 
-export { defineChat, UISetChat, UISetChatComposer, UISetChatModelPicker, UISetChatThreads, UISetChatUsage }
+export { defineChat, UISetChat, UISetChatComposer, UISetChatModelPicker, UISetChatQueue, UISetChatThreads, UISetChatUsage }
 export type { ChatMessage, ChatPart, ComposerItem, Feedback, Model, Thread }
-export type { UISetChatEvents, UISetChatComposerEvents, UISetChatModelPickerEvents, UISetChatThreadsEvents }
+export type { QueuedMessage as ChatQueuedMessage, UISetChatEvents, UISetChatComposerEvents, UISetChatModelPickerEvents, UISetChatQueueEvents, UISetChatThreadsEvents }

@@ -236,6 +236,7 @@ vercel-labs/ui#905 (2026-11-19).
 | Motion part 2: on and off, checks, errors and a refused press per skin, React and Web Components | done, not pushed | 2026-11-20: `--uiset-toggle-*`, `--uiset-check-scale` and `--uiset-nudge-*` per skin, drawn by `base.css`; Blueprint's inked check in its file; the nudge set by `feedback.ts`. 11 e2e tests in `motion.spec.ts`, each mutation-checked; filmstrips of a check and a nudge in every skin. |
 | Motion part 3: moves per skin, `shell/glide.ts` for the sortable list, tree and board, React and Web Components | done, not pushed | 2026-11-20: `--uiset-move-*` per skin; the switch thumb and segmented indicator use them. 9 e2e tests (8 in `motion.spec.ts`, 1 web), mutation-checked; the list, tree, board and template specs (286) pass with items sliding. |
 | Motion pieces: `number-ticker`, `text-reveal`, `thinking`, `crossfade`, React and Web Components | done, not pushed | 2026-11-20: per-skin tokens and Thinking styles in the skins, helpers in `motion/`, a Motion kit page and the menu's Motion live. 15 e2e tests in `motion-pieces.spec.ts` and 1 web, mutation-checked; axe in the gallery in every skin and theme. |
+| Agent parts: approvals, subagent runs, checkpoints, a queue and AI SDK messages, React and Web Components | done, not pushed | 2026-11-20: `chat-message-parts` (new item), `ChatTool` `onApprove`, `ChatSubagent`, `ChatCheckpoint`, `ChatQueue`; the web chat's `checkpoint` and `subagent` parts, `restore` event and `<uiset-chat-queue>`. 5 e2e tests and 1 web, mutation-checked. |
 | Every kit and template page in every skin: the audit and its fixes, React and Web Components | done, not pushed | 2026-11-20: five skins × two themes, kits and templates, reviewed by eye. Fixed: canvas opening fit, grid checkboxes, Studio meter ladder, Base track edges, Ink tab cue, square chips. Each with a test, mutation-checked. |
 
 ## Decision log
@@ -2141,4 +2142,13 @@ vercel-labs/ui#905 (2026-11-19).
   motion per skin and the Motion pieces. Lint `content/whats-new` refuses a dated release
   whose changelog adds things while What's new's newest entry is older (it fired on the old
   row with 0.6.0 dated, and passes now), and CLAUDE.md's first hard rule names What's new.
+- 2026-11-20 — Agent parts, the next roadmap item, built for tonight's release inside a 19:00
+  cutoff (the owner asked for it with the afternoon left; Firefox moved to the morning). The
+  chat kit already had a context meter and a plan, and the web chat already read AI SDK
+  parts with approvals; React caught up (`ChatTool`'s `onApprove`, and `ChatMessageParts`
+  for `UIMessage` parts with no `ai` dependency), and both builds gained checkpoints,
+  subagent runs and a queue. Allow and Restore carry `data-agent-confirm`, so an agent asks
+  a person first. The web queue needed its slot name for `hidden` to win over its own
+  display. What's new now leads with the three Nov 20 entries; the inputs asked for most are
+  Now on the roadmap.
 

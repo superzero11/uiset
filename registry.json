@@ -3119,7 +3119,7 @@
       "name": "chat-parts",
       "type": "registry:ui",
       "title": "Chat parts",
-      "description": "Reasoning that opens while the model thinks, tool calls with status, input and output, sources, citations and images.",
+      "description": "Reasoning that opens while the model thinks, tool calls with status, input and output and Allow or Deny when one waits for approval, subagent runs with their own steps, checkpoints to restore, sources, citations and images.",
       "dependencies": [
         "@ui-sdk/core@0.1.0-beta.13",
         "@ui-sdk/react@0.1.0-beta.13"
@@ -3127,7 +3127,8 @@
       "registryDependencies": [
         "superzero11/uiset/uiset",
         "superzero11/uiset/chat",
-        "superzero11/uiset/scroll-area"
+        "superzero11/uiset/scroll-area",
+        "superzero11/uiset/button"
       ],
       "files": [
         {
@@ -3144,10 +3145,39 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "chat-message-parts",
+      "type": "registry:ui",
+      "title": "Chat message parts",
+      "description": "Draws a Vercel AI SDK message's parts with the chat kit: Markdown text that completes while it streams, reasoning, tool calls in every state with approvals, sources, files, a plan, checkpoints and subagent runs. No dependency on the ai package.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.13",
+        "@ui-sdk/react@0.1.0-beta.13"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/chat",
+        "superzero11/uiset/chat-parts",
+        "superzero11/uiset/chat-response"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/chat-message-parts.tsx",
+          "type": "registry:ui",
+          "target": "@ui/chat-message-parts.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/chat/chat.css",
+          "type": "registry:file",
+          "target": "@ui/chat/chat.css"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "chat-composer",
       "type": "registry:ui",
       "title": "Chat composer",
-      "description": "The message box: Enter to send, history with ArrowUp, slash commands and mentions, attachments by drop, paste or picker, a model picker and a usage meter.",
+      "description": "The message box: Enter to send, history with ArrowUp, slash commands and mentions, attachments by drop, paste or picker, a model picker, a usage meter, and the messages queued while the agent works.",
       "dependencies": [
         "@ui-sdk/core@0.1.0-beta.13",
         "@ui-sdk/react@0.1.0-beta.13"

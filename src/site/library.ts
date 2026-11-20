@@ -51,11 +51,11 @@ const kitText: Record<string, { headline: string; items: string[]; tag: string; 
   },
   chat: {
     headline: "A complete chat kit",
-    items: ["chat", "chat-response", "chat-parts", "chat-composer", "chat-sidebar"],
+    items: ["chat", "chat-response", "chat-parts", "chat-message-parts", "chat-composer", "chat-sidebar"],
     tag: "AI",
     stage: "chat-stage",
     description:
-      "Streaming Markdown and code, reasoning, tool calls, sources and citations, plans, versions, message actions, a composer with attachments, commands, mentions and a model picker, and a list of chats.",
+      "Streaming Markdown and code, reasoning, tool calls with approvals, subagent runs, checkpoints, sources and citations, plans, versions, message actions, a composer with attachments, commands, mentions, a model picker and a queue, a list of chats, and Vercel AI SDK messages as they are.",
   },
   "rich-text": {
     headline: "A rich text editor agents can write in too",

@@ -47,6 +47,7 @@ const appParts: Record<string, string> = {
   upload: "/docs/kits/forms#upload",
   "sortable-list": "/docs/kits/lists#sortable-list",
   "sortable-tree": "/docs/kits/lists#sortable-tree",
+  "chat-message-parts": "/docs/kits/chat#agent-parts",
   "number-ticker": "/docs/kits/motion#number-ticker",
   "text-reveal": "/docs/kits/motion#text-reveal",
   thinking: "/docs/kits/motion#thinking",

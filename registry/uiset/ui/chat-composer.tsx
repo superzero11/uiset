@@ -291,8 +291,51 @@ function ChatUsage({
   )
 }
 
-export { ChatComposer, ChatModelPicker, ChatUsage }
+type QueuedMessage = { id: string; text: string }
+
+/**
+ * Messages a person wrote while the agent was still working, sent in turn when it's done:
+ * "2 queued", each with Remove, and Send now for the first.
+ */
+function ChatQueue({
+  items,
+  onRemove,
+  onSendNow,
+  label = "Queued messages",
+}: {
+  items: QueuedMessage[]
+  onRemove: (id: string) => void
+  onSendNow?: (id: string) => void
+  label?: string
+}) {
+  if (!items.length) return null
+  return (
+    <section className="chat-queue" data-slot="chat-queue" aria-label={label}>
+      <p className="chat-queue-head">
+        {items.length} queued<span className="chat-queue-note">, sent when the answer is done</span>
+      </p>
+      <ol className="chat-queue-list">
+        {items.map((item, index) => (
+          <li key={item.id}>
+            <span className="chat-queue-text">{item.text}</span>
+            {index === 0 && onSendNow && (
+              <Button variant="ghost" aria-label={`Send now: ${item.text}`} onClick={() => onSendNow(item.id)}>
+                Send now
+              </Button>
+            )}
+            <Button variant="ghost" className="chat-queue-remove" aria-label={`Remove from queue: ${item.text}`} onClick={() => onRemove(item.id)}>
+              <ChatIcon path={remove} />
+            </Button>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
+export { ChatComposer, ChatModelPicker, ChatQueue, ChatUsage }
 export type {
+  QueuedMessage as ChatQueuedMessage,
   ComposerItem as ChatComposerItem,
   Message as ChatComposerMessage,
   Model as ChatModel,
