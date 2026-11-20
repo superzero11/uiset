@@ -21,6 +21,29 @@ test.beforeEach(async ({ page }) => {
   await expect(page.getByText("How can I help?")).toBeVisible()
 })
 
+// The React chat lost following after a wheel at its end over a one-pixel rounding (2026-11-20,
+// like shadcn-ui/ui#12766; site.spec.ts reproduces it). This build doesn't round that way here,
+// so this guards that a wheel and End at the end keep following, with the same re-arm wired in.
+test("the thread keeps following after a wheel or End at its end", async ({ page }) => {
+  await ask(page, "What's left?")
+  await page.addStyleTag({ content: ".chat-thread-frame { max-height: 220px }" })
+  const log = page.locator(".chat-thread-log").first()
+  const height = await log.evaluate((el) => el.getBoundingClientRect().height)
+  await page.addStyleTag({ content: `.chat-thread-log { padding-block-end: ${(1.6 - (height % 1)) % 1}px }` })
+  const view = page.locator(".chat-thread-scroller")
+  await view.evaluate((el) => el.scrollTo({ top: el.scrollHeight }))
+  await expect(view).toHaveAttribute("data-sticking", "")
+  const area = (await view.boundingBox())!
+  await page.mouse.move(area.x + area.width / 2, area.y + area.height / 2)
+  await page.mouse.wheel(0, 300)
+  await view.focus()
+  await page.keyboard.press("End")
+  await page.waitForTimeout(600)
+  await expect(view).toHaveAttribute("data-sticking", "")
+  await ask(page, "And then?")
+  expect(await view.evaluate((el) => el.scrollHeight - el.scrollTop - el.clientHeight)).toBeLessThanOrEqual(2)
+})
+
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes

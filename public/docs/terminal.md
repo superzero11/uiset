@@ -2,7 +2,8 @@
 
 A terminal for commands your app defines, like a web shell, a dev console or a CLI in the
 browser. Built on UI SDK's `createInputHistory` (Up and Down) and a `ScrollArea` with
-`stickToEnd` (output follows its end unless you scroll up).
+`stickToEnd` (output follows its end unless you scroll up; a wheel or End at the end keeps
+it following).
 
 ```bash
 npx shadcn@latest add @uiset/terminal

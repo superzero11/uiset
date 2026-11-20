@@ -609,6 +609,32 @@ test.describe("Chat kit", () => {
   const chat = (page: Page) => page.locator(".item-frame")
   const box = (page: Page) => chat(page).getByRole("textbox", { name: "Message" })
 
+  // A wheel at the end of a thread whose content ends between two pixels settled a pixel up and
+  // let go of following, and nothing re-armed it, so the next answer arrived out of view
+  // (2026-11-20; the same failure as shadcn-ui/ui#12766). Forced here: a short thread whose
+  // content ends .6 past a whole pixel (the browser rounds the end up, then a wheel settles below).
+  test("the thread keeps following after a wheel or End at its end", async ({ page }) => {
+    await page.addStyleTag({ content: ".chat-thread-frame { max-height: 220px }" })
+    const log = page.locator(".chat-thread-log").first()
+    const height = await log.evaluate((el) => el.getBoundingClientRect().height)
+    await page.addStyleTag({ content: `.chat-thread-log { padding-block-end: ${(1.6 - (height % 1)) % 1}px }` })
+    const view = chat(page).locator(".chat-thread-scroller")
+    await view.scrollIntoViewIfNeeded()
+    await view.evaluate((el) => el.scrollTo({ top: el.scrollHeight }))
+    await expect(view).toHaveAttribute("data-sticking", "")
+    const area = (await view.boundingBox())!
+    await page.mouse.move(area.x + area.width / 2, area.y + area.height / 2)
+    await page.mouse.wheel(0, 300)
+    await view.focus()
+    await page.keyboard.press("End")
+    await page.waitForTimeout(600)
+    await expect(view).toHaveAttribute("data-sticking", "")
+    await box(page).fill("Tell me more")
+    await box(page).press("Enter")
+    await expect(chat(page).locator(".chat-message[data-from=assistant]:not([data-streaming])")).toHaveCount(3, { timeout: 15000 })
+    expect(await view.evaluate((el) => el.scrollHeight - el.scrollTop - el.clientHeight)).toBeLessThanOrEqual(2)
+  })
+
   for (const scheme of ["light", "dark"] as const) {
     test(`passes axe in ${scheme} mode, code colors included`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: scheme, reducedMotion: "reduce" })

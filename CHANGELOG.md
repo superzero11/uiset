@@ -8,6 +8,20 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
+## 0.6.0 (unreleased)
+
+On UI SDK `0.1.0-beta.13`.
+
+### Fixed
+
+- **A chat or terminal keeps following new output after a wheel at its end.** When the
+  content's height ended between two pixels, a wheel at the bottom settled a pixel up, UI
+  SDK's `stickToEnd` read that as scrolling up and let go, and nothing re-armed it: the next
+  answer arrived out of view (the same failure as shadcn-ui/ui#12766). `ScrollBox` with
+  `stickToEnd`, and the web elements' scroll areas, now stick to the end again after a
+  downward wheel, End, PageDown or ArrowDown there. The `scroll-area` item brings
+  `shell/rearm-end.ts`. React and Web Components.
+
 ## 0.5.1 (2026-11-20)
 
 On UI SDK `0.1.0-beta.13`.

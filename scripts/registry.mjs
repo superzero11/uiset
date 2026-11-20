@@ -134,6 +134,7 @@ const components = [
     "scroll-area",
     "Scroll area",
     "Styled scrolling, plus ScrollBox with the parts in place.",
+    ["shell/rearm-end.ts"],
   ],
   ["separator", "Separator", "A line between content."],
   ["textarea", "Textarea", "Multi-line text that can grow with its content, and a count of its limit.", [], ["field"]],

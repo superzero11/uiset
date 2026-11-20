@@ -14,7 +14,8 @@ Each of the last four brings `chat` with it. `chat-response` also adds `react-ma
 `remark-gfm`, `remend` and `shiki`.
 
 The behavior is UI SDK's. The thread is a `ScrollArea` that follows new text with
-`stickToEnd`, and its controller brings you back from Jump to latest; the message box brings back what you sent with `createInputHistory`; "/" and "@" are
+`stickToEnd` (a wheel or End at the bottom keeps it following, where UI SDK lets go over a
+one-pixel rounding), and its controller brings you back from Jump to latest; the message box brings back what you sent with `createInputHistory`; "/" and "@" are
 `TriggerMenu`; attachments are `FileInput`; reasoning, tool calls and sources are
 `Collapsible`; the model picker is a `Select`; usage is a `Meter`.
 

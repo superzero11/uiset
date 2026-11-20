@@ -3,6 +3,7 @@
 // and class the scroller had. Agents name the scroll area from its viewport, as in React.
 import type { createScrollAreaController } from "@ui-sdk/core/scroll-area"
 import "@ui-sdk/web/scroll-area"
+import { rearmAtEnd } from "@/registry/uiset/ui/shell/rearm-end"
 import { h } from "./dom"
 
 type Attrs = Record<string, string | boolean | null | undefined>
@@ -25,6 +26,8 @@ function scrollArea(
     axis !== "y" && bar("horizontal"),
     axis === "both" && h("ui-scroll-area-corner"),
   )
+  // With stick-to-end, a downward wheel or key at the end keeps following (shell/rearm-end.ts).
+  if (frame["stick-to-end"]) rearmAtEnd(view, () => (root as HTMLElement & { api?: ScrollAreaApi }).api)
   return { root, view, content }
 }
 

@@ -2006,4 +2006,18 @@ vercel-labs/ui#905 (2026-11-19).
 - 2026-11-20 — **@uiset/web 0.5.1 on npm**, published by the owner (signed in again first,
   then approved with two-step verification); npm answered `+ @uiset/web@0.5.1`. The registry
   fix had gone live with the push before it.
+- 2026-11-20 — **Chats keep following after a wheel at the end** (from the daily watch's lead,
+  shadcn-ui/ui#12766, checked against UISet on the owner's go-ahead). The React chat kit had
+  it: its content was 977.609px tall, so the end sat at 433.609; the browser reports 434, a
+  wheel at the end settles on 433, and UI SDK's `stickToEnd` takes that as a scroll up and
+  lets go. At the rounded end no further wheel, End or PageDown fires a scroll, so nothing
+  re-armed it, and the next answer landed 507px below the view. End, PageDown and ArrowDown
+  alone were fine. `shell/rearm-end.ts` sticks to the end again after a downward wheel or key
+  at the end, through the scroll area's controller; `ScrollBox` (with its own controller when
+  none is passed) and the web `scrollArea()` wire it, so the chat and terminal in both
+  builds get it. An e2e test forces the case (a short thread whose content ends .6 past a
+  pixel; a .2 fraction rounds down and doesn't show it) and fails without the re-arm; the web
+  build doesn't round that way in the same setup, so its test guards following only, and a
+  unit test of the helper fails without it. To file with UI SDK: a sub-pixel move up at the
+  end shouldn't let go, or a downward input at the end should re-arm.
 

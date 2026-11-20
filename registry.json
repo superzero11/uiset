@@ -986,6 +986,11 @@
           "path": "registry/uiset/ui/scroll-area.tsx",
           "type": "registry:ui",
           "target": "@ui/scroll-area.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/rearm-end.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/rearm-end.ts"
         }
       ]
     },
