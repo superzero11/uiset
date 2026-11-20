@@ -2193,3 +2193,9 @@ vercel-labs/ui#905 (2026-11-19).
   catches the gap; I hadn't run it until the full unit run. Specs: `chat-kit-agent`,
   `chat-app-agent`, `web/chat-agent` (with axe in every skin for the kit demo); mutation
   checks on the React and web queue, the template's Restore and the web caret.
+- 2026-11-20 — Full Chrome and web run for 0.6.0: 1025 passed, 5 failed. Two phone-width
+  tests (the gallery at 375 px) were real: today's agent parts pushed the page to 474 px.
+  The queue's grid and the subagent header's task line sized to their longest unbroken text;
+  the queue now has `minmax(0, 1fr)` columns, and the task a zero flex basis, so both end in an
+  ellipsis. The other three (two canvas gallery loads over 60 s, a crossfade timing check)
+  passed alone. Free memory never fell below 25% at 2 workers, with a 4 GB job alongside.

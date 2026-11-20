@@ -337,6 +337,10 @@
   }
 
   .chat-subagent-task {
+    /* A zero basis, so the header never asks for the task's whole line: it fills the room
+       there is and ends in an ellipsis on a phone. */
+    flex: 1 1 0;
+    inline-size: 0;
     overflow: hidden;
     color: var(--ui-muted-foreground);
     font-size: 0.75rem;
@@ -371,8 +375,11 @@
   }
 
   /* Messages waiting their turn, above the composer. */
+  /* minmax(0, 1fr): a long queued message truncates instead of widening the queue (and the
+     page) to its one unbroken line. */
   .chat-queue {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.25rem;
     padding: 0.5rem 0.625rem;
     border: 1px solid var(--ui-border);
@@ -392,6 +399,7 @@
 
   .chat-queue-list {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.25rem;
     margin: 0;
     padding: 0;
