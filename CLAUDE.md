@@ -48,6 +48,10 @@ Project skills live in `.claude/skills/` (installed with `npx skills add`, pinne
 - No `Vercel` in product names; "built on UI SDK". Skins, kits and templates don't recreate real
   products' looks. The site's own design is in `design/site-plan.md`.
 - Don't push, create the GitHub repo or open PRs without the owner's go-ahead.
+- No silent scope cuts. A feature shows up everywhere it belongs: its kit's page live (the
+  kit demo, or a live example under its section), its component page, React and Web
+  Components, docs and skills. If doing it properly is bigger than planned, tell the owner
+  and ask before leaving any of it out; never call a code-only section live.
 - Every slip gets a lint rule: when the owner or a review catches a mistake a rule could
   have caught, the fix adds one to `scripts/lint/rules/` with the incident in its `why` and
   samples in `tests/unit/lint.test.ts`. Never silence the lint without a

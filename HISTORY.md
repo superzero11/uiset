@@ -2169,3 +2169,12 @@ vercel-labs/ui#905 (2026-11-19).
   items, and the core skill's table too; the owner asked whether it was in the kit. New lint
   `content/kit-install`: a kit doc's install commands name every item of the kit
   (`scripts/docs.mjs`), or one an item brings by importing it (each chart's `./chart`).
+- 2026-11-20 — Every kit item is live on its kit's page. `chat-message-parts` was live only on
+  its component page: the chat kit's Agent parts section was code only, because Claude judged
+  putting it in the kit's demo a bigger change and left it out without asking, then described
+  the section as if it showed it. The owner: never again (CLAUDE.md rule "No silent scope
+  cuts", and a memory). Kit pages now draw an item's live example under its section
+  (`sections` in `src/site/library.ts`, h2 or h3): Chat's Agent parts, Forms' Inline edit and
+  Upload, App frame's Table, which had the same gap. New lint `content/kit-live`: every kit
+  item is used by the kit's demo or named under a section. `kit-sections.spec.ts` with axe,
+  mutation-checked. Still open, the owner's call: agent parts in the chat kit's main demo.

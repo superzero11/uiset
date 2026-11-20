@@ -1,4 +1,4 @@
-import { Children, isValidElement, useEffect, useRef, useState, type ReactNode } from "react"
+import { Children, isValidElement, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import ReactMarkdown, { type Components } from "react-markdown"
 import remarkGfm from "remark-gfm"
 import registry from "@/registry.json"
@@ -174,10 +174,33 @@ function useMarkdown(load: (() => Promise<string>) | undefined) {
   return source
 }
 
+/** A kit section's live example, as on the item's own page. */
+function SectionExample({ item }: { item: string }) {
+  const example = useExample(item)
+  const { theme } = useSiteTheme()
+  const [skin] = useSkin()
+  return example ? <ExamplePreview example={example} item={item} title={example.meta.title} skin={skin} theme={theme} /> : null
+}
+
 function MarkdownPage({ page }: { page: DocPage }) {
   const source = useMarkdown(markdown[`/docs/${page.file}`])
   const kit = page.section === "Kits" ? kits.find((k) => k.href === page.path) : undefined
   const Demo = kit ? kitDemos[kit.id] : undefined
+  const sections = kit?.sections
+  const components = useMemo<Components>(() => {
+    if (!sections) return mdComponents
+    const withExample = (Heading: (props: { children?: ReactNode }) => ReactNode) =>
+      function HeadingWithExample({ children }: { children?: ReactNode }) {
+        const item = sections[slugify(textOf(children))]
+        return (
+          <>
+            <Heading>{children}</Heading>
+            {item && <SectionExample item={item} />}
+          </>
+        )
+      }
+    return { ...mdComponents, h2: withExample(mdComponents.h2 as never), h3: withExample(mdComponents.h3 as never) }
+  }, [sections])
   return (
     <>
       {kit && Demo && (
@@ -186,7 +209,7 @@ function MarkdownPage({ page }: { page: DocPage }) {
         </ItemStage>
       )}
       <div className="docs-article">
-        {source === null ? <p className="docs-loading">Loading…</p> : <ReactMarkdown remarkPlugins={[remarkGfm]} components={mdComponents} skipHtml>{source}</ReactMarkdown>}
+        {source === null ? <p className="docs-loading">Loading…</p> : <ReactMarkdown remarkPlugins={[remarkGfm]} components={components} skipHtml>{source}</ReactMarkdown>}
         <PageFooter page={page} markdownUrl={`/docs/${page.file}`} source={source} />
       </div>
     </>

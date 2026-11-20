@@ -6,7 +6,7 @@ import { facts } from "../../src/site/facts.ts"
 import pkg from "../../package.json"
 
 const pinned = pkg.dependencies["@ui-sdk/react"]
-import { currentUiSdk, installVersions, kitInstall, statedCounts, whatsNewCurrent } from "../../scripts/lint/rules/facts.ts"
+import { currentUiSdk, installVersions, kitInstall, kitLive, statedCounts, whatsNewCurrent } from "../../scripts/lint/rules/facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "../../scripts/lint/rules/plan.ts"
 
 // Each rule gets a sample it must catch and one it must let through, so no rule goes quiet.
@@ -146,6 +146,24 @@ describe("the runner", () => {
     const files = { "registry/uiset/ui/a.css": ".a {\n  /* lint-ignore css/no-important */\n  color: red !important;\n}" }
     expect(lint(repo(files), rules).problems.map((p) => p.rule).sort()).toEqual(["css/no-important", "lint/ignore"])
     expect(lint(repo({ "src/a.ts": "// lint-ignore made/up: why" }), rules).problems[0]!.message).toContain('No lint rule "made/up"')
+  })
+
+  test("content/kit-live wants every kit item live on its page: in the demo or under a section", () => {
+    const demos = 'const kitDemos = {\n  chat: from(() => import("./chat-demo"), (m) => m.ChatDemo),\n}\nconst templateDemos = {}'
+    const library = (sections: string) =>
+      `const kitText = {\n  chat: {\n    headline: "Chat",\n    items: ["chat", "chat-parts", "chat-message-parts"],${sections}\n  },\n}`
+    const files = {
+      "src/site/library-demos.tsx": demos,
+      "src/site/chat-demo.tsx": 'import { Chat } from "@/registry/uiset/ui/chat"\nimport { Thread } from "./thread"',
+      "src/site/thread.tsx": 'import { ChatTool } from "@/registry/uiset/ui/chat-parts"',
+      "registry/uiset/ui/chat.tsx": "",
+      "registry/uiset/ui/chat-parts.tsx": 'import { Chat } from "./chat"',
+    }
+    // chat-parts counts though the demo only reaches it through ./thread.
+    expect(kitLive.checkRepo(repo({ ...files, "src/site/library.ts": library("") }))).toEqual([
+      expect.objectContaining({ path: "src/site/library.ts", line: 2, rule: "content/kit-live", message: expect.stringContaining("chat-message-parts") }),
+    ])
+    expect(kitLive.checkRepo(repo({ ...files, "src/site/library.ts": library('\n    sections: { "agent-parts": "chat-message-parts" },') }))).toEqual([])
   })
 
   test("content/kit-install wants every kit item in its install command, or brought by one", () => {

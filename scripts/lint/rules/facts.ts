@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs"
+import { posix } from "node:path"
 import { lineOf, type FileRule, type RepoRule } from "../core.ts"
 import { facts } from "../../../src/site/facts.ts"
 
@@ -107,6 +108,61 @@ export const kitInstall: RepoRule = {
           line: lineOf(doc, Math.max(0, doc.indexOf("npx shadcn@latest add"))),
           rule: "content/kit-install",
           message: `The ${kit[1]} kit's install command leaves out ${missing.map((m) => `@uiset/${m}`).join(", ")}. Add ${missing.length === 1 ? "it" : "them"} to the command.`,
+        })
+    }
+    return problems
+  },
+}
+
+// The registry item a source file belongs to: `chat-parts.tsx`, `chart/points.ts` (chart),
+// `templates/ide-app.tsx` (ide-app).
+const itemOf = (file: string) => {
+  const rest = file.replace("registry/uiset/ui/", "").replace(/\.(tsx|ts)$/, "")
+  return (rest.startsWith("templates/") ? rest.split("/")[1] : rest.split("/")[0])!
+}
+
+export const kitLive: RepoRule = {
+  id: "content/kit-live",
+  why: "2026-11-20: chat-message-parts (approvals, subagent runs, checkpoints, the queue) joined the Chat kit live only on its own component page; the kit page's Agent parts section had code alone, because adding it to the kit's demo was bigger and Claude left it out without asking. The owner: never again. Forms (inline edit, upload) and App frame (table) had the same gap. Every item of a kit is live on its kit's page: used by the kit's demo, or drawn under a section (`sections` in src/site/library.ts).",
+  checkRepo(ctx) {
+    const demos = ctx.read("src/site/library-demos.tsx")
+    const library = ctx.read("src/site/library.ts")
+    if (!demos || !library) return []
+    const resolve = (spec: string, from: string) => {
+      if (!spec.startsWith("@/") && !spec.startsWith(".")) return undefined
+      const base = spec.startsWith("@/") ? spec.slice(2) : posix.join(posix.dirname(from), spec)
+      return ["", ".tsx", ".ts", "/index.tsx", "/index.ts"].map((ext) => base + ext).find((path) => /\.tsx?$/.test(path) && ctx.read(path) !== undefined)
+    }
+    const used = (start: string) => {
+      const seen = new Set<string>()
+      const visit = (file: string | undefined) => {
+        if (!file || seen.has(file)) return
+        seen.add(file)
+        for (const m of (ctx.read(file) ?? "").matchAll(/(?:from|import\()\s*"([^"]+)"/g)) visit(resolve(m[1]!, file))
+      }
+      visit(start)
+      return new Set([...seen].filter((f) => f.startsWith("registry/uiset/ui/")).map(itemOf))
+    }
+    const block = demos.slice(demos.indexOf("const kitDemos"), demos.indexOf("const templateDemos"))
+    const problems = []
+    for (const demo of block.matchAll(/"?([\w-]+)"?: from\(\(\) => import\("([^"]+)"\)/g)) {
+      const id = demo[1]!
+      // Its entry in kitText runs to the next kit's.
+      const at = library.search(new RegExp(`\\n  "?${id}"?: \\{`))
+      if (at < 0) continue
+      const next = library.slice(at + 1).search(/\n  "?[\w-]+"?: \{|\n\}/)
+      const entry = library.slice(at, next < 0 ? undefined : at + 1 + next)
+      const items = [...(/items: \[([^\]]*)\]/.exec(entry)?.[1]?.matchAll(/"([^"]+)"/g) ?? [])].map((m) => m[1]!)
+      const sections = /sections: \{([^}]*)\}/.exec(entry)?.[1] ?? ""
+      const live = used(resolve(demo[2]!, "src/site/library-demos.tsx") ?? "")
+      for (const m of sections.matchAll(/:\s*"([^"]+)"/g)) live.add(m[1]!)
+      const missing = items.filter((item) => !live.has(item))
+      if (missing.length)
+        problems.push({
+          path: "src/site/library.ts",
+          line: lineOf(library, at + 1),
+          rule: "content/kit-live",
+          message: `The ${id} kit's page shows ${missing.join(", ")} nowhere live: use ${missing.length === 1 ? "it" : "them"} in the kit's demo, or name ${missing.length === 1 ? "its" : "their"} example under a section (sections: { "heading-id": "item" }).`,
         })
     }
     return problems

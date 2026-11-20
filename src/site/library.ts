@@ -32,11 +32,18 @@ type Kit = Card & {
   headline: string
   /** The demo's class on its page, for its height. */
   stage?: string
+  /** Live examples drawn under a section of its page: the heading's id, and the item's example. */
+  sections?: Record<string, string>
 }
 
-const kitText: Record<string, { headline: string; items: string[]; tag: string; stage?: string; description?: string }> = {
-  "app-shell": { headline: "The frame of an app, and the parts that show data", items: ["app-shell", "page-header", "stat", "table"], tag: "Structure" },
-  forms: { headline: "Forms from a schema, inline edits and uploads", items: ["schema-form", "inline-edit", "upload"], tag: "Inputs" },
+const kitText: Record<string, { headline: string; items: string[]; tag: string; stage?: string; description?: string; sections?: Record<string, string> }> = {
+  "app-shell": { headline: "The frame of an app, and the parts that show data", items: ["app-shell", "page-header", "stat", "table"], tag: "Structure", sections: { table: "table" } },
+  forms: {
+    headline: "Forms from a schema, inline edits and uploads",
+    items: ["schema-form", "inline-edit", "upload"],
+    tag: "Inputs",
+    sections: { "inline-edit": "inline-edit", upload: "upload" },
+  },
   motion: {
     headline: "Numbers, text and content that move, each skin its own way",
     items: ["number-ticker", "text-reveal", "thinking", "crossfade"],
@@ -54,6 +61,7 @@ const kitText: Record<string, { headline: string; items: string[]; tag: string; 
     items: ["chat", "chat-response", "chat-parts", "chat-message-parts", "chat-composer", "chat-sidebar"],
     tag: "AI",
     stage: "chat-stage",
+    sections: { "agent-parts": "chat-message-parts" },
     description:
       "Streaming Markdown and code, reasoning, tool calls with approvals, subagent runs, checkpoints, sources and citations, plans, versions, message actions, a composer with attachments, commands, mentions, a model picker and a queue, a list of chats, and Vercel AI SDK messages as they are.",
   },
@@ -102,7 +110,7 @@ const kits: Kit[] = docPages
   .map((p) => {
     const slug = p.path.split("/").at(-1)!
     const text = kitText[slug]!
-    return { id: slug, title: p.title, description: text.description ?? p.description, href: p.path, items: text.items, tag: text.tag, headline: text.headline, stage: text.stage }
+    return { id: slug, title: p.title, description: text.description ?? p.description, href: p.path, items: text.items, tag: text.tag, headline: text.headline, stage: text.stage, sections: text.sections }
   })
 
 const templateCards: Card[] = templates.map((t) => ({ id: t.id, title: t.name, description: t.what, href: `/templates/${t.id}`, items: [t.id], tag: "Page" }))
