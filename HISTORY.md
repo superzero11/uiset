@@ -173,6 +173,11 @@ vercel-labs/ui#905 (2026-11-19).
     under where the dialog was) is lost for as long as the exit transition lasts. Popovers
     let the click through. UISet closes dialogs at once until it's fixed. Not filed yet
     (2026-11-20).
+35. **A popup that's leaving still counts for agents.** While a trigger menu (the rich text
+    editor's mention list) fades out, it's still a component under the editor's name, so a
+    step by that label, right after a person picks a mention, fails as naming two
+    components. The message says to use a ref, and the step works once the list is gone.
+    The bridge could skip parts with `data-ending-style`. Not filed yet (2026-11-20).
 
 ## What shipped
 

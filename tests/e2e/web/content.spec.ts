@@ -1,4 +1,4 @@
-import AxeBuilder from "@axe-core/playwright"
+import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
 // The content and form parts as web elements, on a page with no React: the table, avatar

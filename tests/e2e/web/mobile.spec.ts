@@ -1,4 +1,4 @@
-import AxeBuilder from "@axe-core/playwright"
+import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
 // The Mobile kit as web elements, on a page with no React: data in, events out.

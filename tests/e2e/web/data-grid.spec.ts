@@ -1,4 +1,4 @@
-import AxeBuilder from "@axe-core/playwright"
+import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
 // The Data Grid as a web element, on a page with no React. 60 customers. Columns, in order:

@@ -1,4 +1,4 @@
-import AxeBuilder from "@axe-core/playwright"
+import AxeBuilder from "./axe"
 import { expect, test, type Page } from "@playwright/test"
 
 const section = (page: Page) => page.locator(".item-frame")
@@ -232,7 +232,8 @@ test("Mod+K adds a link to the selection, refuses unsafe addresses, and removes 
   await expect(editor(page)).toBeFocused()
   // With the caret inside the link, the same button edits or removes it.
   await page.keyboard.press("ArrowLeft")
-  await toolbar(page).getByRole("button", { name: "Link" }).click()
+  // Exact: the link form, still fading out inside the toolbar, has Save link and Remove link.
+  await toolbar(page).getByRole("button", { name: "Link", exact: true }).click()
   await page.getByRole("dialog", { name: "Edit link" }).getByRole("button", { name: "Remove link" }).click()
   await expect(editor(page).locator("a")).toHaveCount(0)
   await expect(editor(page)).toHaveText("read the docs")
@@ -355,6 +356,9 @@ test.describe("review fixes", () => {
     await clear(page)
     await page.keyboard.type("Thanks @gra")
     await page.getByRole("option", { name: "Grace Hopper" }).click()
+    // While the mention list fades out, agents still see it under the editor's name, and a step
+    // by label is ambiguous (UI SDK issue #35 in HISTORY.md).
+    await expect(page.locator('[data-slot="trigger-menu-content"]')).toHaveCount(0)
     const result = await page.evaluate(() =>
       (window as unknown as { agent: { act: (x: unknown) => Promise<{ ok: boolean }> } }).agent.act({ steps: [{ ref: "Release notes", action: "insert", args: ["Signed"] }] }),
     )

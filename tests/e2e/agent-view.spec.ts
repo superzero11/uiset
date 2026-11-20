@@ -1,4 +1,4 @@
-import AxeBuilder from "@axe-core/playwright"
+import AxeBuilder from "./axe"
 import { expect, test, type Page } from "@playwright/test"
 
 // Agent view: beside a live example, what UI SDK's agent bridge reads, its agent-check score,

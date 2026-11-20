@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { lint, type FileRule, type RepoContext, type RepoRule } from "../../scripts/lint/core.ts"
-import { exampleFrames, internalPrimitives, noDeferredFocus, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "../../scripts/lint/rules/code.ts"
+import { axeWaits, exampleFrames, internalPrimitives, noDeferredFocus, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "../../scripts/lint/rules/code.ts"
 import { rules } from "../../scripts/lint/rules/index.ts"
 import { facts } from "../../src/site/facts.ts"
 import pkg from "../../package.json"
@@ -72,6 +72,7 @@ describe("code rules", () => {
     `{\n  "dependencies": {\n    "@ui-sdk/react": "^0.1.0-beta.9"\n  }\n}`,
     `{\n  "dependencies": {\n    "@ui-sdk/react": "0.1.0-beta.9",\n    "react": "^19.3.1"\n  }\n}`,
   )
+  fileRule(axeWaits, "tests/e2e/board.spec.ts", `import AxeBuilder from "@axe-core/playwright"`, `import AxeBuilder from "./axe"`)
   // lint-ignore tests/no-only: the sample tests/no-only must catch
   fileRule(noOnly, "tests/e2e/board.spec.ts", `test.only("a card moves", async () => {})`, `test("a card moves", async () => {})`)
   // The samples follow the facts, so adding a part doesn't break this test (it did at 23).

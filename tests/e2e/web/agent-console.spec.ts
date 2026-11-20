@@ -1,4 +1,4 @@
-import AxeBuilder from "@axe-core/playwright"
+import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
 // The Agent Console as web elements, on a page with no React: project settings an agent

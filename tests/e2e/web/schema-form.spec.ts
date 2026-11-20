@@ -1,4 +1,4 @@
-import AxeBuilder from "@axe-core/playwright"
+import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
 // <uiset-schema-form> on the Content page, with no React: a person through its steps, the

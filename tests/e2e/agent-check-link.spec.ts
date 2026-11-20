@@ -1,7 +1,7 @@
 import { once } from "node:events"
 import { createServer, type IncomingMessage } from "node:http"
 import type { AddressInfo } from "node:net"
-import AxeBuilder from "@axe-core/playwright"
+import AxeBuilder from "./axe"
 import { expect, test, type Page } from "@playwright/test"
 import { checkUrl } from "@/api/_agent-check/run"
 import { formatAgentReadiness } from "@/registry/uiset/ui/agent-check/check"

@@ -157,6 +157,17 @@ export const pinUiSdk: FileRule = {
   },
 }
 
+export const axeWaits: FileRule = {
+  id: "tests/axe-waits",
+  why: "2026-11-20: under reduced motion a popup still fades in for 120ms, and axe checks made straight after opening one read its text mid-fade as too faint (the data grid's list in Chrome, the rich text menu in WebKit). tests/e2e/axe.ts waits for transitions first.",
+  appliesTo: (path) => path.startsWith("tests/e2e/") && path.endsWith(".spec.ts"),
+  check: (text) =>
+    [...text.matchAll(/from\s+["']@axe-core\/playwright["']/g)].map((m) => ({
+      line: lineOf(text, m.index!),
+      message: 'Import AxeBuilder from tests/e2e/axe.ts ("./axe" or "../axe"): it waits for transitions before axe runs.',
+    })),
+}
+
 export const noOnly: FileRule = {
   id: "tests/no-only",
   why: "A test left on .only skips every other test in its file, and the suite still passes.",
