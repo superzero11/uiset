@@ -111,5 +111,7 @@ agents can use a page; and the theme generator.
 
 ## Asking for things
 
-[Open an issue on GitHub](https://github.com/superzero11/uiset/issues) with what you're
-building and what's missing. Kits and templates that many people need come first.
+Ask for a component, kit or template, or share what you're building, in
+[Discussions](https://github.com/superzero11/uiset/discussions); report a bug as an
+[issue](https://github.com/superzero11/uiset/issues). Kits and templates that many people
+need come first.
