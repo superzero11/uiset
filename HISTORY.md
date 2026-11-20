@@ -165,19 +165,20 @@ vercel-labs/ui#905 (2026-11-19).
 33. **Scroll Area's `stickToEnd` lets go after a sub-pixel move up at the end.** Content
     whose height ends between two pixels rounds the end; a wheel there settles a pixel up,
     which reads as scrolling up, and no later wheel or key at the end re-arms it (the same
-    as shadcn-ui/ui#12766). UISet's `shell/rearm-end.ts` re-arms it. Not filed yet: the
-    owner decides (2026-11-20).
+    as shadcn-ui/ui#12766). UISet's `shell/rearm-end.ts` re-arms it. Filed as
+    vercel-labs/ui#927 (2026-11-20).
 34. **A closing modal dialog swallows clicks on the page.** While the content and backdrop
     have `data-ending-style`, a press outside is taken for one outside an open dialog: its
     pointerdown is prevented and its click stopped, so the next click on the page (a link
     under where the dialog was) is lost for as long as the exit transition lasts. Popovers
-    let the click through. UISet closes dialogs at once until it's fixed. Not filed yet
-    (2026-11-20).
+    let the click through. UISet closes dialogs at once until it's fixed. Filed as
+    vercel-labs/ui#928 (2026-11-20).
 35. **A popup that's leaving still counts for agents.** While a trigger menu (the rich text
     editor's mention list) fades out, it's still a component under the editor's name, so a
     step by that label, right after a person picks a mention, fails as naming two
     components. The message says to use a ref, and the step works once the list is gone.
-    The bridge could skip parts with `data-ending-style`. Not filed yet (2026-11-20).
+    The bridge could skip parts with `data-ending-style`. Filed as vercel-labs/ui#929
+    (2026-11-20).
 
 ## What shipped
 
@@ -2111,4 +2112,9 @@ vercel-labs/ui#905 (2026-11-19).
   check the box changes at once in Blueprint and the check is clipped from the start of the
   line. No lint rule fits a perceptual miss like this; filmstrips are now taken slowed down
   and zoomed (research/motion/check-slow.mjs) as well as at full speed.
+- 2026-11-20 — The ranking list on the lists page was titled "Rank what to build next" but
+  named "Priorities", so the owner, following written steps, couldn't find it, and voice
+  control and agents had to use a name nobody sees. It's now named as titled, in React and
+  Web Components; the web demo shows both lists' titles as the React page does. The three
+  UI SDK issues found today are filed as vercel-labs/ui#927, #928 and #929.
 

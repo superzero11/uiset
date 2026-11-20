@@ -25,7 +25,8 @@ export function RankingExample() {
   return (
     <div className="stack">
       <p className="example-strong">Rank what to build next</p>
-      <SortableList label="Priorities" items={priorities} value={order} onValueChange={setOrder} numbered />
+      {/* Named as titled, so people and agents call it what they see. */}
+      <SortableList label="Rank what to build next" items={priorities} value={order} onValueChange={setOrder} numbered />
       <p className="example-note">First: {top}</p>
     </div>
   )

@@ -275,7 +275,7 @@ test("the sortable list moves by keys, reports the new order, and an agent moves
   expect(await page.evaluate(() => (window as unknown as { changes: string[][] }).changes)).toEqual([["offline", "search", "export", "sso", "dark"]])
   await expect(page.locator("#priorities-first")).toHaveText("First: Offline mode")
   await expect(list.getByRole("option", { name: "Faster search" })).toBeFocused()
-  const result = await act(page, [{ ref: "Priorities", action: "moveItem", args: ["Dark mode", 1] }])
+  const result = await act(page, [{ ref: "Rank what to build next", action: "moveItem", args: ["Dark mode", 1] }])
   expect(result.ok).toBe(true)
   expect(await list.evaluate((el) => (el as HTMLElement & { value: string[] }).value)).toEqual(["dark", "offline", "search", "export", "sso"])
   // Setting the order from script fires nothing; keys it leaves out follow, in the items' order.

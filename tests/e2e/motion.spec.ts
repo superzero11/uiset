@@ -262,7 +262,7 @@ for (const [skin, ms] of Object.entries(moveTimes)) {
   test(`${skin} slides items to their new places${ms ? ` in ${ms}ms` : ": Ink jumps"}`, async ({ page }) => {
     await page.addInitScript((s) => localStorage.setItem("uiset-site-skin", s), skin)
     await page.goto("/docs/kits/lists")
-    const list = page.getByRole("listbox", { name: "Priorities" })
+    const list = page.getByRole("listbox", { name: "Rank what to build next" })
     await list.scrollIntoViewIfNeeded()
     await list.getByRole("option", { name: "Faster search" }).focus()
     await page.keyboard.press("Space")
@@ -275,7 +275,7 @@ for (const [skin, ms] of Object.entries(moveTimes)) {
 test("under reduced motion, items jump to their new places", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto("/docs/kits/lists")
-  const list = page.getByRole("listbox", { name: "Priorities" })
+  const list = page.getByRole("listbox", { name: "Rank what to build next" })
   await list.scrollIntoViewIfNeeded()
   await list.getByRole("option", { name: "Faster search" }).focus()
   await page.keyboard.press("Space")
