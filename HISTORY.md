@@ -2117,4 +2117,10 @@ vercel-labs/ui#905 (2026-11-19).
   control and agents had to use a name nobody sees. It's now named as titled, in React and
   Web Components; the web demo shows both lists' titles as the React page does. The three
   UI SDK issues found today are filed as vercel-labs/ui#927, #928 and #929.
+- 2026-11-20 — Next: the Motion pieces before agent parts (the owner's choice). The owner
+  asked how UISet compares with AffectUI's motion page; today's motion is how every part
+  moves, while the Library's Animate → Motion is pieces a page places. A number ticker, a
+  text reveal, Thinking and a crossfade, each per skin, are Now on the roadmap
+  (`design/motion-pieces-plan.md`); agent parts are first in Next and will use them.
+  Illustrations stay with the later Animate item.
 

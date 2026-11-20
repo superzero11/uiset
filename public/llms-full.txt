@@ -3770,30 +3770,33 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**Agent parts for AI apps.** Approvals that wait for a person, checkpoints to roll
-back to, a task queue, a context meter, subagent runs and an adapter from Vercel's AI SDK
-messages, in the chat kit and the Agent Console, with skins, sound and agents. M
+**Motion pieces.** A number ticker, text that reveals as it streams, a Thinking state
+and a crossfade, each skin its own way, for the Library's Animate → Motion. Plan:
+`design/motion-pieces-plan.md`. M
 
 ## Next, in order
 
-1. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
+1. **Agent parts for AI apps.** Approvals that wait for a person, checkpoints to roll
+   back to, a task queue, a context meter, subagent runs and an adapter from Vercel's AI SDK
+   messages, in the chat kit and the Agent Console, with skins, sound and agents. M
+2. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
    number field with a country picker, and input masks for cards, IBANs and currency. M
-2. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
+3. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
    and agents setting a filter by name. M
-3. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
+4. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
    reorder, and a player whose scrubber snaps to chapters, beside Studio. M each
-4. **Locale packs.** Every component's and kit's built-in words translated, with
+5. **Locale packs.** Every component's and kit's built-in words translated, with
    right-to-left tested packs for the main languages. UI SDK ships none. M
-5. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
+6. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
    repair; export to Tailwind `@theme`, Figma variables and DESIGN.md. S
-6. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
+7. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
    paging. M–L
-7. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
+8. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
-8. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
+9. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
    and an invoice. S each
-9. **Print skin.** Swiss and letterpress type, from a written design plan first. M
-10. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
+10. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+11. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
     import. M
 
 Between these, small ones: dialogs and popovers that open in place (UI SDK's `inline`), tree
@@ -3804,9 +3807,9 @@ still lists.
 
 ## Then: motion and developer tools
 
-- **Animated components, kits and templates**, built on the motion above: the Library's
-  Animate column, with Illustrations (animated scenes for landing pages) and Motion (text,
-  numbers, transitions), and kits and templates whose movement shows what changed. L
+- **Animated scenes and kits**, built on the motion above: the Library's Illustrations
+  (animated scenes for landing pages), and kits and templates whose movement shows what
+  changed. L
 - **Developer tools:** Agent view as a browser extension for any UI SDK app; upgrade help,
   a per-item diff when UI SDK moves so your edits survive; a starter app with the templates
   as routed pages. M each
