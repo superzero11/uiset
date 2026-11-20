@@ -15,33 +15,30 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**Motion, per skin.** Each skin moves its own way, as it already sounds its own way:
-openings, moves and state changes, drawn from UI SDK's state, reduced motion respected.
-Openings, closings and state changes are built (in 0.6.0); moves come next. M–L
+**Agent parts for AI apps.** Approvals that wait for a person, checkpoints to roll
+back to, a task queue, a context meter, subagent runs and an adapter from Vercel's AI SDK
+messages, in the chat kit and the Agent Console, with skins, sound and agents. M
 
 ## Next, in order
 
-1. **Agent parts for AI apps.** Approvals that wait for a person, checkpoints to roll
-   back to, a task queue, a context meter, subagent runs and an adapter from Vercel's AI SDK
-   messages, in the chat kit and the Agent Console, with skins, sound and agents. M
-2. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
+1. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
    number field with a country picker, and input masks for cards, IBANs and currency. M
-3. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
+2. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
    and agents setting a filter by name. M
-4. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
+3. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
    reorder, and a player whose scrubber snaps to chapters, beside Studio. M each
-5. **Locale packs.** Every component's and kit's built-in words translated, with
+4. **Locale packs.** Every component's and kit's built-in words translated, with
    right-to-left tested packs for the main languages. UI SDK ships none. M
-6. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
+5. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
    repair; export to Tailwind `@theme`, Figma variables and DESIGN.md. S
-7. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
+6. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
    paging. M–L
-8. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
+7. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
-9. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
+8. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
    and an invoice. S each
-10. **Print skin.** Swiss and letterpress type, from a written design plan first. M
-11. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
+9. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+10. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage, CSV
     import. M
 
 Between these, small ones: dialogs and popovers that open in place (UI SDK's `inline`), tree

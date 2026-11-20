@@ -202,10 +202,22 @@ open, doesn't animate.
 An alert dialog never closes on a press outside it, so it nudges: the press visibly did
 something. A field's error appears on the same timing as on and off.
 
+| Skin        | Moves (a reordered item, a switch's thumb, a segmented control's indicator) |
+| ----------- | ------------------------------------------------------------------------- |
+| `base`      | Glides, 200 ms                                                            |
+| `blueprint` | Slides in a straight line at an even speed, 220 ms                        |
+| `studio`    | Snaps to its place like a stepped knob, 140 ms                            |
+| `phosphor`  | Jumps in whole steps, 120 ms                                              |
+| `ink`       | Jumps                                                                     |
+
+The sortable list and tree and the board slide their items to new places with
+`shell/glide.ts`, whether a person or an agent moved them. The items stay the real elements,
+so focus and a second move work while they slide.
+
 **Less motion.** Under the system's `prefers-reduced-motion`, or inside
 `<UISet motion="reduce">`, nothing moves, grows or is drawn, in any skin: what appears and
-disappears fades (120 ms in, 90 ms out), panels snap open, and on and off, errors and
-refusals change at once. Everything else, color included, changes at once. Ink stays instant either way. `motion="reduce"` lets an app offer its own switch, or quiet one
+disappears fades (120 ms in, 90 ms out), panels snap open, and on and off, errors,
+refusals and moves change at once. Everything else, color included, changes at once. Ink stays instant either way. `motion="reduce"` lets an app offer its own switch, or quiet one
 part of a page.
 
 **Speed.** `--uiset-motion-speed` (1 by default) scales every duration in every skin: 0.5
@@ -234,6 +246,8 @@ opacity, a scale and a vertical shift; a closing has the same four, with `exit`:
 --uiset-nudge-ease: cubic-bezier(0.23, 1, 0.32, 1);
 --uiset-nudge-scale: 1.02;
 --uiset-nudge-shift: 0px; /* sideways, at the nudge's halfway point */
+--uiset-move-duration: 200ms; /* a move; 0ms makes items jump */
+--uiset-move-ease: cubic-bezier(0.23, 1, 0.32, 1);
 ```
 
 Reduced motion overrides these, so a skin doesn't need its own reduced version. The design

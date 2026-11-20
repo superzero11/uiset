@@ -71,6 +71,9 @@
     --uiset-nudge-ease: cubic-bezier(0.3, 0.6, 0.7, 0.85);
     --uiset-nudge-scale: 1;
     --uiset-nudge-shift: 3px;
+    /* A move snaps to its place as a stepped knob snaps to a detent. */
+    --uiset-move-duration: 140ms;
+    --uiset-move-ease: cubic-bezier(0.3, 0.6, 0.7, 0.85);
     --uiset-solid-bg: var(--studio-lamp);
     --uiset-solid-fg: oklch(0.2 0.02 70);
     --uiset-solid-border: oklch(0.7 0.13 70);

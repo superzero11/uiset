@@ -32,6 +32,13 @@ On UI SDK `0.1.0-beta.13`.
   An alert dialog pressed outside, which it never closes on, nudges in the skin's way, so
   the press visibly did something. Skins set `--uiset-toggle-*`, `--uiset-check-scale` and
   `--uiset-nudge-*`. React and Web Components.
+- **Items slide to their new places, each skin its own way.** A sortable list's items, a
+  sortable tree's rows and a board's cards (across columns too) slide when they're put in a
+  new order, by a person or an agent: Base glides, Blueprint slides in a straight line,
+  Studio snaps like a stepped knob, Phosphor jumps in steps, Ink jumps. A switch's thumb and
+  a segmented control's indicator move on the same timing (the thumb no longer overshoots).
+  Skins set `--uiset-move-duration` and `--uiset-move-ease`; the list, tree and board items
+  bring `shell/glide.ts`. React and Web Components.
 - **`motion="reduce"` on `<UISet>` and `<uiset-root>`** quiets that part of the page,
   whatever the system setting says, so an app can offer its own switch.
 

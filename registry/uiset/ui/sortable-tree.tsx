@@ -3,6 +3,7 @@
 import { createParts, type PartProps } from "@ui-sdk/react/primitive"
 import { useCallback, useId, type CSSProperties, type ReactNode } from "react"
 import { keepDragPreviewInside } from "./shell/drag-preview"
+import { glide } from "./shell/glide"
 import { Icon } from "./shell/icons"
 import { sortableTree, type SortableTreeItem, type SortableTreeOptions, type SortableTreeRow } from "./sortable-tree/sortable-tree"
 import "./shell/shell.css"
@@ -33,7 +34,16 @@ const helpText =
  */
 function SortableTree({ label, icons = false, renderItem, help, className, ...props }: SortableTreeProps) {
   const helpId = `${useId()}-help`
-  const keepPreview = useCallback((el: HTMLElement | null) => (el ? keepDragPreviewInside(el) : undefined), [])
+  // A dragged row's copy stays inside the tree, and rows slide to their new places.
+  const keepPreview = useCallback((el: HTMLElement | null) => {
+    if (!el) return
+    const stopPreview = keepDragPreviewInside(el)
+    const stopGlide = glide(el, ".sortable-tree-row")
+    return () => {
+      stopPreview()
+      stopGlide()
+    }
+  }, [])
   const described = [props["aria-describedby"], helpId].filter(Boolean).join(" ")
 
   return (

@@ -72,6 +72,9 @@
     --uiset-nudge-ease: steps(2, jump-none);
     --uiset-nudge-scale: 1;
     --uiset-nudge-shift: 4px;
+    /* A move jumps in whole steps, as a terminal moves text. */
+    --uiset-move-duration: 120ms;
+    --uiset-move-ease: steps(3, jump-end);
     --uiset-solid-bg: var(--phosphor-glow);
     --uiset-solid-fg: var(--phosphor-tube);
     --uiset-solid-border: var(--phosphor-glow);

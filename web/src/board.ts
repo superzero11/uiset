@@ -11,6 +11,7 @@ import "@ui-sdk/web/input"
 import { boardPrimitive, keepDragPreviewInside, type BoardColumnSpec, type BoardControllerApi, type BoardLanesDetails } from "@/registry/uiset/ui/board/board"
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import "@/registry/uiset/ui/board/board.css"
+import { glide } from "@/registry/uiset/ui/shell/glide"
 import { attr, h, holdRender, isOn, place, uid } from "./dom"
 import { scrollArea } from "./scroll"
 
@@ -208,6 +209,7 @@ class BoardView {
     el.classList.add("board")
     // A dragged card's copy stays inside the board, keeping its look.
     keepDragPreviewInside(el)
+    glide(el, ".board-card")
     this.help = h("p", { id: uid("board-help"), hidden: true })
     el.prepend(this.help, this.area)
     // These attributes change what's drawn, not the board's state: they draw again here.

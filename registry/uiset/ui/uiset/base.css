@@ -548,12 +548,17 @@
   width: var(--uiset-switch-thumb);
   height: var(--uiset-switch-thumb);
   border-radius: var(--uiset-switch-thumb-radius);
+  /* The thumb moves on the skin's move timing; its colour follows on and off. */
   transition-property: translate, background-color;
-  transition-duration: var(--uiset-medium), calc(var(--uiset-toggle-off-duration) * var(--uiset-motion-speed, 1));
-  transition-timing-function: var(--uiset-ease-spring), var(--uiset-toggle-ease);
+  transition-duration:
+    calc(var(--uiset-move-duration) * var(--uiset-motion-speed, 1)),
+    calc(var(--uiset-toggle-off-duration) * var(--uiset-motion-speed, 1));
+  transition-timing-function: var(--uiset-move-ease), var(--uiset-toggle-ease);
 
   &[data-checked] {
-    transition-duration: var(--uiset-medium), calc(var(--uiset-toggle-duration) * var(--uiset-motion-speed, 1));
+    transition-duration:
+      calc(var(--uiset-move-duration) * var(--uiset-motion-speed, 1)),
+      calc(var(--uiset-toggle-duration) * var(--uiset-motion-speed, 1));
     margin-inline-start: 0;
     translate: calc(
         var(--uiset-switch-width) - var(--uiset-switch-thumb) -
@@ -672,12 +677,11 @@
   text-align: center;
 }
 
+/* The chosen item's indicator slides to it on the skin's move timing. */
 [data-uiset] [data-slot="segmented-control-indicator"] {
-  transition:
-    top var(--uiset-medium) var(--uiset-ease),
-    left var(--uiset-medium) var(--uiset-ease),
-    width var(--uiset-medium) var(--uiset-ease),
-    height var(--uiset-medium) var(--uiset-ease);
+  transition-property: top, left, width, height;
+  transition-duration: calc(var(--uiset-move-duration) * var(--uiset-motion-speed, 1));
+  transition-timing-function: var(--uiset-move-ease);
 }
 
 [data-uiset] [data-slot="slider-thumb"] {

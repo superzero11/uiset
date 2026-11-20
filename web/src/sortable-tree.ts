@@ -4,6 +4,7 @@
 import type { TreeReorderReason } from "@ui-sdk/core"
 import { createParts, type UiDetailedChangeEvent, type UiChangeEvent, type UiElement } from "@ui-sdk/web"
 import { keepDragPreviewInside } from "@/registry/uiset/ui/shell/drag-preview"
+import { glide } from "@/registry/uiset/ui/shell/glide"
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import { sortableTree, type SortableTreeExpandReason, type SortableTreeItem, type SortableTreeItemsDetails, type SortableTreeRow } from "@/registry/uiset/ui/sortable-tree/sortable-tree"
 import "@/registry/uiset/ui/sortable-tree/sortable-tree.css"
@@ -54,6 +55,7 @@ class TreeView {
   constructor(private el: SortableTreeElement) {
     el.classList.add("sortable-tree")
     keepDragPreviewInside(el)
+    glide(el, ".sortable-tree-row")
     new MutationObserver(() => this.schedule()).observe(el, { attributes: true, attributeFilter: ["label", "icons", "help", "aria-describedby"] })
   }
 

@@ -60,6 +60,9 @@
     --uiset-nudge-ease: linear;
     --uiset-nudge-scale: 1;
     --uiset-nudge-shift: 4px;
+    /* A move slides in a straight line at an even speed, like a parallel rule. */
+    --uiset-move-duration: 220ms;
+    --uiset-move-ease: linear;
     --uiset-solid-bg: var(--blueprint-line);
     --uiset-solid-fg: var(--blueprint-paper);
     --uiset-solid-border: var(--blueprint-line);

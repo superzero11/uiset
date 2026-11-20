@@ -233,6 +233,7 @@ vercel-labs/ui#905 (2026-11-19).
 | IDE file tree: drag a file or folder into a folder, React and Web Components                    | done, not pushed | 2026-11-19: `ide/file-drag.ts`, shared. 3 e2e tests each in React and web, also in WebKit; 6/6 mutations caught |
 | Motion part 1: openings, closings and panels per skin, `motion="reduce"`, React and Web Components | done, not pushed | 2026-11-20: tokens in `tokens.css` and each skin, drawn by `base.css`; Blueprint and Phosphor clip in their own files. 13 e2e tests in `motion.spec.ts` and 1 web, each mutation-checked. Filmstrips of popover, dialog, toast and accordion in every skin. |
 | Motion part 2: on and off, checks, errors and a refused press per skin, React and Web Components | done, not pushed | 2026-11-20: `--uiset-toggle-*`, `--uiset-check-scale` and `--uiset-nudge-*` per skin, drawn by `base.css`; Blueprint's inked check in its file; the nudge set by `feedback.ts`. 11 e2e tests in `motion.spec.ts`, each mutation-checked; filmstrips of a check and a nudge in every skin. |
+| Motion part 3: moves per skin, `shell/glide.ts` for the sortable list, tree and board, React and Web Components | done, not pushed | 2026-11-20: `--uiset-move-*` per skin; the switch thumb and segmented indicator use them. 9 e2e tests (8 in `motion.spec.ts`, 1 web), mutation-checked; the list, tree, board and template specs (286) pass with items sliding. |
 | Every kit and template page in every skin: the audit and its fixes, React and Web Components | done, not pushed | 2026-11-20: five skins × two themes, kits and templates, reviewed by eye. Fixed: canvas opening fit, grid checkboxes, Studio meter ladder, Base track edges, Ink tab cue, square chips. Each with a test, mutation-checked. |
 
 ## Decision log
@@ -2094,4 +2095,13 @@ vercel-labs/ui#905 (2026-11-19).
   keydown when it opened the folder it dropped into. The tests passed, so only the exit
   code showed it, and the summary line hid it. The folder now opens with no event for a
   keyboard drop; the unit run exits 0. Check the exit code, not only the counts.
+- 2026-11-20 — Motion part 3, moves, the same day. `shell/glide.ts` watches a container for
+  reorders (a MutationObserver), and slides each item from where it was with the browser's
+  own animations, reading the skin's `--uiset-move-*` from the container. It notes places
+  relative to the container's scrolled content, so scrolling moves nothing, and less any
+  slide in progress, so a second move continues from where the item is. A card moved to
+  another column is a new element in React, so places are also kept by accessible name.
+  The item being dragged is left alone, and so is a drag's copy. The data grid's columns
+  aren't included: each column is cells in every row. With motion done, the next planned
+  item, agent parts for AI apps, is Now on the roadmap.
 

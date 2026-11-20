@@ -1551,6 +1551,11 @@
           "target": "@ui/shell/drag-preview.ts"
         },
         {
+          "path": "registry/uiset/ui/shell/glide.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/glide.ts"
+        },
+        {
           "path": "registry/uiset/ui/shell/shell.css",
           "type": "registry:file",
           "target": "@ui/shell/shell.css"
@@ -1600,6 +1605,11 @@
           "path": "registry/uiset/ui/shell/drag-preview.ts",
           "type": "registry:file",
           "target": "@ui/shell/drag-preview.ts"
+        },
+        {
+          "path": "registry/uiset/ui/shell/glide.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/glide.ts"
         },
         {
           "path": "registry/uiset/ui/shell/shell.css",
@@ -2464,6 +2474,11 @@
           "path": "registry/uiset/ui/shell/drag-preview.ts",
           "type": "registry:file",
           "target": "@ui/shell/drag-preview.ts"
+        },
+        {
+          "path": "registry/uiset/ui/shell/glide.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/glide.ts"
         },
         {
           "path": "registry/uiset/ui/shell/shell.css",

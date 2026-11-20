@@ -39,8 +39,8 @@ import { UISet } from "@/components/ui/uiset"
   `blueprint`, `studio`, `phosphor` (dark only) or `ink` (light only). Themed skins name
   fonts to load (see docs/theming.md).
 - `theme`: `system`, `light` or `dark`. `sound` turns on interaction sounds.
-- Each skin animates openings, closings and on and off its own way, and follows the
-  system's reduced motion. `motion="reduce"` quiets a root whatever the system says (an app's own switch);
+- Each skin animates openings, closings, on and off, and moves its own way, and follows
+  the system's reduced motion. `motion="reduce"` quiets a root whatever the system says (an app's own switch);
   `--uiset-motion-speed` scales every duration. Don't add your own transitions to popups.
 - Everything inside takes the skin, popups included. Skins nest: the nearest root wins.
 

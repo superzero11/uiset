@@ -57,7 +57,8 @@ const [order, setOrder] = useState(features.map((f) => f.value))
 - `help` replaces the instructions read out with the list.
 
 A dragged item's copy follows the pointer while the item itself shows where it will land,
-and a list in a scroll area scrolls when the copy nears its edge. On a touch screen, an
+and a list in a scroll area scrolls when the copy nears its edge. Items slide to their new
+places on the skin's move timing (see Theming, Motion), and jump under reduced motion. On a touch screen, an
 item drags from its grip, so a finger elsewhere still scrolls the page.
 
 Items carry `data-moving` while they're picked up, `data-dragging` while a pointer drags

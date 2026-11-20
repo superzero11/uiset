@@ -256,3 +256,25 @@ test("a checkbox turns on and off on its skin's timing, with no wait: Studio's l
   await expect(box).toHaveAttribute("data-checked")
   expect(await timing()).toEqual(["0.06s", "0s"])
 })
+
+test("a sortable list's items slide to their new places", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" })
+  await page.goto("/content.html")
+  const list = page.getByRole("listbox", { name: "Priorities" })
+  await list.scrollIntoViewIfNeeded()
+  const first = list.getByRole("option").first()
+  const name = await first.getAttribute("aria-label")
+  await first.focus()
+  await page.keyboard.press("Space")
+  await page.evaluate(() => ((window as unknown as { slid: string[] }).slid = []))
+  await page.evaluate(() => {
+    const look = () => {
+      for (const a of document.getAnimations())
+        if (!(a instanceof CSSTransition) && !(a instanceof CSSAnimation)) (window as unknown as { slid: string[] }).slid.push(((a.effect as KeyframeEffect).target as Element).getAttribute("aria-label") ?? "")
+      requestAnimationFrame(look)
+    }
+    look()
+  })
+  await page.keyboard.press("ArrowDown")
+  await expect.poll(() => page.evaluate(() => (window as unknown as { slid: string[] }).slid)).toContain(name)
+})

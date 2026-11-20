@@ -64,6 +64,9 @@ const [board] = useState(createBoardController)
 A finger scrolls the board from anywhere on a card, and drags it from the grip at its
 top corner, which shows on touch screens only. The keyboard and agents don't need it.
 
+Cards slide to their new places, across columns too, on the skin's move timing (see
+Theming, Motion), and jump under reduced motion.
+
 ## Known limits
 
 Releasing a dragged card over a full column, or outside the board, drops it in the last

@@ -229,3 +229,70 @@ test("an error fades in, and appears at once in Phosphor", async ({ page }) => {
     expect(faded).toBe(ms)
   }
 })
+
+/* ------------------------------------------------------------------ moves */
+
+/** After `act`, the slides items run: aria-label → duration in ms. */
+async function slides(page: Page, selector: string, act: () => Promise<void>) {
+  await page.evaluate(() => ((window as unknown as { slid: Record<string, number> }).slid = {}))
+  await page.evaluate((selector) => {
+    const slid = (window as unknown as { slid: Record<string, number> }).slid
+    const look = () => {
+      for (const a of document.getAnimations()) {
+        const target = (a.effect as KeyframeEffect | null)?.target
+        if (a instanceof CSSTransition || a instanceof CSSAnimation || !target?.matches(selector)) continue
+        slid[target.getAttribute("aria-label") ?? "?"] = Number(a.effect!.getTiming().duration)
+      }
+      requestAnimationFrame(look)
+    }
+    look()
+  }, selector)
+  await act()
+  await page.waitForTimeout(150)
+  return page.evaluate(() => (window as unknown as { slid: Record<string, number> }).slid)
+}
+
+const moveTimes: Record<string, number | undefined> = { base: 200, blueprint: 220, studio: 140, phosphor: 120, ink: undefined }
+
+for (const [skin, ms] of Object.entries(moveTimes)) {
+  test(`${skin} slides items to their new places${ms ? ` in ${ms}ms` : ": Ink jumps"}`, async ({ page }) => {
+    await page.addInitScript((s) => localStorage.setItem("uiset-site-skin", s), skin)
+    await page.goto("/docs/kits/lists")
+    const list = page.getByRole("listbox", { name: "Priorities" })
+    await list.scrollIntoViewIfNeeded()
+    await list.getByRole("option", { name: "Faster search" }).focus()
+    await page.keyboard.press("Space")
+    const slid = await slides(page, ".sortable-list-item", () => page.keyboard.press("ArrowDown"))
+    if (ms === undefined) expect(slid).toEqual({})
+    else expect(slid).toMatchObject({ "Faster search": ms, "Offline mode": ms })
+  })
+}
+
+test("under reduced motion, items jump to their new places", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" })
+  await page.goto("/docs/kits/lists")
+  const list = page.getByRole("listbox", { name: "Priorities" })
+  await list.scrollIntoViewIfNeeded()
+  await list.getByRole("option", { name: "Faster search" }).focus()
+  await page.keyboard.press("Space")
+  expect(await slides(page, ".sortable-list-item", () => page.keyboard.press("ArrowDown"))).toEqual({})
+})
+
+test("a card carried to another column slides there", async ({ page }) => {
+  await page.goto("/docs/kits/board")
+  const card = page.getByRole("option", { name: "Audit the cookie banner" })
+  await card.scrollIntoViewIfNeeded()
+  await card.focus()
+  await page.keyboard.press("Space")
+  const slid = await slides(page, ".board-card", () => page.keyboard.press("ArrowLeft"))
+  expect(slid["Audit the cookie banner"]).toBe(200)
+})
+
+test("a switch's thumb moves on the skin's move timing", async ({ page }) => {
+  for (const [skin, s] of [["base", "0.2s"], ["studio", "0.14s"]] as const) {
+    await page.addInitScript((k) => localStorage.setItem("uiset-site-skin", k), skin)
+    await page.goto("/docs/components/switch")
+    const thumb = page.locator(".example [data-slot=switch-thumb]").first()
+    expect(await thumb.evaluate((el) => getComputedStyle(el).transitionDuration.split(", ")[0])).toBe(s)
+  }
+})

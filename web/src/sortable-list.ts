@@ -4,6 +4,7 @@
 import type { ReorderReason } from "@ui-sdk/core"
 import { createParts, type UiChangeEvent, type UiElement } from "@ui-sdk/web"
 import { keepDragPreviewInside } from "@/registry/uiset/ui/shell/drag-preview"
+import { glide } from "@/registry/uiset/ui/shell/glide"
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import { sortableList, type SortableListSelectReason } from "@/registry/uiset/ui/sortable-list/sortable-list"
 import "@/registry/uiset/ui/sortable-list/sortable-list.css"
@@ -60,6 +61,7 @@ class ListView {
   constructor(private el: SortableListElement) {
     el.classList.add("sortable-list")
     keepDragPreviewInside(el)
+    glide(el, ".sortable-list-item")
     new MutationObserver(() => this.schedule()).observe(el, { attributes: true, attributeFilter: ["label", "numbered", "multiple", "help", "aria-describedby"] })
   }
 

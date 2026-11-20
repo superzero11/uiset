@@ -3,6 +3,7 @@
 import { createParts, type PartProps } from "@ui-sdk/react/primitive"
 import { useCallback, useId, useMemo, type ReactNode } from "react"
 import { keepDragPreviewInside } from "./shell/drag-preview"
+import { glide } from "./shell/glide"
 import { Icon } from "./shell/icons"
 import { sortableList, type SortableListOptions } from "./sortable-list/sortable-list"
 import "./shell/shell.css"
@@ -48,7 +49,16 @@ function SortableList({ label, items, numbered = false, renderItem, help, multip
   const keys = useMemo(() => items.map((item) => item.value), [items])
   const itemLabel = useCallback((key: string) => byKey.get(key)?.item.label ?? key, [byKey])
   const locked = useCallback((key: string) => !!byKey.get(key)?.item.locked, [byKey])
-  const keepPreview = useCallback((el: HTMLElement | null) => (el ? keepDragPreviewInside(el) : undefined), [])
+  // A dragged item's copy stays inside the list, and items slide to their new places.
+  const keepPreview = useCallback((el: HTMLElement | null) => {
+    if (!el) return
+    const stopPreview = keepDragPreviewInside(el)
+    const stopGlide = glide(el, ".sortable-list-item")
+    return () => {
+      stopPreview()
+      stopGlide()
+    }
+  }, [])
   const described = [props["aria-describedby"], helpId].filter(Boolean).join(" ")
 
   return (

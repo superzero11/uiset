@@ -209,14 +209,14 @@ const components = [
     "sortable-list",
     "Sortable list",
     "A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name.",
-    ["sortable-list/sortable-list.ts", "sortable-list/sortable-list.css", "shell/drag-preview.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
+    ["sortable-list/sortable-list.ts", "sortable-list/sortable-list.css", "shell/drag-preview.ts", "shell/glide.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
     [],
   ],
   [
     "sortable-tree",
     "Sortable tree",
     "A tree people reorder and nest: drag a row up or down and sideways to change its level, or pick it up with Space and use the arrows. Only branches hold items, a drop elsewhere goes back and says why, and agents move items into branches by name.",
-    ["sortable-tree/sortable-tree.ts", "sortable-tree/sortable-tree.css", "shell/drag-preview.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
+    ["sortable-tree/sortable-tree.ts", "sortable-tree/sortable-tree.css", "shell/drag-preview.ts", "shell/glide.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
     [],
   ],
   [
@@ -391,7 +391,7 @@ const components = [
     "board",
     "Board",
     "A kanban board on UI SDK createTransfer: one tab stop, arrows across cards and columns, Space to carry a card, drag with the pointer, column limits, add in place, a details dialog to edit, move or delete, filters, and agent actions.",
-    ["board/board.ts", "board/board.css", "shell/drag-preview.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
+    ["board/board.ts", "board/board.css", "shell/drag-preview.ts", "shell/glide.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
     ["alert-dialog", "avatar", "badge", "button", "checkbox", "dialog", "field", "label", "scroll-area", "search-field", "select", "textarea"],
   ],
   [

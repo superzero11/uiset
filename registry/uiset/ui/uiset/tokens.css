@@ -47,6 +47,10 @@
   --uiset-nudge-ease: cubic-bezier(0.23, 1, 0.32, 1);
   --uiset-nudge-scale: 1.02;
   --uiset-nudge-shift: 0px;
+  /* Moves: an item put in a new place slides there (shell/glide.ts), and so do a switch's
+     thumb and a segmented control's indicator. Base's glide. */
+  --uiset-move-duration: 200ms;
+  --uiset-move-ease: cubic-bezier(0.23, 1, 0.32, 1);
 
   --uiset-sound: soft;
   --uiset-sound-volume: 0.6;

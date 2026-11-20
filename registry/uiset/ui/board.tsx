@@ -29,6 +29,7 @@ import { Label } from "./label"
 import { ScrollBox } from "./scroll-area"
 import { SearchField } from "./search-field"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger } from "./select"
+import { glide } from "./shell/glide"
 import { Icon } from "./shell/icons"
 import { Textarea } from "./textarea"
 import {
@@ -305,8 +306,17 @@ function Board({
       ),
   })
   const hiddenSet = new Set(hidden)
-  // A dragged card's copy stays inside the board, keeping its look (see keepDragPreviewInside).
-  const keepPreview = useCallback((el: HTMLElement | null) => (el ? keepDragPreviewInside(el) : undefined), [])
+  // A dragged card's copy stays inside the board, keeping its look (see keepDragPreviewInside),
+  // and cards slide to their new places, across columns too.
+  const keepPreview = useCallback((el: HTMLElement | null) => {
+    if (!el) return
+    const stopPreview = keepDragPreviewInside(el)
+    const stopGlide = glide(el, ".board-card")
+    return () => {
+      stopPreview?.()
+      stopGlide()
+    }
+  }, [])
   // Only a hidden card that's on the board counts as filtering: the board's own rule.
   const filtering = Object.values(lanes ?? handle.api.lanes()).some((keys) => keys.some((key) => hiddenSet.has(key)))
 
