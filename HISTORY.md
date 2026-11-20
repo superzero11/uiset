@@ -2136,4 +2136,9 @@ vercel-labs/ui#905 (2026-11-19).
   "Rank what to build next" contained "Next", the schema form's button, so a step by "Next"
   was ambiguous (97 of 100). The list is now "Rank what to build first", title and name alike,
   which also reads with the "First: …" line under it; every page scores 100 again.
+- 2026-11-20 — The owner caught What's new: ready to release 0.6.0, the home page still led
+  with Nov 18–19 entries and had missed 0.5.0's sortable lists. It now shows sortable lists,
+  motion per skin and the Motion pieces. Lint `content/whats-new` refuses a dated release
+  whose changelog adds things while What's new's newest entry is older (it fired on the old
+  row with 0.6.0 dated, and passes now), and CLAUDE.md's first hard rule names What's new.
 

@@ -19,25 +19,26 @@ import { Specimen } from "../specimen"
 
 /* ------------------------------------------------------------------ content */
 
-// Newest first. Keep three: the row has room for three before it scrolls.
+// Three, oldest first: the row reads left to right in time and has room for three before
+// it scrolls. A release that adds something adds its entry here (lint: content/whats-new).
 const whatsNew = [
   {
-    date: "2026-11-18",
-    title: "A new uiset.dev",
-    href: "/components",
-    what: "The library as live cards, each opening its own page; the docs in a sidebar; and one skin switch that dresses the whole site.",
-  },
-  {
-    date: "2026-11-18",
-    title: "Agent view",
-    href: "/docs/components/select",
-    what: "On every component, kit and template page, see what an agent reads from the example as you use it, and run its actions from there.",
-  },
-  {
     date: "2026-11-19",
-    title: "On UI SDK beta.13",
-    href: "/docs/installation",
-    what: "Every item pins UI SDK 0.1.0-beta.13: a menu keeps focus on the item you point at as it opens, a carousel behind a dialog goes inert, and agents name Web Components’ tabs and scroll areas as they do in React.",
+    title: "Sortable lists and trees",
+    href: "/docs/kits/lists",
+    what: "Lists and trees people put in order: drag an item, or pick it up with Space and move it with the arrows. A selection moves together, and every move is read out.",
+  },
+  {
+    date: "2026-11-20",
+    title: "Motion, per skin",
+    href: "/docs/theming#motion",
+    what: "Each skin opens and closes, turns on and off, and moves things its own way: Base glides, Blueprint draws, Studio snaps, Phosphor scans, Ink redraws. Reduced motion only fades.",
+  },
+  {
+    date: "2026-11-20",
+    title: "Motion pieces",
+    href: "/docs/kits/motion",
+    what: "A number ticker, text that reveals as it streams, a Thinking state and a crossfade, each skin its own way. People and agents read the real value.",
   },
 ]
 

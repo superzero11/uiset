@@ -18,8 +18,8 @@ test("What's new puts the latest releases on one line, each linking to its page"
   const list = await home(page)
   const items = list.getByRole("listitem")
   await expect(items).toHaveCount(3)
-  await expect(list.getByRole("link", { name: "Agent view" })).toHaveAttribute("href", "/docs/components/select")
-  await expect(list.getByRole("link", { name: "On UI SDK beta.13" })).toHaveAttribute("href", "/docs/installation")
+  await expect(list.getByRole("link", { name: "Motion, per skin" })).toHaveAttribute("href", "/docs/theming#motion")
+  await expect(list.getByRole("link", { name: "Motion pieces" })).toHaveAttribute("href", "/docs/kits/motion")
 
   // The markers share one line, and each connector runs from its marker to the next one.
   const markers = list.locator('[data-slot="timeline-marker"]')

@@ -55,10 +55,12 @@ Project skills live in `.claude/skills/` (installed with `npx skills add`, pinne
 
 ## Every change: hard rules, no exceptions
 
-1. **Docs, llms files and skills move with the code**, in the same commit: the docs page,
-   the core skill (`skills/uiset`) when it's affected, and `pnpm registry:build`, which
-   regenerates `public/llms*.txt` and the kit skills' references. A local hook refuses a
-   commit while generated files are stale.
+1. **Docs, llms files, skills and What's new move with the code**, in the same commit: the
+   docs page, the core skill (`skills/uiset`) when it's affected, `pnpm registry:build`, which
+   regenerates `public/llms*.txt` and the kit skills' references, and, for a release that
+   adds something, its entry in the home page's What's new (`src/site/pages/home.tsx`). A
+   local hook refuses a commit while generated files are stale; lint `content/whats-new`
+   refuses a dated release that adds things while What's new is older.
 2. **Verify by eye and show it**: screenshots of the change in all five skins (Base,
    Blueprint, Studio, Phosphor, Ink), each in light and dark, React and Web Components where
    both exist, sent here, not just "checked".
@@ -71,7 +73,7 @@ Project skills live in `.claude/skills/` (installed with `npx skills add`, pinne
      now or wait for the batch.
    - **Screenshots**: what was shared.
    - **Dev server**: the URLs for the owner to check.
-   - **Docs, llms and skills**: which ones changed, or why none needed to.
+   - **Docs, llms and skills**: which ones changed (What's new included), or why none needed to.
    A local Stop hook sends the turn back if a label is missing.
 5. **No push before the owner has checked the dev server** and said to push. A local hook
    asks on every push.

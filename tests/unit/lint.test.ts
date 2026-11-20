@@ -6,7 +6,7 @@ import { facts } from "../../src/site/facts.ts"
 import pkg from "../../package.json"
 
 const pinned = pkg.dependencies["@ui-sdk/react"]
-import { currentUiSdk, installVersions, statedCounts } from "../../scripts/lint/rules/facts.ts"
+import { currentUiSdk, installVersions, statedCounts, whatsNewCurrent } from "../../scripts/lint/rules/facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "../../scripts/lint/rules/plan.ts"
 
 // Each rule gets a sample it must catch and one it must let through, so no rule goes quiet.
@@ -146,6 +146,18 @@ describe("the runner", () => {
     const files = { "registry/uiset/ui/a.css": ".a {\n  /* lint-ignore css/no-important */\n  color: red !important;\n}" }
     expect(lint(repo(files), rules).problems.map((p) => p.rule).sort()).toEqual(["css/no-important", "lint/ignore"])
     expect(lint(repo({ "src/a.ts": "// lint-ignore made/up: why" }), rules).problems[0]!.message).toContain('No lint rule "made/up"')
+  })
+
+  test("content/whats-new wants an entry for a release that adds something", () => {
+    const changelog = "# Changelog\n\n## 0.7.0 (unreleased)\n\n### Added\n\n## 0.6.0 (2026-11-20)\n\n### Added\n\n- **Motion.**\n\n## 0.5.1 (2026-11-19)\n\n### Fixed\n"
+    const home = (date: string) => `const whatsNew = [\n  { date: "2026-11-18", title: "A" },\n  { date: "${date}", title: "B" },\n]`
+    expect(whatsNewCurrent.checkRepo(repo({ "CHANGELOG.md": changelog, "src/site/pages/home.tsx": home("2026-11-19") }))).toEqual([
+      expect.objectContaining({ path: "src/site/pages/home.tsx", line: 1, rule: "content/whats-new" }),
+    ])
+    expect(whatsNewCurrent.checkRepo(repo({ "CHANGELOG.md": changelog, "src/site/pages/home.tsx": home("2026-11-20") }))).toEqual([])
+    // A patch release that only fixes things doesn't need an entry.
+    const patch = "## 0.6.1 (2026-11-22)\n\n### Fixed\n\n" + changelog
+    expect(whatsNewCurrent.checkRepo(repo({ "CHANGELOG.md": patch, "src/site/pages/home.tsx": home("2026-11-20") }))).toEqual([])
   })
 
   test("the baseline lets known problems stay, fails new ones, and says when it can shrink", () => {

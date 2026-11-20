@@ -42,6 +42,41 @@ export const currentUiSdk: RepoRule = {
   },
 }
 
+/** The newest dated release in the changelog that adds something: its version and date. */
+function latestAddingRelease(changelog: string) {
+  for (const head of changelog.matchAll(/^## (\d+\.\d+\.\d+) \((\d{4}-\d{2}-\d{2})\)$/gm)) {
+    // The section runs to the next release heading, dated or not.
+    const rest = changelog.slice(head.index! + head[0].length)
+    const next = rest.search(/^## /m)
+    if (/^### Added$/m.test(next < 0 ? rest : rest.slice(0, next))) return { version: head[1]!, date: head[2]! }
+  }
+  return undefined
+}
+
+export const whatsNewCurrent: RepoRule = {
+  id: "content/whats-new",
+  why: "2026-11-20: 0.6.0 (motion per skin and the Motion pieces) was ready to release while the home page's What's new still led with Nov 18–19 items, and missed 0.5.0's sortable lists; the owner caught it. A release that adds something has an entry in What's new dated on or after it.",
+  checkRepo(ctx) {
+    const release = latestAddingRelease(ctx.read("CHANGELOG.md") ?? "")
+    const path = "src/site/pages/home.tsx"
+    const home = ctx.read(path)
+    if (!release || !home) return []
+    const at = home.indexOf("const whatsNew")
+    if (at < 0) return []
+    const dates = [...home.slice(at).matchAll(/date: "(\d{4}-\d{2}-\d{2})"/g)].map((m) => m[1]!)
+    const newest = dates.sort().at(-1) ?? ""
+    if (newest >= release.date) return []
+    return [
+      {
+        path,
+        line: lineOf(home, at),
+        rule: "content/whats-new",
+        message: `CHANGELOG's ${release.version} (${release.date}) adds things, but What's new's newest entry is ${newest || "missing"}. Add the release's headline to whatsNew.`,
+      },
+    ]
+  },
+}
+
 // The lint and its tests run from the repo root.
 const pin = /"@ui-sdk\/react": "0\.1\.0-beta\.(\d+)"/.exec(readFileSync("package.json", "utf8"))?.[1]
 
