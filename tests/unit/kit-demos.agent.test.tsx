@@ -40,7 +40,7 @@ test("the chat template scores 100 with a reply on screen", async () => {
       <ChatAppTemplate assistant={assistant} />
     </UISet>,
   )
-  await userEvent.click(screen.getByRole("button", { name: "Review my search hook" }))
+  await userEvent.click(screen.getByRole("button", { name: "Draft release notes" }))
   await screen.findByText("Cancel the last request before you start the next one.")
   await act(() => new Promise((resolve) => setTimeout(resolve, 50)))
   const report = await checkAgentReadiness(agent)

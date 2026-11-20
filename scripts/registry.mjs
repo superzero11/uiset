@@ -617,7 +617,7 @@ const templates = [
     "chat-app",
     "Chat app page",
     "The chat kit as a product: chats, a thread and a composer, with your model plugged in as an async stream of events.",
-    ["chat", "chat-composer", "chat-parts", "chat-response", "chat-sidebar"],
+    ["chat", "chat-composer", "chat-message-parts", "chat-parts", "chat-response", "chat-sidebar"],
     ["templates/chat-app-sample.ts"],
   ],
   [

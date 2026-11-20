@@ -3672,6 +3672,7 @@
         "superzero11/uiset/uiset",
         "superzero11/uiset/chat",
         "superzero11/uiset/chat-composer",
+        "superzero11/uiset/chat-message-parts",
         "superzero11/uiset/chat-parts",
         "superzero11/uiset/chat-response",
         "superzero11/uiset/chat-sidebar"

@@ -58,6 +58,16 @@ On UI SDK `0.1.0-beta.13`.
   Remove and Send now. React and Web Components (`checkpoint` and `subagent` parts and a
   `restore` event on `<uiset-chat>`, and `<uiset-chat-queue>`); the new item is
   `chat-message-parts`.
+- **The composer queues what's written while an answer runs.** `ChatComposer`'s `onQueue`,
+  and `<uiset-chat-composer queue>` with a `queue` event: Enter and Queue beside Stop hand
+  the message on instead of refusing it.
+- **The chat-app template works as an agent.** Its assistant can yield `checkpoint` and
+  `subagent` events and wait on `approval(id)` for Allow or Deny; Restore cuts the thread
+  back and calls `onRestore`; what's written meanwhile is queued and sent when the answer
+  is done. Answers are kept as AI SDK message parts, drawn by `ChatMessageParts`. The
+  sample assistant does all of it when asked to fix something. React and Web Components.
+- **The chat kit's demo shows agent parts working**: a checkpoint, a subagent's run, a pull
+  request waiting for Allow, and the queue; the web Chat page too.
 - **`motion="reduce"` on `<UISet>` and `<uiset-root>`** quiets that part of the page,
   whatever the system setting says, so an app can offer its own switch.
 
@@ -70,6 +80,9 @@ On UI SDK `0.1.0-beta.13`.
 
 ### Fixed
 
+- **A message whose tool call waits for a person shows no typing caret.** `<uiset-chat>`
+  marked it streaming, and busy, while its `status` was `streaming`; the chat-app template
+  did the same.
 - **A keyboard drop into a folder no longer warns in development.** The sortable tree opened
   the folder with UI SDK's `drop` reason and the drop's keydown, which UI SDK's development
   check refuses for that reason (it threw in the unit tests). React and Web Components.

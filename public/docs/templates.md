@@ -61,7 +61,7 @@ Render it, then replace its sample data:
 | `settings`  | `<SettingsTemplate onSave={(section, data) => …} onAction={…} />` | Each form's `FormData` by section; `onAction` for change plan, add seats, update card, change photo |
 | `admin`     | `<AdminTemplate defaultCustomers={…} onSave={…} onDelete={…} />` | Reject to keep the drawer open with a message |
 | `inbox`     | `<InboxTemplate defaultMessages={…} now={new Date()} onSend={…} onMove={…} />` | Sending and folder moves go to your mail API |
-| `chat-app`  | `<ChatAppTemplate assistant={…} commands={…} mentions={…} />` | An async generator of `text`, `reasoning`, `tool` and `sources` events |
+| `chat-app`  | `<ChatAppTemplate assistant={…} commands={…} mentions={…} />` | An async generator of `text`, `reasoning`, `tool`, `sources`, `checkpoint` and `subagent` events |
 | `pricing`   | `<PricingTemplate plans={…} lede={…} />`   | Plans, comparison rows and questions are props; "save n%" comes from the plans |
 | `project-board` | `<ProjectBoardTemplate defaultCards={…} defaultLanes={…} columns={…} people={…} labels={…} onMove={…} onSave={…} />` | Both views share the cards and lanes; the last column counts as done; `onCreate` and `onDelete` too |
 | `calendar-app` | `<CalendarAppTemplate defaultEvents={…} calendars={…} today={…} now={new Date()} onSave={…} onDelete={…} />` | Each event names its calendar, and the calendar's chart slot is its color; times are minutes in `timeZone` |
@@ -93,6 +93,17 @@ async function* assistant({ text, history, signal }: AssistantInput) {
 With the AI SDK's UI stream, map its parts the same way: text deltas to `text`, reasoning
 to `reasoning`, tool calls and results to `tool` (same `id` updates the card), and source
 parts to `sources`.
+
+An agent waits for a person the same way the sample does: yield the call with
+`status: "approval"`, then `await approval(id)`; Allow resolves `true`, Deny or Stop
+`false`. Yield a `checkpoint` before it changes things, and a `subagent` for work it hands
+off, again as that work changes.
+
+```ts
+yield { type: "tool", id: "deploy", name: "deploy_preview", status: "approval", input }
+if (await approval("deploy")) yield { type: "tool", id: "deploy", name: "deploy_preview", status: "running", input }
+else yield { type: "tool", id: "deploy", name: "deploy_preview", status: "denied", input }
+```
 
 ## Checked
 

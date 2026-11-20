@@ -21,7 +21,8 @@
             <uiset-chat-threads id="threads" label="Chats" value="chat-1" newable renamable deletable></uiset-chat-threads>
             <div class="chat-app-main">
               <uiset-chat id="chat" label="Conversation" empty-title="What are we working on?"></uiset-chat>
-              <uiset-chat-composer id="composer" label="Message" placeholder="Ask anything. Type / for commands, @ to mention a file…" attachments>
+              <uiset-chat-queue id="queue" send-now></uiset-chat-queue>
+              <uiset-chat-composer id="composer" label="Message" placeholder="Ask anything. Type / for commands, @ to mention a file…" attachments queue>
                 <uiset-chat-model-picker id="model" label="Model" value="balanced"></uiset-chat-model-picker>
                 <uiset-chat-usage id="usage" used="0" limit="200000"></uiset-chat-usage>
               </uiset-chat-composer>

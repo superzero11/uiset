@@ -392,7 +392,9 @@ class UISetChat extends Evented<UISetChatEvents>() {
     }
     const index = new Map(messages.map((m, i) => [m.id, i]))
     for (const message of messages) {
-      const live = streaming && message === messages.at(-1) && message.role === "assistant"
+      // A message whose tool call waits for a person isn't being written: no caret, not busy.
+      const waits = message.parts.some((p) => (p as { state?: string }).state === "approval-requested")
+      const live = streaming && message === messages.at(-1) && message.role === "assistant" && !waits
       nodes.push(this.drawMessage(message, live, message === lastAssistant, index.get(message.id)! + 1))
     }
     for (const [id, view] of this.#views) if (!index.has(id)) (view.el.remove(), this.#views.delete(id))
@@ -764,18 +766,21 @@ type ComposerItem = { value: string; label: string; description?: string }
  * `running`. `files` is a FileList, as AI SDK's sendMessage takes. `commands` (after "/")
  * and `mentions` (after "@") suggest as you type; `attachments` takes files (its value is the
  * input's accept list, or empty). Up and Down bring back what you sent. Its children go in
- * the toolbar beside Send, like <uiset-chat-model-picker> and <uiset-chat-usage>.
+ * the toolbar beside Send, like <uiset-chat-model-picker> and <uiset-chat-usage>. With
+ * `queue`, Enter and Queue fire `queue` while `running`, for <uiset-chat-queue>.
  */
 /** What `<uiset-chat-composer>` fires. */
 type UISetChatComposerEvents = {
   /** `files` is a FileList, as AI SDK's `sendMessage({ files })` takes. */
   send: CustomEvent<{ text: string; files: FileList }>
   stop: CustomEvent<null>
+  /** With `queue`: what was written while `running`, to send when the answer is done. */
+  queue: CustomEvent<{ text: string; files: FileList }>
 }
 
 class UISetChatComposer extends Evented<UISetChatComposerEvents>() {
   #draft = ""
-  static observedAttributes = ["running", "label", "placeholder", "attachments"]
+  static observedAttributes = ["running", "label", "placeholder", "attachments", "queue"]
   #commands: ComposerItem[] = []
   #mentions: ComposerItem[] = []
   #sent: string[] = []
@@ -860,13 +865,14 @@ class UISetChatComposer extends Evented<UISetChatComposerEvents>() {
   private submit() {
     const dom = this.#dom!
     const text = dom.field.value.trim()
-    if ((!text && !this.#files.length) || isOn(this, "running")) return
+    const running = isOn(this, "running")
+    if ((!text && !this.#files.length) || (running && !isOn(this, "queue"))) return
     if (text) this.#sent = [...this.#sent, text]
     this.#history.reset()
     // A FileList, as AI SDK's sendMessage({ files }) takes.
     const transfer = new DataTransfer()
     for (const file of this.#files) transfer.items.add(file)
-    this.dispatchEvent(new CustomEvent("send", { detail: { text, files: transfer.files } }))
+    this.dispatchEvent(new CustomEvent(running ? "queue" : "send", { detail: { text, files: transfer.files } }))
     this.write("")
     this.#files = []
     if (dom.fileInput) dom.fileInput.value = []
@@ -956,7 +962,9 @@ class UISetChatComposer extends Evented<UISetChatComposerEvents>() {
     const running = isOn(this, "running")
     const stopHadFocus = dom.stop.contains(document.activeElement)
     ;(dom.stop.parentElement as HTMLElement).style.display = running ? "" : "none"
-    ;(dom.send.parentElement as HTMLElement).style.display = running ? "none" : ""
+    const queue = running && isOn(this, "queue")
+    ;(dom.send.parentElement as HTMLElement).style.display = running && !queue ? "none" : ""
+    dom.send.textContent = queue ? "Queue" : "Send"
     if (stopHadFocus && !running) dom.field.focus()
     dom.send.disabled = !dom.field.value.trim() && !this.#files.length
     attr(dom.send, "data-disabled", dom.send.disabled)
@@ -1066,7 +1074,6 @@ class UISetChatModelPicker extends Evented<UISetChatModelPickerEvents>() {
 
 const compact = new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 })
 
-/** <uiset-chat-usage used="1200" limit="200000" label="Context used" unit="tokens">: how full the context is. */
 type QueuedMessage = { id: string; text: string }
 /** What `<uiset-chat-queue>` fires, naming the message by its `id`. */
 type UISetChatQueueEvents = {
@@ -1132,6 +1139,7 @@ class UISetChatQueue extends Evented<UISetChatQueueEvents>() {
   }
 }
 
+/** <uiset-chat-usage used="1200" limit="200000" label="Context used" unit="tokens">: how full the context is. */
 class UISetChatUsage extends ElementBase {
   static observedAttributes = ["used", "limit", "label", "unit"]
   #dom?: { meter: MeterElement; text: HTMLElement }

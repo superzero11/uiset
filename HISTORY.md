@@ -2178,3 +2178,18 @@ vercel-labs/ui#905 (2026-11-19).
   Upload, App frame's Table, which had the same gap. New lint `content/kit-live`: every kit
   item is used by the kit's demo or named under a section. `kit-sections.spec.ts` with axe,
   mutation-checked. Still open, the owner's call: agent parts in the chat kit's main demo.
+- 2026-11-20 — Agent parts finished where they belong (the owner chose this over starting the
+  inputs). The chat kit's demo has an agent's turn from AI SDK parts (a checkpoint, a
+  subagent's run, a pull request waiting for Allow) and a queue; the web Chat page runs the
+  same turn from a suggestion (its tests rely on an empty start). The composer queues while
+  running (`onQueue`; `<uiset-chat-composer queue>` and a `queue` event): before, it refused
+  what was written, so a real queue couldn't be filled. The chat-app template, React and Web
+  Components, works as an agent: `checkpoint` and `subagent` events, `approval(id)` for
+  Allow and Deny, Restore with `onRestore`, the queue; answers kept as AI SDK parts and drawn
+  by `ChatMessageParts`; the sample assistant does it all when asked to fix something.
+  Screenshots caught a typing caret under an approval while the agent waited: a message whose
+  tool call waits for a person is no longer marked streaming (`<uiset-chat>`, the template).
+  `chat-app` now lists `chat-message-parts` as a dependency: `registry-closure.test.ts`
+  catches the gap; I hadn't run it until the full unit run. Specs: `chat-kit-agent`,
+  `chat-app-agent`, `web/chat-agent` (with axe in every skin for the kit demo); mutation
+  checks on the React and web queue, the template's Restore and the web caret.

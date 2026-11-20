@@ -44,6 +44,7 @@ function ChatComposer({
   onSubmit,
   running = false,
   onStop,
+  onQueue,
   label = "Message",
   placeholder = "Message…",
   commands,
@@ -54,6 +55,9 @@ function ChatComposer({
   onSubmit: (message: Message) => void
   running?: boolean
   onStop?: () => void
+  /** While `running`, Enter and Queue hand the message here instead of refusing it; show
+   *  them with `ChatQueue` and send them when the answer is done. */
+  onQueue?: (message: Message) => void
   label?: string
   placeholder?: string
   commands?: ComposerItem[]
@@ -97,10 +101,11 @@ function ChatComposer({
 
   const submit = () => {
     const text = field.current?.value.trim() ?? ""
-    if ((!text && !files.length) || running) return
+    if ((!text && !files.length) || (running && !onQueue)) return
     if (text) sent.current = [...sent.current, text]
     history.reset()
-    onSubmit({ text, files })
+    if (running) onQueue!({ text, files })
+    else onSubmit({ text, files })
     write("")
     setFiles([])
   }
@@ -175,14 +180,21 @@ function ChatComposer({
         )}
         {tools}
         <span className="chat-composer-spacer" />
-        {running && onStop ? (
+        {running && onStop && (
           <Button type="button" variant="outline" onClick={onStop}>
             Stop
           </Button>
-        ) : (
+        )}
+        {running && onQueue ? (
           <Button type="submit" disabled={!hasText && !files.length}>
-            Send
+            Queue
           </Button>
+        ) : (
+          !(running && onStop) && (
+            <Button type="submit" disabled={!hasText && !files.length}>
+              Send
+            </Button>
+          )
         )}
       </div>
     </>

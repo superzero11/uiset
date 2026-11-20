@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
   ChatBranch,
   ChatEmpty,
@@ -13,8 +13,15 @@ import {
 import {
   ChatComposer,
   ChatModelPicker,
+  ChatQueue,
   ChatUsage,
+  type ChatQueuedMessage,
 } from "@/registry/uiset/ui/chat-composer"
+import {
+  ChatMessageParts,
+  type ChatMessagePart,
+  type ChatToolPart,
+} from "@/registry/uiset/ui/chat-message-parts"
 import {
   ChatCitation,
   ChatReasoning,
@@ -39,6 +46,8 @@ type Turn = {
   feedback?: ChatFeedback
   versions?: string[]
   version?: number
+  /** An agent's turn, as AI SDK message parts. */
+  parts?: ChatMessagePart[]
 }
 
 const minutes = (n: number) => new Date(Date.now() - n * 60000)
@@ -119,6 +128,45 @@ const seed: Turn[] = [
       },
     ],
   },
+  {
+    id: 4,
+    from: "assistant",
+    text: "",
+    parts: [
+      { type: "checkpoint", id: "cp-rollout", label: "Before the rollout", time: minutes(3) },
+      {
+        type: "subagent",
+        id: "sub-tester",
+        name: "Tester",
+        task: "Type fast on a slow network",
+        status: "done",
+        seconds: 9,
+        parts: [
+          {
+            type: "tool-runTests",
+            toolCallId: "t-tests",
+            title: "Ran the search tests",
+            state: "output-available",
+            input: { network: "Slow 4G", typing: "react" },
+            output: { passed: 12, failed: 0 },
+          },
+          {
+            type: "text",
+            text: "Typing “react” fast sends one request, and a slow early response no longer replaces a newer one.",
+          },
+        ],
+      },
+      { type: "text", text: "The fix holds up on a slow network. Opening a pull request needs your yes." },
+      {
+        type: "tool-openPullRequest",
+        toolCallId: "t-pr",
+        title: "Open a pull request",
+        state: "approval-requested",
+        input: { branch: "fix/debounce-search", title: "Debounce search and abort stale requests" },
+        approval: { id: "ap-pr" },
+      },
+    ],
+  },
 ]
 
 const threads0: ChatThreadItem[] = [
@@ -157,8 +205,17 @@ function ChatDemo() {
   })
   const [running, setRunning] = useState(false)
   const [used, setUsed] = useState(18400)
+  // What was written while an answer ran, per chat; sent in turn when it's done. Stop holds
+  // the rest until Send now.
+  const [queues, setQueues] = useState<Record<string, ChatQueuedMessage[]>>({})
+  const [held, setHeld] = useState(false)
   const stopped = useRef(false)
   const nextId = useRef(10)
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([])
+  useEffect(() => () => timers.current.forEach(clearTimeout), [])
+  const queue = queues[active] ?? []
+  const setQueue = (next: (q: ChatQueuedMessage[]) => ChatQueuedMessage[]) =>
+    setQueues((all) => ({ ...all, [active]: next(all[active] ?? []) }))
 
   const list = turns[active] ?? []
   const update = (id: number, patch: (turn: Turn) => Partial<Turn>) =>
@@ -166,6 +223,54 @@ function ChatDemo() {
       ...all,
       [active]: (all[active] ?? []).map((t) => (t.id === id ? { ...t, ...patch(t) } : t)),
     }))
+
+  const updatePart = (turnId: number, callId: string | undefined, patch: Partial<ChatToolPart>, then?: ChatMessagePart) =>
+    update(turnId, (t) => ({
+      parts: [
+        ...(t.parts ?? []).map((p) =>
+          (p as ChatToolPart).toolCallId === callId ? ({ ...p, ...patch } as ChatMessagePart) : p,
+        ),
+        ...(then ? [then] : []),
+      ],
+    }))
+
+  function approve(turnId: number, part: ChatToolPart, approved: boolean) {
+    if (!approved) {
+      updatePart(turnId, part.toolCallId, { state: "output-denied" }, { type: "text", text: "Okay, I won't open it. The branch is still there." })
+      return
+    }
+    updatePart(turnId, part.toolCallId, { state: "approval-responded" })
+    timers.current.push(
+      setTimeout(
+        () =>
+          updatePart(
+            turnId,
+            part.toolCallId,
+            { state: "output-available", output: { url: "https://github.com/acme/app/pull/482", number: 482 } },
+            { type: "text", text: "Opened pull request #482: *Debounce search and abort stale requests*." },
+          ),
+        900,
+      ),
+    )
+  }
+
+  // Back to the checkpoint: the agent's turn as it was there, and nothing after it.
+  function restore(turnId: number) {
+    setTurns((all) => {
+      const list = all[active] ?? []
+      const at = list.findIndex((t) => t.id === turnId)
+      if (at < 0) return all
+      const start = seed.find((t) => t.id === turnId)
+      return { ...all, [active]: [...list.slice(0, at), start ?? list[at]!] }
+    })
+  }
+
+  useEffect(() => {
+    const next = queue[0]
+    if (running || held || !next) return
+    setQueue((q) => q.slice(1))
+    void send(next.text)
+  }, [running, held, queue])
 
   async function send(text: string, files: File[] = []) {
     stopped.current = false
@@ -272,7 +377,7 @@ function ChatDemo() {
                 avatar={{ fallback: "AI" }}
                 streaming={turn.streaming}
                 actions={
-                  !turn.streaming && turn.text ? (
+                  !turn.streaming && turn.text && !turn.parts ? (
                     <div className="chat-message-footer">
                       <ChatMessageActions
                         text={
@@ -329,18 +434,40 @@ function ChatDemo() {
                   <ChatSources sources={turn.sources} />
                 )}
                 {turn.tasks && <ChatTasks title="Rollout" tasks={turn.tasks} />}
+                {turn.parts && (
+                  <ChatMessageParts
+                    parts={turn.parts}
+                    onApprove={(part, approved) => approve(turn.id, part, approved)}
+                    onRestore={() => restore(turn.id)}
+                  />
+                )}
               </ChatMessage>
             ),
           )}
         </ChatThread>
+        <ChatQueue
+          items={queue}
+          onRemove={(id) => setQueue((q) => q.filter((m) => m.id !== id))}
+          onSendNow={(id) => {
+            // It goes first, and the answer running now stops for it.
+            setQueue((q) => [...q.filter((m) => m.id === id), ...q.filter((m) => m.id !== id)])
+            setHeld(false)
+            stopped.current = true
+          }}
+        />
         <ChatComposer
           label="Message"
           placeholder="Ask anything. Type / for commands, @ to mention a file…"
           running={running}
           onStop={() => {
             stopped.current = true
+            setHeld(true)
           }}
-          onSubmit={({ text, files }) => send(text || "Look at these files", files)}
+          onQueue={({ text }) => text && setQueue((q) => [...q, { id: `q-${nextId.current++}`, text }])}
+          onSubmit={({ text, files }) => {
+            setHeld(false)
+            void send(text || "Look at these files", files)
+          }}
           commands={commands}
           mentions={mentions}
           attachments={{ maxFiles: 5, maxSize: 10 * 1024 * 1024 }}
@@ -353,7 +480,9 @@ function ChatDemo() {
         />
         <p className="console-note">
           Simulated assistant. Every part is a real component: markdown, code, reasoning,
-          tool calls, sources, tasks, versions, attachments, commands and mentions.
+          tool calls, sources, tasks, versions, attachments, commands and mentions; and an
+          agent&rsquo;s turn from AI SDK parts: a checkpoint, a subagent&rsquo;s run, a pull
+          request waiting for Allow. Write while it answers to queue a message.
         </p>
       </div>
     </div>

@@ -637,7 +637,10 @@ chat.addEventListener("retry", () => regenerate())
   `running`, brings back what you sent with Up and Down, takes files with `attachments` (its
   value is the accept list), and suggests `commands` after "/" and `mentions` after "@".
   Its event is `send`, not `submit`, which its own form's native event would share. Its
-  `value` is the text in the box.
+  `value` is the text in the box. With `queue`, what's written while `running` fires
+  `queue` with `{ text, files }` (Enter, or Queue beside Stop), for `<uiset-chat-queue>`.
+- A message whose tool call waits for approval shows no caret and isn't busy, though
+  `status` is still `streaming`.
 - `<uiset-chat-threads>` takes `threads` (`{ id, title, updatedAt? }`) and `value`.
   Choosing a chat sets `value` and fires `valuechange` (cancelable; not `select`, which a
   text field's native event shares). It also fires `new`, `rename` with `{ value, title }`

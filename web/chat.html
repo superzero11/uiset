@@ -19,7 +19,8 @@
         <uiset-chat-threads id="threads" label="Chats" value="t1" newable renamable deletable></uiset-chat-threads>
         <section class="web-chat-main" aria-label="Chat">
           <uiset-chat id="chat" label="Conversation" editable></uiset-chat>
-          <uiset-chat-composer id="composer" label="Message" placeholder="Ask about your project…" attachments="image/*,.pdf"></uiset-chat-composer>
+          <uiset-chat-queue id="queue" send-now></uiset-chat-queue>
+          <uiset-chat-composer id="composer" label="Message" placeholder="Ask about your project…" attachments="image/*,.pdf" queue></uiset-chat-composer>
         </section>
       </main>
     </uiset-root>

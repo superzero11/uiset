@@ -2,7 +2,9 @@
 // commands, mentions, attachments, a model picker and usage. It streams from the React
 // template's stand-in model (templates/chat-app-sample.ts); plug in yours as an `Assistant`.
 // Its events become the chat's message parts here, the shape AI SDK's useChat holds, so
-// useChat's `messages` and `status` could go into <uiset-chat> as they are instead.
+// useChat's `messages` and `status` could go into <uiset-chat> as they are instead. An agent's
+// checkpoints, subagent runs and tool calls waiting for a person come as events too, and what's
+// written while an answer runs is queued and sent when it's done.
 import { createAgent } from "@ui-sdk/web/agent"
 import {
   estimateTokens,
@@ -13,6 +15,7 @@ import {
   sampleSuggestions,
   type Assistant,
   type AssistantEvent,
+  type AssistantTool,
   type AssistantToolStatus,
 } from "@/registry/uiset/ui/templates/chat-app-sample"
 import type { ChatMessage, ChatPart, ComposerItem, Feedback, Model, Thread } from "../chat"
@@ -24,6 +27,7 @@ const userName = "You"
 
 type Chat = HTMLElement & { messages: ChatMessage[]; status: string; suggestions: string[]; feedback: Record<string, Feedback> }
 type Composer = HTMLElement & { commands: ComposerItem[]; mentions: ComposerItem[] }
+type Queue = HTMLElement & { items: { id: string; text: string }[] }
 type Threads = HTMLElement & { threads: Thread[] }
 type Picker = HTMLElement & { models: Model[]; value: string }
 
@@ -33,6 +37,7 @@ const composer = $<Composer>("composer")
 const threadsEl = $<Threads>("threads")
 const picker = $<Picker>("model")
 const usage = $("usage")
+const queueEl = $<Queue>("queue")
 
 picker.models = sampleModels
 composer.commands = sampleCommands
@@ -50,6 +55,14 @@ const feedback = new Map<string, Record<string, Feedback>>()
 const used = new Map<string, number>()
 // One answer at a time: Retry or a suggestion waits for Stop.
 let running: { thread: string; abort: AbortController; status: "submitted" | "streaming" } | null = null
+// Tool calls waiting for a person, by id: Allow and Deny settle them, stopping denies them.
+const approvals = new Map<string, (allowed: boolean) => void>()
+// What was written while an answer ran, per chat. Stop holds it until Send now.
+const queues = new Map<string, { id: string; text: string }[]>()
+let held = false
+let nextQueued = 1
+// Answers cut back to a checkpoint while streaming: what they still send is dropped.
+const restored = new Set<string>()
 
 function render() {
   chat.messages = conversations.get(active) ?? []
@@ -59,6 +72,15 @@ function render() {
   threadsEl.threads = threads
   attr(threadsEl, "value", active)
   attr(usage, "used", String(used.get(active) ?? 0))
+  queueEl.items = queues.get(active) ?? []
+}
+
+/** The next queued message goes once nothing is running, unless Stop held the queue. */
+function sendQueued() {
+  const [first, ...rest] = queues.get(active) ?? []
+  if (running || held || !first) return
+  queues.set(active, rest)
+  void send(first.text)
 }
 
 const textOf = (message: ChatMessage) =>
@@ -77,33 +99,47 @@ const toolState: Record<AssistantToolStatus, string> = {
   denied: "output-denied",
 }
 
-/** An answer as it streams: reasoning, tool calls, text and sources, as message parts. */
+const toolPart = ({ id, name, title, status, input, output }: AssistantTool) =>
+  ({ type: `tool-${name}`, toolCallId: id, toolName: name, title, state: toolState[status], input, output }) as ChatPart
+
+/** An answer as it streams, as message parts in the order they came. */
 class Answer {
-  reasoning?: { text: string; done: boolean; seconds?: number }
-  tools: { id: string; name: string; title?: string; status: AssistantToolStatus; input?: unknown; output?: unknown }[] = []
-  text = ""
-  sources: { href: string; title: string }[] = []
+  parts: ChatPart[] = []
 
   apply(event: AssistantEvent) {
-    if (event.type === "text") this.text += event.delta
-    else if (event.type === "reasoning") this.reasoning = { text: (this.reasoning?.text ?? "") + event.delta, done: false }
-    else if (event.type === "reasoning-end") this.reasoning = { text: this.reasoning?.text ?? "", done: true, seconds: event.seconds }
-    else if (event.type === "tool") {
+    const last = this.parts.at(-1)
+    const at = (same: (p: ChatPart) => boolean, part: ChatPart) => {
+      const i = this.parts.findIndex(same)
+      if (i >= 0) this.parts[i] = part
+      else this.parts.push(part)
+    }
+    if (event.type === "text") {
+      if (last?.type === "text") (last as { text: string }).text += event.delta
+      else this.parts.push({ type: "text", text: event.delta, state: "streaming" })
+    } else if (event.type === "reasoning") {
+      if (last?.type === "reasoning" && (last as { state?: string }).state === "streaming") (last as { text: string }).text += event.delta
+      else this.parts.push({ type: "reasoning", text: event.delta, state: "streaming" })
+    } else if (event.type === "reasoning-end") {
+      for (const p of this.parts) if (p.type === "reasoning" && (p as { state?: string }).state === "streaming") Object.assign(p, { state: "done", seconds: event.seconds })
+    } else if (event.type === "tool") {
       const { type: _type, ...tool } = event
-      const known = this.tools.findIndex((t) => t.id === tool.id)
-      if (known >= 0) this.tools[known] = tool
-      else this.tools.push(tool)
-    } else if (event.type === "sources") this.sources = event.sources
+      at((p) => (p as { toolCallId?: string }).toolCallId === tool.id, toolPart(tool))
+    } else if (event.type === "sources") this.parts.push(...event.sources.map((s) => ({ type: "source-url", url: s.href, title: s.title }) as ChatPart))
+    else if (event.type === "checkpoint") this.parts.push({ type: "checkpoint", id: event.id, label: event.label, time: new Date() })
+    else if (event.type === "subagent") {
+      const { type: _type, steps = [], ...run } = event
+      const inner = steps.map((step): ChatPart => {
+        if (step.type === "text") return { type: "text", text: step.text }
+        const { type: _t, ...tool } = step
+        return toolPart(tool)
+      })
+      at((p) => p.type === "subagent" && (p as { id: string }).id === run.id, { type: "subagent", ...run, parts: inner })
+    }
   }
 
-  parts(streaming: boolean): ChatPart[] {
-    const state = streaming ? "streaming" : "done"
-    return [
-      ...(this.reasoning ? [{ type: "reasoning", text: this.reasoning.text, state: this.reasoning.done || !streaming ? "done" : "streaming", seconds: this.reasoning.seconds } as ChatPart] : []),
-      ...this.tools.map((tool) => ({ type: `tool-${tool.name}`, toolName: tool.name, title: tool.title, state: toolState[tool.status], input: tool.input, output: tool.output })),
-      ...(this.text ? [{ type: "text", text: this.text, state } as ChatPart] : []),
-      ...this.sources.map((source) => ({ type: "source-url", url: source.href, title: source.title }) as ChatPart),
-    ]
+  /** A copy for the chat; done, every text and thought is complete. */
+  snapshot(streaming: boolean): ChatPart[] {
+    return this.parts.map((p) => (!streaming && (p.type === "text" || p.type === "reasoning") ? { ...p, state: "done" } : { ...p }) as ChatPart)
   }
 }
 
@@ -132,11 +168,18 @@ async function send(text: string, files: File[] = []) {
   const id = `m${next++}`
   const answer = new Answer()
   const show = (streaming: boolean) => {
-    const parts = answer.parts(streaming)
+    if (restored.has(id)) return
+    const parts = answer.snapshot(streaming)
     if (parts.length) put(thread, { id, role: "assistant", name: "Assistant", avatar: { fallback: "AI" }, parts })
   }
+  abort.signal.addEventListener("abort", () => {
+    for (const settle of approvals.values()) settle(false)
+    approvals.clear()
+  })
+  const approval = (toolId: string) =>
+    abort.signal.aborted ? Promise.resolve(false) : new Promise<boolean>((resolve) => approvals.set(toolId, resolve))
   try {
-    for await (const event of assistant({ text, files, model: picker.value, history, signal: abort.signal })) {
+    for await (const event of assistant({ text, files, model: picker.value, history, signal: abort.signal, approval })) {
       answer.apply(event)
       running.status = "streaming"
       show(true)
@@ -144,20 +187,67 @@ async function send(text: string, files: File[] = []) {
     }
   } catch {
     // Stopping on purpose isn't a failure.
-    if (!abort.signal.aborted) answer.text += "\n\n*The answer stopped early. Try again.*"
+    if (!abort.signal.aborted) answer.apply({ type: "text", delta: "\n\n*The answer stopped early. Try again.*" })
   } finally {
     show(false)
     used.set(thread, (used.get(thread) ?? 0) + estimateTokens(text))
     running = null
     render()
+    sendQueued()
   }
 }
 
 composer.addEventListener("send", (event) => {
   const { text, files } = (event as CustomEvent<{ text: string; files: FileList }>).detail
+  held = false
   void send(text || "Look at these files", [...files])
 })
-composer.addEventListener("stop", () => running?.abort.abort())
+composer.addEventListener("stop", () => {
+  held = true
+  running?.abort.abort()
+})
+composer.addEventListener("queue", (event) => {
+  const { text } = (event as CustomEvent<{ text: string }>).detail
+  if (!text) return
+  queues.set(active, [...(queues.get(active) ?? []), { id: `queued-${nextQueued++}`, text }])
+  render()
+})
+queueEl.addEventListener("remove", (event) => {
+  const id = (event as CustomEvent<{ value: string }>).detail.value
+  queues.set(active, (queues.get(active) ?? []).filter((m) => m.id !== id))
+  render()
+})
+queueEl.addEventListener("send", (event) => {
+  // Send now: it goes first, and the answer running now stops for it.
+  const id = (event as CustomEvent<{ value: string }>).detail.value
+  const list = queues.get(active) ?? []
+  queues.set(active, [...list.filter((m) => m.id === id), ...list.filter((m) => m.id !== id)])
+  held = false
+  if (running) running.abort.abort()
+  else sendQueued()
+})
+chat.addEventListener("approve", (event) => {
+  // A tool call waiting for a person: their answer goes to the assistant, and shows at once.
+  const { value: allowed, id, part } = (event as CustomEvent<{ value: boolean; id: string; part: number }>).detail
+  const message = (conversations.get(active) ?? []).find((m) => m.id === id)
+  const tool = message?.parts[part] as { toolCallId?: string; state?: string } | undefined
+  if (!message || !tool?.toolCallId) return
+  approvals.get(tool.toolCallId)?.(allowed)
+  approvals.delete(tool.toolCallId)
+  put(active, { ...message, parts: message.parts.map((p, i) => (i === part ? ({ ...p, state: allowed ? "approval-responded" : "output-denied" } as ChatPart) : p)) })
+  render()
+})
+chat.addEventListener("restore", (event) => {
+  // Back to a checkpoint: its answer up to it, and nothing after.
+  const { id, part } = (event as CustomEvent<{ value: string; id: string; part: number }>).detail
+  restored.add(id)
+  if (running?.thread === active) running.abort.abort()
+  const list = conversations.get(active) ?? []
+  const at = list.findIndex((m) => m.id === id)
+  if (at < 0) return
+  conversations.set(active, [...list.slice(0, at), { ...list[at]!, parts: list[at]!.parts.slice(0, part + 1) }])
+  render()
+})
 chat.addEventListener("suggestion", (event) => void send((event as CustomEvent<{ value: string }>).detail.value))
 chat.addEventListener("retry", (event) => {
   // Retry asks the question before that answer again.

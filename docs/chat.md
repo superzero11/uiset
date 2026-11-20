@@ -185,7 +185,11 @@ import { ChatQueue } from "@/components/ui/chat-composer"
   shows), and its `parts` are drawn inside it, the same way.
 - `ChatQueue` takes `items` (`{ id, text }`), `onRemove(id)` and, for Send now on the
   first, `onSendNow(id)`. It renders nothing when the queue is empty. Each button names its
-  message ("Remove from queue: Then open a pull request").
+  message ("Remove from queue: Then open a pull request"). The composer's `onQueue` fills
+  it while an answer runs.
+- A message whose tool call waits for a person isn't being written: give its
+  `ChatMessage` no `streaming` then, so it shows no caret and isn't busy. With the AI SDK
+  it isn't: `useChat` is `ready` until `addToolApprovalResponse`.
 - The context meter is `ChatUsage`, and a plan is `ChatTasks`.
 
 ## The composer
@@ -193,6 +197,9 @@ import { ChatQueue } from "@/components/ui/chat-composer"
 - `onSubmit({ text, files })` gets the trimmed text and the attached files, then the box
   clears. With no text and no files, nothing is sent.
 - While `running` is on, Enter and Send don't send. With `onStop` too, Send becomes Stop.
+- With `onQueue`, what's written while `running` isn't refused: Enter and Queue hand it
+  to `onQueue({ text, files })` and the box clears. Show it with `ChatQueue` and send it
+  when the answer is done; Stop beside Queue still stops the answer.
 - `commands` show after "/" at the start of the message and `mentions` after "@", each
   `{ value, label, description? }`. Choosing one inserts the trigger and the label
   ("/summarize "); `onSubmit` gets that text, not the item's `value`.
@@ -229,13 +236,26 @@ npx shadcn@latest add @uiset/chat-app
 ```
 
 `<ChatAppTemplate assistant={assistant} />` is the kit as a page. `assistant` is an async
-generator given `{ text, files, model, history, signal }` that yields `text`, `reasoning`,
-`reasoning-end`, `tool` (the same `id` updates the card) and `sources` events; the sample
-one streams a placeholder. It also takes `models`, `commands`, `mentions`, `suggestions`,
-`userName` ("You"), `userAvatar` and `limit` (200000, for the usage meter).
+generator given `{ text, files, model, history, signal, approval }` that yields `text`,
+`reasoning`, `reasoning-end`, `tool` (the same `id` updates the card) and `sources` events,
+and for an agent's work `checkpoint` (`{ id, label? }`) and `subagent` (`{ id, name, task?,
+status, seconds?, steps? }`, sent again as it changes). The sample one streams a
+placeholder; asked to fix, change or deploy something ("Fix the date format and deploy a
+preview"), it works as an agent. It also takes `models`, `commands`, `mentions`,
+`suggestions`, `userName` ("You"), `userAvatar`, `limit` (200000, for the usage meter)
+and `onRestore`.
 
-- It runs one answer at a time. Stop aborts `signal` and isn't shown as a failure; any
-  other error adds "The answer stopped early. Try again."
+- A `tool` event with `status: "approval"` shows Allow and Deny; `await approval(id)`
+  resolves `true` once the person allows it, `false` if they deny it or the answer stops.
+  The answer stays open meanwhile, with no caret.
+- Restore on a checkpoint cuts its answer back to the checkpoint, drops the turns after it,
+  stops an answer still running, and calls `onRestore({ id, label })` for your app's own
+  state.
+- It runs one answer at a time. What's written meanwhile is queued above the composer and
+  sent in turn when the answer is done; Stop holds the queue until Send now, which stops
+  the answer running and sends that message. Stop aborts `signal` and isn't shown as a
+  failure; any other error adds "The answer stopped early. Try again."
+- Each answer is kept as AI SDK message parts and drawn with `ChatMessageParts`.
 - It starts on the second entry in `models` (the sample's "Balanced").
 - New chats are numbered ("Untitled chat 2") until the first message, cut to 40
   characters, becomes the title. Deleting the last chat starts a new one.
@@ -299,5 +319,7 @@ the refs; retry with a ref. Nothing in the kit is `data-agent-hidden`.
 custom elements. `<uiset-chat>` draws a whole conversation from AI SDK's `messages` shape,
 with Allow and Deny on tool calls that wait for approval (an `approve` event), and the
 `checkpoint` and `subagent` parts (Restore fires `restore`). `<uiset-chat-queue>` takes
-`items` and fires `remove` and, with `send-now`, `send`. The launcher has no element. See
-[Web Components](./web-components.md#chat).
+`items` and fires `remove` and, with `send-now`, `send`. With `queue`,
+`<uiset-chat-composer>` fires `queue` instead of refusing what's written while `running`.
+A message whose tool call waits for approval shows no caret. The launcher has no element.
+See [Web Components](./web-components.md#chat).

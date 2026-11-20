@@ -38,7 +38,7 @@ const whatsNew = [
     date: "2026-11-20",
     title: "Agent parts",
     href: "/docs/kits/chat#agent-parts",
-    what: "Tools that wait for your approval, subagent runs with their own steps, checkpoints to restore, a queue, and Vercel AI SDK messages drawn as they are.",
+    what: "Tools that wait for your approval, subagent runs with their own steps, checkpoints to restore, a queue the composer fills while the agent works, and Vercel AI SDK messages drawn as they are. Live in the chat kit's demo and the chat-app template.",
   },
 ]
 
