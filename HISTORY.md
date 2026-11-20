@@ -2003,4 +2003,7 @@ vercel-labs/ui#905 (2026-11-19).
   packs 83 files, 291.6 kB, with the five skin scopes in `dist/uiset.css`. The owner
   publishes it (`npm login` first: sessions last two hours); the registry fix ships with
   the push.
+- 2026-11-20 — **@uiset/web 0.5.1 on npm**, published by the owner (signed in again first,
+  then approved with two-step verification); npm answered `+ @uiset/web@0.5.1`. The registry
+  fix had gone live with the push before it.
 
