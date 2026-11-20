@@ -232,6 +232,7 @@ vercel-labs/ui#905 (2026-11-19).
 | Sortable tree (`sortable-tree`), React and Web Components                                          | done, not pushed | 2026-11-19: on `createTreeReorder`, `createRovingFocus` and `createTypeahead`. 11 unit tests, 11/11 mutations caught |
 | IDE file tree: drag a file or folder into a folder, React and Web Components                    | done, not pushed | 2026-11-19: `ide/file-drag.ts`, shared. 3 e2e tests each in React and web, also in WebKit; 6/6 mutations caught |
 | Motion part 1: openings, closings and panels per skin, `motion="reduce"`, React and Web Components | done, not pushed | 2026-11-20: tokens in `tokens.css` and each skin, drawn by `base.css`; Blueprint and Phosphor clip in their own files. 13 e2e tests in `motion.spec.ts` and 1 web, each mutation-checked. Filmstrips of popover, dialog, toast and accordion in every skin. |
+| Motion part 2: on and off, checks, errors and a refused press per skin, React and Web Components | done, not pushed | 2026-11-20: `--uiset-toggle-*`, `--uiset-check-scale` and `--uiset-nudge-*` per skin, drawn by `base.css`; Blueprint's inked check in its file; the nudge set by `feedback.ts`. 11 e2e tests in `motion.spec.ts`, each mutation-checked; filmstrips of a check and a nudge in every skin. |
 | Every kit and template page in every skin: the audit and its fixes, React and Web Components | done, not pushed | 2026-11-20: five skins × two themes, kits and templates, reviewed by eye. Fixed: canvas opening fit, grid checkboxes, Studio meter ladder, Base track edges, Ink tab cue, square chips. Each with a test, mutation-checked. |
 
 ## Decision log
@@ -2080,3 +2081,11 @@ vercel-labs/ui#905 (2026-11-19).
   right after Escape and fails with a 200ms close. In the same run, reduced motion let
   every opacity change ease, not only what appears and disappears; a toolbar button that
   came on was read by axe mid-fade. Now only popups, dialogs, toasts and backdrops fade.
+- 2026-11-20 — Motion part 2, state changes, built the same day as part 1, to release
+  together tonight (the owner keeps to one release a day). On and off uses its own timing
+  per skin, with off apart from on so Studio's lamp can cool slower than it warms. UI SDK
+  gives every button a 300ms transition delay for its pending dimming; the first filmstrip
+  showed checkboxes filling late, so on and off sets its delay to zero and a test checks it.
+  The refusal nudge needs no UI SDK event: an alert dialog never closes on an outside press,
+  so a press outside an open one is the refusal. A count changing waits for a part that
+  shows one.

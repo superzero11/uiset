@@ -3286,9 +3286,10 @@ they play for agents' changes too. Haptics are on by default where the device ha
 
 ## Motion
 
-Each skin opens and closes things its own way. The motion runs on UI SDK's own state
-(`data-starting-style` and `data-ending-style`), so an agent's change moves the way a
-person's does, and nothing waits for it: focus moves and announcements happen at the start.
+Each skin opens and closes things, and turns them on and off, its own way. The motion runs
+on UI SDK's own state (`data-starting-style`, `data-ending-style`, `data-checked`), so an
+agent's change moves the way a person's does, and nothing waits for it: focus moves and
+announcements happen at the start.
 
 | Skin        | Opening                                              | Closing                                       | Panel                     |
 | ----------- | ---------------------------------------------------- | --------------------------------------------- | ------------------------- |
@@ -3306,10 +3307,21 @@ one outside an open dialog, and the click would be lost. The drawer keeps UI SDK
 spring. A tooltip that opens at once, because another was just
 open, doesn't animate.
 
+| Skin        | On and off (switch, checkbox, radio, toggle)              | A press an alert dialog refuses        |
+| ----------- | --------------------------------------------------------- | -------------------------------------- |
+| `base`      | Eases, 150 ms; the check grows in                         | The dialog swells a little and settles |
+| `blueprint` | Even pace, 160 ms; the check is inked in from the start of the line | A jog aside at an even pace   |
+| `studio`    | A lamp: warms in 60 ms, cools in 300 ms                   | A jolt in the rack that stops dead     |
+| `phosphor`  | At once, like inverse video                               | A step aside and back                  |
+| `ink`       | At once                                                   | Nothing moves                          |
+
+An alert dialog never closes on a press outside it, so it nudges: the press visibly did
+something. A field's error appears on the same timing as on and off.
+
 **Less motion.** Under the system's `prefers-reduced-motion`, or inside
 `<UISet motion="reduce">`, nothing moves, grows or is drawn, in any skin: what appears and
-disappears fades (120 ms in, 90 ms out), and panels snap open. Everything else, color
-included, changes at once. Ink stays instant either way. `motion="reduce"` lets an app offer its own switch, or quiet one
+disappears fades (120 ms in, 90 ms out), panels snap open, and on and off, errors and
+refusals change at once. Everything else, color included, changes at once. Ink stays instant either way. `motion="reduce"` lets an app offer its own switch, or quiet one
 part of a page.
 
 **Speed.** `--uiset-motion-speed` (1 by default) scales every duration in every skin: 0.5
@@ -3330,6 +3342,14 @@ opacity, a scale and a vertical shift; a closing has the same four, with `exit`:
 --uiset-panel-duration: 200ms; /* accordion and collapsible panels */
 --uiset-panel-close-duration: 150ms;
 --uiset-panel-ease: cubic-bezier(0.23, 1, 0.32, 1);
+--uiset-toggle-duration: 150ms; /* on, and a check or a dot appearing */
+--uiset-toggle-off-duration: 150ms; /* off, which can be slower, like a cooling lamp */
+--uiset-toggle-ease: cubic-bezier(0.23, 1, 0.32, 1);
+--uiset-check-scale: 0.5; /* a check grows from this size */
+--uiset-nudge-duration: 200ms; /* a refused press */
+--uiset-nudge-ease: cubic-bezier(0.23, 1, 0.32, 1);
+--uiset-nudge-scale: 1.02;
+--uiset-nudge-shift: 0px; /* sideways, at the nudge's halfway point */
 ```
 
 Reduced motion overrides these, so a skin doesn't need its own reduced version. The design
@@ -3738,7 +3758,7 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 **Motion, per skin.** Each skin moves its own way, as it already sounds its own way:
 openings, moves and state changes, drawn from UI SDK's state, reduced motion respected.
-Openings and closings are built (in 0.6.0); state changes and then moves come next. M–L
+Openings, closings and state changes are built (in 0.6.0); moves come next. M–L
 
 ## Next, in order
 

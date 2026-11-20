@@ -61,6 +61,16 @@
     --uiset-panel-duration: 130ms;
     --uiset-panel-close-duration: 100ms;
     --uiset-panel-ease: cubic-bezier(0.3, 0.6, 0.7, 0.85);
+    /* On and off is a lamp: it warms fast and cools slowly. */
+    --uiset-toggle-duration: 60ms;
+    --uiset-toggle-off-duration: 300ms;
+    --uiset-toggle-ease: cubic-bezier(0, 0, 0.2, 1);
+    --uiset-check-scale: 1;
+    /* A refusal jolts the module in its rack and stops dead. */
+    --uiset-nudge-duration: 120ms;
+    --uiset-nudge-ease: cubic-bezier(0.3, 0.6, 0.7, 0.85);
+    --uiset-nudge-scale: 1;
+    --uiset-nudge-shift: 3px;
     --uiset-solid-bg: var(--studio-lamp);
     --uiset-solid-fg: oklch(0.2 0.02 70);
     --uiset-solid-border: oklch(0.7 0.13 70);

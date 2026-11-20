@@ -63,6 +63,15 @@
     --uiset-panel-duration: 100ms;
     --uiset-panel-close-duration: 100ms;
     --uiset-panel-ease: steps(3, jump-start);
+    /* On and off is inverse video: at once. */
+    --uiset-toggle-duration: 0ms;
+    --uiset-toggle-off-duration: 0ms;
+    --uiset-check-scale: 1;
+    /* A refusal jumps the box a step aside and back, as a terminal moves text. */
+    --uiset-nudge-duration: 120ms;
+    --uiset-nudge-ease: steps(2, jump-none);
+    --uiset-nudge-scale: 1;
+    --uiset-nudge-shift: 4px;
     --uiset-solid-bg: var(--phosphor-glow);
     --uiset-solid-fg: var(--phosphor-tube);
     --uiset-solid-border: var(--phosphor-glow);

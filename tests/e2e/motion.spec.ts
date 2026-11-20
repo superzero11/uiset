@@ -118,3 +118,114 @@ for (const skin of ["base", "phosphor"]) {
   })
 }
 
+
+/* ------------------------------------------------------------------ on and off, refusals */
+
+/** A checkbox's declared timing in its current state: duration, delay. */
+const timing = (page: Page) =>
+  page.locator(".example [data-slot=checkbox]").first().evaluate((el) => {
+    const style = getComputedStyle(el)
+    return [style.transitionDuration.split(", ")[0], style.transitionDelay.split(", ")[0]]
+  })
+
+// Base eases, Blueprint keeps an even pace, Studio's lamp warms fast and cools slowly,
+// Phosphor's inverse video and Ink change at once.
+const toggles: Record<string, { on: string; off: string }> = {
+  base: { on: "0.15s", off: "0.15s" },
+  blueprint: { on: "0.16s", off: "0.16s" },
+  studio: { on: "0.06s", off: "0.3s" },
+  phosphor: { on: "0s", off: "0s" },
+  ink: { on: "0s", off: "0s" },
+}
+
+for (const [skin, { on, off }] of Object.entries(toggles)) {
+  test(`${skin} turns a checkbox on in ${on} and off in ${off}, with no wait`, async ({ page }) => {
+    await page.addInitScript((s) => localStorage.setItem("uiset-site-skin", s), skin)
+    await page.goto("/docs/components/checkbox")
+    const box = page.locator(".example [data-slot=checkbox]").first()
+    if ((await box.getAttribute("data-checked")) !== null) await box.click()
+    await expect(box).not.toHaveAttribute("data-checked")
+    // UI SDK delays every button's transitions 300ms; a checkbox once waited that long.
+    expect(await timing(page)).toEqual([off, "0s"])
+    await box.click()
+    await expect(box).toHaveAttribute("data-checked")
+    expect(await timing(page)).toEqual([on, "0s"])
+  })
+}
+
+test("under reduced motion, a checkbox turns on at once", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" })
+  await page.goto("/docs/components/checkbox")
+  const box = page.locator(".example [data-slot=checkbox]").first()
+  await box.click()
+  expect((await timing(page))[0]).toBe("0s")
+})
+
+test("Blueprint inks a check in from the start of the line", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("uiset-site-skin", "blueprint"))
+  await page.goto("/docs/components/checkbox")
+  const box = page.locator(".example [data-slot=checkbox]").first()
+  if ((await box.getAttribute("data-checked")) !== null) await box.click()
+  await expect(box).not.toHaveAttribute("data-checked")
+  const check = { path: "/docs/components/checkbox", trigger: ".example [data-slot=checkbox]", part: "[data-slot=checkbox-indicator]" }
+  const ran = await page.evaluate(async ({ trigger, part }) => {
+    ;(document.querySelector(trigger) as HTMLElement).click()
+    const seen: Record<string, string> = {}
+    for (let frame = 0; frame < 8; frame++) {
+      await new Promise((resolve) => requestAnimationFrame(resolve))
+      for (const a of document.getAnimations()) {
+        const effect = a.effect as KeyframeEffect | null
+        if (a instanceof CSSTransition && effect?.target?.matches(part)) seen[a.transitionProperty] = String(effect.getKeyframes()[0]?.clipPath ?? "")
+      }
+    }
+    return seen
+  }, check)
+  expect(ran["clip-path"]).toContain("100%")
+})
+
+test("an alert dialog nudges at a press outside it, each skin its own way", async ({ page }) => {
+  await page.goto("/docs/components/alert-dialog")
+  await page.locator(".example [data-slot=alert-dialog-trigger]").first().click()
+  const dialog = page.locator("[data-slot=alert-dialog-content]")
+  await expect(dialog).toBeVisible()
+  await page.mouse.click(10, 700)
+  await expect(dialog).toBeVisible()
+  const names = await dialog.evaluate((el) => el.getAnimations().map((a) => (a as CSSAnimation).animationName))
+  expect(names).toContain("uiset-nudge")
+  // Each press nudges again.
+  await expect(dialog).not.toHaveAttribute("data-refused")
+  await page.mouse.click(10, 700)
+  await expect(dialog).toHaveAttribute("data-refused", "")
+})
+
+test("under reduced motion, a refused press doesn't move the dialog", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" })
+  await page.goto("/docs/components/alert-dialog")
+  await page.locator(".example [data-slot=alert-dialog-trigger]").first().click()
+  const dialog = page.locator("[data-slot=alert-dialog-content]")
+  await expect(dialog).toBeVisible()
+  await page.mouse.click(10, 700)
+  expect(await dialog.evaluate((el) => getComputedStyle(el).animationDuration)).toBe("0s")
+})
+
+test("an error fades in, and appears at once in Phosphor", async ({ page }) => {
+  for (const [skin, ms] of [["base", 150], ["phosphor", 0]] as const) {
+    await page.addInitScript((s) => localStorage.setItem("uiset-site-skin", s), skin)
+    await page.goto("/templates/inbox")
+    await page.locator(".template-frame").getByRole("button", { name: "Compose" }).click()
+    const form = page.getByRole("form", { name: "New message" })
+    await expect(form).toBeVisible()
+    const faded = await page.evaluate(async () => {
+      ;[...document.querySelectorAll("button")].find((b) => b.textContent === "Send")!.click()
+      const seen: number[] = []
+      for (let frame = 0; frame < 8; frame++) {
+        await new Promise((resolve) => requestAnimationFrame(resolve))
+        for (const a of document.getAnimations())
+          if (a instanceof CSSTransition && (a.effect as KeyframeEffect).target?.matches('[data-slot="field-error"]')) seen.push(Number(a.effect!.getTiming().duration))
+      }
+      return seen[0] ?? 0
+    })
+    await expect(form.getByText("Add someone to send to.")).toBeVisible()
+    expect(faded).toBe(ms)
+  }
+})

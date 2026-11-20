@@ -34,6 +34,19 @@
   --uiset-panel-duration: 200ms;
   --uiset-panel-close-duration: 150ms;
   --uiset-panel-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  /* On and off: a switch, checkbox or radio filling, a toggle pressed, a check or a dot
+     appearing. Off has its own duration, so a lamp can cool slower than it warms. */
+  --uiset-toggle-duration: 150ms;
+  --uiset-toggle-off-duration: 150ms;
+  --uiset-toggle-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  /* How a check or a dot appears: Base's grows from half its size. */
+  --uiset-check-scale: 0.5;
+  /* A refused press (outside an alert dialog) nudges the dialog: a grow and a sideways jog
+     at the halfway point, and back. */
+  --uiset-nudge-duration: 200ms;
+  --uiset-nudge-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --uiset-nudge-scale: 1.02;
+  --uiset-nudge-shift: 0px;
 
   --uiset-sound: soft;
   --uiset-sound-volume: 0.6;

@@ -17,7 +17,7 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 **Motion, per skin.** Each skin moves its own way, as it already sounds its own way:
 openings, moves and state changes, drawn from UI SDK's state, reduced motion respected.
-Openings and closings are built (in 0.6.0); state changes and then moves come next. M–L
+Openings, closings and state changes are built (in 0.6.0); moves come next. M–L
 
 ## Next, in order
 

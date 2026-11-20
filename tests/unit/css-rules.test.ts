@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs"
 import { join } from "node:path"
 import { expect, test } from "vitest"
+import { noImportant } from "../../scripts/lint/rules/code.ts"
 
 const cssFiles = (dir: string): string[] =>
   readdirSync(dir).flatMap((name) => {
@@ -20,16 +21,15 @@ test("focus outlines use the ring border color, never the translucent halo", () 
   expect(offenders).toEqual([])
 })
 
-// Layers keep skins nestable; only the reduced-motion reset may use !important.
+// Layers keep skins nestable; only the reduced-motion reset may use !important. The lint
+// rule reads which block each one sits in (a window of text before it once overran).
 test("no !important outside the reduced-motion reset", () => {
   const offenders = cssFiles("registry").flatMap((file) => {
-    const text = readFileSync(file, "utf8")
-    return [...text.matchAll(/!important/g)]
-      .filter((m) => {
-        const before = text.slice(Math.max(0, m.index! - 700), m.index)
-        return !/prefers-reduced-motion|\[data-motion="reduce"\]|\[hidden\]/.test(before)
-      })
-      .map((m) => `${file}:${text.slice(0, m.index).split("\n").length}`)
+    const lines = readFileSync(file, "utf8").split("\n")
+    return noImportant
+      .check(lines.join("\n"), file)
+      .filter((found) => !lines[found.line - 2]?.includes(`lint-ignore ${noImportant.id}:`))
+      .map((found) => `${file}:${found.line}`)
   })
   expect(offenders).toEqual([])
 })

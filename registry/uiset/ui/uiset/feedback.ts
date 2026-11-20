@@ -98,8 +98,20 @@ function pressTarget(event: Event) {
   return target
 }
 
+// An alert dialog never closes on a press outside it. The dialog nudges (base.css, per skin)
+// so the press visibly did something; restarting it lets each press nudge again.
+function nudgeIfRefused(event: PointerEvent) {
+  const dialog = [...document.querySelectorAll<HTMLElement>('[data-slot="alert-dialog-content"][data-open]')].pop()
+  if (!dialog || !rootOf(dialog) || dialog.contains(event.target as Node)) return
+  dialog.removeAttribute("data-refused")
+  void dialog.offsetWidth
+  dialog.setAttribute("data-refused", "")
+  dialog.addEventListener("animationend", () => dialog.removeAttribute("data-refused"), { once: true })
+}
+
 function onPointerDown(event: PointerEvent) {
   if (rootOf(event.target as Element | null)?.dataset.sound === "on") unlockAudio()
+  nudgeIfRefused(event)
   const target = pressTarget(event)
   if (target) cue(target, { cue: "press" })
 }

@@ -542,20 +542,18 @@
   padding: calc(var(--uiset-switch-inset) - var(--uiset-switch-border));
   border-width: var(--uiset-switch-border);
   border-radius: calc(var(--uiset-switch-thumb-radius) + var(--uiset-switch-inset));
-  transition:
-    background-color var(--uiset-medium) var(--uiset-ease),
-    border-color var(--uiset-medium) var(--uiset-ease);
 }
 
 [data-uiset] [data-slot="switch-thumb"] {
   width: var(--uiset-switch-thumb);
   height: var(--uiset-switch-thumb);
   border-radius: var(--uiset-switch-thumb-radius);
-  transition:
-    translate var(--uiset-medium) var(--uiset-ease-spring),
-    background-color var(--uiset-medium) var(--uiset-ease);
+  transition-property: translate, background-color;
+  transition-duration: var(--uiset-medium), calc(var(--uiset-toggle-off-duration) * var(--uiset-motion-speed, 1));
+  transition-timing-function: var(--uiset-ease-spring), var(--uiset-toggle-ease);
 
   &[data-checked] {
+    transition-duration: var(--uiset-medium), calc(var(--uiset-toggle-duration) * var(--uiset-motion-speed, 1));
     margin-inline-start: 0;
     translate: calc(
         var(--uiset-switch-width) - var(--uiset-switch-thumb) -
@@ -574,6 +572,63 @@
       )
       0;
   }
+}
+
+/* On and off, per skin (design/motion-plan.md): a switch, checkbox or radio fills, a toggle
+   is pressed. Going off takes --uiset-toggle-off-duration, so Studio's lamp cools slower
+   than it warms; Phosphor's inverse video and Ink change at once. */
+[data-uiset] :is([data-slot="switch"], [data-slot="checkbox"], [data-slot="radio"], [data-slot="toggle"]) {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: calc(var(--uiset-toggle-off-duration) * var(--uiset-motion-speed, 1));
+  transition-timing-function: var(--uiset-toggle-ease);
+  /* UI SDK delays every button's transitions 300ms, for its pending dimming; on and off
+     shows at once. */
+  transition-delay: 0s;
+
+  &:is([data-checked], [data-pressed], [data-indeterminate]) {
+    transition-duration: calc(var(--uiset-toggle-duration) * var(--uiset-motion-speed, 1));
+  }
+}
+
+/* A check or a dot appears: Base's grows from half its size, Studio's lamp lights, and
+   Blueprint's is inked in (its clip is in blueprint.css). */
+[data-uiset] :is([data-slot="checkbox-indicator"], [data-slot="radio-indicator"]) {
+  transition-property: opacity, scale, clip-path;
+  transition-duration: calc(var(--uiset-toggle-duration) * var(--uiset-motion-speed, 1));
+  transition-timing-function: var(--uiset-toggle-ease);
+
+  &:is([data-starting-style], [data-ending-style]) {
+    opacity: 0;
+    scale: var(--uiset-check-scale);
+  }
+
+  &[data-ending-style] {
+    transition-duration: calc(var(--uiset-toggle-off-duration) * var(--uiset-motion-speed, 1));
+  }
+}
+
+/* An error appears on the skin's on timing: a fade, at once in Phosphor and Ink. */
+[data-uiset] [data-slot="field-error"] {
+  transition: opacity calc(var(--uiset-toggle-duration) * var(--uiset-motion-speed, 1)) var(--uiset-toggle-ease);
+}
+
+@starting-style {
+  [data-uiset] [data-slot="field-error"] {
+    opacity: 0;
+  }
+}
+
+/* A refused press nudges the dialog, so the press visibly did something: an alert dialog
+   never closes on a press outside it. feedback.ts sets data-refused for one nudge. */
+@keyframes uiset-nudge {
+  50% {
+    scale: var(--uiset-nudge-scale);
+    translate: var(--uiset-nudge-shift) 0;
+  }
+}
+
+[data-uiset] [data-slot="alert-dialog-content"][data-refused] {
+  animation: uiset-nudge calc(var(--uiset-nudge-duration) * var(--uiset-motion-speed, 1)) var(--uiset-nudge-ease);
 }
 
 /* A toast's title and description sit together (React's .toast-text, the web's stack

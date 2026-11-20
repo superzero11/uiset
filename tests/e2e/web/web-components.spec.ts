@@ -243,3 +243,16 @@ test("faders, meters and step sequencers are UI SDK's elements in UISet's classe
   const columns = await page.locator(".step-sequencer").evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(" ").length)
   expect(columns).toBe(8)
 })
+
+test("a checkbox turns on and off on its skin's timing, with no wait: Studio's lamp", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" })
+  await root(page).evaluate((el) => el.setAttribute("skin", "studio"))
+  const box = page.locator('[data-slot="checkbox"]').first()
+  const timing = () => box.evaluate((el) => [getComputedStyle(el).transitionDuration.split(", ")[0], getComputedStyle(el).transitionDelay.split(", ")[0]])
+  if ((await box.getAttribute("data-checked")) !== null) await box.click()
+  await expect(box).not.toHaveAttribute("data-checked")
+  expect(await timing()).toEqual(["0.3s", "0s"])
+  await box.click()
+  await expect(box).toHaveAttribute("data-checked")
+  expect(await timing()).toEqual(["0.06s", "0s"])
+})
