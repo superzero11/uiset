@@ -8,7 +8,8 @@ import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "@/registry/ui
 import { Field, FieldLabel, Input } from "@/registry/uiset/ui/field"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger } from "@/registry/uiset/ui/select"
 import { Switch } from "@/registry/uiset/ui/switch"
-import { agent } from "./agent"
+import type { Approval } from "@/registry/uiset/ui/agent/approvals"
+import { agent, approvals } from "./agent"
 import { useAgentVersion } from "./agent-panel"
 import { CodeBlock } from "./shell/code"
 
@@ -173,7 +174,7 @@ function ActionInput({ entry, action, run, done }: { entry: Entry; action: strin
   )
 }
 
-function AgentViewRow({ entry, run }: { entry: Entry; run: (ref: string, label: string, action: string, args?: unknown[]) => void }) {
+function AgentViewRow({ entry, run, ask }: { entry: Entry; run: (ref: string, label: string, action: string, args?: unknown[]) => void; ask?: Approval }) {
   const [editing, setEditing] = useState<string | null>(null)
   const name = entry.label ?? entry.component
   const point = () => highlightElement(elementOf(entry.ref), { duration: 900, scroll: false })
@@ -203,6 +204,15 @@ function AgentViewRow({ entry, run }: { entry: Entry; run: (ref: string, label: 
               </Button>
             )
           })}
+        </div>
+      )}
+      {ask && (
+        <div className="agent-view-ask" role="group" aria-label={`The agent wants to: ${ask.message}`}>
+          <p>The agent wants to: {ask.message}</p>
+          <Button onClick={() => approvals.approve(ask.id)}>Allow</Button>
+          <Button variant="outline" onClick={() => approvals.deny(ask.id)}>
+            Don&rsquo;t allow
+          </Button>
         </div>
       )}
       {editing && <ActionInput entry={entry} action={editing} run={(args) => run(entry.ref, name, editing, args)} done={() => setEditing(null)} />}
@@ -318,6 +328,11 @@ function AgentViewPanel({ root, title }: { root: RefObject<HTMLElement | null>; 
   })
   const entries = read?.entries ?? null
   const fromQuery = read?.fromQuery ?? 0
+  // A step marked data-agent-confirm waits for a person; the row that asked shows Allow,
+  // or the bridge would wait with nothing on screen to answer it.
+  const pending = useSyncExternalStore(approvals.subscribe, approvals.pending, approvals.pending)
+  const askOf = (ref: string) => pending.find((a) => a.step.ref === ref)
+  const waiting = entries?.map((e) => askOf(e.ref)).find(Boolean)
 
   async function run(ref: string, label: string, action: string, args: unknown[] = []) {
     const result = await agent.act({ steps: [{ ref, action, args }] })
@@ -363,12 +378,12 @@ function AgentViewPanel({ root, title }: { root: RefObject<HTMLElement | null>; 
       ) : (
         <ul className="agent-view-list" aria-label="Components an agent sees">
           {entries.map((entry) => (
-            <AgentViewRow key={entry.ref} entry={entry} run={run} />
+            <AgentViewRow key={entry.ref} entry={entry} run={run} ask={askOf(entry.ref)} />
           ))}
         </ul>
       )}
       <output className="agent-view-said" aria-live="polite">
-        {said}
+        {waiting ? `Waiting for you: ${waiting.message}` : said}
       </output>
       {entries && entries.length > 0 && (
         <Collapsible className="agent-view-raw">

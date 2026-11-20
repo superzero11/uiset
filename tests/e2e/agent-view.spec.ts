@@ -135,3 +135,25 @@ test("on the Agent Console's page, a prompt changes the settings beside it", asy
   await expect(stage).toContainText("Done: 2 changes", { timeout: 15_000 })
   await expect(stage.getByRole("combobox", { name: "Region" })).toContainText("Europe")
 })
+
+test("an action that asks a person first waits in its row for Allow, and Don't allow stops it", async ({ page }) => {
+  await page.goto("/docs/components/chat-message-parts")
+  await expect(page.getByRole("button", { name: /Deploy preview/ }).first()).toBeVisible({ timeout: 20_000 })
+  await turnOn(page)
+  const panel = page.getByRole("region", { name: /^Agent view of/ }).first()
+  const row = panel.getByRole("listitem").filter({ hasText: "Asks a person first: Puts the conversation back to this checkpoint" })
+  const status = page.locator(".chat-agent-example [role=status]")
+  const ask = row.getByRole("group", { name: "The agent wants to: Puts the conversation back to this checkpoint" })
+
+  await row.getByRole("button", { name: /^press Restore Checkpoint/ }).click()
+  await expect(ask).toBeVisible()
+  await expect(panel.locator("output")).toHaveText("Waiting for you: Puts the conversation back to this checkpoint")
+  await ask.getByRole("button", { name: "Don’t allow" }).click()
+  await expect(ask).toHaveCount(0)
+  await expect(status).toBeEmpty()
+
+  await row.getByRole("button", { name: /^press Restore Checkpoint/ }).click()
+  await ask.getByRole("button", { name: "Allow", exact: true }).click()
+  await expect(ask).toHaveCount(0)
+  await expect(status).toHaveText("Restored to the checkpoint.")
+})

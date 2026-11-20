@@ -2152,3 +2152,9 @@ vercel-labs/ui#905 (2026-11-19).
   display. What's new now leads with the three Nov 20 entries; the inputs asked for most are
   Now on the roadmap.
 
+- 2026-11-20 — Agent view answers its own approvals. Pressing an action marked
+  `data-agent-confirm` from Agent view queued an approval that only the Agents page drew, so on
+  a component's page the bridge waited with nothing to answer (the owner found it on the
+  checkpoint's Restore). The row that asked now shows the ask with Allow and Don't allow, and
+  the panel's output says it's waiting. Not a lint rule (which page draws an approval isn't in
+  one file): an e2e test in `agent-view.spec.ts`, mutation-checked.
