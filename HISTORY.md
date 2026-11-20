@@ -1998,4 +1998,9 @@ vercel-labs/ui#905 (2026-11-19).
   rule, `css/skin-scope`, holds the wrapper and the root rule, and an e2e test checks the
   cards on a Blueprint page (each fix undone fails it). The theming guide's claim that
   nested skins never inherit decoration was the bug; it now shows the scoped pattern.
+- 2026-11-20 — **Release 0.5.1, prepared** (the owner checked the Themes page and said go
+  ahead). A patch: skins stop at a nested skin, and the theme cards are fitted. The tarball
+  packs 83 files, 291.6 kB, with the five skin scopes in `dist/uiset.css`. The owner
+  publishes it (`npm login` first: sessions last two hours); the registry fix ships with
+  the push.
 
