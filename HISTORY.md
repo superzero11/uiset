@@ -2199,3 +2199,11 @@ vercel-labs/ui#905 (2026-11-19).
   the queue now has `minmax(0, 1fr)` columns, and the task a zero flex basis, so both end in an
   ellipsis. The other three (two canvas gallery loads over 60 s, a crossfade timing check)
   passed alone. Free memory never fell below 25% at 2 workers, with a 4 GB job alongside.
+- 2026-11-20 — Tests through the agent bridge, browsers only for rendering, is Now on the
+  roadmap, to start once 0.6.0 ships; the inputs move to Next 1. The owner asked why a suite
+  for an agent-friendly UI still runs everything in Playwright, after the WebKit run at 3
+  workers crashed the Mac at the gallery page (19:39; each WebKit worker near 5.4 GB). Of 657
+  e2e tests, about 235 only check state or behavior and can drive components through the
+  bridge in Vitest; WebKit and Firefox will run only what can differ between engines (layout,
+  CSS, contrast, motion). The run stopped at 355 of 1030; WebKit for 0.6.0 is still to do, at
+  2 workers and 1 for the gallery specs.
