@@ -349,9 +349,12 @@ test.describe("Studio", () => {
   })
 
   // The skins audit (2026-11-20): in Base the Signal meter's and Master fader's tracks were a
-  // muted trough at 1.1:1, so the meter's empty part and the fader's travel didn't show.
-  for (const theme of ["light", "dark"] as const) {
-    test(`in Base ${theme}, the meter's and fader's tracks hold 3:1 against the rack`, async ({ page }) => {
+  // muted trough at 1.1:1, so the meter's empty part and the fader's travel didn't show; then a
+  // check in every skin found Blueprint's meter at 1.3:1 and Studio's slots at 1.7:1. A track
+  // shows by its fill, its border or a solid edge drawn as a shadow, whichever is strongest.
+  for (const [skin, theme] of [["base", "light"], ["base", "dark"], ["blueprint", "dark"], ["studio", "dark"], ["phosphor", "dark"], ["ink", "light"]] as const) {
+    test(`in ${skin} ${theme}, the meter's and fader's tracks hold 3:1 against the rack`, async ({ page }) => {
+      await page.addInitScript((s) => localStorage.setItem("uiset-site-skin", s), skin)
       await page.goto(`/docs/kits/studio?theme=${theme}`)
       await expect(page.getByRole("meter", { name: "Signal" })).toBeVisible()
       const ratios = await page.evaluate(() => {
@@ -369,6 +372,10 @@ test.describe("Studio", () => {
           })
           return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!
         }
+        const ratio = (x: string, y: string) => {
+          const [a, b] = [luminance(rgba(x)), luminance(rgba(y))]
+          return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+        }
         const behind = (el: Element) => {
           for (let e = el.parentElement; e; e = e.parentElement) {
             const bg = getComputedStyle(e).backgroundColor
@@ -378,10 +385,12 @@ test.describe("Studio", () => {
         }
         const tracks = document.querySelectorAll('.level-meter [data-slot="meter-track"], .fader-field [data-slot="slider-track"]')
         return [...tracks].map((track) => {
-          const edge = /^(\S+\(.*?\)|#\w+|\w+)/.exec(getComputedStyle(track).boxShadow)?.[1] ?? "transparent"
-          const a = luminance(rgba(edge))
-          const b = luminance(rgba(behind(track)))
-          return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+          const style = getComputedStyle(track)
+          const bg = behind(track)
+          const edges = style.boxShadow === "none" ? [] : style.boxShadow.split(/,(?![^(]*\))/).map((s) => /^\s*(\S+\(.*?\)|#\w+|\w+)/.exec(s)?.[1] ?? "transparent")
+          const solid = [style.backgroundColor, ...edges].filter((c) => rgba(c)[3] === 255)
+          if (parseFloat(style.borderTopWidth) > 0) solid.push(style.borderTopColor)
+          return Math.max(0, ...solid.map((c) => ratio(c, bg)))
         })
       })
       expect(ratios.length).toBeGreaterThanOrEqual(2)

@@ -189,6 +189,11 @@
       }
     }
 
+    /* A meter is drawn as a rectangle in line: the faint fill alone was 1.3:1. */
+    & :is([data-slot="meter-track"], [data-slot="progress-track"]) {
+      box-shadow: inset 0 0 0 1.5px var(--blueprint-line);
+    }
+
     & [data-slot="slider-track"]:not([data-orientation="vertical"]) {
       height: 1.5px;
       background: var(--blueprint-line);

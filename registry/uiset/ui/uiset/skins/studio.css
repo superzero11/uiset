@@ -23,6 +23,9 @@
     --studio-lamp: oklch(0.82 0.15 72);
     --studio-lamp-glow: oklch(0.82 0.15 72 / 0.55);
     --studio-slot: oklch(0.16 0.008 255);
+    /* The milled lip around a slot or a meter: 3:1 against the panel, so a fader's travel
+       and a meter's length show. */
+    --studio-slot-edge: oklch(0.68 0.006 255);
     --studio-bevel: inset 0 1px 0 oklch(1 0 0 / 0.08), inset 0 -1px 0 oklch(0 0 0 / 0.35);
 
     --ui-background: var(--studio-panel);
@@ -240,7 +243,9 @@
     /* Sliders: fader caps in a slot */
     & [data-slot="slider-track"] {
       background: var(--studio-slot);
-      box-shadow: inset 0 1px 2px oklch(0 0 0 / 0.7);
+      box-shadow:
+        inset 0 1px 2px oklch(0 0 0 / 0.7),
+        0 0 0 1px var(--studio-slot-edge);
     }
 
     & [data-slot="slider-indicator"] {
@@ -372,7 +377,7 @@
        colours where they sit on the whole scale: green low, amber, red only near the top. */
     & [data-slot="meter-track"] {
       container-type: inline-size;
-      border: 1px solid oklch(0 0 0 / 0.5);
+      border: 1px solid var(--studio-slot-edge);
       background: repeating-linear-gradient(
         90deg,
         var(--studio-slot) 0 6px,

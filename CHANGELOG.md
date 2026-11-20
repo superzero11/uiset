@@ -45,9 +45,12 @@ On UI SDK `0.1.0-beta.13`.
   Components.
 - **Studio's LED meter lights its colours where they sit on the whole scale.** The green to
   red ladder was squeezed into the lit part, so a meter at 40% already showed red.
-- **Base's slider, meter and progress tracks hold 3:1 against the page.** The muted trough
-  alone was 1.1:1, so a meter's empty part and a fader's travel didn't show; tracks now have
-  an inner edge in `--ui-input`, the colour Base keeps at 3:1 for fields.
+- **Slider, meter and progress tracks hold 3:1 against the page in every skin.** Base's
+  muted trough was 1.1:1, so a meter's empty part and a fader's travel didn't show: tracks
+  get an inner edge in `--ui-input`, the colour Base keeps at 3:1 for fields. Blueprint
+  draws a meter as a rectangle in line (its faint fill was 1.3:1), Studio's slots and
+  meters get a milled lip (`--studio-slot-edge`, they were 1.7:1), and Phosphor outlines a
+  slider's travel in its dim green, as it does a meter.
 - **Ink underlines the chosen tab in a phone's tab bar**, which differed by shade alone.
 - **The chat's suggestion chips, citations and attachments are square in square skins**
   (Blueprint, Phosphor) and round elsewhere.

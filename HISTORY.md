@@ -2040,3 +2040,10 @@ vercel-labs/ui#905 (2026-11-19).
   frame's 16px corners are the site's frame, the same in every skin; calendar events drop
   their place when the title wraps, by design. Still open for a look: Blueprint's event
   fills and disabled Send, Ink's coloured canvas stripes, Phosphor's near-white code.
+- 2026-11-20 — Tracks hold 3:1 in every skin. After the Base fix, measuring the rack's
+  tracks in every skin (fill, border or a solid edge, whichever is strongest, against what's
+  behind) found Blueprint's meter at 1.3:1, Studio's slots at 1.7:1 and Phosphor's slider
+  travel under 3:1 once its translucent fill was composited. Each skin draws it its own way:
+  a rectangle in line, a milled lip, a dim outline like Phosphor's meter. The e2e test covers
+  all five; it failed on Phosphor before its fix, and the measurement on the other two. Left for later: a ring meter's remainder in Base dark
+  is faint (its value is also written in the ring).
