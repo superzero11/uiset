@@ -66,7 +66,10 @@ Project skills live in `.claude/skills/` (installed with `npx skills add`, pinne
    both exist, sent here, not just "checked".
 3. **Batch, don't repeat**: commit each item locally; run only the affected specs at 2
    workers (Firefox only after asking); the full suite, the web build and the npm publish
-   happen once per planned batch, at the end of the day.
+   happen once per planned batch, at the end of the day. **Ask the owner before any heavy
+   run** (the full suite in any browser, WebKit, Firefox, or a batch of specs that takes
+   more than a few minutes): they may add two or three more features to it first. One heavy
+   thing at a time, with nothing else running.
 4. **Every turn that changes files ends with this report**, each label with its answer:
    - **Full suite**: needed now, or can wait for the end-of-day check; which specs ran.
    - **Build and publish**: whether the web build and an `@uiset/web` publish are needed
