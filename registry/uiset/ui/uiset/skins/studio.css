@@ -42,6 +42,22 @@
     --ui-font-size: 0.875rem;
 
     --uiset-sound: mechanical;
+
+    /* Motion: hardware with weight. An opening drops a few pixels into place at full speed
+       and stops dead (a curve still moving when it lands); a closing lifts out. */
+    --uiset-enter-duration: 120ms;
+    --uiset-enter-ease: cubic-bezier(0.3, 0.6, 0.7, 0.85);
+    --uiset-enter-scale: 1;
+    --uiset-enter-shift: -8px;
+    --uiset-exit-duration: 90ms;
+    --uiset-exit-ease: cubic-bezier(0.4, 0, 1, 1);
+    --uiset-exit-scale: 1;
+    --uiset-exit-shift: -4px;
+    --uiset-dialog-time: 1.25;
+    --uiset-toast-shift: -0.5rem;
+    --uiset-panel-duration: 130ms;
+    --uiset-panel-close-duration: 100ms;
+    --uiset-panel-ease: cubic-bezier(0.3, 0.6, 0.7, 0.85);
     --uiset-solid-bg: var(--studio-lamp);
     --uiset-solid-fg: oklch(0.2 0.02 70);
     --uiset-solid-border: oklch(0.7 0.13 70);

@@ -56,9 +56,10 @@ const skins = ["base", "blueprint", "studio", "phosphor", "ink"] as const
 /**
  * The root every UISet page wraps itself in, like React's <UISet>:
  * <uiset-root skin="studio" theme="dark" sound> … </uiset-root>
+ * motion="reduce" keeps fades and moves nothing, whatever the system setting says.
  */
 class UISetRoot extends ElementBase {
-  static observedAttributes = ["skin", "theme", "sound", "haptics"]
+  static observedAttributes = ["skin", "theme", "motion", "sound", "haptics"]
   connectedCallback() {
     // Stylesheets loaded after the module are on the page once an element connects.
     orderLayers()
@@ -74,6 +75,8 @@ class UISetRoot extends ElementBase {
     this.setAttribute("data-skin", this.getAttribute("skin") || "base")
     if (theme === "light" || theme === "dark") this.setAttribute("data-theme", theme)
     else this.removeAttribute("data-theme")
+    if (this.getAttribute("motion") === "reduce") this.setAttribute("data-motion", "reduce")
+    else this.removeAttribute("data-motion")
     // "false" is what a framework writes for a false binding: off, like "off".
     const haptics = this.getAttribute("haptics")
     this.setAttribute("data-sound", sound !== null && sound !== "off" && sound !== "false" ? "on" : "off")

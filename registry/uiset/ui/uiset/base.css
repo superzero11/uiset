@@ -497,142 +497,10 @@
 }
 
 /* Every popup surface shares one radius in a skin (A17). */
-[data-uiset]
-  :is(
-    [data-slot="select-content"],
-    [data-slot="popover-content"],
-    [data-slot="menu-content"],
-    [data-slot="combobox-content"],
-    [data-slot="autocomplete-content"],
-    [data-slot="hover-card-content"],
-    [data-slot="date-picker-content"],
-    [data-slot="navigation-menu-viewport"],
-    [data-slot="trigger-menu-content"]
-  ) {
-  border-radius: var(--uiset-popup-radius);
-}
-
-/* A block of code. UI SDK styles every <code> as inline code (padding, rounded corners, a
-   tint); inside <pre> the padding indents only the first line, so a block's code has none. */
-[data-uiset] pre > code {
-  padding: 0;
-  border-radius: 0;
-  background: none;
-}
-
-/* A select, menu or plain button placed in a toolbar is rounded like the toolbar's own
-   buttons (UI SDK's radius less the 3px gap and edge), so its corners sit concentric
-   inside the toolbar's instead of matching them. */
-[data-uiset]
-  [data-slot="toolbar"]
-  :is([data-slot="select-trigger"], [data-slot="menu-trigger"], [data-slot="popover-trigger"], [data-slot="button"]) {
-  border-radius: max(0px, calc(var(--ui-radius) - 3px));
-}
-
-/* A segmented control's track keeps UI SDK's radius, and its chosen item UI SDK's radius
-   less 3px (the 2px gap and 1px edge between them), so the two curves share a center.
-   A track rounder than that looks loose around the item. */
-
-/* The track is built around the thumb: the same gap (the inset) on all four sides, and
-   corners that follow the thumb's at that distance, in every skin. */
-[data-uiset] [data-slot="switch"] {
-  box-sizing: border-box;
-  width: var(--uiset-switch-width);
-  height: calc(var(--uiset-switch-thumb) + var(--uiset-switch-inset) * 2);
-  padding: calc(var(--uiset-switch-inset) - var(--uiset-switch-border));
-  border-width: var(--uiset-switch-border);
-  border-radius: calc(var(--uiset-switch-thumb-radius) + var(--uiset-switch-inset));
-  transition:
-    background-color var(--uiset-medium) var(--uiset-ease),
-    border-color var(--uiset-medium) var(--uiset-ease);
-}
-
-[data-uiset] [data-slot="switch-thumb"] {
-  width: var(--uiset-switch-thumb);
-  height: var(--uiset-switch-thumb);
-  border-radius: var(--uiset-switch-thumb-radius);
-  transition:
-    translate var(--uiset-medium) var(--uiset-ease-spring),
-    background-color var(--uiset-medium) var(--uiset-ease);
-
-  &[data-checked] {
-    margin-inline-start: 0;
-    translate: calc(
-        var(--uiset-switch-width) - var(--uiset-switch-thumb) -
-          var(--uiset-switch-inset) * 2
-      )
-      0;
-  }
-
-  &[data-checked]:dir(rtl) {
-    translate: calc(
-        (
-            var(--uiset-switch-width) - var(--uiset-switch-thumb) -
-              var(--uiset-switch-inset) * 2
-          ) *
-          -1
-      )
-      0;
-  }
-}
-
-/* A toast's title and description sit together (React's .toast-text, the web's stack
-   part) and take the room, so the action and Dismiss line up at the end. */
-[data-uiset] [data-slot="toast"] {
-  flex-wrap: nowrap;
-}
-
-[data-uiset] [data-slot="toast"] > :is(.toast-text, [data-slot="stack"]) {
-  display: grid;
-  flex: 1 1 auto;
-  gap: 0.125rem;
-  min-inline-size: 0;
-}
-
-/* A calendar keeps its own size in a stretching layout (a grid, a flex column), so its
-   days stay square rather than widening into bars. */
-[data-uiset] [data-slot="calendar"]:not(.schedule-month) {
-  inline-size: max-content;
-  max-inline-size: 100%;
-}
-
-/* UI SDK draws a chevron in an arrow button that has no icon of its own, and keeps its
-   default text arrow beside it; the text arrow goes (the button keeps its aria-label). */
-[data-uiset]
-  :is(
-    [data-slot="calendar-previous"],
-    [data-slot="calendar-next"],
-    [data-slot="carousel-previous"],
-    [data-slot="carousel-next"],
-    [data-slot="pagination-previous"],
-    [data-slot="pagination-next"]
-  ):not(:has(*)) {
-  font-size: 0;
-}
-
-/* Date and time segments are separate targets; keep each at least 24px (WCAG 2.5.8). */
-[data-uiset] [data-slot$="input-segment"]:not([data-type="literal"]) {
-  min-inline-size: 24px;
-  min-block-size: 24px;
-  text-align: center;
-}
-
-[data-uiset] [data-slot="segmented-control-indicator"] {
-  transition:
-    top var(--uiset-medium) var(--uiset-ease),
-    left var(--uiset-medium) var(--uiset-ease),
-    width var(--uiset-medium) var(--uiset-ease),
-    height var(--uiset-medium) var(--uiset-ease);
-}
-
-[data-uiset] [data-slot="slider-thumb"] {
-  transition: scale var(--uiset-fast) var(--uiset-ease);
-
-  &[data-dragging] {
-    scale: 1.15;
-  }
-}
-
+/* Openings and closings, per skin (design/motion-plan.md). The skin's --uiset-enter-* and
+   --uiset-exit-* tokens say how long, on which curve and from where; reduced motion swaps in
+   --uiset-r-* (below), so everything fades and nothing moves. A skin that draws its openings
+   (Blueprint, Phosphor) adds a clip in its own file. */
 [data-uiset]
   :is(
     [data-slot="select-content"],
@@ -640,40 +508,145 @@
     [data-slot="menu-content"],
     [data-slot="tooltip-content"],
     [data-slot="combobox-content"],
+    [data-slot="autocomplete-content"],
+    [data-slot="hover-card-content"],
+    [data-slot="trigger-menu-content"],
+    [data-slot="date-picker-content"],
     [data-slot="dialog-content"],
-    [data-slot="alert-dialog-content"]
+    [data-slot="alert-dialog-content"],
+    [data-slot="toast"]
   ) {
+  --uiset-time: 1;
   transform-origin: var(--transform-origin, center);
-  transition:
-    opacity var(--uiset-fast) var(--uiset-ease),
-    scale var(--uiset-medium) var(--uiset-ease);
+  transition-property: opacity, scale, translate, clip-path;
+  transition-duration: calc(
+    var(--uiset-r-enter, var(--uiset-enter-duration)) * var(--uiset-time) * var(--uiset-motion-speed, 1)
+  );
+  transition-timing-function: var(--uiset-r-ease, var(--uiset-enter-ease));
 
+  &[data-starting-style] {
+    opacity: var(--uiset-r-opacity, var(--uiset-enter-opacity));
+    scale: var(--uiset-r-scale, var(--uiset-enter-scale));
+    translate: 0 var(--uiset-r-shift, var(--uiset-enter-shift));
+  }
+
+  &[data-ending-style] {
+    transition-duration: calc(
+      var(--uiset-r-exit, var(--uiset-exit-duration)) * var(--uiset-time) * var(--uiset-motion-speed, 1)
+    );
+    transition-timing-function: var(--uiset-r-ease, var(--uiset-exit-ease));
+    opacity: var(--uiset-r-opacity, var(--uiset-exit-opacity));
+    scale: var(--uiset-r-scale, var(--uiset-exit-scale));
+    translate: 0 var(--uiset-r-shift, var(--uiset-exit-shift));
+  }
+
+  /* A tooltip that opens at once, because another was just open, doesn't animate. */
+  &[data-instant] {
+    transition: none;
+  }
+}
+
+[data-uiset] :is([data-slot="dialog-content"], [data-slot="alert-dialog-content"]) {
+  --uiset-time: var(--uiset-dialog-time);
+}
+
+/* A toast doesn't grow; it comes in from its edge. A swiped one follows the finger. */
+[data-uiset] [data-slot="toast"] {
   &[data-starting-style],
   &[data-ending-style] {
-    opacity: 0;
-    scale: 0.96;
+    scale: 1;
+    translate: 0 var(--uiset-r-shift, var(--uiset-toast-shift));
+  }
+
+  &[data-swiping] {
+    transition: none;
   }
 }
 
 [data-uiset] :is([data-slot="dialog-backdrop"], [data-slot="alert-dialog-backdrop"]) {
-  transition: opacity var(--uiset-medium) var(--uiset-ease);
+  transition: opacity calc(var(--uiset-r-enter, var(--uiset-enter-duration)) * var(--uiset-dialog-time) * var(--uiset-motion-speed, 1)) linear;
 
   &[data-starting-style],
   &[data-ending-style] {
     opacity: 0;
   }
+
+  &[data-ending-style] {
+    transition-duration: calc(var(--uiset-r-exit, var(--uiset-exit-duration)) * var(--uiset-dialog-time) * var(--uiset-motion-speed, 1));
+  }
 }
 
+/* Panels grow from UI SDK's measured height. Clipped while they grow; the margin keeps the
+   focus ring of a field at the panel's edge. */
+[data-uiset] [data-slot="accordion-panel"] {
+  height: var(--accordion-panel-height, auto);
+}
+
+[data-uiset] [data-slot="collapsible-panel"] {
+  height: var(--collapsible-panel-height, auto);
+}
+
+[data-uiset] :is([data-slot="accordion-panel"], [data-slot="collapsible-panel"]) {
+  overflow: clip;
+  overflow-clip-margin: 4px;
+  transition-property: height, padding-block;
+  transition-duration: calc(var(--uiset-r-panel, var(--uiset-panel-duration)) * var(--uiset-motion-speed, 1));
+  transition-timing-function: var(--uiset-panel-ease);
+
+  &:is([data-starting-style], [data-ending-style]) {
+    height: 0;
+    padding-block: 0;
+  }
+
+  &[data-ending-style] {
+    transition-duration: calc(var(--uiset-r-panel, var(--uiset-panel-close-duration)) * var(--uiset-motion-speed, 1));
+  }
+}
+
+/* Less motion, asked for by the system or by motion="reduce" on a root: what appears and
+   disappears fades (120ms in, 90ms out), nothing moves, grows or is drawn, and panels snap.
+   Only opacity changes over time (WCAG doesn't count it as motion); everything else, colour
+   included, changes at once. Ink stays instant either way. */
 @media (prefers-reduced-motion: reduce) {
+  [data-uiset] {
+    --uiset-r-enter: 120ms;
+    --uiset-r-exit: 90ms;
+    --uiset-r-ease: linear;
+    --uiset-r-opacity: 0;
+    --uiset-r-scale: 1;
+    --uiset-r-shift: 0px;
+    --uiset-r-panel: 0ms;
+  }
+
   [data-uiset],
   [data-uiset] * {
-    transition-duration: 0s !important;
+    transition-property: opacity !important;
     animation-duration: 0s !important;
   }
 
   [data-uiset] [data-slot]:active {
     scale: none;
   }
+}
+
+[data-uiset][data-motion="reduce"] {
+  --uiset-r-enter: 120ms;
+  --uiset-r-exit: 90ms;
+  --uiset-r-ease: linear;
+  --uiset-r-opacity: 0;
+  --uiset-r-scale: 1;
+  --uiset-r-shift: 0px;
+  --uiset-r-panel: 0ms;
+}
+
+[data-uiset][data-motion="reduce"],
+[data-uiset][data-motion="reduce"] * {
+  transition-property: opacity !important;
+  animation-duration: 0s !important;
+}
+
+[data-uiset][data-motion="reduce"] [data-slot]:active {
+  scale: none;
 }
 
 /* Windows high contrast drops shadows and fills, so state must survive as borders. */

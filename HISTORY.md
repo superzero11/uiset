@@ -215,6 +215,7 @@ vercel-labs/ui#905 (2026-11-19).
 | Sortable list (`sortable-list`), React and Web Components                                          | done, not pushed | 2026-11-19: on `createReorder` and `createSelection`, with a guide of its own. 13 unit tests, 8/8 mutations caught |
 | Sortable tree (`sortable-tree`), React and Web Components                                          | done, not pushed | 2026-11-19: on `createTreeReorder`, `createRovingFocus` and `createTypeahead`. 11 unit tests, 11/11 mutations caught |
 | IDE file tree: drag a file or folder into a folder, React and Web Components                    | done, not pushed | 2026-11-19: `ide/file-drag.ts`, shared. 3 e2e tests each in React and web, also in WebKit; 6/6 mutations caught |
+| Motion part 1: openings, closings and panels per skin, `motion="reduce"`, React and Web Components | done, not pushed | 2026-11-20: tokens in `tokens.css` and each skin, drawn by `base.css`; Blueprint and Phosphor clip in their own files. 13 e2e tests in `motion.spec.ts` and 1 web, each mutation-checked. Filmstrips of popover, dialog, toast and accordion in every skin. |
 
 ## Decision log
 
@@ -2020,4 +2021,11 @@ vercel-labs/ui#905 (2026-11-19).
   build doesn't round that way in the same setup, so its test guards following only, and a
   unit test of the helper fails without it. To file with UI SDK: a sub-pixel move up at the
   end shouldn't let go, or a downward input at the end should re-arm.
-
+- 2026-11-20 — Motion part 1 approved and built: the five directions as revised, Ink still
+  with no ghost, and reduced motion keeps fades while nothing moves. Skins set timing
+  variables and `base.css` draws them, so a nested skin moves its own way and reduced motion
+  swaps the variables, not the rules. `motion="reduce"` on a root applies the same reset as
+  the system setting, `!important` included, so the lint rule's one exception now covers
+  both. A filmstrip (pause `document.getAnimations()` and step `currentTime`) checked each
+  skin frame by frame. The tests count transitions that change something visible: Chrome
+  starts a transition from `scale: 1` to `none`, which moves nothing.

@@ -22,12 +22,13 @@ import { UISet } from "@/components/ui/uiset"
 | `skin`     | `"base"`   | `"base"`, `"blueprint"`, `"studio"`, `"phosphor"` or `"ink"`                  |
 | `keyColor` | none       | `{ l, c, h }` in OKLCH: the base skin's accent (black and white without one)   |
 | `theme`    | `"system"` | `"light"`, `"dark"` or `"system"` (follows the device)                        |
+| `motion`   | `"system"` | `"reduce"` fades and moves nothing inside, whatever the system setting says (see Motion) |
 | `sound`    | `false`    | Short synthesized sounds on interaction, voiced per skin                      |
 | `haptics`  | `true`     | A tap on Android, and the system haptic on iOS 18 Safari, for switches and the like |
 
 Every UISet item and every UI SDK component inside takes the skin, popups included: UI SDK
 renders them in place, in the browser's top layer, so they inherit it. Web Components use `<uiset-root skin="ink" theme="light"
-sound>` the same way.
+motion="reduce" sound>` the same way.
 
 ## Skins
 
@@ -167,8 +168,56 @@ Audio (no files). Each skin picks a voice (`--uiset-sound`: `soft`, `mechanical`
 or `paper`); `--uiset-sound-volume` sets the level. Sounds follow UI SDK's own events, so
 they play for agents' changes too. Haptics are on by default where the device has them.
 
-## Motion and system settings
+## Motion
 
-UISet's motion stops under `prefers-reduced-motion`; Ink has none at all. In Windows'
-forced colors, state that relied on fills becomes borders, and Phosphor drops its bloom
-and scan lines.
+Each skin opens and closes things its own way. The motion runs on UI SDK's own state
+(`data-starting-style` and `data-ending-style`), so an agent's change moves the way a
+person's does, and nothing waits for it: focus moves and announcements happen at the start.
+
+| Skin        | Opening                                              | Closing                                       | Panel                     |
+| ----------- | ---------------------------------------------------- | --------------------------------------------- | ------------------------- |
+| `base`      | Fades in and grows from 96%, 150 ms                   | Fades and shrinks, 100 ms                     | Eases open, 200 ms        |
+| `blueprint` | Drawn from the trigger's side at an even pace, 200 ms | Erased back toward the trigger, 140 ms        | Extends evenly, 200 ms    |
+| `studio`    | Drops 8 px into place and stops dead, 120 ms          | Lifts out, 90 ms                              | Opens with a hard stop, 130 ms |
+| `phosphor`  | Drawn top to bottom in four scan steps, 100 ms        | Fades like cooling phosphor, 280 ms; clicks go through it | A line at a time, 100 ms |
+| `ink`       | Appears                                               | Disappears                                    | Redraws                   |
+
+Popovers, menus, select and combobox lists, tooltips, hover cards, date pickers, dialogs and
+toasts take part, and accordion and collapsible panels grow from their measured height.
+Dialogs take a little longer (Base 200 ms, Blueprint 240, Studio 150, Phosphor 120). The
+drawer keeps UI SDK's own spring. A tooltip that opens at once, because another was just
+open, doesn't animate.
+
+**Less motion.** Under the system's `prefers-reduced-motion`, or inside
+`<UISet motion="reduce">`, nothing moves, grows or is drawn, in any skin: what appears and
+disappears fades (120 ms in, 90 ms out), and panels snap open. Everything else, color
+included, changes at once. Ink stays instant either way. `motion="reduce"` lets an app offer its own switch, or quiet one
+part of a page.
+
+**Speed.** `--uiset-motion-speed` (1 by default) scales every duration in every skin: 0.5
+is twice as fast.
+
+**In your own skin**, set the timings on the skin's root. Where an opening starts from is an
+opacity, a scale and a vertical shift; a closing has the same four, with `exit`:
+
+```css
+--uiset-enter-duration: 160ms;
+--uiset-enter-ease: cubic-bezier(0.23, 1, 0.32, 1);
+--uiset-enter-opacity: 0;
+--uiset-enter-scale: 0.98;
+--uiset-enter-shift: -4px;
+--uiset-exit-duration: 110ms; /* and --uiset-exit-ease, -opacity, -scale, -shift */
+--uiset-dialog-time: 1.3; /* dialogs take this many times as long */
+--uiset-toast-shift: 0.5rem; /* toasts come in from their edge */
+--uiset-panel-duration: 200ms; /* accordion and collapsible panels */
+--uiset-panel-close-duration: 150ms;
+--uiset-panel-ease: cubic-bezier(0.23, 1, 0.32, 1);
+```
+
+Reduced motion overrides these, so a skin doesn't need its own reduced version. The design
+notes are in `design/motion-plan.md`.
+
+## Forced colors
+
+In Windows' forced colors, state that relied on fills becomes borders, and Phosphor drops
+its bloom and scan lines.

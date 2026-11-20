@@ -51,8 +51,9 @@ server-rendered app doesn't need to guard the import.
 
 - `<uiset-root>` is the React `<UISet>`: `skin` (`base`, `blueprint`, `studio`, `phosphor`,
   `ink`), `theme`
-  (`light`, `dark`, or leave it out to follow the system), `sound` (present to turn the
-  feedback sounds on) and `haptics="off"`. Change the attributes to switch live.
+  (`light`, `dark`, or leave it out to follow the system), `motion="reduce"` (fades and
+  moves nothing, whatever the system setting says), `sound` (present to turn the feedback
+  sounds on) and `haptics="off"`. Change the attributes to switch live.
 - A key color is `data-key` on the root with the color's OKLCH lightness, chroma and hue as
   three variables: `<uiset-root data-key style="--uiset-key-l: 0.55; --uiset-key-c: 0.2;
   --uiset-key-h: 150">`. It's what React's `keyColor` writes.

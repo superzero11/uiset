@@ -47,6 +47,22 @@
     --ui-font-size: 0.875rem;
 
     --uiset-sound: beep;
+
+    /* Motion: a tube draws in lines and fades as its phosphor cools. An opening is drawn top
+       to bottom in four scan steps (the clip below); a closing fades slowly, and clicks go
+       through it meanwhile. */
+    --uiset-enter-duration: 100ms;
+    --uiset-enter-ease: steps(4, jump-start);
+    --uiset-enter-opacity: 1;
+    --uiset-enter-scale: 1;
+    --uiset-exit-duration: 280ms;
+    --uiset-exit-ease: cubic-bezier(0, 0, 0.2, 1);
+    --uiset-exit-scale: 1;
+    --uiset-dialog-time: 1.2;
+    --uiset-toast-shift: 0px;
+    --uiset-panel-duration: 100ms;
+    --uiset-panel-close-duration: 100ms;
+    --uiset-panel-ease: steps(3, jump-start);
     --uiset-solid-bg: var(--phosphor-glow);
     --uiset-solid-fg: var(--phosphor-tube);
     --uiset-solid-border: var(--phosphor-glow);
@@ -315,6 +331,39 @@
   @media (prefers-reduced-transparency: reduce) {
     :where(:scope)[data-uiset][data-skin="phosphor"] {
       background-image: none;
+    }
+  }
+
+  /* Drawn openings. Not under reduced motion, where openings fade instead. */
+  :where(:scope)[data-uiset][data-skin="phosphor"] {
+    @media (prefers-reduced-motion: no-preference) {
+      & :is(
+          [data-slot="select-content"],
+          [data-slot="popover-content"],
+          [data-slot="menu-content"],
+          [data-slot="tooltip-content"],
+          [data-slot="combobox-content"],
+          [data-slot="autocomplete-content"],
+          [data-slot="hover-card-content"],
+          [data-slot="trigger-menu-content"],
+          [data-slot="date-picker-content"],
+          [data-slot="dialog-content"],
+          [data-slot="alert-dialog-content"],
+          [data-slot="toast"]
+        ):not([data-motion="reduce"] *) {
+        /* 8px past the edges, so the bloom and a focus ring stay whole. */
+        clip-path: inset(-8px);
+
+        /* Drawn top to bottom, whatever side it opens on, as a raster draws. */
+        &[data-starting-style] {
+          clip-path: inset(-8px -8px 100% -8px);
+        }
+
+        /* Cooling: a closing popup lets clicks through while it fades. */
+        &[data-ending-style] {
+          pointer-events: none;
+        }
+      }
     }
   }
 }

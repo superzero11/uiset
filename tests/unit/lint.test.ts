@@ -43,7 +43,7 @@ describe("code rules", () => {
     noImportant,
     "registry/uiset/ui/uiset/base.css",
     `.a { color: red !important; }`,
-    `@media (prefers-reduced-motion: reduce) {\n  .a { animation: none !important; }\n}\n/* not !important here */\n.b { color: red; }`,
+    `@media (prefers-reduced-motion: reduce) {\n  .a { animation: none !important; }\n}\n[data-uiset][data-motion="reduce"] * { animation-duration: 0s !important; }\n/* not !important here */\n.b { color: red; }`,
   )
   fileRule(
     skinScope,

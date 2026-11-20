@@ -16,9 +16,8 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 ## Now
 
 **Motion, per skin.** Each skin moves its own way, as it already sounds its own way:
-openings, moves and state changes, drawn from UI SDK's state, reduced motion respected. The
-plan is written and waits on review; then openings, state changes and moves, in that order.
-M–L
+openings, moves and state changes, drawn from UI SDK's state, reduced motion respected.
+Openings and closings are built (in 0.6.0); state changes and then moves come next. M–L
 
 **Every kit and template page, in every skin.** The layout audit covered Base light at
 desktop and phone width and fixed seven things; the other four skins, light and dark, get

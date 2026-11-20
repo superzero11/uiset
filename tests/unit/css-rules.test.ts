@@ -26,8 +26,8 @@ test("no !important outside the reduced-motion reset", () => {
     const text = readFileSync(file, "utf8")
     return [...text.matchAll(/!important/g)]
       .filter((m) => {
-        const before = text.slice(Math.max(0, m.index! - 400), m.index)
-        return !/prefers-reduced-motion|\[hidden\]/.test(before)
+        const before = text.slice(Math.max(0, m.index! - 700), m.index)
+        return !/prefers-reduced-motion|\[data-motion="reduce"\]|\[hidden\]/.test(before)
       })
       .map((m) => `${file}:${text.slice(0, m.index).split("\n").length}`)
   })

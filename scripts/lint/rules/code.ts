@@ -66,7 +66,7 @@ export const relativeImports: FileRule = {
 
 export const noImportant: FileRule = {
   id: "css/no-important",
-  why: "Project rule: cascade layers order UISet's CSS, so apps override it without !important. The one exception is the reduced-motion reset.",
+  why: "Project rule: cascade layers order UISet's CSS, so apps override it without !important. The one exception is the reduced-motion reset, under the system setting or a root's motion=\"reduce\".",
   appliesTo: (path) => /^(registry|src|web\/src)\//.test(path) && path.endsWith(".css"),
   check(text) {
     const out: Finding[] = []
@@ -86,7 +86,7 @@ export const noImportant: FileRule = {
         prelude = ""
       } else if (c === ";") prelude = ""
       else prelude += c
-      if (text.startsWith("!important", i) && !blocks.some((b) => /@media[^{]*prefers-reduced-motion/.test(b)))
+      if (text.startsWith("!important", i) && !blocks.some((b) => /@media[^{]*prefers-reduced-motion|\[data-motion="reduce"\]/.test(b)))
         out.push({ line: lineOf(text, i), message: "!important outside the reduced-motion reset: order it with UISet's layers instead." })
     }
     return out

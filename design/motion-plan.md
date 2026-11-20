@@ -1,6 +1,8 @@
 # Motion, per skin: the plan
 
-For review before any code. Each skin already sounds like what it depicts. This plan makes
+Approved on 2026-11-20. Part 1, openings, closings and panels with reduced motion, is built
+(`base.css`, the skins' tokens, `tests/e2e/motion.spec.ts`; documented in
+`docs/theming.md`). Parts 2 and 3, moves and on and off, come next. Each skin already sounds like what it depicts. This plan makes
 each one move like it too: how things open and close, how they move to a new place, and how
 a state changes. Roadmap item 1, size M–L, in three parts. Revised on 2026-11-19 after a
 review of how other libraries and design systems handle motion (below).
@@ -181,11 +183,10 @@ terminal does. The skin's own rule stands: no flicker, and nothing blinks but th
 ### Ink
 
 E-paper doesn't animate; it redraws. Ink keeps every duration at zero, as its design plan
-says, whatever the motion setting, and that's its way of moving. One option for you to
-decide: e-paper leaves a faint ghost of what was there until the next refresh. A closed
-popup could leave its dotted outline for one refresh (about 150 ms) and then clear. That's
-two still frames, not an animation, so it keeps the rule. I'd leave it out: on real
-e-paper the ghost is a flaw that readers refresh away.
+says, whatever the motion setting, and that's its way of moving. Decided on 2026-11-20: no ghost. E-paper
+leaves a faint ghost of what was there until the next refresh, and a closed popup could have
+left its dotted outline for one refresh, but on real e-paper the ghost is a flaw that readers
+refresh away.
 
 ## Reduced motion
 

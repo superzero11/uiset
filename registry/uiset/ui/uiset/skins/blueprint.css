@@ -34,6 +34,22 @@
       "Barlow Semi Condensed", "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
     --ui-font-size: 0.9375rem;
     --uiset-sound: paper;
+
+    /* Motion: drawn, not faded. An opening is revealed from its trigger's side at an even
+       pace (the clip below); a closing is erased back. Nothing scales or bounces. */
+    --uiset-enter-duration: 200ms;
+    --uiset-enter-ease: linear;
+    --uiset-enter-opacity: 1;
+    --uiset-enter-scale: 1;
+    --uiset-exit-duration: 140ms;
+    --uiset-exit-ease: linear;
+    --uiset-exit-opacity: 1;
+    --uiset-exit-scale: 1;
+    --uiset-dialog-time: 1.2;
+    --uiset-toast-shift: 0px;
+    --uiset-panel-duration: 200ms;
+    --uiset-panel-close-duration: 140ms;
+    --uiset-panel-ease: linear;
     --uiset-solid-bg: var(--blueprint-line);
     --uiset-solid-fg: var(--blueprint-paper);
     --uiset-solid-border: var(--blueprint-line);
@@ -330,6 +346,47 @@
       & [data-slot="slider-indicator"]:not([data-orientation="vertical"]),
       & [data-slot="slider-indicator"][data-orientation="vertical"] {
         background: Highlight;
+      }
+    }
+  }
+
+  /* Drawn openings. Not under reduced motion, where openings fade instead. */
+  :where(:scope)[data-uiset][data-skin="blueprint"] {
+    @media (prefers-reduced-motion: no-preference) {
+      & :is(
+          [data-slot="select-content"],
+          [data-slot="popover-content"],
+          [data-slot="menu-content"],
+          [data-slot="tooltip-content"],
+          [data-slot="combobox-content"],
+          [data-slot="autocomplete-content"],
+          [data-slot="hover-card-content"],
+          [data-slot="trigger-menu-content"],
+          [data-slot="date-picker-content"],
+          [data-slot="dialog-content"],
+          [data-slot="alert-dialog-content"],
+          [data-slot="toast"]
+        ):not([data-motion="reduce"] *) {
+        /* 8px past the edges, so the offset shadow and a focus ring stay whole. */
+        clip-path: inset(-8px);
+
+        /* From the side the trigger is on, as a pen would draw it. */
+        &:is([data-starting-style], [data-ending-style]) {
+          clip-path: inset(-8px -8px 100% -8px);
+        }
+
+        &[data-side="top"]:is([data-starting-style], [data-ending-style]),
+        &[data-slot="toast"]:is([data-starting-style], [data-ending-style]) {
+          clip-path: inset(100% -8px -8px -8px);
+        }
+
+        &[data-side="right"]:is([data-starting-style], [data-ending-style]) {
+          clip-path: inset(-8px 100% -8px -8px);
+        }
+
+        &[data-side="left"]:is([data-starting-style], [data-ending-style]) {
+          clip-path: inset(-8px -8px -8px 100%);
+        }
       }
     }
   }

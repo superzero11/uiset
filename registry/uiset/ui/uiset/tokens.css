@@ -13,6 +13,28 @@
   --uiset-fast: 120ms;
   --uiset-medium: 200ms;
 
+  /* Openings and closings (design/motion-plan.md). Skins set them; base.css draws them on
+     UI SDK's data-starting-style and data-ending-style. These are Base's: a fade and a small
+     grow from the trigger, quick, and quicker out. An app scales every duration with
+     --uiset-motion-speed (1 by default, set on any ancestor). */
+  --uiset-enter-duration: 150ms;
+  --uiset-enter-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --uiset-enter-opacity: 0;
+  --uiset-enter-scale: 0.96;
+  --uiset-enter-shift: 0px;
+  --uiset-exit-duration: 100ms;
+  --uiset-exit-ease: cubic-bezier(0.4, 0, 1, 1);
+  --uiset-exit-opacity: 0;
+  --uiset-exit-scale: 0.96;
+  --uiset-exit-shift: 0px;
+  /* Dialogs are bigger, so they take a little longer. */
+  --uiset-dialog-time: 1.33;
+  /* A toast comes in from its edge, below. */
+  --uiset-toast-shift: 0.5rem;
+  --uiset-panel-duration: 200ms;
+  --uiset-panel-close-duration: 150ms;
+  --uiset-panel-ease: cubic-bezier(0.23, 1, 0.32, 1);
+
   --uiset-sound: soft;
   --uiset-sound-volume: 0.6;
   --uiset-typing: off;

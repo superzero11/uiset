@@ -147,6 +147,25 @@ test("a dialog from UI SDK opens, traps focus and returns it, styled by the skin
   await expect(page.getByRole("button", { name: "Open details" })).toBeFocused()
 })
 
+test('<uiset-root motion="reduce"> fades a dialog and moves nothing, with the system setting off', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" })
+  await root(page).evaluate((el) => el.setAttribute("motion", "reduce"))
+  await expect(root(page)).toHaveAttribute("data-motion", "reduce")
+  const ran = await page.evaluate(async () => {
+    ;[...document.querySelectorAll("button")].find((b) => b.textContent === "Open details")!.click()
+    const seen = new Set<string>()
+    for (let frame = 0; frame < 12; frame++) {
+      await new Promise((resolve) => requestAnimationFrame(resolve))
+      for (const a of document.getAnimations())
+        if (a instanceof CSSTransition && (a.effect as KeyframeEffect).target?.matches("ui-dialog-content")) seen.add(a.transitionProperty)
+    }
+    return [...seen]
+  })
+  expect(ran).toEqual(["opacity"])
+  await root(page).evaluate((el) => el.removeAttribute("motion"))
+  await expect(root(page)).not.toHaveAttribute("data-motion")
+})
+
 type Agent = {
   act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }>
   query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]>

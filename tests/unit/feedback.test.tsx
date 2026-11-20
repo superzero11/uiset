@@ -84,3 +84,10 @@ test("slider steps tick with a pitch that follows the value", async () => {
   expect(cue).toBe("tick")
   expect(options?.pitch).toBeCloseTo(1)
 })
+
+test('motion="reduce" marks the root, and the system setting is the default', () => {
+  const { container, rerender } = render(<UISet motion="reduce" />)
+  expect(container.firstElementChild!.getAttribute("data-motion")).toBe("reduce")
+  rerender(<UISet />)
+  expect(container.firstElementChild!.hasAttribute("data-motion")).toBe(false)
+})

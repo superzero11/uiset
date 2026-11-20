@@ -12,6 +12,28 @@ again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 
 On UI SDK `0.1.0-beta.13`.
 
+### Added
+
+- **Each skin opens and closes things its own way.** Base fades and grows (150 ms in, 100
+  out), Blueprint draws a popup from its trigger's side at an even pace and erases it back,
+  Studio drops it into place and stops dead, Phosphor draws it in four scan steps and lets it
+  fade like cooling phosphor (clicks go through it while it fades), and Ink stays instant.
+  Popovers, menus, select and combobox lists, tooltips, hover cards, date pickers, dialogs,
+  toasts, and accordion and collapsible panels take part, on UI SDK's
+  `data-starting-style` and `data-ending-style`. Skins set `--uiset-enter-*`,
+  `--uiset-exit-*`, `--uiset-panel-*`, `--uiset-dialog-time` and `--uiset-toast-shift`;
+  `--uiset-motion-speed` scales every duration. See Theming, Motion. React and Web
+  Components.
+- **`motion="reduce"` on `<UISet>` and `<uiset-root>`** quiets that part of the page,
+  whatever the system setting says, so an app can offer its own switch.
+
+### Changed
+
+- **Reduced motion keeps fades.** Under `prefers-reduced-motion` (or `motion="reduce"`),
+  what appears and disappears now fades, 120 ms in and 90 ms out, instead of snapping;
+  nothing moves, grows or is drawn, and panels still snap. This is what UI SDK does and
+  advises, and it makes UISet agree with UI SDK's drawer, which already faded.
+
 ### Fixed
 
 - **A chat or terminal keeps following new output after a wheel at its end.** When the

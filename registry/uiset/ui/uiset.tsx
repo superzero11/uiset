@@ -16,6 +16,8 @@ type UISetProps = React.ComponentProps<"div"> & {
   skin?: Skin
   keyColor?: KeyColor
   theme?: "light" | "dark" | "system"
+  /** "reduce" keeps fades and moves nothing, whatever the system setting says. */
+  motion?: "system" | "reduce"
   sound?: boolean
   haptics?: boolean
 }
@@ -24,6 +26,7 @@ function UISet({
   skin = "base",
   keyColor,
   theme = "system",
+  motion = "system",
   sound = false,
   haptics = true,
   style,
@@ -42,6 +45,7 @@ function UISet({
       data-skin={skin}
       data-theme={theme === "system" ? undefined : theme}
       data-key={keyColor ? "" : undefined}
+      data-motion={motion === "reduce" ? "reduce" : undefined}
       data-sound={sound ? "on" : "off"}
       data-haptics={haptics ? "on" : "off"}
       style={{ ...keyStyle, ...style } as React.CSSProperties}
