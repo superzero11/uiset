@@ -2132,4 +2132,8 @@ vercel-labs/ui#905 (2026-11-19).
   readers and agents, which read the final value; the reveal keeps the whole text in the
   page. Under reduced motion the helpers don't animate at all rather than rely on the CSS
   reset. Chat and stat don't use them yet: that's with the agent parts, which are Now again.
+- 2026-11-20 — The full run's agent-readiness check caught the rename: on the web content page,
+  "Rank what to build next" contained "Next", the schema form's button, so a step by "Next"
+  was ambiguous (97 of 100). The list is now "Rank what to build first", title and name alike,
+  which also reads with the "First: …" line under it; every page scores 100 again.
 

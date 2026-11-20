@@ -515,7 +515,7 @@ test("a sortable list moves an item with the keys, says each step, and its place
   await open(page)
   const area = example(page, "Sortable list")
   await area.scrollIntoViewIfNeeded()
-  const list = area.getByRole("listbox", { name: "Rank what to build next" })
+  const list = area.getByRole("listbox", { name: "Rank what to build first" })
   const item = list.getByRole("option", { name: "Faster search" })
   await item.focus()
   await page.keyboard.press("Space")
@@ -540,7 +540,7 @@ test("a sortable list moves an item by drag, with a copy under the pointer", asy
   await open(page)
   const area = example(page, "Sortable list")
   await area.scrollIntoViewIfNeeded()
-  const list = area.getByRole("listbox", { name: "Rank what to build next" })
+  const list = area.getByRole("listbox", { name: "Rank what to build first" })
   const from = (await list.getByRole("option", { name: "Dark mode" }).boundingBox())!
   const to = (await list.getByRole("option").first().boundingBox())!
   await page.mouse.move(from.x + 40, from.y + from.height / 2)

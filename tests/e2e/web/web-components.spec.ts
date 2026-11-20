@@ -260,7 +260,7 @@ test("a checkbox turns on and off on its skin's timing, with no wait: Studio's l
 test("a sortable list's items slide to their new places", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" })
   await page.goto("/content.html")
-  const list = page.getByRole("listbox", { name: "Rank what to build next" })
+  const list = page.getByRole("listbox", { name: "Rank what to build first" })
   await list.scrollIntoViewIfNeeded()
   const first = list.getByRole("option").first()
   const name = await first.getAttribute("aria-label")

@@ -24,9 +24,9 @@ export function RankingExample() {
   const top = priorities.find((item) => item.value === order[0])?.label
   return (
     <div className="stack">
-      <p className="example-strong">Rank what to build next</p>
+      <p className="example-strong">Rank what to build first</p>
       {/* Named as titled, so people and agents call it what they see. */}
-      <SortableList label="Rank what to build next" items={priorities} value={order} onValueChange={setOrder} numbered />
+      <SortableList label="Rank what to build first" items={priorities} value={order} onValueChange={setOrder} numbered />
       <p className="example-note">First: {top}</p>
     </div>
   )
