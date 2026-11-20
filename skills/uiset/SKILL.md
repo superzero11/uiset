@@ -78,7 +78,7 @@ import { UISet } from "@/components/ui/uiset"
 | Status and data display                | `badge`, `stat`, `alert`, `empty-state`, `skeleton`, `description-list`, `item-list` |
 | An AI agent's work: approvals, subagent runs, checkpoints, a queue, AI SDK messages | `chat-message-parts` (draws `UIMessage` parts), `chat-parts` (`ChatTool` with `onApprove`, `ChatSubagent`, `ChatCheckpoint`), `chat-composer` (`ChatQueue`, `ChatUsage`) |
 | A number that moves, streamed text, a wait, content swapped in place | `number-ticker`, `text-reveal`, `thinking`, `crossfade` (each skin moves its own way; don't hand-roll counters or typewriters) |
-| A chat with a model                    | `chat`, `chat-response`, `chat-parts`, `chat-composer`, `chat-sidebar`, or the `chat-app` template |
+| A chat with a model                    | `chat`, `chat-response`, `chat-parts`, `chat-message-parts` (AI SDK messages), `chat-composer`, `chat-sidebar`, or the `chat-app` template |
 | Rich text                              | `rich-text` (`RichTextEditor`, `RichTextContent`; Markdown and HTML in and out) |
 | Tables                                 | `data-grid`                                                |
 | A list people put in order            | `sortable-list` (`SortableList`: drag or Space and arrows, `multiple`, `locked`; agents `moveItem`) |

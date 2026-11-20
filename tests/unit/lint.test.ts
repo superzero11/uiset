@@ -6,7 +6,7 @@ import { facts } from "../../src/site/facts.ts"
 import pkg from "../../package.json"
 
 const pinned = pkg.dependencies["@ui-sdk/react"]
-import { currentUiSdk, installVersions, statedCounts, whatsNewCurrent } from "../../scripts/lint/rules/facts.ts"
+import { currentUiSdk, installVersions, kitInstall, statedCounts, whatsNewCurrent } from "../../scripts/lint/rules/facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "../../scripts/lint/rules/plan.ts"
 
 // Each rule gets a sample it must catch and one it must let through, so no rule goes quiet.
@@ -146,6 +146,17 @@ describe("the runner", () => {
     const files = { "registry/uiset/ui/a.css": ".a {\n  /* lint-ignore css/no-important */\n  color: red !important;\n}" }
     expect(lint(repo(files), rules).problems.map((p) => p.rule).sort()).toEqual(["css/no-important", "lint/ignore"])
     expect(lint(repo({ "src/a.ts": "// lint-ignore made/up: why" }), rules).problems[0]!.message).toContain('No lint rule "made/up"')
+  })
+
+  test("content/kit-install wants every kit item in its install command, or brought by one", () => {
+    const kits = 'const KITS = [\n  { title: "Chat", names: ["chat", "chat-parts", "chat-message-parts"], doc: "chat.md" },\n]'
+    const doc = (items: string) => `# Chat\n\n\`\`\`bash\nnpx shadcn@latest add ${items}\n\`\`\`\n`
+    const built = { "registry/uiset/ui/chat-parts.tsx": 'import { ChatTasks } from "./chat"\nimport { icon } from "./chat/icons"' }
+    expect(kitInstall.checkRepo(repo({ "scripts/docs.mjs": kits, "docs/chat.md": doc("@uiset/chat @uiset/chat-parts"), ...built }))).toEqual([
+      expect.objectContaining({ path: "docs/chat.md", line: 4, rule: "content/kit-install", message: expect.stringContaining("@uiset/chat-message-parts") }),
+    ])
+    // `chat` comes with chat-parts, as each chart brings `chart`; a command may wrap lines.
+    expect(kitInstall.checkRepo(repo({ "scripts/docs.mjs": kits, "docs/chat.md": doc("@uiset/chat-parts \\\n  @uiset/chat-message-parts"), ...built }))).toEqual([])
   })
 
   test("content/whats-new wants an entry for a release that adds something", () => {

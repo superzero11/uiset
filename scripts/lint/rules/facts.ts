@@ -77,6 +77,42 @@ export const whatsNewCurrent: RepoRule = {
   },
 }
 
+const installed = (doc: string) => {
+  const named = new Set<string>()
+  for (const command of doc.matchAll(/npx shadcn@latest add((?:[^\n]*\\\n)*[^\n]*)/g))
+    for (const item of command[1]!.matchAll(/@uiset\/([\w-]+)/g)) named.add(item[1]!)
+  return named
+}
+
+export const kitInstall: RepoRule = {
+  id: "content/kit-install",
+  why: "2026-11-20: chat-message-parts joined the Chat kit (its items, its page's Agent parts) but the kit's install command in docs/chat.md still named five items, so copying it left the adapter out; the owner asked whether it was in the kit. A kit doc's install commands name every item of the kit, or an item one of them brings with it.",
+  checkRepo(ctx) {
+    const kits = ctx.read("scripts/docs.mjs") ?? ""
+    const problems = []
+    for (const kit of kits.matchAll(/title: "([^"]+)",\s*names: \[([^\]]*)\],\s*doc: "([^"]+)"/g)) {
+      const path = `docs/${kit[3]}`
+      const doc = ctx.read(path)
+      if (!doc) continue
+      const covered = installed(doc)
+      // An item brings the items its source imports, like each chart's `./chart`.
+      for (const name of covered) {
+        const source = ctx.read(`registry/uiset/ui/${name}.tsx`) ?? ""
+        for (const dep of source.matchAll(/from "\.\/([\w-]+)["/]/g)) covered.add(dep[1]!)
+      }
+      const missing = [...kit[2]!.matchAll(/"([^"]+)"/g)].map((m) => m[1]!).filter((name) => !covered.has(name))
+      if (missing.length)
+        problems.push({
+          path,
+          line: lineOf(doc, Math.max(0, doc.indexOf("npx shadcn@latest add"))),
+          rule: "content/kit-install",
+          message: `The ${kit[1]} kit's install command leaves out ${missing.map((m) => `@uiset/${m}`).join(", ")}. Add ${missing.length === 1 ? "it" : "them"} to the command.`,
+        })
+    }
+    return problems
+  },
+}
+
 // The lint and its tests run from the repo root.
 const pin = /"@ui-sdk\/react": "0\.1\.0-beta\.(\d+)"/.exec(readFileSync("package.json", "utf8"))?.[1]
 

@@ -5159,17 +5159,19 @@ person's selection); agents format through Markdown instead.
 
 # Chat
 
-A chat interface on UI SDK, in five items: the thread and its messages, Markdown answers
-that stream, the parts around an answer (reasoning, tool calls, sources), the message box,
-and the list of chats. Every part takes plain props, so your model's stream goes into your
-own state and the kit draws it. The `chat-app` template puts them together into a page.
+A chat interface on UI SDK, in six items: the thread and its messages, Markdown answers that
+stream, the parts around an answer (reasoning, tool calls, sources), an AI SDK message drawn
+from those parts, the message box, and the list of chats. Every part takes plain props, so
+your model's stream goes into your own state and the kit draws it. The `chat-app` template
+puts them together into a page.
 
 ```bash
 npx shadcn@latest add @uiset/chat @uiset/chat-response \
-  @uiset/chat-parts @uiset/chat-composer @uiset/chat-sidebar
+  @uiset/chat-parts @uiset/chat-message-parts \
+  @uiset/chat-composer @uiset/chat-sidebar
 ```
 
-Each of the last four brings `chat` with it. `chat-response` also adds `react-markdown`,
+Each of the last five brings `chat` with it. `chat-response` also adds `react-markdown`,
 `remark-gfm`, `remend` and `shiki`.
 
 The behavior is UI SDK's. The thread is a `ScrollArea` that follows new text with
