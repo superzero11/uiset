@@ -89,6 +89,9 @@
     --uiset-swap-ease: steps(4, jump-start);
     --uiset-swap-in-opacity: 1;
     --uiset-swap-in-clip: inset(0 0 100% 0);
+    /* The old content is replaced line by line as the new one scans in, never under it. */
+    --uiset-swap-out-opacity: 1;
+    --uiset-swap-out-clip: inset(100% 0 0 0);
     --uiset-solid-bg: var(--phosphor-glow);
     --uiset-solid-fg: var(--phosphor-tube);
     --uiset-solid-border: var(--phosphor-glow);
