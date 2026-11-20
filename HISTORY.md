@@ -2047,3 +2047,11 @@ vercel-labs/ui#905 (2026-11-19).
   a rectangle in line, a milled lip, a dim outline like Phosphor's meter. The e2e test covers
   all five; it failed on Phosphor before its fix, and the measurement on the other two. Left for later: a ring meter's remainder in Base dark
   is faint (its value is also written in the ring).
+- 2026-11-20 — A slip, caught by the full suite: writing motion part 1, the scripted
+  replacement of `base.css`'s old popup, backdrop and reduced-motion rules took 137 lines
+  above them too (block code padding, the popup radius, toolbar radii, the switch's track
+  and thumb, the toast's layout, the calendar's size, arrow buttons, date segments, the
+  segmented control and slider thumb). Two code block tests failed on the 4px first-line
+  indent; the rules are back as they were, and every other removal of the day was checked
+  line by line. Since then, a replacement in a shared file is checked with `git diff` for
+  removed lines before it's committed.

@@ -8,3 +8,11 @@ export async function openGallery(page: Page, url: string) {
   await page.goto(url)
   await page.locator(".gallery[data-ready]").waitFor({ timeout: 60_000 })
 }
+
+/**
+ * Waits until no transition is running. Under reduced motion a popup still fades in for
+ * 120ms, and axe measuring contrast mid-fade reads the text as too faint.
+ */
+export async function settled(page: Page) {
+  await page.waitForFunction(() => document.getAnimations().every((a) => !(a instanceof CSSTransition) || a.playState !== "running"))
+}

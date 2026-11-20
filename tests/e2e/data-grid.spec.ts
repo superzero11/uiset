@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test, type Page } from "@playwright/test"
+import { settled } from "./gallery"
 
 // The Orders grid on the home page: 10,000 seeded rows. Columns, in order:
 // 1 select, 2 Order, 3 Customer, 4 Region, 5 Status, 6 Amount, 7 Placed, 8 Rush.
@@ -66,6 +67,7 @@ for (const scheme of ["light", "dark"] as const) {
     await moveTo(page, 2, 5)
     await page.keyboard.press("Enter")
     await expect(grid(page).getByRole("option").first()).toBeVisible()
+    await settled(page)
     const choosing = await new AxeBuilder({ page })
       .include(".item-frame")
       .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
