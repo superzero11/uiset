@@ -2158,3 +2158,14 @@ vercel-labs/ui#905 (2026-11-19).
   checkpoint's Restore). The row that asked now shows the ask with Allow and Don't allow, and
   the panel's output says it's waiting. Not a lint rule (which page draws an approval isn't in
   one file): an e2e test in `agent-view.spec.ts`, mutation-checked.
+- 2026-11-20 — Agent view reads a demo that loads after it. With Agent view on, a kit page's
+  panel read the stage before the demo's code arrived, and UI SDK's `agent.subscribe` reports
+  state changes, not components arriving, so it never read again: the chat kit said "No
+  controls here" beside its Send button (the owner caught it), the board listed nothing while
+  agent-check counted 14. The panel now also re-reads when the stage's DOM changes (throttled to
+  100 ms). An e2e test with Agent view on before the page loads, mutation-checked.
+- 2026-11-20 — The chat kit's install command names `chat-message-parts`. The adapter joined
+  the kit's items and its page's Agent parts, but `docs/chat.md`'s command still named five
+  items, and the core skill's table too; the owner asked whether it was in the kit. New lint
+  `content/kit-install`: a kit doc's install commands name every item of the kit
+  (`scripts/docs.mjs`), or one an item brings by importing it (each chart's `./chart`).

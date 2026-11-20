@@ -9,7 +9,8 @@ import { lint, type Baseline, type RepoContext } from "./core.ts"
 import { rules } from "./rules/index.ts"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..")
-const git = (...args: string[]) => execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 })
+// stderr piped: a rule may ask for a file that isn't there, and `read` answers undefined quietly.
+const git = (...args: string[]) => execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "pipe"] })
 const args = new Set(process.argv.slice(2))
 const staged = args.has("--staged")
 const baselinePath = join(root, "scripts/lint/baseline.json")

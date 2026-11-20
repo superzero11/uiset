@@ -319,7 +319,26 @@ function AgentViewPanel({ root, title }: { root: RefObject<HTMLElement | null>; 
   const panel = useRef<HTMLElement>(null)
   const near = useNearView(panel)
   const version = useAgentVersion()
-  const tick = near ? version : null
+  // The bridge's subscribe reports state changes, not components arriving (a demo that loads
+  // late, a list that grows), so changes to the stage's DOM count too.
+  const [grown, setGrown] = useState(0)
+  useEffect(() => {
+    const el = root.current
+    if (!el || !near) return
+    let timer: number | undefined
+    const watch = new MutationObserver(() => {
+      timer ??= window.setTimeout(() => {
+        timer = undefined
+        setGrown((n) => n + 1)
+      }, 100)
+    })
+    watch.observe(el, { childList: true, subtree: true })
+    return () => {
+      watch.disconnect()
+      window.clearTimeout(timer)
+    }
+  }, [root, near])
+  const tick = near ? version + grown : null
   const [said, setSaid] = useState("")
   const read = useEachChange(tick, 50, () => (root.current ? readWithin(root.current) : undefined))
   const report = useEachChange(tick, 250, () => {

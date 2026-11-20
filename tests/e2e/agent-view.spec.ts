@@ -94,6 +94,17 @@ test("a kit's page has its own view, and the library's cards stay out of agents'
   expect((await snapshot(page)).some((e) => e.component === "data-grid")).toBe(false)
 })
 
+test("a kit whose demo loads after the panel still lists its controls", async ({ page }) => {
+  // Agent view starts on, so the panel reads before the demo's code arrives; the bridge's
+  // subscribe doesn't report components arriving, so the panel must notice the stage grow.
+  await page.addInitScript(() => localStorage.setItem("uiset-agent-view", "on"))
+  await page.goto("/docs/kits/chat")
+  const panel = page.getByRole("region", { name: "Agent view of Chat" })
+  await panel.scrollIntoViewIfNeeded()
+  await expect(panel.locator(".agent-view-name", { hasText: /^Send$/ })).toBeVisible({ timeout: 15_000 })
+  await expect(panel).not.toContainText("No controls here")
+})
+
 for (const [skin, theme] of [
   ["base", "light"],
   ["base", "dark"],
