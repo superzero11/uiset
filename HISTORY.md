@@ -2230,3 +2230,7 @@ vercel-labs/ui#905 (2026-11-19).
 - 2026-11-21 — Replied on vercel-labs/ui#927 (the owner said post): option 1 (treat a
   sub-pixel stop short of the end as at the end) fixes UISet's case, with the repro for the
   contributor's spec; re-arming on a scroll back to the end suggested as a separate follow-up.
+- 2026-11-21 — Solid 2.0 natively is Next 2 on the roadmap (the owner asked): Solid 2.0 came
+  out on 2026-11-17 (`solid-js` 2.0.3 now), and UI SDK ships `@ui-sdk/solid` at beta.13 with
+  `solid-js` and `@solidjs/web` ^2.0.0 as peers. UISet's components, then kits, on it; until
+  then Solid apps use the Web Components build. It replaces the "Solid guide" in Later. L.

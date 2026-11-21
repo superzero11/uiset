@@ -31,22 +31,24 @@ once. Faster releases, and far less memory. M
 
 1. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
    number field with a country picker, and input masks for cards, IBANs and currency. M
-2. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
+2. **Solid 2.0, natively.** UI SDK already supports Solid 2.0, out November 17: UISet's
+   components, then kits, on `@ui-sdk/solid`. Solid uses the Web Components build today. L
+3. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
    and agents setting a filter by name. M
-3. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
+4. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
    reorder, and a player whose scrubber snaps to chapters, beside Studio. M each
-4. **Locale packs.** Every component's and kit's built-in words translated, with
+5. **Locale packs.** Every component's and kit's built-in words translated, with
    right-to-left tested packs for the main languages. UI SDK ships none. M
-5. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
+6. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
    repair; export to Tailwind `@theme`, Figma variables and DESIGN.md. S
-6. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
+7. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
    paging. M–L
-7. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
+8. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
-8. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
+9. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
    and an invoice. S each
-9. **Print skin.** Swiss and letterpress type, from a written design plan first. M
-10. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
+10. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+11. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
     CSV import. M
 
 Between these, small ones: dialogs and popovers that open in place (UI SDK's `inline`), tree
@@ -68,24 +70,23 @@ still lists.
 
 A map kit, a seat map, a Gantt chart, dragging onto dates and cards, a swipe deck and a
 radial menu for the mobile kit, a window manager and resizable panels, sticky notes on the
-canvas, a dashboard grid, a document viewer, voice in chat, the Cockpit and Paper skins, a
-Solid guide, more templates (onboarding, an agent-wired settings console, a docs site), and
-generative UI adapters.
+canvas, a dashboard grid, a document viewer, voice in chat, the Cockpit and Paper skins,
+more templates (onboarding, an agent-wired settings console, a docs site), and generative UI
+adapters.
 
 ## Following UI SDK
 
 UI SDK is in public beta. UISet pins its exact version and moves with each release once the
-tests for what the release changes pass. UISet is on 0.1.0-beta.13. Problems we find in UI SDK
-go upstream with a test that shows them. Open now:
+tests for what the release changes pass. UISet is on 0.1.0-beta.13. Problems we find in UI
+SDK go upstream with a test that shows them. Open now:
 [#780](https://github.com/vercel-labs/ui/issues/780) (a wheel in a drawer in WebKit),
 [#905](https://github.com/vercel-labs/ui/issues/905) (a tree reorder that knows which items
 take children), [#927](https://github.com/vercel-labs/ui/issues/927) (a scroll area that
-stops following new content after a sub-pixel move at its end) and
+stops following after a sub-pixel move) and
 [#928](https://github.com/vercel-labs/ui/issues/928) (a press on the page lost while a modal
-closes). Fixed upstream, in the next beta:
-[#929](https://github.com/vercel-labs/ui/issues/929) (a closing popup still counted by the
-agent bridge). Fixed in beta.12 and beta.13, with UISet's workarounds gone: UI SDK's #848, #856,
-#857, #887 and #888 (details in HISTORY.md).
+closes). Fixed for the next beta: [#929](https://github.com/vercel-labs/ui/issues/929) (a
+closing popup still counted by the agent bridge). Fixed in beta.12 and beta.13, with UISet's
+workarounds gone: UI SDK's #848, #856, #857, #887 and #888 (details in HISTORY.md).
 
 ## Waiting on others
 
