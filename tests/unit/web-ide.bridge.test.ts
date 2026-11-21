@@ -13,9 +13,8 @@ afterEach(() => {
   document.body.innerHTML = ""
 })
 
-// As the page loads it fills the palette's Recent, and for a moment two palette items share
-// src/index.ts's value: UI SDK warns of it (a console warning in the browser, which the browser
-// test never read). That one warning is let through on load; any other still fails.
+// The page loads with no UI SDK warning at all. It once filled the palette's files and then its
+// Recent back to back, and for a moment two items shared src/index.ts's value (2026-11-21).
 async function openIde() {
   const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
   globalThis.__UI_SDK_STRICT__ = false
@@ -25,7 +24,7 @@ async function openIde() {
     globalThis.__UI_SDK_STRICT__ = true
     const seen = warn.mock.calls.map((call) => String(call[0]))
     warn.mockRestore()
-    expect(seen.filter((w) => !w.includes('command: Two items have the value "file:src/index.ts"'))).toEqual([])
+    expect(seen).toEqual([])
   }
 }
 

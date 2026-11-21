@@ -243,7 +243,7 @@ import { Icon } from "@/components/ui/shell/icons"
 
 | Keys                     | Where        | Does                                                       |
 | ------------------------ | ------------ | ---------------------------------------------------------- |
-| Mod+B                    | anywhere     | Collapse the sidebar to icons, or expand it (wide screens only) |
+| Mod+B                    | anywhere     | Collapse the sidebar to icons, or expand it (wide screens only); an `AppShell` inside another leaves it to the outer one |
 | "/" (the `shortcut`)     | anywhere     | Focus the search field, except while typing in another field |
 | Escape                   | drawer       | Close the navigation drawer                                |
 | Tab, Enter, Space        | stepper      | Each step is a button; locked steps are skipped            |

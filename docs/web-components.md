@@ -328,8 +328,8 @@ month.addEventListener("daychoose", (e) => showDay(e.detail.value))
   `problem(event)` (why an event wouldn't fit: hours, steps, overlaps), `eventElement`
   and `neighbor`. Agents add, move, resize and open events by the names people see.
 - `<uiset-schedule-month>` is UI SDK's calendar with each day's first events as chips
-  (`limit`, 3 by default) and the events in each day's name. Choosing a day fires
-  `daychoose`; the month buttons fire `monthchange`.
+  (`limit`, 3 by default) and the events in each day's name; `label` names the month for
+  people and agents. Choosing a day fires `daychoose`; the month buttons fire `monthchange`.
 - The toolbar and the event dialog are your page's: `web/schedule.html` has Day, Week,
   Month and Rooms, a dialog that checks times with `api.problem`, and focus that returns to
   the event or a deleted one's neighbor.

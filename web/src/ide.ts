@@ -1038,6 +1038,7 @@ class UISetCommandPalette extends Evented<UISetCommandPaletteEvents>() {
   #query = ""
   #returnTo: HTMLElement | null = null
   #ran = false
+  #queued = false
   #dom?: { dialog: DialogElement; title: HTMLElement; command: CommandElement; input: HTMLInputElement; empty: HTMLElement; list: HTMLElement; commandsTrigger: HTMLElement }
 
   get files() {
@@ -1045,21 +1046,32 @@ class UISetCommandPalette extends Evented<UISetCommandPaletteEvents>() {
   }
   set files(v: string[]) {
     this.#files = v ?? []
-    this.update()
+    this.queueUpdate()
   }
   get recent() {
     return this.#recent
   }
   set recent(v: string[]) {
     this.#recent = v ?? []
-    this.update()
+    this.queueUpdate()
   }
   get commands() {
     return this.#commands
   }
   set commands(v: PaletteCommand[]) {
     this.#commands = v ?? []
-    this.update()
+    this.queueUpdate()
+  }
+
+  // Files, recent and commands set together (a page fills all three at once) make one list:
+  // two lists in a row had UI SDK's command register an item of each, so two shared a value.
+  private queueUpdate() {
+    if (this.#queued) return
+    this.#queued = true
+    queueMicrotask(() => {
+      this.#queued = false
+      this.update()
+    })
   }
 
   connectedCallback() {

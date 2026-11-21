@@ -15,10 +15,9 @@ import { createBridge, settle } from "./bridge"
 
 const bridge = createBridge()
 
-// On a template page the site's AppShell and the template's both register Mod+B, which UI SDK
-// warns about (the newest wins). The unit tests turn every UI SDK warning into an error, which
-// would stop the page drawing; here they're collected instead, and any other one fails the test.
-const KNOWN = /The shortcut "mod\+b" is registered twice in the same scope/
+// The unit tests turn every UI SDK warning into an error, which would stop a page drawing; here
+// they're collected, and any one fails the test. (A template page once warned that Mod+B was
+// registered twice, by the site's AppShell and the template's: 2026-11-21.)
 let warnings: string[] = []
 const checkVisibility = Element.prototype.checkVisibility
 beforeAll(() => {
@@ -39,9 +38,9 @@ beforeAll(() => {
 afterEach(async () => {
   cleanup()
   await settle()
-  const others = warnings.filter((w) => !KNOWN.test(w))
+  const seen = warnings
   warnings = []
-  expect(others).toEqual([])
+  expect(seen).toEqual([])
 })
 afterAll(() => {
   Element.prototype.checkVisibility = checkVisibility

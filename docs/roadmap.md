@@ -15,17 +15,15 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**0.6.1: fixes from the community watch.** React toasts an agent can read
-([vercel-labs/ui#978](https://github.com/vercel-labs/ui/issues/978)), searchable selects
-checked against beta.13's [#931](https://github.com/vercel-labs/ui/issues/931), and no
-clipped focus rings in the chat's message list. S
+**0.6.1: fixes, ready for the next release.** Toasts an agent can read
+([vercel-labs/ui#978](https://github.com/vercel-labs/ui/issues/978)), no clipped focus rings
+in the chat, month views and pricing questions agents find by name, Mod+B registered once
+when one shell sits in another, and the web IDE's palette without a duplicate. S
 
-**Then: tests through the agent bridge, browsers only for rendering.** About a third of the
-browser tests only check behavior ("press Allow, the tool is done"); they move to Vitest,
-driving components through UI SDK's agent bridge with no browser. Chrome keeps what needs a
-real page: keys, focus, layout, contrast and motion. WebKit and Firefox run only what can
-differ between engines, and the gallery's tests split so no browser loads every component at
-once. Faster releases, and far less memory. M
+**Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
+bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox
+715 each, from 1,030; the gallery's scans go a group at a time. Left: timing a full release
+run against before. M
 
 ## Next, in order
 

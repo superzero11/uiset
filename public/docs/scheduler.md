@@ -80,7 +80,8 @@ const [schedule] = useState(createScheduleController)
 New events by keyboard come from **New event**. Every move, resize and removal is
 announced. Delete hands focus to the next event, or to the schedule when none is left.
 Choosing a day in the month focuses that day's first event. In the month view each day is named with its events ("Wednesday, November
-18, 2026, 2 events: Standup at 9:00 AM, Launch rehearsal at 3:00 PM").
+18, 2026, 2 events: Standup at 9:00 AM, Launch rehearsal at 3:00 PM"), and the month itself is a
+group named by `label`, which is how an agent finds it.
 
 ## For agents
 

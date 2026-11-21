@@ -2278,3 +2278,12 @@ vercel-labs/ui#905 (2026-11-19).
   console's cards-above-a-modal test is `@engine` (the top layer). Found, not yet fixed: the
   month grids have no agent name, the pricing questions reach agents as q0 to q3, Mod+B is
   registered twice on template pages, the web IDE lists a file twice as Recent.
+- 2026-11-21 — 0.6.1 gains the four fixes found while moving tests (the owner said fix them
+  and add them to the next release). The scheduler's and calendar's month view is a group named
+  by `label`, so agents find it (it was a nameless calendar); the pricing questions use their
+  words as values, so `agent.query` names them; an `AppShell` inside another leaves Mod+B to
+  the outer one (no "registered twice" warning on template pages); the web command palette
+  makes one list from files, recent and commands set together (no duplicate item on load).
+  Each has a Vitest test that failed before the fix, in React and Web Components where both
+  exist; the readiness and web IDE tests now allow no UI SDK warning at all. The month view
+  passes axe in Chrome, light and dark; the web IDE's browser spec passes (21). Vitest: 764.

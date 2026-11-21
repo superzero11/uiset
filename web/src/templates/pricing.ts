@@ -67,10 +67,11 @@ document.getElementById("compare")!.replaceChildren(
 )
 
 document.getElementById("faq")!.replaceChildren(
-  ...sampleQuestions.map((item, i) =>
+  // A question's words are its value, so an agent opens it, and reads it back, by them.
+  ...sampleQuestions.map((item) =>
     h(
       "ui-accordion-item",
-      { value: `q${i}` },
+      { value: item.q },
       h("ui-accordion-header", null, h("ui-accordion-trigger", null, h("button", { type: "button" }, item.q))),
       h("ui-accordion-panel", { hidden: true }, item.a),
     ),

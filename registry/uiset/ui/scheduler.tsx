@@ -348,8 +348,12 @@ function MonthView({
     byDay.set(e.track, list)
   }
   return (
+    // Named on its root too, as a group: the agent bridge names a calendar there, not by its
+    // grid, and a name on a plain div isn't allowed.
     <Calendar
       className="schedule-month"
+      role="group"
+      aria-label={label}
       month={month}
       onMonthChange={(m) => onMonthChange?.(m)}
       today={today}

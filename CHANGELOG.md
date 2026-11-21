@@ -22,6 +22,19 @@ UI SDK 0.1.0-beta.13, as before.
   left 4px at its sides; Ink's 3px ring with its 2px gap lost a pixel on full-width rows
   (reasoning, tool calls, subagent runs, sources). It leaves 6px now. React and Web
   Components (`chat`).
+- **An agent finds a month view by its name.** `MonthView` and `<uiset-schedule-month>` named
+  only the grid inside, and the agent bridge names a calendar from its root, so agents saw a
+  nameless calendar. The month is now a group named by `label` ("Month of events" in the
+  calendar template). `scheduler` and `calendar-app`.
+- **An agent opens a pricing question by its words.** The questions' values were q0 to q3,
+  which `agent.query` reported as their names; each question's words are its value now.
+  `pricing`, React and Web Components.
+- **Mod+B is registered once when an `AppShell` sits inside another** (a template shown in
+  an app's own shell): the inner shell leaves it to the outer one, which toggles the same
+  remembered sidebar. UI SDK had warned that the shortcut was registered twice. `app-shell`.
+- **The web IDE's command palette loads without a duplicate.** Files and Recent set back to
+  back made UI SDK's command register two items with one file's value for a moment; the
+  palette now makes one list from changes set together. `@uiset/web` (`<uiset-command-palette>`).
 
 ## 0.6.0 (2026-11-21)
 

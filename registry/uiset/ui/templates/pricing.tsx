@@ -162,8 +162,9 @@ function PricingTemplate({
           Questions
         </h2>
         <Accordion aria-label="Pricing questions">
-          {questions.map((item, i) => (
-            <AccordionItem key={i} value={`q${i}`}>
+          {/* A question's words are its value, so an agent opens it, and reads it back, by them. */}
+          {questions.map((item) => (
+            <AccordionItem key={item.q} value={item.q}>
               <AccordionHeader>
                 <AccordionTrigger>{item.q}</AccordionTrigger>
               </AccordionHeader>

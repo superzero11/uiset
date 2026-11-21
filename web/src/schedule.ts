@@ -323,7 +323,12 @@ class UISetScheduleMonth extends Evented<UISetScheduleMonthEvents>() {
       else cal.setAttribute(name === "month" ? "default-month" : name, value)
     }
     if (this.getAttribute("month") && cal.month !== undefined && cal.month !== this.getAttribute("month")) cal.month = this.getAttribute("month")!
-    cal.querySelector("ui-calendar-grid")?.setAttribute("aria-label", this.getAttribute("label") ?? "Month")
+    // Named on its root too, as a group: the agent bridge names a calendar there, not by its
+    // grid, and a name on a plain element isn't allowed.
+    const label = this.getAttribute("label") ?? "Month"
+    cal.setAttribute("role", "group")
+    cal.setAttribute("aria-label", label)
+    cal.querySelector("ui-calendar-grid")?.setAttribute("aria-label", label)
     // The calendar draws its days from its template: each is decorated once it's there.
     this.observer?.disconnect()
     this.observer = new MutationObserver(() => this.decorate())
