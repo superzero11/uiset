@@ -18,6 +18,10 @@ UI SDK 0.1.0-beta.13, as before.
   `data-agent-hidden`, as UI SDK's agent-ready advice said, so an agent never saw a toast or
   its Undo ([vercel-labs/ui#978](https://github.com/vercel-labs/ui/issues/978)). An empty
   region still stays out of the snapshot. Add `toast` again to take it.
+- **Chat: no focus ring is cut at the thread's edges.** The thread's scroll area clips, and it
+  left 4px at its sides; Ink's 3px ring with its 2px gap lost a pixel on full-width rows
+  (reasoning, tool calls, subagent runs, sources). It leaves 6px now. React and Web
+  Components (`chat`).
 
 ## 0.6.0 (2026-11-21)
 

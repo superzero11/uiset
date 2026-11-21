@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test"
+import { clippedRings } from "../rings"
 
 // The agent's turn and the queue as web elements: the Chat page's pretend model and the Chat
 // app template's sample assistant, each asked to fix something.
@@ -51,3 +52,16 @@ for (const [name, path] of [
     })
   })
 }
+
+test("no focus ring in the Chat page's thread is clipped, in any skin", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" })
+  await page.goto("/chat.html")
+  await page.getByRole("button", { name: "Fix the date format and deploy a preview" }).click()
+  await expect(deploy(page)).toHaveAttribute("data-status", "approval", { timeout: 15_000 })
+  for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
+    await page.locator("uiset-root").evaluate((el, s) => el.setAttribute("skin", s), skin)
+    const { controls, cut } = await clippedRings(page, "uiset-chat")
+    expect(controls, skin).toBeGreaterThan(5)
+    expect(cut, skin).toEqual([])
+  }
+})

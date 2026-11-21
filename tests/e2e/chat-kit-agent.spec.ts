@@ -1,5 +1,6 @@
 import AxeBuilder from "./axe"
 import { expect, test, type Page } from "@playwright/test"
+import { clippedRings } from "./rings"
 
 // Agent parts in the chat kit's own demo (src/site/chat-demo.tsx): an agent's turn drawn from
 // AI SDK parts, a tool waiting for approval, a checkpoint to go back to, and messages queued
@@ -83,3 +84,16 @@ for (const [skin, theme] of [
     expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(" | ")}`)).toEqual([])
   })
 }
+
+// A scroll area clips: a full-width row's focus ring needs room at the thread's sides. Ink's
+// 3px ring was cut by 1px (2026-11-21, after shadcn-ui/ui#12788 reported the same in theirs).
+test("no focus ring in the thread is clipped, in any skin", async ({ page }) => {
+  for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
+    await page.evaluate((s) => localStorage.setItem("uiset-site-skin", s), skin)
+    await page.goto("/docs/kits/chat")
+    await expect(pr(page)).toHaveAttribute("data-status", "approval", { timeout: 20_000 })
+    const { controls, cut } = await clippedRings(page, ".item-frame .chat-thread")
+    expect(controls, skin).toBeGreaterThan(10)
+    expect(cut, skin).toEqual([])
+  }
+})

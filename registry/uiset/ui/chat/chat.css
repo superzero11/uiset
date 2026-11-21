@@ -52,11 +52,13 @@
     overscroll-behavior: contain;
   }
 
+  /* The scroller clips: its sides leave room for the widest focus ring (Ink's 3px line and
+     2px gap) on a row that spans the thread. */
   .chat-thread-log {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 0.25rem 0.25rem 0.75rem;
+    padding: 0.25rem 0.375rem 0.75rem;
   }
 
   .chat-thread-jump {

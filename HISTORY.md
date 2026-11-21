@@ -2240,3 +2240,12 @@ vercel-labs/ui#905 (2026-11-19).
   in the snapshot and its Undo presses; it failed before the fix. Lint `agent/toasts-visible`
   refuses the mark on a toast region in React and Web Components, since the installed UI SDK
   skill still advises it. 46 browser tests on agent scores, templates and toasts pass.
+- 2026-11-21 — 0.6.1, checks 2 and 3. **#931** (a select search field with its own value and
+  a `flushSync` in `onChange` loses the typed text since beta.13): no UISet component, kit,
+  template or demo has a select with a search field; `SelectInput` is only re-exported. UI SDK
+  fixed it in PR #935 (closed today), so apps that use it get the fix with the next beta.
+  **Focus rings in the chat** (after shadcn-ui/ui#12788): a check that focuses every control in
+  the thread and measures its ring against the box that clips it found Ink's 3px ring cut by
+  1px at the scroller's sides on four of five surfaces; the thread now leaves 6px. New
+  `tests/e2e/rings.ts`, used by a React and a Web Components test across all five skins;
+  both fail with the old padding.
