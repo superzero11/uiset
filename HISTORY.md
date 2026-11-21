@@ -2234,3 +2234,9 @@ vercel-labs/ui#905 (2026-11-19).
   out on 2026-11-17 (`solid-js` 2.0.3 now), and UI SDK ships `@ui-sdk/solid` at beta.13 with
   `solid-js` and `@solidjs/web` ^2.0.0 as peers. UISet's components, then kits, on it; until
   then Solid apps use the Web Components build. It replaces the "Solid guide" in Later. L.
+- 2026-11-21 — 0.6.1, fix 1: toasts readable by agents. `Toaster` dropped `data-agent-hidden`
+  (on its region since 0.1.0, from UI SDK's agent-ready advice; vercel-labs/ui#978, found by
+  the watch). A Vitest test drives it through the agent bridge with no browser: the toast is
+  in the snapshot and its Undo presses; it failed before the fix. Lint `agent/toasts-visible`
+  refuses the mark on a toast region in React and Web Components, since the installed UI SDK
+  skill still advises it. 46 browser tests on agent scores, templates and toasts pass.

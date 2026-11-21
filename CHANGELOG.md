@@ -8,6 +8,17 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
+## 0.6.1 (unreleased)
+
+UI SDK 0.1.0-beta.13, as before.
+
+### Fixed
+
+- **An agent reads toasts and presses their actions.** The React `Toaster` marked its region
+  `data-agent-hidden`, as UI SDK's agent-ready advice said, so an agent never saw a toast or
+  its Undo ([vercel-labs/ui#978](https://github.com/vercel-labs/ui/issues/978)). An empty
+  region still stays out of the snapshot. Add `toast` again to take it.
+
 ## 0.6.0 (2026-11-21)
 
 On UI SDK `0.1.0-beta.13`.

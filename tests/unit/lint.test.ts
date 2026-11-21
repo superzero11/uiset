@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { lint, type FileRule, type RepoContext, type RepoRule } from "../../scripts/lint/core.ts"
-import { axeWaits, exampleFrames, internalPrimitives, noDeferredFocus, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports } from "../../scripts/lint/rules/code.ts"
+import { axeWaits, exampleFrames, internalPrimitives, noDeferredFocus, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports, toastsVisible } from "../../scripts/lint/rules/code.ts"
 import { rules } from "../../scripts/lint/rules/index.ts"
 import { facts } from "../../src/site/facts.ts"
 import pkg from "../../package.json"
@@ -146,6 +146,14 @@ describe("the runner", () => {
     const files = { "registry/uiset/ui/a.css": ".a {\n  /* lint-ignore css/no-important */\n  color: red !important;\n}" }
     expect(lint(repo(files), rules).problems.map((p) => p.rule).sort()).toEqual(["css/no-important", "lint/ignore"])
     expect(lint(repo({ "src/a.ts": "// lint-ignore made/up: why" }), rules).problems[0]!.message).toContain('No lint rule "made/up"')
+  })
+
+  test("agent/toasts-visible refuses data-agent-hidden on a toast region", () => {
+    expect(toastsVisible.check('<ToastRegion toaster={toast} data-agent-hidden="" {...props}>', "registry/uiset/ui/toast.tsx")).toEqual([
+      expect.objectContaining({ line: 1, message: expect.stringContaining("#978") }),
+    ])
+    expect(toastsVisible.check('<ui-toast-region aria-label="Notifications" data-agent-hidden>', "web/board.html")).toHaveLength(1)
+    expect(toastsVisible.check('<ToastRegion toaster={toast} {...props}>\n<div data-agent-hidden="">', "registry/uiset/ui/toast.tsx")).toEqual([])
   })
 
   test("content/kit-live wants every kit item live on its page: in the demo or under a section", () => {

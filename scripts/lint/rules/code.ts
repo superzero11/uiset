@@ -168,6 +168,17 @@ export const axeWaits: FileRule = {
     })),
 }
 
+export const toastsVisible: FileRule = {
+  id: "agent/toasts-visible",
+  why: "2026-11-21: UISet's Toaster had data-agent-hidden on its region since 0.1.0, as UI SDK's agent-ready skill advised, so no agent could read a toast or press its Undo (vercel-labs/ui#978; the daily watch found it). An empty region already stays out of the snapshot. The installed skill still gives the advice.",
+  appliesTo: (path) => /^(registry|src|web)\//.test(path) && /\.(tsx?|html)$/.test(path),
+  check: (text) =>
+    [...text.matchAll(/<(?:ToastRegion|ui-toast-region)\b[^>]*\bdata-agent-hidden/g)].map((m) => ({
+      line: lineOf(text, m.index!),
+      message: "Leave data-agent-hidden off a toast region: it hides every toast from agents, and an empty region is already left out (vercel-labs/ui#978).",
+    })),
+}
+
 export const noOnly: FileRule = {
   id: "tests/no-only",
   why: "A test left on .only skips every other test in its file, and the suite still passes.",
