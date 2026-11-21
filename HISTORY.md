@@ -2249,3 +2249,10 @@ vercel-labs/ui#905 (2026-11-19).
   1px at the scroller's sides on four of five surfaces; the thread now leaves 6px. New
   `tests/e2e/rings.ts`, used by a React and a Web Components test across all five skins;
   both fail with the old padding.
+- 2026-11-21 — Tests through the agent bridge, started (the owner said go ahead; plan in
+  `design/bridge-testing-plan.md`). Of 654 browser tests, 198 only check behavior, 231 need a
+  real page but no engine differences, 225 can differ between engines. Both bridges work in
+  jsdom (a probe rendered the web chat and listed Allow and Deny). Pilot: the five agent-parts
+  tests now drive the example through the bridge in Vitest (`tests/unit/bridge.ts`, a helper
+  with a stand-in person and an unattended agent), in about a second; removing approvals, the
+  confirm mark or the queue's Remove each fails them. `tests/e2e/agent-parts.spec.ts` is gone.
