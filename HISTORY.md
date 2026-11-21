@@ -2219,3 +2219,11 @@ vercel-labs/ui#905 (2026-11-19).
   install test passed (122 items). The owner publishes (`npm login` first).
 - 2026-11-21 — `@uiset/web` 0.6.0 on npm (the owner published; `latest`, 89 files, 1.24 MB
   unpacked). The registry and the site ship with the push, after the owner's check.
+- 2026-11-21 — `@uiset/web` 0.6.0 is live on uiset.dev too (pushed after the owner's check;
+  the registry serves `chat-message-parts` about 3.5 minutes later). From the daily community
+  watch, the owner approved: a 0.6.1 fix batch first in Now (React toasts readable by agents,
+  since `toast.tsx` hid the toast region from the bridge, per vercel-labs/ui#978; searchable
+  selects checked against #931, new in beta.13; the chat message list's focus rings checked
+  in every skin, per shadcn-ui/ui#12788), then the bridge testing. "Following UI SDK" now
+  lists #927 and #928 open and #929 fixed for the next beta. A reply to the contributor on
+  #927 is drafted for the owner to post (`research/upstream/927-reply.md`).

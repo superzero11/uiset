@@ -15,12 +15,17 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**Tests through the agent bridge, browsers only for rendering.** Starts once 0.6.0 ships.
-About a third of the browser tests only check behavior ("press Allow, the tool is done");
-they move to Vitest, driving components through UI SDK's agent bridge with no browser.
-Chrome keeps what needs a real page: keys, focus, layout, contrast and motion. WebKit and
-Firefox run only what can differ between engines, and the gallery's tests split so no
-browser loads every component at once. Faster releases, and far less memory. M
+**0.6.1: fixes from the community watch.** React toasts an agent can read
+([vercel-labs/ui#978](https://github.com/vercel-labs/ui/issues/978)), searchable selects
+checked against beta.13's [#931](https://github.com/vercel-labs/ui/issues/931), and no
+clipped focus rings in the chat's message list. S
+
+**Then: tests through the agent bridge, browsers only for rendering.** About a third of the
+browser tests only check behavior ("press Allow, the tool is done"); they move to Vitest,
+driving components through UI SDK's agent bridge with no browser. Chrome keeps what needs a
+real page: keys, focus, layout, contrast and motion. WebKit and Firefox run only what can
+differ between engines, and the gallery's tests split so no browser loads every component at
+once. Faster releases, and far less memory. M
 
 ## Next, in order
 
@@ -72,14 +77,15 @@ generative UI adapters.
 UI SDK is in public beta. UISet pins its exact version and moves with each release once the
 tests for what the release changes pass. UISet is on 0.1.0-beta.13. Problems we find in UI SDK
 go upstream with a test that shows them. Open now:
-[#780](https://github.com/vercel-labs/ui/issues/780) (a wheel in a drawer in WebKit) and
+[#780](https://github.com/vercel-labs/ui/issues/780) (a wheel in a drawer in WebKit),
 [#905](https://github.com/vercel-labs/ui/issues/905) (a tree reorder that knows which items
-take children). Fixed in beta.12 and beta.13, and UISet's workarounds gone:
-[#848](https://github.com/vercel-labs/ui/issues/848), [#856](https://github.com/vercel-labs/ui/issues/856)
-(Pagination's dev check), [#857](https://github.com/vercel-labs/ui/issues/857) and
-[#887](https://github.com/vercel-labs/ui/issues/887) (web tabs and scroll areas named as in
-React) and [#888](https://github.com/vercel-labs/ui/issues/888) (`createStickToBottom` with
-its rows in a wrapper).
+take children), [#927](https://github.com/vercel-labs/ui/issues/927) (a scroll area that
+stops following new content after a sub-pixel move at its end) and
+[#928](https://github.com/vercel-labs/ui/issues/928) (a press on the page lost while a modal
+closes). Fixed upstream, in the next beta:
+[#929](https://github.com/vercel-labs/ui/issues/929) (a closing popup still counted by the
+agent bridge). Fixed in beta.12 and beta.13, with UISet's workarounds gone: UI SDK's #848, #856,
+#857, #887 and #888 (details in HISTORY.md).
 
 ## Waiting on others
 
