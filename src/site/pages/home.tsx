@@ -23,19 +23,19 @@ import { Specimen } from "../specimen"
 // it scrolls. A release that adds something adds its entry here (lint: content/whats-new).
 const whatsNew = [
   {
-    date: "2026-11-20",
+    date: "2026-11-21",
     title: "Motion, per skin",
     href: "/docs/theming#motion",
     what: "Each skin opens and closes, turns on and off, and moves things its own way: Base glides, Blueprint draws, Studio snaps, Phosphor scans, Ink redraws. Reduced motion only fades.",
   },
   {
-    date: "2026-11-20",
+    date: "2026-11-21",
     title: "Motion pieces",
     href: "/docs/kits/motion",
     what: "A number ticker, text that reveals as it streams, a Thinking state and a crossfade, each skin its own way. People and agents read the real value.",
   },
   {
-    date: "2026-11-20",
+    date: "2026-11-21",
     title: "Agent parts",
     href: "/docs/kits/chat#agent-parts",
     what: "Tools that wait for your approval, subagent runs with their own steps, checkpoints to restore, a queue the composer fills while the agent works, and Vercel AI SDK messages drawn as they are. Live in the chat kit's demo and the chat-app template.",

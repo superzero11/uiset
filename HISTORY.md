@@ -2207,3 +2207,13 @@ vercel-labs/ui#905 (2026-11-19).
   bridge in Vitest; WebKit and Firefox will run only what can differ between engines (layout,
   CSS, contrast, motion). The run stopped at 355 of 1030; WebKit for 0.6.0 is still to do, at
   2 workers and 1 for the gallery specs.
+- 2026-11-21 — **Release 0.6.0, prepared.** Motion per skin, the Motion pieces, agent parts
+  (in the chat kit's demo and the chat-app template too), live kit sections, and the
+  composer's queue. Tested in all three browsers: Chrome and web (1025 passed, two phone-width
+  bugs found and fixed); WebKit in full in four guarded runs (big pages at 1 worker); Firefox
+  in Docker with its VM capped at 4 GB (`MemoryMiB` 4096 in Docker Desktop's settings, the
+  owner's yes), 1,002 passed, two Firefox page crashes during axe that pass on rerun. A
+  memory guard (pressure level, swap growth, browser size; it also stops the Docker
+  container) stopped runs before harm several times while the owner's Chrome and jobs ran.
+  Dated 2026-11-21, What's new too. The tarball packs 89 files, 300.9 kB; the fresh-app
+  install test passed (122 items). The owner publishes (`npm login` first).
