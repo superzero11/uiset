@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-    test(`the Board page passes axe in ${skin}, ${theme}`, async ({ page }) => {
+    test(`the Board page passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
       const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()
@@ -31,7 +31,7 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   }
 }
 
-test("a card moves by keyboard: the board redraws as it's carried, and Undo takes it back", async ({ page }) => {
+test("a card moves by keyboard: the board redraws as it's carried, and Undo takes it back", { tag: "@engine" }, async ({ page }) => {
   await card(page, "Keyboard shortcuts sheet").focus()
   await page.keyboard.press("Space")
   await page.keyboard.press("ArrowRight")
@@ -51,7 +51,7 @@ test("a card moves by keyboard: the board redraws as it's carried, and Undo take
   await expect(column(page, "Done").getByRole("option", { name: "Ship the beta" })).toBeFocused()
 })
 
-test("Undo focuses the card in the same task as the press, so nothing can come in between", async ({ page }) => {
+test("Undo focuses the card in the same task as the press, so nothing can come in between", { tag: "@engine" }, async ({ page }) => {
   await card(page, "Keyboard shortcuts sheet").focus()
   await page.keyboard.press("Space")
   await page.keyboard.press("ArrowRight")
@@ -66,7 +66,7 @@ test("Undo focuses the card in the same task as the press, so nothing can come i
   expect(focused).toBe("Keyboard shortcuts sheet")
 })
 
-test("a card drags to another column with the pointer", async ({ page }) => {
+test("a card drags to another column with the pointer", { tag: "@engine" }, async ({ page }) => {
   const from = (await card(page, "Ship the beta").boundingBox())!
   const to = (await column(page, "Backlog").boundingBox())!
   await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)
@@ -77,7 +77,7 @@ test("a card drags to another column with the pointer", async ({ page }) => {
   await expect(column(page, "Backlog").getByRole("option", { name: "Ship the beta" })).toBeVisible()
 })
 
-test("Enter opens the page's dialog; a move from it keeps limits and returns focus", async ({ page }) => {
+test("Enter opens the page's dialog; a move from it keeps limits and returns focus", { tag: "@engine" }, async ({ page }) => {
   await card(page, "Onboarding checklist").focus()
   await page.keyboard.press("Enter")
   const dialog = page.getByRole("dialog", { name: "Onboarding checklist" })
@@ -93,7 +93,7 @@ test("Enter opens the page's dialog; a move from it keeps limits and returns foc
   await expect(card(page, "Ship the beta")).toBeFocused()
 })
 
-test("Add a card opens a form; the page adds the card; Escape closes it", async ({ page }) => {
+test("Add a card opens a form; the page adds the card; Escape closes it", { tag: "@engine" }, async ({ page }) => {
   await board(page).getByRole("button", { name: "Add a card to Backlog" }).click()
   const title = page.getByRole("textbox", { name: "Title of the new card in Backlog" })
   await expect(title).toBeFocused()
@@ -107,7 +107,7 @@ test("Add a card opens a form; the page adds the card; Escape closes it", async 
   await expect(board(page).getByRole("button", { name: "Add a card to In review" })).toHaveCount(0)
 })
 
-test("search hides cards in place; focus skips them", async ({ page }) => {
+test("search hides cards in place; focus skips them", { tag: "@engine" }, async ({ page }) => {
   await page.getByRole("searchbox", { name: "Search cards" }).fill("login")
   await expect(card(page, "Fix the login redirect")).toBeVisible()
   await expect(card(page, "Dark mode for charts")).toBeHidden()
@@ -145,7 +145,7 @@ type Live = HTMLElement & {
 }
 const live = (page: Page, run: (el: Live) => unknown) => board(page).evaluate((el, code) => new Function("el", `return (${code})(el)`)(el), run.toString())
 
-test("a card whose details change is patched in place and keeps focus; `today` is an attribute", async ({ page }) => {
+test("a card whose details change is patched in place and keeps focus; `today` is an attribute", { tag: "@engine" }, async ({ page }) => {
   await card(page, "Ship the beta").focus()
   await live(page, (el) => (el.cards = { ...el.cards, c7: { ...el.cards.c7, title: "Ship the beta now", due: "2026-11-10" } }))
   await expect(card(page, "Ship the beta now")).toBeFocused()
@@ -174,7 +174,7 @@ test("renamed columns and a new renderCard redraw; counts include every id, in w
   expect(await live(page, (el) => (el.lanes.done!.push("c1"), el.lanes.done!.includes("c1")))).toBe(false)
 })
 
-test("without addable and openable the board neither adds nor opens, and agents are told", async ({ page }) => {
+test("without addable and openable the board neither adds nor opens, and agents are told", { tag: "@engine" }, async ({ page }) => {
   await board(page).evaluate((el) => (el.removeAttribute("addable"), el.removeAttribute("openable")))
   await expect(board(page).getByRole("button", { name: /Add a card/ })).toHaveCount(0)
   await card(page, "Ship the beta").focus()
@@ -196,7 +196,7 @@ test("the page's own description stays; the board's help is added to it", async 
   await expect(board(page)).toHaveAccessibleDescription(/^Team Atlas\. Arrow keys move/)
 })
 
-test("a focused card the filter hides hands focus on; a stale hidden id doesn't stop moves", async ({ page }) => {
+test("a focused card the filter hides hands focus on; a stale hidden id doesn't stop moves", { tag: "@engine" }, async ({ page }) => {
   await card(page, "Keyboard shortcuts sheet").focus()
   await live(page, (el) => (el.hiddenCards = ["c2"]))
   await expect(card(page, "Audit the cookie banner")).toBeFocused()
@@ -208,7 +208,7 @@ test("a focused card the filter hides hands focus on; a stale hidden id doesn't 
   await page.keyboard.press("Escape")
 })
 
-test("Undo takes back its own move only; a deleted card comes back with Undo", async ({ page }) => {
+test("Undo takes back its own move only; a deleted card comes back with Undo", { tag: "@engine" }, async ({ page }) => {
   const toastFor = (text: string) => page.getByRole("region", { name: "Notifications" }).locator("ui-toast", { hasText: text })
   await act(page, [{ ref: "Sprint board", action: "moveCard", args: ["Keyboard shortcuts sheet", "Done"] }])
   await act(page, [{ ref: "Sprint board", action: "moveCard", args: ["Ship the beta", "Backlog"] }])

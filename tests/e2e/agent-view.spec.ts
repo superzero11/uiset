@@ -94,7 +94,7 @@ test("a kit's page has its own view, and the library's cards stay out of agents'
   expect((await snapshot(page)).some((e) => e.component === "data-grid")).toBe(false)
 })
 
-test("a kit whose demo loads after the panel still lists its controls", async ({ page }) => {
+test("a kit whose demo loads after the panel still lists its controls", { tag: "@engine" }, async ({ page }) => {
   // Agent view starts on, so the panel reads before the demo's code arrives; the bridge's
   // subscribe doesn't report components arriving, so the panel must notice the stage grow.
   await page.addInitScript(() => localStorage.setItem("uiset-agent-view", "on"))
@@ -111,7 +111,7 @@ for (const [skin, theme] of [
   ["phosphor", "dark"],
   ["ink", "light"],
 ] as const) {
-  test(`the panel passes axe in ${skin}, ${theme}`, async ({ page }) => {
+  test(`the panel passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
     await page.goto(`/docs/components/select?skin=${skin}&theme=${theme}`)
     await expect(page.getByRole("combobox", { name: "Role" })).toBeVisible({ timeout: 20_000 })
@@ -124,7 +124,7 @@ for (const [skin, theme] of [
   })
 }
 
-test("on a phone the panel goes under the example, and the page doesn't scroll sideways", async ({ page }) => {
+test("on a phone the panel goes under the example, and the page doesn't scroll sideways", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto("/docs/components/select")
   await expect(page.getByRole("combobox", { name: "Role" })).toBeVisible({ timeout: 20_000 })

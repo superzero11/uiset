@@ -40,7 +40,7 @@ test("opening the page loads its first examples, not all of them, and they draw 
   await expect(page.getByRole("heading", { level: 3, name: "Timeline", exact: true })).toBeAttached()
 })
 
-test("a card coming into view loads even while others are still loading", async ({ page }) => {
+test("a card coming into view loads even while others are still loading", { tag: "@engine" }, async ({ page }) => {
   // The background fill is stuck on held examples; scrolling to the last card loads it anyway.
   const requested = await trackExamples(page, (slug) => slug === "select" || slug === "combobox")
   await page.goto("/gallery")
@@ -52,7 +52,7 @@ test("a card coming into view loads even while others are still loading", async 
   expect(requested.size).toBeGreaterThan(firstSix.length)
 })
 
-test("a link to an example far down the page lands on it, without scroll anchoring too", async ({ page }) => {
+test("a link to an example far down the page lands on it, without scroll anchoring too", { tag: "@engine" }, async ({ page }) => {
   // Browsers keep a link's target in view as content above it loads, scroll anchoring or not
   // (Safari has had overflow-anchor only since 27).
   await page.addInitScript(() => {

@@ -26,7 +26,7 @@ test("run commands; output keeps its colors and links; errors read in the danger
   await expect(output(page)).toContainText("frobnicate: command not found. Type help for the list.")
 })
 
-test("Up brings back earlier commands; history lists them", async ({ page }) => {
+test("Up brings back earlier commands; history lists them", { tag: "@engine" }, async ({ page }) => {
   await run(page, "echo one")
   await run(page, "echo two")
   await input(page).press("ArrowUp")
@@ -40,7 +40,7 @@ test("Up brings back earlier commands; history lists them", async ({ page }) => 
   await expect(output(page)).toContainText("2  echo one")
 })
 
-test("Tab completes a command or a file, lists several, and leaves an empty prompt alone", async ({ page }) => {
+test("Tab completes a command or a file, lists several, and leaves an empty prompt alone", { tag: "@engine" }, async ({ page }) => {
   await input(page).fill("ec")
   await input(page).press("Tab")
   await expect(input(page)).toHaveValue("echo ")
@@ -58,7 +58,7 @@ test("Tab completes a command or a file, lists several, and leaves an empty prom
   await expect(input(page)).not.toBeFocused()
 })
 
-test("a streamed command redraws its progress line; Ctrl+C stops a long one", async ({ page }) => {
+test("a streamed command redraws its progress line; Ctrl+C stops a long one", { tag: "@engine" }, async ({ page }) => {
   await run(page, "build")
   await expect(output(page)).toContainText("✓ Built in 0.6s")
   await expect(output(page).getByText("Building greeter…")).toHaveCount(1)
@@ -74,7 +74,7 @@ test("a streamed command redraws its progress line; Ctrl+C stops a long one", as
   expect(await output(page).locator(".terminal-line").count()).toBe(count)
 })
 
-test("Ctrl+L clears the screen", async ({ page }) => {
+test("Ctrl+L clears the screen", { tag: "@engine" }, async ({ page }) => {
   await run(page, "ls")
   await input(page).press("Control+l")
   await expect(output(page).locator(".terminal-line")).toHaveCount(0)
@@ -94,7 +94,7 @@ test("agents run commands and read the output", async ({ page }) => {
   expect(items).toEqual(expect.arrayContaining(["~/greeter $ echo from an agent", "from an agent"]))
 })
 
-test("every ANSI color clears 4.5:1 on the terminal in every skin and theme", async ({ page }) => {
+test("every ANSI color clears 4.5:1 on the terminal in every skin and theme", { tag: "@engine" }, async ({ page }) => {
   test.slow() // one page load per skin and theme
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     for (const theme of ["light", "dark"]) {
@@ -138,7 +138,7 @@ test.describe("review fixes", () => {
     await expect(output(page).locator('.terminal-line[data-kind="out"]', { hasText: /Install/ })).toHaveCount(1)
   })
 
-  test("Ctrl+C gives the prompt back at once, even from a command that ignores it", async ({ page }) => {
+  test("Ctrl+C gives the prompt back at once, even from a command that ignores it", { tag: "@engine" }, async ({ page }) => {
     await run(page, "sleep 5")
     await expect(term(page)).toHaveAttribute("data-running", "")
     await input(page).press("Control+c")
@@ -162,7 +162,7 @@ test.describe("review fixes", () => {
     expect(result.error?.message).toMatch(/one line of plain text/)
   })
 
-  test("the log announces new lines, not redraws; the prompt is named Command line", async ({ page }) => {
+  test("the log announces new lines, not redraws; the prompt is named Command line", { tag: "@engine" }, async ({ page }) => {
     await expect(output(page)).toHaveAttribute("aria-relevant", "additions")
     await expect(input(page)).toHaveAccessibleName("Command line")
     await input(page).fill("cat ")
@@ -171,14 +171,14 @@ test.describe("review fixes", () => {
     await expect(output(page).locator(".terminal-line").last()).toHaveAttribute("aria-hidden", "true")
   })
 
-  test("in a narrow terminal the prompt keeps room to type while a command runs", async ({ page }) => {
+  test("in a narrow terminal the prompt keeps room to type while a command runs", { tag: "@engine" }, async ({ page }) => {
     await term(page).evaluate((el) => (el.style.inlineSize = "300px"))
     await run(page, "sleep 2")
     const width = await input(page).evaluate((el) => el.getBoundingClientRect().width)
     expect(width).toBeGreaterThan(60)
   })
 
-  test("New output below brings you to the end and puts you back in the prompt", async ({ page }) => {
+  test("New output below brings you to the end and puts you back in the prompt", { tag: "@engine" }, async ({ page }) => {
     await run(page, "help")
     await run(page, "help")
     await run(page, "ping here")
@@ -190,7 +190,7 @@ test.describe("review fixes", () => {
     await input(page).press("Control+c")
   })
 
-  test("badges, dim and grey text keep 4.5:1 on their own backgrounds in every skin and theme", async ({ page }) => {
+  test("badges, dim and grey text keep 4.5:1 on their own backgrounds in every skin and theme", { tag: "@engine" }, async ({ page }) => {
     test.slow() // one page load per skin and theme
     for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
       for (const theme of ["light", "dark"]) {

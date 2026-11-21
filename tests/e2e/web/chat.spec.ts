@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 // The React chat lost following after a wheel at its end over a one-pixel rounding (2026-11-20,
 // like shadcn-ui/ui#12766; site.spec.ts reproduces it). This build doesn't round that way here,
 // so this guards that a wheel and End at the end keep following, with the same re-arm wired in.
-test("the thread keeps following after a wheel or End at its end", async ({ page }) => {
+test("the thread keeps following after a wheel or End at its end", { tag: "@engine" }, async ({ page }) => {
   await ask(page, "What's left?")
   await page.addStyleTag({ content: ".chat-thread-frame { max-height: 220px }" })
   const log = page.locator(".chat-thread-log").first()
@@ -47,7 +47,7 @@ test("the thread keeps following after a wheel or End at its end", async ({ page
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-    test(`the Chat page passes axe in ${skin}, ${theme}, with an answer showing`, async ({ page }) => {
+    test(`the Chat page passes axe in ${skin}, ${theme}, with an answer showing`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
       await ask(page, "What's left?")
@@ -151,7 +151,7 @@ test("with several replies on the page, the check still scores 100", async ({ pa
   expect(report.score, formatAgentReadiness(report, "chat")).toBe(100)
 })
 
-test("while it answers, the composer shows Stop, and Stop ends the answer", async ({ page }) => {
+test("while it answers, the composer shows Stop, and Stop ends the answer", { tag: "@engine" }, async ({ page }) => {
   await page.locator("uiset-chat-composer").evaluate((el) => el.addEventListener("stop", () => ((window as unknown as { stops: number }).stops = ((window as unknown as { stops?: number }).stops ?? 0) + 1)))
   await composer(page).fill("Go")
   await composer(page).press("Enter")
@@ -179,7 +179,7 @@ test("a tool call waiting on the person offers Allow and Deny, and reports the c
   expect(await page.evaluate(() => (window as unknown as { approved: unknown }).approved)).toEqual({ value: false, id: "a", part: 0 })
 })
 
-test("the thread list selects, renames and deletes after asking", async ({ page }) => {
+test("the thread list selects, renames and deletes after asking", { tag: "@engine" }, async ({ page }) => {
   const threads = page.getByRole("navigation", { name: "Chats" })
   await threads.getByRole("button", { name: "Open Pricing page copy", exact: true }).click()
   await expect(threads.getByRole("button", { name: "Open Pricing page copy", exact: true })).toHaveAttribute("aria-current", "page")
@@ -274,7 +274,7 @@ test("properties set before the elements are defined still draw", async ({ page 
   await expect(page.getByText("How can I help?")).toBeVisible()
 })
 
-test("while an answer streams, an open tool call, Wrap and focus stay as they were", async ({ page }) => {
+test("while an answer streams, an open tool call, Wrap and focus stay as they were", { tag: "@engine" }, async ({ page }) => {
   // The page's model is held mid-answer, as if tokens keep coming.
   await page.locator("uiset-chat").evaluate((el) => {
     const chat = el as unknown as { messages: unknown[]; status: string }
@@ -295,7 +295,7 @@ test("while an answer streams, an open tool call, Wrap and focus stay as they we
   await expect(answer.getByRole("button", { name: "Wrap lines" })).toBeFocused()
 })
 
-test("the composer sends a FileList, and Enter sends when the menu finds nothing", async ({ page }) => {
+test("the composer sends a FileList, and Enter sends when the menu finds nothing", { tag: "@engine" }, async ({ page }) => {
   await page.locator("uiset-chat-composer").evaluate((el) =>
     el.addEventListener("send", (e) => ((window as unknown as { sent: unknown }).sent = { isList: (e as CustomEvent).detail.files instanceof FileList, text: (e as CustomEvent).detail.text })),
   )
@@ -307,7 +307,7 @@ test("the composer sends a FileList, and Enter sends when the menu finds nothing
   await expect(composer(page)).toBeFocused()
 })
 
-test("the chat list keeps focus on what you chose, and a rename finished elsewhere leaves focus there", async ({ page }) => {
+test("the chat list keeps focus on what you chose, and a rename finished elsewhere leaves focus there", { tag: "@engine" }, async ({ page }) => {
   const threads = page.getByRole("navigation", { name: "Chats" })
   await threads.getByRole("button", { name: "Open Pricing page copy", exact: true }).focus()
   await page.keyboard.press("Enter")

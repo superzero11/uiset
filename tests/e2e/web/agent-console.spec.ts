@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-    test(`the Agent Console page passes axe in ${skin}, ${theme}`, async ({ page }) => {
+    test(`the Agent Console page passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
       await suggestion(page, "Make it public and move it to Europe").click()

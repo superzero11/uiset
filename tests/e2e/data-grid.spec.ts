@@ -40,7 +40,7 @@ test.beforeEach(async ({ page }) => {
 })
 
 for (const scheme of ["light", "dark"] as const) {
-  test(`passes axe in ${scheme} mode, with a range, a group and the editor open`, async ({
+  test(`passes axe in ${scheme} mode, with a range, a group and the editor open`, { tag: "@engine" }, async ({
     page,
   }) => {
     await page.emulateMedia({ colorScheme: scheme, reducedMotion: "reduce" })
@@ -74,7 +74,7 @@ for (const scheme of ["light", "dark"] as const) {
   })
 }
 
-test("one tab stop: Tab enters the grid and the next Tab leaves it", async ({ page }) => {
+test("one tab stop: Tab enters the grid and the next Tab leaves it", { tag: "@engine" }, async ({ page }) => {
   await section(page).getByRole("button", { name: "Export CSV" }).focus()
   await page.keyboard.press("Tab")
   await expect.poll(() => active(page)).toMatchObject({ row: 1, col: 1 })
@@ -88,7 +88,7 @@ test("one tab stop: Tab enters the grid and the next Tab leaves it", async ({ pa
   await expect.poll(() => active(page)).toMatchObject({ row: 2, col: 2 })
 })
 
-test("Enter on a header sorts, and Shift+Enter adds a second sort", async ({ page }) => {
+test("Enter on a header sorts, and Shift+Enter adds a second sort", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 1, 6)
   const amount = grid(page).getByRole("columnheader", { name: /Amount/ })
   await page.keyboard.press("Enter")
@@ -105,7 +105,7 @@ test("Enter on a header sorts, and Shift+Enter adds a second sort", async ({ pag
   await expect(amount).toHaveAttribute("aria-sort", "descending")
 })
 
-test("Enter edits a cell, bad numbers stay open with a message, Escape cancels", async ({
+test("Enter edits a cell, bad numbers stay open with a message, Escape cancels", { tag: "@engine" }, async ({
   page,
 }) => {
   await moveTo(page, 2, 6)
@@ -132,7 +132,7 @@ test("Enter edits a cell, bad numbers stay open with a message, Escape cancels",
   await expect(cellAt(page, 2, 6)).toHaveText("$1,234.50")
 })
 
-test("typing on a list cell starts a replacement: the list narrows, and only an option can be saved", async ({
+test("typing on a list cell starts a replacement: the list narrows, and only an option can be saved", { tag: "@engine" }, async ({
   page,
 }) => {
   await moveTo(page, 2, 4)
@@ -163,7 +163,7 @@ test("typing on a list cell starts a replacement: the list narrows, and only an 
   await expect(cellAt(page, 2, 4)).toHaveText("Europe")
 })
 
-test("a list column is edited from the skin's own list: arrows, Enter, Escape, Tab and a press", async ({ page }) => {
+test("a list column is edited from the skin's own list: arrows, Enter, Escape, Tab and a press", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 2, 5)
   const cell = cellAt(page, 2, 5)
   const before = (await cell.textContent())!
@@ -257,7 +257,7 @@ const drawn = (page: Page) =>
       }
     })
 
-test("an editor's ring stays inside its cell, and a list editor shows the skin's chevron", async ({ page }) => {
+test("an editor's ring stays inside its cell, and a list editor shows the skin's chevron", { tag: "@engine" }, async ({ page }) => {
   // 6 Amount is a plain editor; 4 Region has a list of options.
   for (const [col, list] of [
     [6, false],
@@ -281,7 +281,7 @@ test("an editor's ring stays inside its cell, and a list editor shows the skin's
   }
 })
 
-test("Space flips a yes-or-no cell and checks a row", async ({ page }) => {
+test("Space flips a yes-or-no cell and checks a row", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 2, 8)
   const before = await cellAt(page, 2, 8).textContent()
   await page.keyboard.press("Space")
@@ -297,7 +297,7 @@ test("Space flips a yes-or-no cell and checks a row", async ({ page }) => {
   await expect(section(page).getByRole("button", { name: "Mark paid" })).toBeVisible()
 })
 
-test("Control+End reaches the last of 10,000 rows, rendering only a few", async ({ page }) => {
+test("Control+End reaches the last of 10,000 rows, rendering only a few", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 2, 2)
   await page.keyboard.press("ControlOrMeta+End")
   await expect.poll(() => active(page)).toMatchObject({ row: 10001, col: 8 })
@@ -307,7 +307,7 @@ test("Control+End reaches the last of 10,000 rows, rendering only a few", async 
   await expect.poll(() => active(page)).toMatchObject({ row: 1, col: 1 })
 })
 
-test("copy and paste a block through the system clipboard", async ({ page, context, browserName }) => {
+test("copy and paste a block through the system clipboard", { tag: "@engine" }, async ({ page, context, browserName }) => {
   test.skip(browserName !== "chromium", "Playwright can grant clipboard access only in Chromium")
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await moveTo(page, 2, 3)
@@ -327,7 +327,7 @@ test("copy and paste a block through the system clipboard", async ({ page, conte
   await expect(cellAt(page, 6, 3)).toHaveText(second!)
 })
 
-test("Shift+F10 opens a column menu that hides and pins, and focus comes back", async ({
+test("Shift+F10 opens a column menu that hides and pins, and focus comes back", { tag: "@engine" }, async ({
   page,
 }) => {
   await moveTo(page, 1, 3)
@@ -351,7 +351,7 @@ test("Shift+F10 opens a column menu that hides and pins, and focus comes back", 
   await expect(status).toHaveCSS("position", "sticky")
 })
 
-test("Alt+Arrows resize a column and Alt+Shift+Arrows move it, with focus following", async ({
+test("Alt+Arrows resize a column and Alt+Shift+Arrows move it, with focus following", { tag: "@engine" }, async ({
   page,
 }) => {
   await moveTo(page, 1, 4)
@@ -366,7 +366,7 @@ test("Alt+Arrows resize a column and Alt+Shift+Arrows move it, with focus follow
   await expect.poll(() => active(page)).toMatchObject({ row: 1, col: 5, text: "Region" })
 })
 
-test("the toolbar searches, filters by column, groups and exports a CSV", async ({ page }) => {
+test("the toolbar searches, filters by column, groups and exports a CSV", { tag: "@engine" }, async ({ page }) => {
   const footer = section(page).locator(".data-grid-footer")
   await section(page).getByRole("searchbox", { name: "Search orders" }).fill("wonka europe")
   await expect(footer).toContainText(/^\d[\d,]* of 10,000 rows/)
@@ -404,7 +404,7 @@ test("the toolbar searches, filters by column, groups and exports a CSV", async 
   expect(lines).toHaveLength(filtered + 1)
 })
 
-test("dragging a header's edge resizes the column, and Escape puts it back", async ({ page }) => {
+test("dragging a header's edge resizes the column, and Escape puts it back", { tag: "@engine" }, async ({ page }) => {
   const header = grid(page).getByRole("columnheader", { name: /Customer/ })
   const box = (await header.boundingBox())!
   const handle = header.locator(".data-grid-resizer")
@@ -425,7 +425,7 @@ test("dragging a header's edge resizes the column, and Escape puts it back", asy
   await expect.poll(async () => (await header.boundingBox())!.width).toBeCloseTo(wide, 0)
 })
 
-test("the layout is remembered on the next visit", async ({ page }) => {
+test("the layout is remembered on the next visit", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 1, 4)
   await page.keyboard.press("Alt+Shift+ArrowRight")
   await expect(grid(page).getByRole("columnheader", { name: /Region/ })).toHaveAttribute(
@@ -439,7 +439,7 @@ test("the layout is remembered on the next visit", async ({ page }) => {
   )
 })
 
-test("clicking a row checkbox selects its row and keeps the arrows working", async ({ page }) => {
+test("clicking a row checkbox selects its row and keeps the arrows working", { tag: "@engine" }, async ({ page }) => {
   await grid(page).getByRole("checkbox").nth(1).click()
   await expect(grid(page).getByRole("checkbox").nth(1)).toBeChecked()
   await expect(grid(page).getByRole("row").nth(1)).toHaveAttribute("aria-selected", "true")
@@ -452,7 +452,7 @@ test("clicking a row checkbox selects its row and keeps the arrows working", asy
 })
 
 // The skins audit (2026-11-20): the browser drew the row checkboxes, light grey in dark skins.
-test("row checkboxes are drawn by the skin, not the browser, and show their check", async ({ page }) => {
+test("row checkboxes are drawn by the skin, not the browser, and show their check", { tag: "@engine" }, async ({ page }) => {
   const box = grid(page).getByRole("checkbox").nth(1)
   await expect(box).toHaveCSS("appearance", "none")
   const unchecked = await box.evaluate((el) => getComputedStyle(el).backgroundColor)
@@ -464,7 +464,7 @@ test("row checkboxes are drawn by the skin, not the browser, and show their chec
   await expect(grid(page).getByRole("checkbox", { name: "Select all rows" })).toHaveAttribute("data-indeterminate", "")
 })
 
-test("a refused edit's message stays with that cell", async ({ page }) => {
+test("a refused edit's message stays with that cell", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 2, 6)
   await page.keyboard.press("Enter")
   await page.keyboard.press("ControlOrMeta+A")
@@ -482,7 +482,7 @@ test("a refused edit's message stays with that cell", async ({ page }) => {
   await expect(grid(page).getByText("Amount needs a number")).toHaveCount(0)
 })
 
-test("a focused cell scrolls under the header, and under pinned columns", async ({ page }) => {
+test("a focused cell scrolls under the header, and under pinned columns", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 3, 3)
   const scroller = section(page).locator(".data-grid-scroller")
   await scroller.evaluate((el) => (el.scrollTop = 60))
@@ -497,7 +497,7 @@ test("a focused cell scrolls under the header, and under pinned columns", async 
 
 // A column menu's button doesn't take focus when pressed, so UI SDK alone returned focus to
 // whichever header had it before: Escape from Status's menu went back to Region.
-test("Escape from a column menu opened by its button goes to that column's header", async ({ page }) => {
+test("Escape from a column menu opened by its button goes to that column's header", { tag: "@engine" }, async ({ page }) => {
   await grid(page).getByRole("columnheader", { name: /^Region/ }).focus()
   await grid(page).getByRole("button", { name: "Status column menu" }).click()
   await expect(page.getByRole("menu")).toBeVisible()
@@ -513,7 +513,7 @@ test("Escape from a column menu opened by its button goes to that column's heade
   await expect(grid(page).getByRole("columnheader", { name: /^Status/ })).not.toBeFocused()
 })
 
-test("touch and screen reader users reach the column menu by its button, with Wider", async ({
+test("touch and screen reader users reach the column menu by its button, with Wider", { tag: "@engine" }, async ({
   page,
 }) => {
   const header = grid(page).getByRole("columnheader", { name: /Region/ })

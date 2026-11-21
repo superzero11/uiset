@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/")
 })
 
-test("the search field: / focuses it, typing shows Clear, Clear empties it and keeps focus", async ({ page }) => {
+test("the search field: / focuses it, typing shows Clear, Clear empties it and keeps focus", { tag: "@engine" }, async ({ page }) => {
   const field = page.locator("#search")
   const box = page.getByRole("searchbox", { name: "Search projects" })
   await expect(box).toHaveAttribute("aria-keyshortcuts", "/")
@@ -31,7 +31,7 @@ test("the search field: / focuses it, typing shows Clear, Clear empties it and k
   expect(await page.evaluate(() => (window as unknown as { seen: string[] }).seen.at(-1))).toBe("")
 })
 
-test("the copy button copies its value and says Copied", async ({ page, context, browserName }) => {
+test("the copy button copies its value and says Copied", { tag: "@engine" }, async ({ page, context, browserName }) => {
   test.skip(browserName !== "chromium", "Playwright can grant clipboard access only in Chromium")
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   const button = page.getByRole("button", { name: "Copy install command" })

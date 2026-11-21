@@ -54,7 +54,7 @@ test("Tailwind's reset doesn't strip UISet's controls", async ({ page }) => {
   expect(await look(page)).toEqual(plain)
 })
 
-test("Tailwind's utility classes win over UISet's styles", async ({ page }) => {
+test("Tailwind's utility classes win over UISet's styles", { tag: "@engine" }, async ({ page }) => {
   await withTailwind(page)
   await openGallery(page, "/gallery")
   await ready(page)

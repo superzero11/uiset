@@ -128,7 +128,7 @@ test("an agent's fill with problems shows them under the fields, and tells the a
   await expect(form(page).getByRole("textbox", { name: "Email" })).toHaveAttribute("aria-invalid", "true")
 })
 
-test("the form fits a phone's width, and its review stacks", async ({ page }) => {
+test("the form fits a phone's width, and its review stacks", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 })
   await open(page)
   await form(page).getByRole("textbox", { name: "Email" }).fill("grace@example.com")
@@ -142,7 +142,7 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
     // Plain DOM queries only: in Playwright's Firefox a role query before an axe scan crashes the page.
-    test(`passes axe in ${skin}, ${theme}, with a problem showing and on the review`, async ({ page }) => {
+    test(`passes axe in ${skin}, ${theme}, with a problem showing and on the review`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await openGallery(page, `/gallery?skin=${skin}&theme=${theme}`)
       const card = page.locator("section.example:has(.schema-form)")

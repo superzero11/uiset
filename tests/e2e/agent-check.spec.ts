@@ -49,7 +49,7 @@ test.describe("the Agents page demo", () => {
   })
 
   for (const theme of ["light", "dark"] as const) {
-    test(`passes axe in ${theme}, with the problems showing`, async ({ page, browserName }) => {
+    test(`passes axe in ${theme}, with the problems showing`, { tag: "@engine" }, async ({ page, browserName }) => {
       test.fixme(browserName === "firefox", "Playwright's Firefox crashes (signal 11) while automation inspects this page; normal use doesn't (HISTORY.md decision log, 2026-11-15)")
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await expect(demo(page).locator(".readiness-problems li")).toHaveCount(3)

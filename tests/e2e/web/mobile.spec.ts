@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-    test(`the Mobile page passes axe in ${skin}, ${theme}`, async ({ page }) => {
+    test(`the Mobile page passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
       const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()
@@ -29,7 +29,7 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   }
 }
 
-test("rows from data: keys reach the actions, and focus goes to the row now in its place", async ({ page }) => {
+test("rows from data: keys reach the actions, and focus goes to the row now in its place", { tag: "@engine" }, async ({ page }) => {
   await row(page, "Ada Lovelace").focus()
   await page.keyboard.press("ArrowLeft")
   await expect(row(page, "Ada Lovelace").getByRole("button", { name: "Archive" })).toBeFocused()
@@ -46,7 +46,7 @@ test("rows from data: keys reach the actions, and focus goes to the row now in i
   await expect(page.getByRole("button", { name: "Inbox, 1 new" })).toBeVisible()
 })
 
-test("a long swipe runs the side's first action; Enter opens a row", async ({ page }) => {
+test("a long swipe runs the side's first action; Enter opens a row", { tag: "@engine" }, async ({ page }) => {
   const box = (await row(page, "Linus Pauling").boundingBox())!
   const [x, y] = [box.x + box.width - 20, box.y + box.height / 2]
   await page.mouse.move(x, y)
@@ -59,7 +59,7 @@ test("a long swipe runs the side's first action; Enter opens a row", async ({ pa
   await expect(page.getByRole("region", { name: "Notifications" }).getByText("Opened “Compiler notes for Friday”")).toBeVisible()
 })
 
-test("each row's actions menu is there for screen readers, named for its row", async ({ page }) => {
+test("each row's actions menu is there for screen readers, named for its row", { tag: "@engine" }, async ({ page }) => {
   const menu = row(page, "Ada Lovelace").getByRole("button", { name: "Actions for Unread, Ada Lovelace: The engine's second table" })
   await menu.focus()
   await expect(menu).toBeInViewport()
@@ -89,7 +89,7 @@ test("agents run safe actions and open rows by name; Delete needs the person", a
   expect(items).toContain("Linus Pauling: Lab booking moved (actions: Unread, Archive, Delete)")
 })
 
-test("pull down to refresh; the keyboard has a Refresh button; a failure is announced", async ({ page }) => {
+test("pull down to refresh; the keyboard has a Refresh button; a failure is announced", { tag: "@engine" }, async ({ page }) => {
   const box = (await page.locator("uiset-pull-refresh").boundingBox())!
   await page.mouse.move(box.x + box.width / 2, box.y + 30)
   await page.mouse.down()
@@ -123,7 +123,7 @@ test("the action sheet returns its choice; Delete all can be undone", async ({ p
   await expect(row(page, "Grace Hopper")).toBeVisible()
 })
 
-test("the tab bar switches screens; wheels in a sheet set a time by keys and by agents", async ({ page }) => {
+test("the tab bar switches screens; wheels in a sheet set a time by keys and by agents", { tag: "@engine" }, async ({ page }) => {
   await page.getByRole("button", { name: "Alarms" }).click()
   await expect(page.getByRole("button", { name: "Alarms" })).toHaveAttribute("aria-current", "page")
   await expect(page.getByRole("heading", { name: "Alarms" })).toBeVisible()
@@ -142,7 +142,7 @@ test("the tab bar switches screens; wheels in a sheet set a time by keys and by 
   await expect(page.locator(".mobile-alarm-time", { hasText: "8:45 AM" })).toBeVisible()
 })
 
-test("v-model on a wheel: its value is the listbox's, and a turn fires input once it's in", async ({ page }) => {
+test("v-model on a wheel: its value is the listbox's, and a turn fires input once it's in", { tag: "@engine" }, async ({ page }) => {
   await page.getByRole("button", { name: "Alarms" }).click()
   await page.getByRole("button", { name: "New alarm" }).click()
   const sheet = page.getByRole("dialog", { name: "New alarm" })
@@ -172,7 +172,7 @@ test("a value an agent sets on a wheel stays while the sheet is still opening", 
   await expect(page.getByRole("dialog", { name: "New alarm" }).getByRole("button", { name: "Save alarm for 3:30 AM" })).toBeVisible()
 })
 
-test("a focused row shows its ring inside the row, in every skin", async ({ page }) => {
+test("a focused row shows its ring inside the row, in every skin", { tag: "@engine" }, async ({ page }) => {
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     await page.locator("uiset-root").evaluate((el, s) => el.setAttribute("skin", s), skin)
     await row(page, "Grace Hopper").focus()
@@ -185,7 +185,7 @@ test("a focused row shows its ring inside the row, in every skin", async ({ page
   }
 })
 
-test("an action from a row's menu hands focus to the row now in its place; the last row's to the one before", async ({ page }) => {
+test("an action from a row's menu hands focus to the row now in its place; the last row's to the one before", { tag: "@engine" }, async ({ page }) => {
   await row(page, "Ada Lovelace").getByRole("button", { name: /Actions for/ }).focus()
   await page.keyboard.press("Enter")
   await page.getByRole("menuitem", { name: "Archive" }).click()
@@ -197,7 +197,7 @@ test("an action from a row's menu hands focus to the row now in its place; the l
   await expect(row(page, "Grace Hopper")).toBeFocused()
 })
 
-test("rows are kept by id: reordering and relabeling leave focus where it was", async ({ page }) => {
+test("rows are kept by id: reordering and relabeling leave focus where it was", { tag: "@engine" }, async ({ page }) => {
   await row(page, "Ada Lovelace").focus()
   await page.locator("uiset-swipe-list").evaluate((el) => {
     const list = el as unknown as { items: { label?: string }[] }
@@ -213,7 +213,7 @@ test("rows are kept by id: reordering and relabeling leave focus where it was", 
   await expect(row(page, "relabeled").getByRole("button", { name: "Archive" })).toBeFocused()
 })
 
-test("without openable, rows don't open, and agents are told so", async ({ page }) => {
+test("without openable, rows don't open, and agents are told so", { tag: "@engine" }, async ({ page }) => {
   await page.locator("uiset-swipe-list").evaluate((el) => el.removeAttribute("openable"))
   await page.locator("uiset-swipe-list").evaluate((el) => {
     const list = el as unknown as { items: unknown[] }
@@ -227,7 +227,7 @@ test("without openable, rows don't open, and agents are told so", async ({ page 
   expect(opened.error?.message).toContain("These rows don't open")
 })
 
-test("pull to refresh keeps its Refresh button focused while busy, takes words and threshold, and survives a framework's clear", async ({ page }) => {
+test("pull to refresh keeps its Refresh button focused while busy, takes words and threshold, and survives a framework's clear", { tag: "@engine" }, async ({ page }) => {
   const refresh = page.locator("uiset-pull-refresh")
   const button = page.getByRole("button", { name: "Refresh" })
   await button.focus()

@@ -24,7 +24,7 @@ function styles(page: Page, root: string) {
 test.describe.configure({ mode: "parallel" })
 
 for (const item of uiSdkComponents) {
-  test(`${item}'s example looks the same on its docs page`, async ({ page }) => {
+  test(`${item}'s example looks the same on its docs page`, { tag: "@engine" }, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" })
     const meta = exampleMetas.find((m) => m.slug === exampleSlugByItem.get(item))!
     const id = `example-${meta.title.toLowerCase().replace(/\W+/g, "-")}`
@@ -51,7 +51,7 @@ for (const item of uiSdkComponents) {
 // A popup opens next to its trigger on a docs page. The docs' example once kept a loading
 // example's 8rem of room after it drew, so its trigger stretched to fill it and the hover card
 // opened far below the link.
-test("a hover card opens next to its link on its docs page", async ({ page }) => {
+test("a hover card opens next to its link on its docs page", { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto("/docs/components/hover-card")
   const trigger = page.locator(".docs-preview [data-slot='hover-card-trigger']").first()

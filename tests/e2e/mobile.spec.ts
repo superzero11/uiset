@@ -32,7 +32,7 @@ test("a short swipe shows a row's actions; a long one runs the first", async ({ 
   await expect(row(page, "Margaret Hamilton")).toBeVisible()
 })
 
-test("by keyboard: arrows between rows, Left to the actions, Escape back, Enter opens", async ({ page }) => {
+test("by keyboard: arrows between rows, Left to the actions, Escape back, Enter opens", { tag: "@engine" }, async ({ page }) => {
   await row(page, "Grace Hopper").focus()
   await page.keyboard.press("ArrowDown")
   await expect(row(page, "Ada Lovelace")).toBeFocused()
@@ -56,7 +56,7 @@ test("hidden actions are out of reach until shown", async ({ page }) => {
   await expect(actions).toHaveAttribute("inert", "")
 })
 
-test("pull down at the top to refresh; the tab bar counts what's new", async ({ page }) => {
+test("pull down at the top to refresh; the tab bar counts what's new", { tag: "@engine" }, async ({ page }) => {
   await expect(phone(page).getByRole("button", { name: "Inbox, 2 new" })).toHaveAttribute("aria-current", "page")
   const box = (await list(page).boundingBox())!
   await page.mouse.move(box.x + box.width / 2, box.y + 20)
@@ -68,7 +68,7 @@ test("pull down at the top to refresh; the tab bar counts what's new", async ({ 
   await expect(phone(page).getByRole("button", { name: "Inbox, 3 new" })).toBeVisible()
 })
 
-test("a short pull springs back without refreshing; the keyboard has a Refresh button", async ({ page }) => {
+test("a short pull springs back without refreshing; the keyboard has a Refresh button", { tag: "@engine" }, async ({ page }) => {
   const box = (await list(page).boundingBox())!
   await page.mouse.move(box.x + box.width / 2, box.y + 20)
   await page.mouse.down()
@@ -82,7 +82,7 @@ test("a short pull springs back without refreshing; the keyboard has a Refresh b
   await expect(row(page, "Katherine Johnson")).toBeVisible()
 })
 
-test("set an alarm on the wheels in a sheet, by keys and by scrolling", async ({ page }) => {
+test("set an alarm on the wheels in a sheet, by keys and by scrolling", { tag: "@engine" }, async ({ page }) => {
   await phone(page).getByRole("button", { name: "Alarms" }).click()
   await phone(page).getByRole("button", { name: "New alarm" }).click()
   const sheet = page.getByRole("dialog", { name: "New alarm" })
@@ -113,7 +113,7 @@ test("set an alarm on the wheels in a sheet, by keys and by scrolling", async ({
   await expect(phone(page).locator(".mobile-alarm-time", { hasText: "9:15 PM" })).toBeVisible()
 })
 
-test("a wheel opens with its value in the band", async ({ page }) => {
+test("a wheel opens with its value in the band", { tag: "@engine" }, async ({ page }) => {
   await phone(page).getByRole("button", { name: "Alarms" }).click()
   await phone(page).getByRole("button", { name: "New alarm" }).click()
   const hour = page.getByRole("dialog", { name: "New alarm" }).getByRole("listbox", { name: "Alarm time, hour" })
@@ -126,7 +126,7 @@ test("a wheel opens with its value in the band", async ({ page }) => {
   await expect.poll(middle).toBeLessThan(2)
 })
 
-test("a value an agent sets on a wheel stays, while the sheet is still settling", async ({ page }) => {
+test("a value an agent sets on a wheel stays, while the sheet is still settling", { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" })
   await phone(page).getByRole("button", { name: "Alarms" }).click()
   await phone(page).getByRole("button", { name: "New alarm" }).click()
@@ -143,7 +143,7 @@ test("a value an agent sets on a wheel stays, while the sheet is still settling"
   await expect(sheet.getByRole("listbox", { name: "Alarm time, hour" }).getByRole("option", { name: "3", exact: true })).toBeFocused()
 })
 
-test("a sheet with two snap points rests at half the screen; its handle takes it to the top", async ({ page }) => {
+test("a sheet with two snap points rests at half the screen; its handle takes it to the top", { tag: "@engine" }, async ({ page }) => {
   await phone(page).getByRole("button", { name: "Settings" }).click()
   await phone(page).getByRole("button", { name: "Help" }).click()
   const sheet = page.getByRole("dialog", { name: "Help" })
@@ -169,7 +169,7 @@ test("the action sheet returns what was chosen", async ({ page }) => {
   await expect(row(page, "^Grace Hopper")).toBeVisible()
 })
 
-test("an action hands focus back: to its row, or to the row now in its place", async ({ page }) => {
+test("an action hands focus back: to its row, or to the row now in its place", { tag: "@engine" }, async ({ page }) => {
   await row(page, "Grace Hopper").focus()
   await page.keyboard.press("ArrowRight")
   await page.keyboard.press("Enter")
@@ -183,7 +183,7 @@ test("an action hands focus back: to its row, or to the row now in its place", a
   await expect(row(page, "Margaret Hamilton")).toBeFocused()
 })
 
-test("past a full swipe, only the swiped side's first action fills the row", async ({ page }) => {
+test("past a full swipe, only the swiped side's first action fills the row", { tag: "@engine" }, async ({ page }) => {
   const r = row(page, "Linus Pauling")
   const box = (await r.boundingBox())!
   const [x, y] = [box.x + box.width - 20, box.y + box.height / 2]
@@ -246,7 +246,7 @@ test("Delete all can be undone", async ({ page }) => {
 test.describe("on a touch screen", () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } })
 
-  test("a finger swipes a row aside and pulls the list to refresh", async ({ page, browserName }) => {
+  test("a finger swipes a row aside and pulls the list to refresh", { tag: "@engine" }, async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "drives touches through Chrome's DevTools protocol")
     const cdp = await page.context().newCDPSession(page)
     const touch = (type: "touchStart" | "touchMove" | "touchEnd", x = 0, y = 0) =>
@@ -275,7 +275,7 @@ test.describe("on a touch screen", () => {
 })
 
 // The skins audit (2026-11-20): in Ink the chosen tab differed from the others by shade alone.
-test("in Ink, the chosen tab's name is underlined, not only darker", async ({ page }) => {
+test("in Ink, the chosen tab's name is underlined, not only darker", { tag: "@engine" }, async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("uiset-site-skin", "ink"))
   await page.goto("/docs/kits/mobile")
   const label = (name: RegExp) => page.locator(".mobile-tab").filter({ hasText: name }).first().locator(".mobile-tab-label")

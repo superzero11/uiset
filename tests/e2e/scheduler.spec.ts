@@ -12,7 +12,7 @@ test.beforeEach(async ({ page }) => {
   await example(page).scrollIntoViewIfNeeded()
 })
 
-test("drag down an empty stretch to draw an event", async ({ page }) => {
+test("drag down an empty stretch to draw an event", { tag: "@engine" }, async ({ page }) => {
   const friday = (await track(page, "Friday, November 20").boundingBox())!
   const hour = friday.height / 11
   await page.mouse.move(friday.x + friday.width / 2, friday.y + hour * 1 + 2)
@@ -22,7 +22,7 @@ test("drag down an empty stretch to draw an event", async ({ page }) => {
   await expect(event(page, /^New event, Friday, November 20, 9:00 AM to 10:30 AM/)).toBeVisible()
 })
 
-test("drag an event to move it, and its bottom edge to resize it", async ({ page }) => {
+test("drag an event to move it, and its bottom edge to resize it", { tag: "@engine" }, async ({ page }) => {
   const board = event(page, /^Board prep/)
   const box = (await board.boundingBox())!
   const thursday = (await track(page, "Thursday, November 19").boundingBox())!
@@ -65,7 +65,7 @@ test("the month shows each day's events; choosing a day opens it", async ({ page
   await expect(event(page, /^Launch rehearsal, Wednesday/)).toBeVisible()
 })
 
-test("room bookings refuse an overlap", async ({ page }) => {
+test("room bookings refuse an overlap", { tag: "@engine" }, async ({ page }) => {
   const rooms = page.getByRole("group", { name: "Room bookings", exact: true })
   await rooms.scrollIntoViewIfNeeded()
   const standup = rooms.getByRole("button", { name: /^Standup/ })
@@ -77,7 +77,7 @@ test("room bookings refuse an overlap", async ({ page }) => {
   await expect(rooms.getByRole("button", { name: /^Standup, Studio, 12 seats, 10:00 AM to 11:00 AM/ })).toHaveCount(0)
 })
 
-test("Enter and Space open an event, and Cancel returns focus to it", async ({ page }) => {
+test("Enter and Space open an event, and Cancel returns focus to it", { tag: "@engine" }, async ({ page }) => {
   const standup = event(page, /^Standup, Monday/)
   await standup.focus()
   await page.keyboard.press("Enter")
@@ -91,14 +91,14 @@ test("Enter and Space open an event, and Cancel returns focus to it", async ({ p
   await expect(standup).toBeFocused()
 })
 
-test("Delete removes an event and hands focus to the next one", async ({ page }) => {
+test("Delete removes an event and hands focus to the next one", { tag: "@engine" }, async ({ page }) => {
   await event(page, /^Design review/).focus()
   await page.keyboard.press("Delete")
   await expect(event(page, /^Design review/)).toHaveCount(0)
   await expect(event(page, /^Call with Grace/)).toBeFocused()
 })
 
-test("the dialog hands focus back: to the moved event, or a deleted one's neighbor", async ({ page }) => {
+test("the dialog hands focus back: to the moved event, or a deleted one's neighbor", { tag: "@engine" }, async ({ page }) => {
   await event(page, /^Board prep/).focus()
   await page.keyboard.press("Enter")
   let dialog = page.getByRole("dialog", { name: "Board prep" })
@@ -129,7 +129,7 @@ test("the dialog keeps the schedule's hours and steps", async ({ page }) => {
   await expect(form.getByText("Times go in steps of 15 minutes.").first()).toBeVisible()
 })
 
-test("an end before the start is tied to the Ends field, which takes focus", async ({ page }) => {
+test("an end before the start is tied to the Ends field, which takes focus", { tag: "@engine" }, async ({ page }) => {
   await example(page).getByRole("button", { name: "New event" }).click()
   const form = page.getByRole("form", { name: "New event" })
   await form.getByRole("textbox", { name: "Title" }).fill("Backwards")
@@ -142,7 +142,7 @@ test("an end before the start is tied to the Ends field, which takes focus", asy
   await expect(ends).toHaveAccessibleDescription("It has to end after it starts.")
 })
 
-test("choosing a day in the month by keyboard focuses that day's first event", async ({ page }) => {
+test("choosing a day in the month by keyboard focuses that day's first event", { tag: "@engine" }, async ({ page }) => {
   await example(page).getByRole("radio", { name: "Month" }).click()
   const day = example(page).getByRole("grid").getByRole("gridcell", { name: /November 18/ })
   await day.focus()
@@ -157,7 +157,7 @@ test("names stay current after paging weeks", async ({ page }) => {
   await expect(event(page, /^Standup, Monday, November 16, 9:00 AM to 9:30 AM, Atlas room$/)).toBeVisible()
 })
 
-test("room bookings take a new booking by keyboard, and refuse one that overlaps", async ({ page }) => {
+test("room bookings take a new booking by keyboard, and refuse one that overlaps", { tag: "@engine" }, async ({ page }) => {
   const rooms = page.getByRole("group", { name: "Room bookings", exact: true })
   const demo = rooms.locator("xpath=..")
   await demo.getByRole("button", { name: "New booking" }).click()
@@ -173,7 +173,7 @@ test("room bookings take a new booking by keyboard, and refuse one that overlaps
   await expect(rooms.getByRole("button", { name: /^1:1, Atlas room, 6 seats, 11:00 AM to 12:00 PM/ })).toBeFocused()
 })
 
-test("event edges and today's name clear contrast in every skin and theme", async ({ page }) => {
+test("event edges and today's name clear contrast in every skin and theme", { tag: "@engine" }, async ({ page }) => {
   test.slow() // one page load per skin and theme
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     for (const theme of ["light", "dark"]) {
@@ -216,7 +216,7 @@ test("event edges and today's name clear contrast in every skin and theme", asyn
 test.describe("on a touch screen", () => {
   test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 800 } })
 
-  test("a sideways swipe scrolls the week instead of drawing an event, with no errors", async ({ page, browserName }) => {
+  test("a sideways swipe scrolls the week instead of drawing an event, with no errors", { tag: "@engine" }, async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "drives touches through Chrome's DevTools protocol")
     const errors: string[] = []
     page.on("pageerror", (error) => errors.push(error.message))

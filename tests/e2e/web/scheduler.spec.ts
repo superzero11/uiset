@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-    test(`the Scheduler page passes axe in ${skin}, ${theme}`, async ({ page }) => {
+    test(`the Scheduler page passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
       const run = () => new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()
@@ -37,7 +37,7 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   }
 }
 
-test("drag down an empty stretch to draw an event", async ({ page }) => {
+test("drag down an empty stretch to draw an event", { tag: "@engine" }, async ({ page }) => {
   const friday = (await track(page, "Friday, Nov 20").boundingBox())!
   const hour = friday.height / 10
   await page.mouse.move(friday.x + friday.width / 2, friday.y + hour * 1 + 2)
@@ -47,7 +47,7 @@ test("drag down an empty stretch to draw an event", async ({ page }) => {
   await expect(event(page, /^New event, Friday, Nov 20, 9:00 AM to 10:30 AM/)).toBeVisible()
 })
 
-test("drag an event to move it, and its end edge to resize it", async ({ page }) => {
+test("drag an event to move it, and its end edge to resize it", { tag: "@engine" }, async ({ page }) => {
   const call = event(page, /^Customer call/)
   const box = (await call.boundingBox())!
   const hour = (await track(page, "Wednesday, Nov 18").boundingBox())!.height / 10
@@ -64,7 +64,7 @@ test("drag an event to move it, and its end edge to resize it", async ({ page })
   await expect(event(page, /^Customer call, Wednesday, Nov 18, 11:00 AM to 1:00 PM/)).toBeVisible()
 })
 
-test("arrows move an event, Shift with arrows changes its end, Delete removes it and hands focus on", async ({ page }) => {
+test("arrows move an event, Shift with arrows changes its end, Delete removes it and hands focus on", { tag: "@engine" }, async ({ page }) => {
   await event(page, /^Standup/).focus()
   await page.keyboard.press("ArrowDown")
   await expect(event(page, /^Standup, Monday, Nov 16, 9:15 AM to 10:15 AM/)).toBeFocused()
@@ -77,7 +77,7 @@ test("arrows move an event, Shift with arrows changes its end, Delete removes it
   await expect(page.locator("#schedule").getByRole("button").and(page.locator(":focus"))).toHaveCount(1)
 })
 
-test("Enter opens an event in the page's dialog, and Cancel returns focus to it", async ({ page }) => {
+test("Enter opens an event in the page's dialog, and Cancel returns focus to it", { tag: "@engine" }, async ({ page }) => {
   await event(page, /^Retro/).focus()
   await page.keyboard.press("Enter")
   const dialog = page.getByRole("dialog", { name: "Retro" })
@@ -92,7 +92,7 @@ test("Enter opens an event in the page's dialog, and Cancel returns focus to it"
   expect(opened.ok).toBe(false)
 })
 
-test("New event opens a form that checks its times", async ({ page }) => {
+test("New event opens a form that checks its times", { tag: "@engine" }, async ({ page }) => {
   await page.getByRole("button", { name: "New event" }).click()
   const dialog = page.getByRole("dialog", { name: "New event" })
   await dialog.getByRole("textbox", { name: "Title" }).fill("Pairing")

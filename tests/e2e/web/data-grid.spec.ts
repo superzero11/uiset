@@ -42,7 +42,7 @@ test.beforeEach(async ({ page }) => {
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-    test(`the Data Grid page passes axe in ${skin}, ${theme}`, async ({ page }) => {
+    test(`the Data Grid page passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
       const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()
@@ -51,7 +51,7 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   }
 }
 
-test("one tab stop; arrows move; only rows near the view are drawn; Control+End reaches the last", async ({ page }) => {
+test("one tab stop; arrows move; only rows near the view are drawn; Control+End reaches the last", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 2, 2)
   expect((await active(page)).text).toBe("Acme")
   expect(await grid(page).getByRole("row").count()).toBeLessThan(30)
@@ -61,7 +61,7 @@ test("one tab stop; arrows move; only rows near the view are drawn; Control+End 
   await expect.poll(() => active(page)).toMatchObject({ row: 1, col: 1 })
 })
 
-test("Enter on a header sorts, and the order is live and reported", async ({ page }) => {
+test("Enter on a header sorts, and the order is live and reported", { tag: "@engine" }, async ({ page }) => {
   await host(page).evaluate((el) => el.addEventListener("sortchange", (e) => ((window as unknown as { sorted: unknown }).sorted = (e as CustomEvent).detail.value)))
   await moveTo(page, 1, 5)
   await page.keyboard.press("Enter")
@@ -72,7 +72,7 @@ test("Enter on a header sorts, and the order is live and reported", async ({ pag
   expect(await host(page).evaluate((el) => (el as unknown as { sort: unknown }).sort)).toEqual([{ column: "seats", direction: "descending" }])
 })
 
-test("Enter edits a cell: a list column refuses other values, Escape cancels, the page can refuse", async ({ page }) => {
+test("Enter edits a cell: a list column refuses other values, Escape cancels, the page can refuse", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 2, 3)
   await page.keyboard.press("Enter")
   // A column with options is edited in a combobox, whose list is the skin's own.
@@ -125,7 +125,7 @@ const drawn = (page: Page) =>
       }
     })
 
-test("an editor's ring stays inside its cell, and a list editor shows the skin's chevron", async ({ page }) => {
+test("an editor's ring stays inside its cell, and a list editor shows the skin's chevron", { tag: "@engine" }, async ({ page }) => {
   // 5 Seats is a plain editor; 3 Plan has a list of options.
   for (const [col, list] of [
     [5, false],
@@ -148,7 +148,7 @@ test("an editor's ring stays inside its cell, and a list editor shows the skin's
   }
 })
 
-test("a list column is edited from the skin's own list: arrows, Enter, Escape, Tab and a press", async ({ page }) => {
+test("a list column is edited from the skin's own list: arrows, Enter, Escape, Tab and a press", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 2, 3)
   const cell = cellAt(page, 2, 3)
   const before = (await cell.textContent())!
@@ -229,7 +229,7 @@ test("a list column is edited from the skin's own list: arrows, Enter, Escape, T
   await expect(cell).toHaveText(before)
 })
 
-test("the open list of options passes axe, light and dark", async ({ page }) => {
+test("the open list of options passes axe, light and dark", { tag: "@engine" }, async ({ page }) => {
   for (const theme of ["light", "dark"] as const) {
     await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
     await page.locator("uiset-root").evaluate((el, t) => el.setAttribute("theme", t), theme)
@@ -242,7 +242,7 @@ test("the open list of options passes axe, light and dark", async ({ page }) => 
   }
 })
 
-test("Space checks a row and a yes-or-no cell; the toolbar shows the selection and clears it", async ({ page }) => {
+test("Space checks a row and a yes-or-no cell; the toolbar shows the selection and clears it", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 2, 1)
   await page.keyboard.press("Space")
   await expect(grid(page).getByRole("row", { name: /Acme/ }).first()).toHaveAttribute("aria-selected", "true")
@@ -258,7 +258,7 @@ test("Space checks a row and a yes-or-no cell; the toolbar shows the selection a
   await expect.poll(() => active(page)).toMatchObject({ row: 2 })
 })
 
-test("the toolbar searches, filters a column, groups and exports a CSV", async ({ page }) => {
+test("the toolbar searches, filters a column, groups and exports a CSV", { tag: "@engine" }, async ({ page }) => {
   await host(page).getByRole("searchbox", { name: "Search customers" }).fill("8,900")
   await expect(footer(page)).toHaveText("1 of 60 rows")
   await host(page).getByRole("searchbox", { name: "Search customers" }).fill("")
@@ -276,7 +276,7 @@ test("the toolbar searches, filters a column, groups and exports a CSV", async (
   expect(file.suggestedFilename()).toBe("customers.csv")
 })
 
-test("Shift+F10 opens a column menu that hides a column; the View menu shows it again", async ({ page }) => {
+test("Shift+F10 opens a column menu that hides a column; the View menu shows it again", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 1, 4)
   await page.keyboard.press("Shift+F10")
   await page.getByRole("menuitem", { name: "Hide column" }).click()
@@ -287,7 +287,7 @@ test("Shift+F10 opens a column menu that hides a column; the View menu shows it 
   await expect(grid(page).getByRole("columnheader", { name: /Region/ })).toHaveCount(1)
 })
 
-test("Alt+Arrows resize a header's column and Alt+Shift+Arrows move it, with focus following", async ({ page }) => {
+test("Alt+Arrows resize a header's column and Alt+Shift+Arrows move it, with focus following", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 1, 4)
   const width = () => host(page).evaluate((el) => (el as unknown as { columnState: { widths: Record<string, number> } }).columnState.widths.region)
   await page.keyboard.press("Alt+ArrowRight")
@@ -297,7 +297,7 @@ test("Alt+Arrows resize a header's column and Alt+Shift+Arrows move it, with foc
   expect((await active(page)).text).toContain("Region")
 })
 
-test("Enter on a cell that isn't edited in place fires rowaction", async ({ page }) => {
+test("Enter on a cell that isn't edited in place fires rowaction", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 2, 4)
   await page.keyboard.press("Enter")
   await expect(page.getByRole("region", { name: "Notifications" }).getByText("Opened Acme")).toBeVisible()
@@ -370,7 +370,7 @@ test("properties set before the element is defined are picked up, and later sets
   await expect(early.getByRole("row", { name: /Alpha/ })).toHaveAttribute("aria-selected", "true")
 })
 
-test("the grid keeps a tab stop when its active cell's row or column goes away", async ({ page }) => {
+test("the grid keeps a tab stop when its active cell's row or column goes away", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 30, 3)
   await page.getByRole("searchbox", { name: "Search customers" }).fill("acme")
   await expect.poll(() => tabStops(page)).toBe(1)
@@ -387,7 +387,7 @@ test("the grid keeps a tab stop when its active cell's row or column goes away",
   await expect.poll(() => tabStops(page)).toBe(1)
 })
 
-test("clicking row checkboxes and Select all selects; Shift-click selects the rows between", async ({ page }) => {
+test("clicking row checkboxes and Select all selects; Shift-click selects the rows between", { tag: "@engine" }, async ({ page }) => {
   const boxes = grid(page).getByRole("checkbox")
   await expect(boxes.nth(1)).toHaveCSS("appearance", "none")
   await boxes.nth(1).click()
@@ -406,7 +406,7 @@ test("clicking row checkboxes and Select all selects; Shift-click selects the ro
   await expect(boxes.nth(1)).toBeChecked()
 })
 
-test("the toolbar follows the grid's state, however it changed", async ({ page }) => {
+test("the toolbar follows the grid's state, however it changed", { tag: "@engine" }, async ({ page }) => {
   await page.getByRole("button", { name: "Filters" }).click()
   await page.getByRole("textbox", { name: "Plan" }).fill("pro")
   await page.getByRole("textbox", { name: "Region" }).fill("eu")
@@ -433,7 +433,7 @@ test("the toolbar follows the grid's state, however it changed", async ({ page }
   await expect(page.getByRole("menuitemradio", { name: "Standard" })).toBeChecked()
 })
 
-test("an open column menu stays open as the grid redraws; Escape returns focus to the header", async ({ page }) => {
+test("an open column menu stays open as the grid redraws; Escape returns focus to the header", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 1, 4)
   await page.keyboard.press("Shift+F10")
   const wider = page.getByRole("menuitem", { name: "Wider" })
@@ -453,7 +453,7 @@ test("an open column menu stays open as the grid redraws; Escape returns focus t
   await expect.poll(() => active(page)).toMatchObject({ row: 2, col: 5 })
 })
 
-test("a refused column change is neither announced nor followed by focus", async ({ page }) => {
+test("a refused column change is neither announced nor followed by focus", { tag: "@engine" }, async ({ page }) => {
   await listen(page)
   await host(page).evaluate((el) => el.addEventListener("columnstatechange", (e) => e.preventDefault()))
   await moveTo(page, 1, 4)
@@ -465,7 +465,7 @@ test("a refused column change is neither announced nor followed by focus", async
   expect((await said(page)).some((text) => text.includes("moved"))).toBe(false)
 })
 
-test("rows stay in order in the page after scrolling back up", async ({ page }) => {
+test("rows stay in order in the page after scrolling back up", { tag: "@engine" }, async ({ page }) => {
   const scroller = host(page).locator(".data-grid-scroller")
   for (const top of [1500, 600, 0]) {
     await scroller.evaluate((el, y) => el.scrollTo(0, y), top)
@@ -475,7 +475,7 @@ test("rows stay in order in the page after scrolling back up", async ({ page }) 
   expect(order).toEqual([...order].sort((a, b) => a - b))
 })
 
-test("the count is said only when it changes, and a selection leaves other cells' content alone", async ({ page }) => {
+test("the count is said only when it changes, and a selection leaves other cells' content alone", { tag: "@engine" }, async ({ page }) => {
   await listen(page)
   await page.getByRole("searchbox", { name: "Search customers" }).fill("pro")
   await expect.poll(() => said(page)).toContainEqual(expect.stringMatching(/^\d+ rows$/))
@@ -492,7 +492,7 @@ test("the count is said only when it changes, and a selection leaves other cells
   expect(await name.evaluate((el) => el.firstChild === (window as unknown as { kept: Node }).kept)).toBe(true)
 })
 
-test("an invalid edit left by moving away gives way to the next edit", async ({ page }) => {
+test("an invalid edit left by moving away gives way to the next edit", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 2, 5)
   await page.keyboard.press("Enter")
   await page.keyboard.press("ControlOrMeta+a")
@@ -508,7 +508,7 @@ test("an invalid edit left by moving away gives way to the next edit", async ({ 
   await expect(host(page).locator(".data-grid-error:visible")).toHaveCount(0)
 })
 
-test("double-clicking a resize edge resets its width", async ({ page }) => {
+test("double-clicking a resize edge resets its width", { tag: "@engine" }, async ({ page }) => {
   const region = host(page).locator('[data-column="region"][role=columnheader]')
   const edge = region.locator(".data-grid-resizer")
   const box = (await edge.boundingBox())!
@@ -521,7 +521,7 @@ test("double-clicking a resize edge resets its width", async ({ page }) => {
   await expect.poll(() => host(page).evaluate((el) => ((el as GridEl).columnState as { widths: Record<string, number> }).widths.region)).toBe(undefined)
 })
 
-test("tool labels follow the grid's label and headers; `editable` is observed", async ({ page }) => {
+test("tool labels follow the grid's label and headers; `editable` is observed", { tag: "@engine" }, async ({ page }) => {
   await host(page).evaluate((el) => {
     el.setAttribute("label", "Clients")
     const grid = el as GridEl
@@ -535,7 +535,7 @@ test("tool labels follow the grid's label and headers; `editable` is observed", 
   await expect(host(page).locator("[data-editable]")).toHaveCount(0)
 })
 
-test("a new density keeps the active row in view", async ({ page }) => {
+test("a new density keeps the active row in view", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 30, 2)
   // The active row at the top of the view: smaller rows would leave it above.
   await host(page).evaluate((el) => {

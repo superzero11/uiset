@@ -27,7 +27,7 @@ test.beforeEach(async ({ page }) => {
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-    test(`the Canvas page passes axe in ${skin}, ${theme}`, async ({ page, browserName }) => {
+    test(`the Canvas page passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page, browserName }) => {
       test.fixme(browserName === "firefox", "Playwright's Firefox crashes (signal 11) while automation inspects this page; normal use doesn't (HISTORY.md decision log, 2026-11-15)")
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
@@ -39,7 +39,7 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   }
 }
 
-test("drag a node: it moves, its wires follow as it goes, and Undo puts it back", async ({ page }) => {
+test("drag a node: it moves, its wires follow as it goes, and Undo puts it back", { tag: "@engine" }, async ({ page }) => {
   const search = node(page, /^Search docs/)
   const before = (await search.boundingBox())!
   const wireBefore = await wires(page).evaluateAll((paths) => paths.map((p) => p.getAttribute("d")))
@@ -54,7 +54,7 @@ test("drag a node: it moves, its wires follow as it goes, and Undo puts it back"
   await expect.poll(async () => (await search.boundingBox())!.y).toBeCloseTo(before.y, 0)
 })
 
-test("arrows go to the nearest node that way; Alt with arrows moves it", async ({ page }) => {
+test("arrows go to the nearest node that way; Alt with arrows moves it", { tag: "@engine" }, async ({ page }) => {
   await node(page, /^Draft answer/).focus()
   await page.keyboard.press("ArrowRight")
   await expect(node(page, /^Reply/)).toBeFocused()
@@ -65,7 +65,7 @@ test("arrows go to the nearest node that way; Alt with arrows moves it", async (
   await expect(node(page, /^Reply/)).toBeFocused()
 })
 
-test("Space selects; Delete removes, focus moves on, and Control+Z brings it back with its wires", async ({ page }) => {
+test("Space selects; Delete removes, focus moves on, and Control+Z brings it back with its wires", { tag: "@engine" }, async ({ page }) => {
   await node(page, /^Search docs/).focus()
   await page.keyboard.press("Space")
   await expect(node(page, /^Search docs/)).toHaveAttribute("aria-selected", "true")
@@ -79,7 +79,7 @@ test("Space selects; Delete removes, focus moves on, and Control+Z brings it bac
   await expect(wires(page)).toHaveCount(5)
 })
 
-test("Shift-drag across empty space selects a box; the toolbar removes both", async ({ page }) => {
+test("Shift-drag across empty space selects a box; the toolbar removes both", { tag: "@engine" }, async ({ page }) => {
   const a = (await node(page, /^Answer template/).boundingBox())!
   const b = (await node(page, /^Search docs/).boundingBox())!
   await page.keyboard.down("Shift")
@@ -96,7 +96,7 @@ test("Shift-drag across empty space selects a box; the toolbar removes both", as
   expect(await page.evaluate(() => document.activeElement !== document.body)).toBe(true)
 })
 
-test("C starts a wire from the keyboard; the inspector disconnects and hands focus on", async ({ page }) => {
+test("C starts a wire from the keyboard; the inspector disconnects and hands focus on", { tag: "@engine" }, async ({ page }) => {
   await node(page, /^Reply/).focus()
   await page.keyboard.press("Space")
   await inspector(page).getByRole("button", { name: /^Disconnect Draft answer · Text from Reply · Text/ }).click()
@@ -111,7 +111,7 @@ test("C starts a wire from the keyboard; the inspector disconnects and hands foc
   await expect(node(page, /^Reply/)).toHaveAccessibleDescription(/Inputs: Text from Draft answer Text/)
 })
 
-test("drag from an output port to an input port to wire them; the handle disconnects", async ({ page }) => {
+test("drag from an output port to an input port to wire them; the handle disconnects", { tag: "@engine" }, async ({ page }) => {
   await canvas(page).locator('g[data-slot="canvas-unwire"]').last().click()
   await expect(wires(page)).toHaveCount(4)
   const from = (await canvas(page).locator('[data-slot="canvas-port"][data-canvas-port="out"]').nth(3).boundingBox())!
@@ -124,7 +124,7 @@ test("drag from an output port to an input port to wire them; the handle disconn
   await expect(wires(page)).toHaveCount(5)
 })
 
-test("zoom with the buttons and keys, pan by dragging empty space", async ({ page }) => {
+test("zoom with the buttons and keys, pan by dragging empty space", { tag: "@engine" }, async ({ page }) => {
   const readout = canvas(page).locator("[data-canvas-zoom]")
   const start = await readout.getAttribute("data-zoom")
   // `fit-view` framed every node as the page opened.
@@ -147,7 +147,7 @@ test("zoom with the buttons and keys, pan by dragging empty space", async ({ pag
   expect(await world.evaluate((el) => (el as HTMLElement).style.transform)).not.toBe(before)
 })
 
-test("Add node puts a new node in view and focuses it; Undo removes it without dropping focus", async ({ page }) => {
+test("Add node puts a new node in view and focuses it; Undo removes it without dropping focus", { tag: "@engine" }, async ({ page }) => {
   await tools(page).getByRole("button", { name: "Add node" }).click()
   await page.getByRole("menuitem", { name: "Tool" }).click()
   await expect(node(page, /^New tool/)).toBeFocused()
@@ -157,7 +157,7 @@ test("Add node puts a new node in view and focuses it; Undo removes it without d
   expect(await page.evaluate(() => document.activeElement !== document.body)).toBe(true)
 })
 
-test("the new node takes focus in the same task as the closing menu hands it back", async ({ page }) => {
+test("the new node takes focus in the same task as the closing menu hands it back", { tag: "@engine" }, async ({ page }) => {
   await tools(page).getByRole("button", { name: "Add node" }).click()
   // Where focus is once the task in which the menu returns it to Add node is done, before
   // the next frame: a focus put off to a later frame would still be on its way.
@@ -171,7 +171,7 @@ test("the new node takes focus in the same task as the closing menu hands it bac
   await expect(node(page, /^New tool/)).toBeFocused()
 })
 
-test("Enter on a node puts focus in its notes in the same task", async ({ page }) => {
+test("Enter on a node puts focus in its notes in the same task", { tag: "@engine" }, async ({ page }) => {
   await node(page, /^Draft answer/).focus()
   const focused = await node(page, /^Draft answer/).evaluate((el) => {
     el.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }))
@@ -181,7 +181,7 @@ test("Enter on a node puts focus in its notes in the same task", async ({ page }
   await expect(inspector(page).getByRole("textbox", { name: "Notes" })).toBeFocused()
 })
 
-test("the inspector renames the node shown, keeps fields per node, and Enter opens notes", async ({ page }) => {
+test("the inspector renames the node shown, keeps fields per node, and Enter opens notes", { tag: "@engine" }, async ({ page }) => {
   await node(page, /^Draft answer/).focus()
   await page.keyboard.press("Enter")
   await expect(inspector(page).getByRole("textbox", { name: "Notes" })).toBeFocused()
@@ -209,7 +209,7 @@ test("agents add, wire, move and select nodes by name, and read them", async ({ 
   expect(items).toEqual(expect.arrayContaining([expect.stringMatching(/^Log \(at 900, 320; Inputs: Text from Draft answer Text\.\)/)]))
 })
 
-test("without openable, history or controls the canvas does without them", async ({ page }) => {
+test("without openable, history or controls the canvas does without them", { tag: "@engine" }, async ({ page }) => {
   const el = page.locator("uiset-canvas")
   await el.evaluate((c) => (c.removeAttribute("openable"), c.removeAttribute("history"), c.setAttribute("controls", "false")))
   await expect(canvas(page).getByRole("group", { name: "Zoom" })).toBeHidden()
@@ -220,7 +220,7 @@ test("without openable, history or controls the canvas does without them", async
   await expect(inspector(page).getByRole("textbox", { name: "Notes" })).toHaveCount(0)
 })
 
-test("a refused change leaves the canvas as it was; the page's description stays", async ({ page }) => {
+test("a refused change leaves the canvas as it was; the page's description stays", { tag: "@engine" }, async ({ page }) => {
   const el = page.locator("uiset-canvas")
   await el.evaluate((c) => c.addEventListener("nodeschange", (e) => e.preventDefault()))
   await node(page, /^Search docs/).focus()
@@ -257,7 +257,7 @@ test("properties set before the elements are defined draw once they are", async 
   await expect(page.getByText("Fields for Later node")).toBeVisible()
 })
 
-test("pressing the minimap looks elsewhere", async ({ page }) => {
+test("pressing the minimap looks elsewhere", { tag: "@engine" }, async ({ page }) => {
   const world = canvas(page).locator('[data-slot="canvas-world"]')
   const before = await world.evaluate((el) => (el as HTMLElement).style.transform)
   const map = (await canvas(page).locator(".canvas-minimap svg").boundingBox())!

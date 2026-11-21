@@ -49,7 +49,7 @@ test("Tailwind's reset doesn't strip UISet's web controls", async ({ page }) => 
   expect(await look(page)).toEqual(plain)
 })
 
-test("Tailwind's utility classes win over UISet's web styles", async ({ page }) => {
+test("Tailwind's utility classes win over UISet's web styles", { tag: "@engine" }, async ({ page }) => {
   await withTailwind(page)
   await page.goto("/content.html")
   await inbox(page).evaluate((el) => el.classList.add("tw-red"))

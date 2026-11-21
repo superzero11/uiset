@@ -12,7 +12,7 @@ test.beforeEach(async ({ page }) => {
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-    test(`UI SDK's elements and UISet's pass axe in ${skin}, ${theme}`, async ({ page }) => {
+    test(`UI SDK's elements and UISet's pass axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await root(page).evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
       await expect(root(page)).toHaveAttribute("data-skin", skin)
@@ -31,7 +31,7 @@ test("<uiset-root> carries the skin, theme and feedback settings", async ({ page
   await expect(root(page)).toHaveAttribute("data-theme", "dark")
 })
 
-test("skins restyle UI SDK's own elements, with no React on the page", async ({ page }) => {
+test("skins restyle UI SDK's own elements, with no React on the page", { tag: "@engine" }, async ({ page }) => {
   const save = page.getByRole("button", { name: "Save" })
   const look = () => save.evaluate((el) => [getComputedStyle(el).backgroundColor, getComputedStyle(el).textTransform].join(" "))
   const base = await look()
@@ -43,7 +43,7 @@ test("skins restyle UI SDK's own elements, with no React on the page", async ({ 
 // Base with no shadcn/ui theme and no key color is black and white: what uiset.dev shows. It
 // was blue, so an app without a theme got a different look from the site's. A near-black
 // accent hovers toward the page; toward the text, it didn't change.
-test("Base without a theme or key color is black and white, and a solid button's hover shows", async ({ page }) => {
+test("Base without a theme or key color is black and white, and a solid button's hover shows", { tag: "@engine" }, async ({ page }) => {
   const save = page.getByRole("button", { name: "Save" })
   const colors = () => save.evaluate((el) => [getComputedStyle(el).backgroundColor, getComputedStyle(el).color])
   await root(page).evaluate((el) => el.setAttribute("theme", "light"))
@@ -60,7 +60,7 @@ test("Base without a theme or key color is black and white, and a solid button's
   await expect.poll(async () => (await colors())[0]).toBe("oklch(0.5 0.19 268)")
 })
 
-test("a radio card chooses its option wherever it's pressed, named by its title alone", async ({ page }) => {
+test("a radio card chooses its option wherever it's pressed, named by its title alone", { tag: "@engine" }, async ({ page }) => {
   const cards = page.getByRole("radiogroup", { name: "Plan" })
   const hobby = cards.getByRole("radio", { name: "Hobby", exact: true })
   await expect(hobby).toHaveAccessibleDescription("For personal projects.")
@@ -147,7 +147,7 @@ test("a dialog from UI SDK opens, traps focus and returns it, styled by the skin
   await expect(page.getByRole("button", { name: "Open details" })).toBeFocused()
 })
 
-test('<uiset-root motion="reduce"> fades a dialog and moves nothing, with the system setting off', async ({ page }) => {
+test('<uiset-root motion="reduce"> fades a dialog and moves nothing, with the system setting off', { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" })
   await root(page).evaluate((el) => el.setAttribute("motion", "reduce"))
   await expect(root(page)).toHaveAttribute("data-motion", "reduce")
@@ -193,7 +193,7 @@ test("the patch bay patches by keyboard, draws the cable and reports it", async 
 })
 
 // The same as the React patch bay: inside a scaled container the cable still ends on its jacks.
-test("a cable meets its jacks inside a scaled container", async ({ page }) => {
+test("a cable meets its jacks inside a scaled container", { tag: "@engine" }, async ({ page }) => {
   const bay = page.locator("uiset-patch-bay")
   await bay.evaluate((el: HTMLElement) => {
     const frame = el.parentElement!
@@ -228,7 +228,7 @@ test("agents patch by the jacks' names, taken from the page", async ({ page }) =
   await expect(page.locator("uiset-patch-bay svg .patch-bay-cable")).toHaveCount(1)
 })
 
-test("faders, meters and step sequencers are UI SDK's elements in UISet's classes", async ({ page }) => {
+test("faders, meters and step sequencers are UI SDK's elements in UISet's classes", { tag: "@engine" }, async ({ page }) => {
   const fader = page.getByRole("slider", { name: "Level" })
   await fader.focus()
   await page.keyboard.press("ArrowUp")
@@ -244,7 +244,7 @@ test("faders, meters and step sequencers are UI SDK's elements in UISet's classe
   expect(columns).toBe(8)
 })
 
-test("a checkbox turns on and off on its skin's timing, with no wait: Studio's lamp", async ({ page }) => {
+test("a checkbox turns on and off on its skin's timing, with no wait: Studio's lamp", { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" })
   await root(page).evaluate((el) => el.setAttribute("skin", "studio"))
   const box = page.locator('[data-slot="checkbox"]').first()
@@ -257,7 +257,7 @@ test("a checkbox turns on and off on its skin's timing, with no wait: Studio's l
   expect(await timing()).toEqual(["0.06s", "0s"])
 })
 
-test("a sortable list's items slide to their new places", async ({ page }) => {
+test("a sortable list's items slide to their new places", { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" })
   await page.goto("/content.html")
   const list = page.getByRole("listbox", { name: "Rank what to build first" })

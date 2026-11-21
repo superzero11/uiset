@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { expect, test } from "@playwright/test"
 
 // The built files, loaded as another site would load them (`pnpm check` builds first).
-test("the built module and stylesheet register UISet's elements and skin UI SDK's", async ({ page }) => {
+test("the built module and stylesheet register UISet's elements and skin UI SDK's", { tag: "@engine" }, async ({ page }) => {
   await page.goto("/built.html")
   const root = page.locator("uiset-root")
   await expect(root).toHaveAttribute("data-skin", "studio")

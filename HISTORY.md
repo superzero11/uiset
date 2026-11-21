@@ -2256,3 +2256,9 @@ vercel-labs/ui#905 (2026-11-19).
   tests now drive the example through the bridge in Vitest (`tests/unit/bridge.ts`, a helper
   with a stand-in person and an unattended agent), in about a second; removing approvals, the
   confirm mark or the queue's Remove each fails them. `tests/e2e/agent-parts.spec.ts` is gone.
+- 2026-11-21 — Bridge testing, step 2: `@engine` tags. 390 of 654 browser test blocks are
+  tagged (225 engine-sensitive, 165 key and pointer tests in the kits whose input UISet
+  wrote: board, canvas, data grid, IDE, mobile, rich text, scheduler, terminal, the sortable
+  lists, the web shell parts and chat), and the WebKit and Firefox projects run only those
+  (`grep: /@engine/`). Each engine goes from 1,030 runs to 715; Chrome is unchanged. Tagged by
+  `research/bridge-testing/tag.mjs` from the classifier; one motion test by hand.

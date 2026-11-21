@@ -26,7 +26,7 @@ const fades = (viewport: import("@playwright/test").Locator) =>
     return [Math.round(start), Math.round(end)]
   })
 
-test("a scroll area fades where its content runs on, and keyboard focus rings the whole box", async ({ page }) => {
+test("a scroll area fades where its content runs on, and keyboard focus rings the whole box", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const area = example(page, "Scroll area")
   await area.scrollIntoViewIfNeeded()
@@ -45,7 +45,7 @@ test("a scroll area fades where its content runs on, and keyboard focus rings th
   expect(rings).toEqual(["none", "solid"])
 })
 
-test("data-fades=none turns the fades off", async ({ page }) => {
+test("data-fades=none turns the fades off", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const area = example(page, "Scroll area")
   await area.scrollIntoViewIfNeeded()
@@ -59,7 +59,7 @@ test("data-fades=none turns the fades off", async ({ page }) => {
 
 /* ------------------------------------------------------------------ radio cards */
 
-test("a radio card chooses its option wherever it's pressed, named by its title alone", async ({ page }) => {
+test("a radio card chooses its option wherever it's pressed, named by its title alone", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const radio = example(page, "Radio")
   await radio.scrollIntoViewIfNeeded()
@@ -100,7 +100,7 @@ test("an agent chooses a radio card's option by the group's name", async ({ page
 
 /* ------------------------------------------------------------------ rings */
 
-test("a ring meter fills to its value, and its label names it", async ({ page }) => {
+test("a ring meter fills to its value, and its label names it", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const meter = example(page, "Meter").getByRole("meter", { name: "Reading goal" })
   await meter.scrollIntoViewIfNeeded()
@@ -109,7 +109,7 @@ test("a ring meter fills to its value, and its label names it", async ({ page })
   expect(ring).toMatch(/^conic-gradient\(.* 62%, /)
 })
 
-test("a progress ring with no value turns a quarter, and holds it still for reduced motion", async ({ page }) => {
+test("a progress ring with no value turns a quarter, and holds it still for reduced motion", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const preparing = example(page, "Progress").getByRole("progressbar", { name: "Preparing" })
   await preparing.scrollIntoViewIfNeeded()
@@ -123,7 +123,7 @@ test("a progress ring with no value turns a quarter, and holds it still for redu
 
 /* ------------------------------------------------------------------ textarea count */
 
-test("a textarea's count describes it, and near the limit says what's left, once", async ({ page }) => {
+test("a textarea's count describes it, and near the limit says what's left, once", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const area = example(page, "Textarea")
   await area.scrollIntoViewIfNeeded()
@@ -147,7 +147,7 @@ test("a textarea's count describes it, and near the limit says what's left, once
 
 /* ------------------------------------------------------------------ password rules */
 
-test("password rules tick off as it's typed, and each change is said once", async ({ page }) => {
+test("password rules tick off as it's typed, and each change is said once", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const area = example(page, "Password input")
   await area.scrollIntoViewIfNeeded()
@@ -169,7 +169,7 @@ test("password rules tick off as it's typed, and each change is said once", asyn
 
 /* ------------------------------------------------------------------ confirm button */
 
-test("a confirm button arms on the first press, says so, and acts on the second", async ({ page }) => {
+test("a confirm button arms on the first press, says so, and acts on the second", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const area = example(page, "Button")
   await area.scrollIntoViewIfNeeded()
@@ -200,7 +200,7 @@ test("an agent's press on a confirm button waits for the person, and nothing hap
 
 /* ------------------------------------------------------------------ table */
 
-test("the table's headings and first column stay put while it scrolls", async ({ page }) => {
+test("the table's headings and first column stay put while it scrolls", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 640, height: 900 })
   await open(page)
   const table = example(page, "Table")
@@ -231,7 +231,7 @@ test("the table's headings and first column stay put while it scrolls", async ({
   expect(paints).not.toBe("rgba(0, 0, 0, 0)")
 })
 
-test("right to left, the first column keeps to the right edge", async ({ page }) => {
+test("right to left, the first column keeps to the right edge", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 640, height: 900 })
   await open(page)
   await page.evaluate(() => (document.documentElement.dir = "rtl"))
@@ -253,7 +253,7 @@ test("right to left, the first column keeps to the right edge", async ({ page })
   expect(Math.abs((await right("Amount")) - (amount + moved))).toBeLessThan(1)
 })
 
-test("the table's region is a tab stop only while it scrolls", async ({ page }) => {
+test("the table's region is a tab stop only while it scrolls", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 640, height: 900 })
   await open(page)
   const viewport = example(page, "Table").locator('[data-slot="scroll-area-viewport"]')
@@ -265,7 +265,7 @@ test("the table's region is a tab stop only while it scrolls", async ({ page }) 
   await expect(viewport).not.toHaveAttribute("tabindex", "0")
 })
 
-test("on a narrow screen each row stacks, with its headings beside the values", async ({ page }) => {
+test("on a narrow screen each row stacks, with its headings beside the values", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 })
   await open(page)
   const table = example(page, "Table")
@@ -290,7 +290,7 @@ test("on a narrow screen each row stacks, with its headings beside the values", 
 
 /* ------------------------------------------------------------------ avatar group, count badge */
 
-test("the avatar group overlaps its avatars without covering their initials", async ({ page }) => {
+test("the avatar group overlaps its avatars without covering their initials", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const group = example(page, "Avatar group").getByRole("group", { name: "Reviewers" })
   await group.scrollIntoViewIfNeeded()
@@ -311,7 +311,7 @@ test("the avatar group overlaps its avatars without covering their initials", as
   await expect(group.getByText("+2")).toBeVisible()
 })
 
-test("a count badge sits on its button's top corner", async ({ page }) => {
+test("a count badge sits on its button's top corner", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const badge = example(page, "Badge")
   await badge.scrollIntoViewIfNeeded()
@@ -325,7 +325,7 @@ test("a count badge sits on its button's top corner", async ({ page }) => {
 
 /* ------------------------------------------------------------------ code block */
 
-test("a marked line doesn't hide the line after it, and line numbers aren't part of the text", async ({ page }) => {
+test("a marked line doesn't hide the line after it, and line numbers aren't part of the text", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const block = example(page, "Code block").locator(".code-block").nth(1)
   await block.scrollIntoViewIfNeeded()
@@ -342,7 +342,7 @@ test("a marked line doesn't hide the line after it, and line numbers aren't part
   expect(lefts[4]!).toBe(lefts[0]!)
 })
 
-test("code that runs wide is reached by keyboard, and its colors load", async ({ page }) => {
+test("code that runs wide is reached by keyboard, and its colors load", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const block = example(page, "Code block").locator(".code-block").nth(1)
   await block.scrollIntoViewIfNeeded()
@@ -355,7 +355,7 @@ test("code that runs wide is reached by keyboard, and its colors load", async ({
   await expect(block.locator(".code-line span[style*='color']").first()).toBeVisible({ timeout: 15_000 })
 })
 
-test("the package manager tabs move with the arrow keys, change the command and are remembered", async ({ page }) => {
+test("the package manager tabs move with the arrow keys, change the command and are remembered", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const block = example(page, "Code block").locator(".code-block").first()
   await block.scrollIntoViewIfNeeded()
@@ -374,7 +374,7 @@ test("the package manager tabs move with the arrow keys, change the command and 
 
 /* ------------------------------------------------------------------ inline edit */
 
-test("inline edit by keyboard: Enter edits, Enter saves, focus stays on the value", async ({ page }) => {
+test("inline edit by keyboard: Enter edits, Enter saves, focus stays on the value", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const edit = example(page, "Inline edit")
   await edit.scrollIntoViewIfNeeded()
@@ -408,7 +408,7 @@ test("inline edit by keyboard: Enter edits, Enter saves, focus stays on the valu
   await expect(edit.getByText("Saved as: Orion")).toBeVisible()
 })
 
-test("inline edit: Tab saves and moves on, and an empty name is refused", async ({ page, browserName }) => {
+test("inline edit: Tab saves and moves on, and an empty name is refused", { tag: "@engine" }, async ({ page, browserName }) => {
   // Safari's Tab skips buttons unless the person turned that on; Option+Tab always stops at them.
   const tab = browserName === "webkit" ? "Alt+Tab" : "Tab"
   await open(page)
@@ -431,7 +431,7 @@ test("inline edit: Tab saves and moves on, and an empty name is refused", async 
   await expect(edit.getByRole("button", { name: "Edit Description: Add a description" })).toBeFocused()
 })
 
-test("inline edit: Cancel throws the typing away and Save keeps it, by pointer", async ({ page }) => {
+test("inline edit: Cancel throws the typing away and Save keeps it, by pointer", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const edit = example(page, "Inline edit")
   await edit.scrollIntoViewIfNeeded()
@@ -448,7 +448,7 @@ test("inline edit: Cancel throws the typing away and Save keeps it, by pointer",
   await expect(edit.getByRole("button", { name: "Edit Description: Billing service" })).toBeVisible()
 })
 
-test("inline edit: a value that can't be edited doesn't open", async ({ page }) => {
+test("inline edit: a value that can't be edited doesn't open", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const edit = example(page, "Inline edit")
   const region = edit.getByRole("button", { name: "Edit Region: Europe (Frankfurt)" })
@@ -461,7 +461,7 @@ test("inline edit: a value that can't be edited doesn't open", async ({ page }) 
 
 /* ------------------------------------------------------------------ upload */
 
-test("uploads go up, one fails and is retried from the keyboard, and Delete removes a file", async ({ page }) => {
+test("uploads go up, one fails and is retried from the keyboard, and Delete removes a file", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const upload = example(page, "Upload")
   await upload.scrollIntoViewIfNeeded()
@@ -486,7 +486,7 @@ test("uploads go up, one fails and is retried from the keyboard, and Delete remo
   await expect(list.getByRole("listitem")).toHaveCount(2)
 })
 
-test("chosen files join the queue, a file that's too large is refused with the reason, and Cancel stops one", async ({ page }) => {
+test("chosen files join the queue, a file that's too large is refused with the reason, and Cancel stops one", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const upload = example(page, "Upload")
   await upload.scrollIntoViewIfNeeded()
@@ -511,7 +511,7 @@ const order = (list: import("@playwright/test").Locator) =>
   list.getByRole("option").evaluateAll((els) => els.map((el) => el.getAttribute("aria-label")))
 const spoken = (page: Page) => page.evaluate(() => Array.from(document.querySelectorAll("[aria-live]"), (el) => el.textContent ?? "").join(" | "))
 
-test("a sortable list moves an item with the keys, says each step, and its places follow", async ({ page }) => {
+test("a sortable list moves an item with the keys, says each step, and its places follow", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const area = example(page, "Sortable list")
   await area.scrollIntoViewIfNeeded()
@@ -536,7 +536,7 @@ test("a sortable list moves an item with the keys, says each step, and its place
   expect((await order(list))[2]).toBe("Faster search")
 })
 
-test("a sortable list moves an item by drag, with a copy under the pointer", async ({ page }) => {
+test("a sortable list moves an item by drag, with a copy under the pointer", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const area = example(page, "Sortable list")
   await area.scrollIntoViewIfNeeded()
@@ -553,7 +553,7 @@ test("a sortable list moves an item by drag, with a copy under the pointer", asy
   expect((await order(list))[0]).toBe("Dark mode")
 })
 
-test("a selection moves together by drag, and its copy says how many it carries", async ({ page }) => {
+test("a selection moves together by drag, and its copy says how many it carries", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const area = example(page, "Sortable list")
   await area.scrollIntoViewIfNeeded()
@@ -576,7 +576,7 @@ test("a selection moves together by drag, and its copy says how many it carries"
   await expect(intro).not.toHaveAttribute("data-moving")
 })
 
-test("Shift+Space and a press on a check select, and Escape lets go", async ({ page }) => {
+test("Shift+Space and a press on a check select, and Escape lets go", { tag: "@engine" }, async ({ page }) => {
   await open(page)
   const area = example(page, "Sortable list")
   await area.scrollIntoViewIfNeeded()
@@ -606,7 +606,7 @@ async function openTree(page: Page) {
   return { area, tree }
 }
 
-test("a sortable tree nests a row with the keys, opens the branch it lands in, and says so", async ({ page }) => {
+test("a sortable tree nests a row with the keys, opens the branch it lands in, and says so", { tag: "@engine" }, async ({ page }) => {
   const { area, tree } = await openTree(page)
   const json = tree.getByRole("treeitem", { name: "package.json" })
   await json.focus()
@@ -624,7 +624,7 @@ test("a sortable tree nests a row with the keys, opens the branch it lands in, a
   expect((await outline(tree)).slice(-3)).toEqual(["public", "  package.json", "README.md"])
 })
 
-test("a sortable tree moves a row by drag, a level in for each step sideways", async ({ page }) => {
+test("a sortable tree moves a row by drag, a level in for each step sideways", { tag: "@engine" }, async ({ page }) => {
   const { tree } = await openTree(page)
   const from = (await tree.getByRole("treeitem", { name: "package.json" }).boundingBox())!
   await page.mouse.move(from.x + 140, from.y + from.height / 2)
@@ -638,7 +638,7 @@ test("a sortable tree moves a row by drag, a level in for each step sideways", a
   expect((await outline(tree)).slice(-3)).toEqual(["public", "  package.json", "README.md"])
 })
 
-test("a row carried inside a file is marked, goes back when dropped, and says why", async ({ page }) => {
+test("a row carried inside a file is marked, goes back when dropped, and says why", { tag: "@engine" }, async ({ page }) => {
   const { tree } = await openTree(page)
   const button = tree.getByRole("treeitem", { name: "button.tsx" })
   await button.focus()
@@ -657,7 +657,7 @@ test("a row carried inside a file is marked, goes back when dropped, and says wh
 
 const narrow = ["Table", "Avatar group", "Badge", "Code block", "Inline edit", "Upload", "Sortable list", "Sortable tree"]
 
-test("the new parts fit a phone's width", async ({ page }) => {
+test("the new parts fit a phone's width", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 })
   await open(page)
   for (const title of narrow) {
@@ -673,7 +673,7 @@ test("the new parts fit a phone's width", async ({ page }) => {
 // One scan per page load: several scans of this long, narrow page have crashed Firefox's page.
 for (const theme of ["light", "dark"] as const) {
   for (const title of narrow) {
-    test(`${title} passes axe at phone width, ${theme}`, async ({ page }) => {
+    test(`${title} passes axe at phone width, ${theme}`, { tag: "@engine" }, async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 800 })
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await openGallery(page, `/gallery?theme=${theme}`)

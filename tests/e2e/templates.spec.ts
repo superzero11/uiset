@@ -27,7 +27,7 @@ for (const template of templates) {
     for (const theme of ["light", "dark"] as const) {
       // Blueprint, Studio and Phosphor are dark only; Ink is light only.
       if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue
-      test(`${template} passes axe in ${skin}, ${theme}`, async ({ page }) => {
+      test(`${template} passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
         await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" })
         await open(page, template, `&skin=${skin}&theme=${theme}`)
         // The editor's syntax colors load a beat later; check them, not the plain text.
@@ -161,7 +161,7 @@ test("pricing: the billing switch changes every price", async ({ page }) => {
   await expect(frame(page).getByRole("link", { name: "Start a 14-day trial: Pro" })).toBeVisible()
 })
 
-test("templates fit a phone without scrolling sideways", async ({ page }) => {
+test("templates fit a phone without scrolling sideways", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 })
   for (const template of templates) {
     await open(page, template)
@@ -204,7 +204,7 @@ test("inbox: folder links switch the list, and archived mail can come back", asy
   await expect(frame(page).getByText("Nothing here")).toBeVisible()
 })
 
-test("inbox on a phone: arrows browse, Enter opens and focuses the message, Back returns", async ({ page }) => {
+test("inbox on a phone: arrows browse, Enter opens and focuses the message, Back returns", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 800 })
   await open(page, "inbox")
   const list = frame(page).getByRole("listbox", { name: "Inbox messages" })
@@ -249,7 +249,7 @@ const issueBoard = (page: Page) => frame(page).getByRole("group", { name: "Issue
 const issueColumn = (page: Page, name: string) => issueBoard(page).getByRole("listbox", { name })
 const undoButton = (page: Page) => page.getByRole("region", { name: "Notifications" }).getByRole("button", { name: "Undo", exact: true })
 
-test("project board: at 1440 all four columns fit beside the sidebars", async ({ page }) => {
+test("project board: at 1440 all four columns fit beside the sidebars", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 })
   await open(page, "project-board")
   const done = (await issueBoard(page).getByRole("listbox", { name: "Done" }).boundingBox())!
@@ -358,7 +358,7 @@ test("project board: the card dialog edits a card, and New issue adds one", asyn
 
 const week = (page: Page) => frame(page).getByRole("group", { name: "My calendar", exact: true })
 
-test("calendar: a phone starts on one day; at 1440 the week shows all seven days", async ({ page }) => {
+test("calendar: a phone starts on one day; at 1440 the week shows all seven days", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 800 })
   await open(page, "calendar-app")
   await expect(frame(page).getByRole("heading", { name: "Monday, November 16" })).toBeVisible()

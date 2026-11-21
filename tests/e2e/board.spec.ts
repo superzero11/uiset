@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
   await board(page).scrollIntoViewIfNeeded()
 })
 
-test("drag a card to another column with the pointer", async ({ page }) => {
+test("drag a card to another column with the pointer", { tag: "@engine" }, async ({ page }) => {
   const from = (await card(page, "Keyboard shortcuts sheet").boundingBox())!
   const to = (await column(page, "Done").boundingBox())!
   await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)
@@ -23,7 +23,7 @@ test("drag a card to another column with the pointer", async ({ page }) => {
   await expect(column(page, "Backlog").getByRole("option", { name: "Keyboard shortcuts sheet" })).toHaveCount(0)
 })
 
-test("move a card with the keyboard, then undo from the toast", async ({ page }) => {
+test("move a card with the keyboard, then undo from the toast", { tag: "@engine" }, async ({ page }) => {
   await card(page, "Audit the cookie banner").focus()
   await page.keyboard.press("Space")
   await expect(card(page, "Audit the cookie banner")).toHaveAttribute("aria-selected", "true")
@@ -37,7 +37,7 @@ test("move a card with the keyboard, then undo from the toast", async ({ page })
   await expect(column(page, "Done").getByRole("option", { name: "Audit the cookie banner" })).toBeVisible()
 })
 
-test("Escape puts a picked-up card back", async ({ page }) => {
+test("Escape puts a picked-up card back", { tag: "@engine" }, async ({ page }) => {
   await card(page, "Fix the login redirect").focus()
   await page.keyboard.press("Space")
   await page.keyboard.press("ArrowRight")
@@ -45,7 +45,7 @@ test("Escape puts a picked-up card back", async ({ page }) => {
   await expect(column(page, "In review").getByRole("option", { name: "Fix the login redirect" })).toBeVisible()
 })
 
-test("Enter opens the details, where a card can move and be edited", async ({ page }) => {
+test("Enter opens the details, where a card can move and be edited", { tag: "@engine" }, async ({ page }) => {
   await card(page, "Onboarding checklist").focus()
   await page.keyboard.press("Enter")
   const dialog = page.getByRole("dialog", { name: "Onboarding checklist" })
@@ -60,7 +60,7 @@ test("Enter opens the details, where a card can move and be edited", async ({ pa
   await expect(card(page, "Onboarding checklist v2")).toBeFocused()
 })
 
-test("the dialog can't move a card into a full column", async ({ page }) => {
+test("the dialog can't move a card into a full column", { tag: "@engine" }, async ({ page }) => {
   await card(page, "Onboarding checklist").focus()
   await page.keyboard.press("Enter")
   const dialog = page.getByRole("dialog", { name: "Onboarding checklist" })
@@ -71,7 +71,7 @@ test("the dialog can't move a card into a full column", async ({ page }) => {
   await expect(card(page, "Onboarding checklist")).toBeFocused()
 })
 
-test("deleting a card hands focus to its neighbor", async ({ page }) => {
+test("deleting a card hands focus to its neighbor", { tag: "@engine" }, async ({ page }) => {
   await card(page, "Rate-limit the public API").focus()
   await page.keyboard.press("Enter")
   const dialog = page.getByRole("dialog", { name: "Rate-limit the public API" })
@@ -81,7 +81,7 @@ test("deleting a card hands focus to its neighbor", async ({ page }) => {
   await expect(card(page, "Onboarding checklist")).toBeFocused()
 })
 
-test("an edit that the filter hides hands focus to a card still shown", async ({ page }) => {
+test("an edit that the filter hides hands focus to a card still shown", { tag: "@engine" }, async ({ page }) => {
   await page.getByRole("searchbox", { name: "Search cards" }).fill("api")
   await card(page, "Rate-limit the public API").focus()
   await page.keyboard.press("Enter")
@@ -93,7 +93,7 @@ test("an edit that the filter hides hands focus to a card still shown", async ({
   await expect(card(page, "Ship the invoice export")).toBeFocused()
 })
 
-test("closing the add form returns focus to its button", async ({ page }) => {
+test("closing the add form returns focus to its button", { tag: "@engine" }, async ({ page }) => {
   const add = board(page).getByRole("button", { name: "Add a card to Backlog" })
   await add.click()
   await page.keyboard.press("Escape")
@@ -103,7 +103,7 @@ test("closing the add form returns focus to its button", async ({ page }) => {
   await expect(add).toBeFocused()
 })
 
-test("add a card from a column, and a full column offers none", async ({ page }) => {
+test("add a card from a column, and a full column offers none", { tag: "@engine" }, async ({ page }) => {
   await board(page).getByRole("button", { name: "Add a card to Backlog" }).click()
   await page.keyboard.type("Write the changelog")
   await page.keyboard.press("Enter")
@@ -112,7 +112,7 @@ test("add a card from a column, and a full column offers none", async ({ page })
   await expect(board(page)).toContainText("Full: finish a card to add more.")
 })
 
-test("a search that hides the board's tab stop moves it to a card still shown", async ({ page }) => {
+test("a search that hides the board's tab stop moves it to a card still shown", { tag: "@engine" }, async ({ page }) => {
   await card(page, "Onboarding checklist").focus()
   await page.getByRole("searchbox", { name: "Search cards" }).fill("webhooks")
   await page.getByRole("combobox", { name: "Cards for" }).focus()
@@ -125,7 +125,7 @@ test("a search that hides the board's tab stop moves it to a card still shown", 
   await expect(card(page, "Retry failed webhooks")).toBeFocused()
 })
 
-test("while a filter is on, a dragged card stays put", async ({ page }) => {
+test("while a filter is on, a dragged card stays put", { tag: "@engine" }, async ({ page }) => {
   await page.getByRole("searchbox", { name: "Search cards" }).fill("api")
   const from = (await card(page, "Rate-limit the public API").boundingBox())!
   const to = (await column(page, "Done").boundingBox())!
@@ -137,7 +137,7 @@ test("while a filter is on, a dragged card stays put", async ({ page }) => {
   await expect(column(page, "Backlog").getByRole("option", { name: "Rate-limit the public API" })).toBeVisible()
 })
 
-test("a picked-up card looks different from a focused one", async ({ page }) => {
+test("a picked-up card looks different from a focused one", { tag: "@engine" }, async ({ page }) => {
   const write = card(page, "Keyboard shortcuts sheet")
   await write.focus()
   const focused = await write.evaluate((el) => getComputedStyle(el).outlineStyle + getComputedStyle(el).backgroundColor)

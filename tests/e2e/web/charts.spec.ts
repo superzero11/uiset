@@ -19,7 +19,7 @@ test.beforeEach(async ({ page }) => {
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-    test(`the Charts page passes axe in ${skin}, ${theme}`, async ({ page }) => {
+    test(`the Charts page passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
       const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()
@@ -81,7 +81,7 @@ test("horizontal bars move with Up and Down; a heatmap's Up and Down move by a r
   await expect(cells.getByRole("option", { name: /^Tue, 10:/ })).toBeFocused()
 })
 
-test("a scatter chart's tooltip follows the nearest point to the pointer", async ({ page }) => {
+test("a scatter chart's tooltip follows the nearest point to the pointer", { tag: "@engine" }, async ({ page }) => {
   const chart = page.locator("uiset-scatter-chart")
   await chart.scrollIntoViewIfNeeded()
   const dot = (await listbox(page, "Accounts").getByRole("option", { name: /^Umbrella/ }).boundingBox())!
@@ -171,7 +171,7 @@ test("the legend keeps focus on the button pressed, and hover leaves the legend 
   await expect(listbox(page, "Revenue").getByRole("option").first()).toHaveAccessibleName(/^Jan: Revenue \$/)
 })
 
-test("a moved chart still follows its width", async ({ page }) => {
+test("a moved chart still follows its width", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1100, height: 900 })
   const svg = chartOf(page, "revenue").locator("svg.chart-svg")
   const wide = Number(await svg.getAttribute("width"))
@@ -180,7 +180,7 @@ test("a moved chart still follows its width", async ({ page }) => {
   await expect.poll(async () => Number(await svg.getAttribute("width"))).toBeLessThan(Math.min(wide, 480))
 })
 
-test("a chart waiting for data shows its title only, and passes axe", async ({ page }) => {
+test("a chart waiting for data shows its title only, and passes axe", { tag: "@engine" }, async ({ page }) => {
   await page.evaluate(() => {
     const chart = document.createElement("uiset-line-chart")
     chart.id = "loading"

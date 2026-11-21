@@ -52,7 +52,7 @@ for (const [skin, ran] of Object.entries(skins)) {
 
 // A disabled toolbar button that came on faded in under reduced motion, and axe read it
 // mid-fade (2026-11-20): only what appears and disappears fades.
-test("under reduced motion, a control changes at once while a popup fades", async ({ page }) => {
+test("under reduced motion, a control changes at once while a popup fades", { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto(popover.path)
   const trigger = page.locator(popover.trigger).first()
@@ -86,14 +86,14 @@ test('motion="reduce" on a root fades and moves nothing, with the system setting
   expect(await opening(page, "blueprint", popover)).toEqual({ opacity: 120 })
 })
 
-test("Phosphor's slow fade never catches a click", async ({ page }) => {
+test("Phosphor's slow fade never catches a click", { tag: "@engine" }, async ({ page }) => {
   await opening(page, "phosphor", popover)
   await page.keyboard.press("Escape")
   const leaving = page.locator(`${popover.part}[data-ending-style]`)
   await expect(leaving).toHaveCSS("pointer-events", "none")
 })
 
-test("Blueprint's drawn popup keeps its offset shadow once it's open", async ({ page }) => {
+test("Blueprint's drawn popup keeps its offset shadow once it's open", { tag: "@engine" }, async ({ page }) => {
   await opening(page, "blueprint", popover)
   const popup = page.locator(popover.part)
   await expect(popup).not.toHaveAttribute("data-starting-style")
@@ -106,7 +106,7 @@ test("Blueprint's drawn popup keeps its offset shadow once it's open", async ({ 
 // an open dialog and swallows the click (2026-11-20: the inbox's Sent link, right after
 // sending). So a dialog leaves at once, and the next click lands.
 for (const skin of ["base", "phosphor"]) {
-  test(`in ${skin}, a click on the page lands right after a dialog closes`, async ({ page }) => {
+  test(`in ${skin}, a click on the page lands right after a dialog closes`, { tag: "@engine" }, async ({ page }) => {
     await page.addInitScript((s) => localStorage.setItem("uiset-site-skin", s), skin)
     await page.goto("/docs/components/dialog")
     await page.locator(".example [data-slot=dialog-trigger]").first().click()
@@ -163,7 +163,7 @@ test("under reduced motion, a checkbox turns on at once", async ({ page }) => {
 
 // The owner saw Blueprint's check fade like Base's (2026-11-20): its box's fill faded in with
 // it and hid the stroke. The box now fills at once and the check is drawn on it.
-test("Blueprint inks a check in from the start of the line, on a box already filled", async ({ page }) => {
+test("Blueprint inks a check in from the start of the line, on a box already filled", { tag: "@engine" }, async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("uiset-site-skin", "blueprint"))
   await page.goto("/docs/components/checkbox")
   const box = page.locator(".example [data-slot=checkbox]").first()
@@ -187,7 +187,7 @@ test("Blueprint inks a check in from the start of the line, on a box already fil
   expect(ran["clip-path"]).toContain("100%")
 })
 
-test("an alert dialog nudges at a press outside it, each skin its own way", async ({ page }) => {
+test("an alert dialog nudges at a press outside it, each skin its own way", { tag: "@engine" }, async ({ page }) => {
   await page.goto("/docs/components/alert-dialog")
   await page.locator(".example [data-slot=alert-dialog-trigger]").first().click()
   const dialog = page.locator("[data-slot=alert-dialog-content]")
@@ -202,7 +202,7 @@ test("an alert dialog nudges at a press outside it, each skin its own way", asyn
   await expect(dialog).toHaveAttribute("data-refused", "")
 })
 
-test("under reduced motion, a refused press doesn't move the dialog", async ({ page }) => {
+test("under reduced motion, a refused press doesn't move the dialog", { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto("/docs/components/alert-dialog")
   await page.locator(".example [data-slot=alert-dialog-trigger]").first().click()
@@ -212,7 +212,7 @@ test("under reduced motion, a refused press doesn't move the dialog", async ({ p
   expect(await dialog.evaluate((el) => getComputedStyle(el).animationDuration)).toBe("0s")
 })
 
-test("an error fades in, and appears at once in Phosphor", async ({ page }) => {
+test("an error fades in, and appears at once in Phosphor", { tag: "@engine" }, async ({ page }) => {
   for (const [skin, ms] of [["base", 150], ["phosphor", 0]] as const) {
     await page.addInitScript((s) => localStorage.setItem("uiset-site-skin", s), skin)
     await page.goto("/templates/inbox")
@@ -259,7 +259,7 @@ async function slides(page: Page, selector: string, act: () => Promise<void>) {
 const moveTimes: Record<string, number | undefined> = { base: 200, blueprint: 220, studio: 140, phosphor: 120, ink: undefined }
 
 for (const [skin, ms] of Object.entries(moveTimes)) {
-  test(`${skin} slides items to their new places${ms ? ` in ${ms}ms` : ": Ink jumps"}`, async ({ page }) => {
+  test(`${skin} slides items to their new places${ms ? ` in ${ms}ms` : ": Ink jumps"}`, { tag: "@engine" }, async ({ page }) => {
     await page.addInitScript((s) => localStorage.setItem("uiset-site-skin", s), skin)
     await page.goto("/docs/kits/lists")
     const list = page.getByRole("listbox", { name: "Rank what to build first" })
@@ -272,7 +272,7 @@ for (const [skin, ms] of Object.entries(moveTimes)) {
   })
 }
 
-test("under reduced motion, items jump to their new places", async ({ page }) => {
+test("under reduced motion, items jump to their new places", { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto("/docs/kits/lists")
   const list = page.getByRole("listbox", { name: "Rank what to build first" })
@@ -282,7 +282,7 @@ test("under reduced motion, items jump to their new places", async ({ page }) =>
   expect(await slides(page, ".sortable-list-item", () => page.keyboard.press("ArrowDown"))).toEqual({})
 })
 
-test("a card carried to another column slides there", async ({ page }) => {
+test("a card carried to another column slides there", { tag: "@engine" }, async ({ page }) => {
   await page.goto("/docs/kits/board")
   const card = page.getByRole("option", { name: "Audit the cookie banner" })
   await card.scrollIntoViewIfNeeded()
@@ -292,7 +292,7 @@ test("a card carried to another column slides there", async ({ page }) => {
   expect(slid["Audit the cookie banner"]).toBe(200)
 })
 
-test("a switch's thumb moves on the skin's move timing", async ({ page }) => {
+test("a switch's thumb moves on the skin's move timing", { tag: "@engine" }, async ({ page }) => {
   for (const [skin, s] of [["base", "0.2s"], ["studio", "0.14s"]] as const) {
     await page.addInitScript((k) => localStorage.setItem("uiset-site-skin", k), skin)
     await page.goto("/docs/components/switch")

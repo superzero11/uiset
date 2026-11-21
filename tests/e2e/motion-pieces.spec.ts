@@ -40,7 +40,7 @@ test("under reduced motion, a number shows its new value at once", async ({ page
   expect(await ticker(page).locator(".number-ticker-face").textContent()).toBe("$14,130")
 })
 
-test("a number counts up from where it starts once it's seen", async ({ page }) => {
+test("a number counts up from where it starts once it's seen", { tag: "@engine" }, async ({ page }) => {
   await open(page, "blueprint")
   const teams = page.locator('[data-slot="number-ticker"]').nth(1)
   await teams.scrollIntoViewIfNeeded()
@@ -69,7 +69,7 @@ test("under reduced motion, streamed text appears whole, word by word as it come
   await expect(answer(page).locator("[data-new]")).toHaveCount(0)
 })
 
-test("Thinking is a status said once, drawn in each skin's way and still under reduced motion", async ({ page }) => {
+test("Thinking is a status said once, drawn in each skin's way and still under reduced motion", { tag: "@engine" }, async ({ page }) => {
   await open(page, "studio")
   const status = page.getByRole("status").filter({ hasText: "Searching the docs…" })
   await expect(status).toBeVisible()
@@ -79,7 +79,7 @@ test("Thinking is a status said once, drawn in each skin's way and still under r
   await expect(status.locator(".thinking-mark")).toBeHidden()
 })
 
-test("Ink's Thinking is words and still dots", async ({ page }) => {
+test("Ink's Thinking is words and still dots", { tag: "@engine" }, async ({ page }) => {
   await open(page, "ink")
   const mark = page.getByRole("status").first().locator(".thinking-mark")
   await expect(mark).toBeVisible()

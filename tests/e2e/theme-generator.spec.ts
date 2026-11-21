@@ -28,7 +28,7 @@ async function sameColor(element: Locator, property: "backgroundColor" | "color"
 }
 
 for (const scheme of ["light", "dark"] as const) {
-  test(`passes axe in the ${scheme} site theme`, async ({ page }) => {
+  test(`passes axe in the ${scheme} site theme`, { tag: "@engine" }, async ({ page }) => {
     await page.emulateMedia({ colorScheme: scheme, reducedMotion: "reduce" })
     await page.goto("/themes/generator")
     await expect(status(page)).toContainText("checks pass")
@@ -37,7 +37,7 @@ for (const scheme of ["light", "dark"] as const) {
   })
 }
 
-test("a failing key still passes axe everywhere the generator derived the colors", async ({ page }) => {
+test("a failing key still passes axe everywhere the generator derived the colors", { tag: "@engine" }, async ({ page }) => {
   await page.goto("/themes/generator?key=0.8,0.16,80")
   await expect(status(page)).toContainText("fails")
   const results = await new AxeBuilder({ page }).include(".generator").withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()

@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-    test(`the Content page passes axe in ${skin}, ${theme}`, async ({ page }) => {
+    test(`the Content page passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
       // With the inline edit open and an error showing, and an upload in the list. Plain DOM
@@ -38,7 +38,7 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   }
 }
 
-test("the table: a named scroll area; stacked, each cell is labelled by its heading, and roles stay", async ({ page }) => {
+test("the table: a named scroll area; stacked, each cell is labelled by its heading, and roles stay", { tag: "@engine" }, async ({ page }) => {
   const table = page.getByRole("region", { name: "Invoices" }).getByRole("table")
   await expect(table.getByRole("rowheader", { name: "INV-003" })).toBeVisible()
   await page.setViewportSize({ width: 375, height: 800 })
@@ -320,7 +320,7 @@ test("the sortable tree nests by keys, keeps its items live, and an agent moves 
   expect(refused.error?.message).toContain("README.md can't hold other items.")
 })
 
-test("Motion: a sale moves the figure, an answer streams in, Thinking is a status, a plan swaps in place", async ({ page }) => {
+test("Motion: a sale moves the figure, an answer streams in, Thinking is a status, a plan swaps in place", { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" })
   await page.goto("/content.html")
   const revenue = page.locator("#revenue")

@@ -19,7 +19,7 @@ async function chooseSkin(page: Page, skin: string) {
 
 for (const skin of skins) {
   for (const theme of themes) {
-    test(`${skin} skin in ${theme.toLowerCase()} theme passes axe, contrast included`, async ({
+    test(`${skin} skin in ${theme.toLowerCase()} theme passes axe, contrast included`, { tag: "@engine" }, async ({
       page,
     }) => {
       await page.emulateMedia({ reducedMotion: "reduce" })
@@ -37,7 +37,7 @@ for (const skin of skins) {
   }
 }
 
-test("the whole page passes axe", async ({ page }) => {
+test("the whole page passes axe", { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto("/")
   const results = await new AxeBuilder({ page })
@@ -49,7 +49,7 @@ test("the whole page passes axe", async ({ page }) => {
 // UI SDK styles every <code> as inline code; inside <pre> its padding once pushed the first
 // line of every code block (the site's and the chat kit's) 4px right of the rest.
 for (const path of ["/agents", "/docs/kits/chat"]) {
-  test(`code blocks on ${path} start every line at the same edge`, async ({ page }) => {
+  test(`code blocks on ${path} start every line at the same edge`, { tag: "@engine" }, async ({ page }) => {
     await page.goto(path)
     await expect(page.locator("pre").first()).toBeVisible()
     const offsets = await page.locator("pre").evaluateAll((blocks) =>
@@ -74,7 +74,7 @@ for (const path of ["/agents", "/docs/kits/chat"]) {
 // A copy button with a fuller aria-label once matched UI SDK's icon-only button rule and was
 // squeezed to a square, its label spilling out. Every copy button shows its whole label.
 for (const path of ["/", "/docs/components/select", "/docs/kits/chat"]) {
-  test(`copy buttons on ${path} show their whole label`, async ({ page }) => {
+  test(`copy buttons on ${path} show their whole label`, { tag: "@engine" }, async ({ page }) => {
     await page.goto(path)
     await expect(page.locator(".copy-button").first()).toBeVisible()
     const squeezed = await page
@@ -129,7 +129,7 @@ test("the specimen is reachable and operable with the keyboard alone", async ({
   await expect(page.getByRole("button", { name: "Forget device" })).toBeFocused()
 })
 
-test("checked state survives Windows high contrast (forced colors)", async ({ page, browserName }) => {
+test("checked state survives Windows high contrast (forced colors)", { tag: "@engine" }, async ({ page, browserName }) => {
   // Forced colors is a Windows mode (Chrome, Edge, Firefox); Safari has none, and WebKit only
   // matches the media query under emulation without recoloring anything.
   test.skip(browserName === "webkit", "Safari has no forced-colors mode")
@@ -154,7 +154,7 @@ test("checked state survives Windows high contrast (forced colors)", async ({ pa
   }
 })
 
-test("the switch thumb travels the other way in right-to-left", async ({ page }) => {
+test("the switch thumb travels the other way in right-to-left", { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto("/")
   const thumbX = async () => {
@@ -179,7 +179,7 @@ test("the switch thumb travels the other way in right-to-left", async ({ page })
 
 // The layout audit (2026-11-19) found the Signal meter with no visible name, lying apart from
 // the Output module like a stray scrollbar, and the agent's requests drawn as plain text.
-test("the Studio rack's meter stands named beside its fader, and the agent's requests look pressable", async ({ page }) => {
+test("the Studio rack's meter stands named beside its fader, and the agent's requests look pressable", { tag: "@engine" }, async ({ page }) => {
   await page.goto("/docs/kits/studio")
   const output = page.locator(".rack-module").filter({ has: page.getByRole("heading", { name: "Output" }) })
   const meter = output.getByRole("meter", { name: "Signal" })
@@ -197,7 +197,7 @@ test("the Studio rack's meter stands named beside its fader, and the agent's req
 
 // The skins audit (2026-11-20): Studio's LED ladder squeezed green to red into the lit part,
 // so a meter at 40% already showed red. The ladder spans the whole track.
-test("Studio's meter lights the ladder's colours where they sit on the whole scale", async ({ page }) => {
+test("Studio's meter lights the ladder's colours where they sit on the whole scale", { tag: "@engine" }, async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("uiset-site-skin", "studio"))
   await page.goto("/docs/components/meter")
   const track = page.locator('.example [data-slot="meter-track"]').first()
@@ -209,7 +209,7 @@ test("Studio's meter lights the ladder's colours where they sit on the whole sca
 // The owner found the theme cards' forms under their tag and against the edges (2026-11-20), and
 // a check in other skins found the page's skin leaking into them: on a Blueprint page the Ink
 // card had Blueprint's uppercase labels and the Base card took the blue around it.
-test("theme cards show each skin on its own, fitted below the tag, on a page in another skin", async ({ page }) => {
+test("theme cards show each skin on its own, fitted below the tag, on a page in another skin", { tag: "@engine" }, async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("uiset-site-skin", "blueprint"))
   await page.goto("/themes")
   const card = (skin: string) => page.locator(`.lib-card-skin[data-skin="${skin}"]`)
@@ -250,7 +250,7 @@ test("the Studio rack and the whole site follow the skin picker", async ({ page 
 
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
-    test(`the Studio rack passes axe in ${skin}, ${theme}`, async ({ page }) => {
+    test(`the Studio rack passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.goto(`/docs/kits/studio?skin=${skin}&theme=${theme}`)
       await expect(page.locator(".studio-stage")).toHaveAttribute("data-skin", skin)
@@ -265,7 +265,7 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
 
 // Links to a section of the same page land on it and stay (a Back-button handler once sent
 // every in-page jump back to the top).
-test("links to sections of the same page land on them and stay", async ({ page }) => {
+test("links to sections of the same page land on them and stay", { tag: "@engine" }, async ({ page }) => {
   await page.goto("/docs/installation")
   const section = page.locator("#with-tailwind-css")
   await expect(page.locator("main h1").first()).toBeVisible()
@@ -279,7 +279,7 @@ test("links to sections of the same page land on them and stay", async ({ page }
 // The search palette fills its dialog, and its results start right under the field (the
 // palette once kept its standalone width, and the empty message's padding left a gap). It
 // stays where it opened as the results shrink: centered, it jumped with every key.
-test("search fills its dialog, finds a page and goes to it", async ({ page }) => {
+test("search fills its dialog, finds a page and goes to it", { tag: "@engine" }, async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" })
   await page.goto("/")
   await page.getByRole("button", { name: "Search docs" }).click()
@@ -333,12 +333,12 @@ test.describe("Studio", () => {
     await expect(page.locator(".studio-stage")).toBeVisible()
   })
 
-  test("its page opens on the rack", async ({ page }) => {
+  test("its page opens on the rack", { tag: "@engine" }, async ({ page }) => {
     await expect(page.getByRole("heading", { level: 1, name: "Studio" })).toBeInViewport()
     await expect(page.locator(".studio-stage")).toBeVisible()
   })
 
-  test("the rack passes axe, contrast included", async ({ page }) => {
+  test("the rack passes axe, contrast included", { tag: "@engine" }, async ({ page }) => {
     const results = await new AxeBuilder({ page })
       .include(".studio-stage")
       .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
@@ -353,7 +353,7 @@ test.describe("Studio", () => {
   // check in every skin found Blueprint's meter at 1.3:1 and Studio's slots at 1.7:1. A track
   // shows by its fill, its border or a solid edge drawn as a shadow, whichever is strongest.
   for (const [skin, theme] of [["base", "light"], ["base", "dark"], ["blueprint", "dark"], ["studio", "dark"], ["phosphor", "dark"], ["ink", "light"]] as const) {
-    test(`in ${skin} ${theme}, the meter's and fader's tracks hold 3:1 against the rack`, async ({ page }) => {
+    test(`in ${skin} ${theme}, the meter's and fader's tracks hold 3:1 against the rack`, { tag: "@engine" }, async ({ page }) => {
       await page.addInitScript((s) => localStorage.setItem("uiset-site-skin", s), skin)
       await page.goto(`/docs/kits/studio?theme=${theme}`)
       await expect(page.getByRole("meter", { name: "Signal" })).toBeVisible()
@@ -409,7 +409,7 @@ test.describe("Studio", () => {
     await expect(cutoff).toHaveAttribute("aria-valuetext", "8.0 kHz")
   })
 
-  test("dragging a knob up turns it up", async ({ page }) => {
+  test("dragging a knob up turns it up", { tag: "@engine" }, async ({ page }) => {
     const depth = page.getByRole("slider", { name: "Depth" })
     await depth.scrollIntoViewIfNeeded()
     const before = Number(await depth.getAttribute("aria-valuenow"))
@@ -437,7 +437,7 @@ test.describe("Studio", () => {
     await expect(page.locator(".patch-bay-cable:not([data-draft])")).toHaveCount(1)
   })
 
-  test("a cable patches by dragging from an out jack to an in jack", async ({ page }) => {
+  test("a cable patches by dragging from an out jack to an in jack", { tag: "@engine" }, async ({ page }) => {
     await page.locator(".rack-modules").scrollIntoViewIfNeeded()
     const from = (await page.getByRole("button", { name: "LFO out" }).boundingBox())!
     const to = (await page.getByRole("button", { name: "Amp mod in" }).boundingBox())!
@@ -458,7 +458,7 @@ test.describe("Studio", () => {
   // Cables are drawn in the patch bay's own pixels. Inside something that scales it (a zoomed
   // canvas, a CSS transform), screen distances are no longer those pixels: a cable measured
   // from them missed its jacks, and a dragged one trailed away from the pointer.
-  test("cables meet their jacks, and the pointer, inside a scaled container", async ({ page }) => {
+  test("cables meet their jacks, and the pointer, inside a scaled container", { tag: "@engine" }, async ({ page }) => {
     await page.addStyleTag({ content: ".studio-stage { transform: scale(0.7); transform-origin: 0 0; }" })
     // A new width makes the patch bay measure its jacks again, now that it is scaled.
     await page.setViewportSize({ width: 1100, height: 900 })
@@ -557,7 +557,7 @@ test.describe("Agent Console", () => {
     await box.press("Enter")
   }
 
-  test("passes axe, contrast included", async ({ page, browserName }) => {
+  test("passes axe, contrast included", { tag: "@engine" }, async ({ page, browserName }) => {
     test.fixme(browserName === "firefox", "Playwright's Firefox crashes (signal 11) while automation inspects this page; normal use doesn't (HISTORY.md decision log, 2026-11-15)")
     await ask(page, "Turn on the weekly digest")
     await expect(page.getByRole("switch", { name: "Weekly digest" })).toHaveAttribute(
@@ -671,7 +671,7 @@ test.describe("Chat kit", () => {
   const box = (page: Page) => chat(page).getByRole("textbox", { name: "Message" })
 
   // The skins audit (2026-11-20): suggestion chips were pills in Phosphor, where every corner is square.
-  test("suggestion chips are round in Base and square in Phosphor", async ({ page }) => {
+  test("suggestion chips are round in Base and square in Phosphor", { tag: "@engine" }, async ({ page }) => {
     const chip = () => chat(page).locator('.chat-suggestions [data-slot="toolbar-button"]').first()
     await chat(page).getByRole("button", { name: "New chat" }).click()
     expect(parseFloat(await chip().evaluate((el) => getComputedStyle(el).borderTopLeftRadius))).toBeGreaterThan(8)
@@ -685,7 +685,7 @@ test.describe("Chat kit", () => {
   // let go of following, and nothing re-armed it, so the next answer arrived out of view
   // (2026-11-20; the same failure as shadcn-ui/ui#12766). Forced here: a short thread whose
   // content ends .6 past a whole pixel (the browser rounds the end up, then a wheel settles below).
-  test("the thread keeps following after a wheel or End at its end", async ({ page }) => {
+  test("the thread keeps following after a wheel or End at its end", { tag: "@engine" }, async ({ page }) => {
     await page.addStyleTag({ content: ".chat-thread-frame { max-height: 220px }" })
     const log = page.locator(".chat-thread-log").first()
     const height = await log.evaluate((el) => el.getBoundingClientRect().height)
@@ -708,7 +708,7 @@ test.describe("Chat kit", () => {
   })
 
   for (const scheme of ["light", "dark"] as const) {
-    test(`passes axe in ${scheme} mode, code colors included`, async ({ page }) => {
+    test(`passes axe in ${scheme} mode, code colors included`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ colorScheme: scheme, reducedMotion: "reduce" })
       await chat(page)
         .locator(".chat-thread-scroller")

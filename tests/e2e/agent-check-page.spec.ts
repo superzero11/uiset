@@ -28,7 +28,7 @@ test("on a page with no bridge, checkPage reads the page itself", async ({ page 
 
 const panel = (page: Page) => page.getByRole("dialog", { name: "Agent readiness" })
 
-test("the bookmarklet draws its report over the page, outlines a problem's elements, and goes on Escape", async ({ page }) => {
+test("the bookmarklet draws its report over the page, outlines a problem's elements, and goes on Escape", { tag: "@engine" }, async ({ page }) => {
   await page.setContent(plain)
   await page.evaluate(bookmarklet)
   await expect(panel(page)).toContainText("20/100")
@@ -53,7 +53,7 @@ test("the bookmarklet draws its report over the page, outlines a problem's eleme
 })
 
 for (const scheme of ["light", "dark"] as const) {
-  test(`the bookmarklet's report passes axe in ${scheme}`, async ({ page }) => {
+  test(`the bookmarklet's report passes axe in ${scheme}`, { tag: "@engine" }, async ({ page }) => {
     await page.emulateMedia({ colorScheme: scheme })
     await page.setContent(plain)
     await page.evaluate(bookmarklet)

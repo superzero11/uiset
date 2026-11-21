@@ -44,6 +44,15 @@ snapshot listed Allow, Deny, the composer and the tool.
    chat, the site, agent-check's link, charts, Agent view, motion). Each batch: move, tag,
    mutation-check, run the affected specs at 2 workers.
 
+## Progress
+
+- **Tags in place (2026-11-21).** 390 of 654 test blocks carry `@engine`: the 225
+  engine-sensitive ones and 165 key and pointer tests in the kits whose input UISet wrote.
+  Runs per engine, loops expanded: WebKit and Firefox 715 each (React 437, web 278), from
+  1,030; Chrome stays at 598 and web 429. Running only the 225 would take each engine to
+  roughly a third; keeping UISet's own input tests in every engine is the margin.
+- **Pilot moved:** agent parts (5 tests) through the bridge in Vitest.
+
 ## Done when
 
 - WebKit and Firefox run about a third of today's tests, Chrome about two thirds, and the

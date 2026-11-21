@@ -39,7 +39,7 @@ test.beforeEach(async ({ page }) => {
 
 for (const skin of ["Base", "Blueprint", "Studio", "Phosphor", "Ink"]) {
   for (const theme of ["Light", "Dark"]) {
-    test(`passes axe in ${skin} ${theme.toLowerCase()}, with the "/" menu open`, async ({ page, browserName }) => {
+    test(`passes axe in ${skin} ${theme.toLowerCase()}, with the "/" menu open`, { tag: "@engine" }, async ({ page, browserName }) => {
       await choose(page, "Skin", skin)
       await choose(page, "Theme", theme)
       await editor(page).getByText("Before we ship").click()
@@ -58,7 +58,7 @@ for (const skin of ["Base", "Blueprint", "Studio", "Phosphor", "Ink"]) {
   }
 }
 
-test("Markdown as you type makes headings, lists, nesting, quotes and marks", async ({ page }) => {
+test("Markdown as you type makes headings, lists, nesting, quotes and marks", { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("# Plan")
   await page.keyboard.press("Enter")
@@ -86,7 +86,7 @@ test("Markdown as you type makes headings, lists, nesting, quotes and marks", as
   expect(await markdown(page)).toBe("# Plan\n\n- first\n  - second\n\n> quoted\n\nSome **bold** and `code` here")
 })
 
-test("Enter on an empty list item ends the list; Backspace at its start lifts it", async ({ page }) => {
+test("Enter on an empty list item ends the list; Backspace at its start lifts it", { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("1. one")
   await page.keyboard.press("Enter")
@@ -100,7 +100,7 @@ test("Enter on an empty list item ends the list; Backspace at its start lifts it
   await expect(editor(page).locator("p", { hasText: "after" })).toBeVisible()
 })
 
-test("the toolbar and shortcuts mark text, and show what's on at the caret", async ({ page }) => {
+test("the toolbar and shortcuts mark text, and show what's on at the caret", { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("make this loud")
   await page.keyboard.press("Shift+ArrowLeft")
@@ -122,7 +122,7 @@ test("the toolbar and shortcuts mark text, and show what's on at the caret", asy
   await expect(editor(page).getByRole("heading", { level: 2 })).toHaveText("make this loud")
 })
 
-test('"/" turns the line into a block, and leaves no "/" behind', async ({ page }) => {
+test('"/" turns the line into a block, and leaves no "/" behind', { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("/quo")
   await expect(page.getByRole("option", { name: /Quote/ })).toBeVisible()
@@ -136,7 +136,7 @@ test('"/" turns the line into a block, and leaves no "/" behind', async ({ page 
   await expect(page.locator('[data-slot="trigger-menu-content"]')).toHaveCount(0)
 })
 
-test('"@" mentions a person as one unit', async ({ page }) => {
+test('"@" mentions a person as one unit', { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("Thanks @gra")
   await page.getByRole("option", { name: "Grace Hopper" }).click()
@@ -152,7 +152,7 @@ test('"@" mentions a person as one unit', async ({ page }) => {
   await expect(editor(page)).toHaveText("Thanks ")
 })
 
-test('in a list, Tab picks from an open "@" menu instead of nesting the item', async ({ page }) => {
+test('in a list, Tab picks from an open "@" menu instead of nesting the item', { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("- Notes")
   await page.keyboard.press("Enter")
@@ -166,7 +166,7 @@ test('in a list, Tab picks from an open "@" menu instead of nesting the item', a
   await expect(editor(page).getByRole("listitem").nth(1)).toHaveAttribute("aria-level", "2")
 })
 
-test("undo and redo step through edits, from the keyboard and the toolbar", async ({ page }) => {
+test("undo and redo step through edits, from the keyboard and the toolbar", { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("hello")
   await page.waitForTimeout(800)
@@ -181,7 +181,7 @@ test("undo and redo step through edits, from the keyboard and the toolbar", asyn
   await expect(editor(page)).toHaveText("hello world")
 })
 
-test("pasting a web page keeps its structure and drops what's unsafe", async ({ page, browserName }) => {
+test("pasting a web page keeps its structure and drops what's unsafe", { tag: "@engine" }, async ({ page, browserName }) => {
   test.skip(browserName === "firefox", "Firefox empties the data of a paste event made by a script")
   await clear(page)
   await editor(page).evaluate((el) => {
@@ -199,7 +199,7 @@ test("pasting a web page keeps its structure and drops what's unsafe", async ({ 
   expect(await page.evaluate(() => (window as unknown as { pwned?: number }).pwned)).toBeUndefined()
 })
 
-test("pasting Markdown text turns it into blocks", async ({ page, browserName }) => {
+test("pasting Markdown text turns it into blocks", { tag: "@engine" }, async ({ page, browserName }) => {
   test.skip(browserName === "firefox", "Firefox empties the data of a paste event made by a script")
   await clear(page)
   await editor(page).evaluate((el) => {
@@ -212,7 +212,7 @@ test("pasting Markdown text turns it into blocks", async ({ page, browserName })
   await expect(editor(page).getByRole("checkbox", { name: "test it" })).toHaveAttribute("aria-checked", "true")
 })
 
-test("Mod+K adds a link to the selection, refuses unsafe addresses, and removes it", async ({ page }) => {
+test("Mod+K adds a link to the selection, refuses unsafe addresses, and removes it", { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("read the docs")
   for (let i = 0; i < 4; i++) await page.keyboard.press("Shift+ArrowLeft")
@@ -239,7 +239,7 @@ test("Mod+K adds a link to the selection, refuses unsafe addresses, and removes 
   await expect(editor(page)).toHaveText("read the docs")
 })
 
-test("a to-do's box checks it off, by pointer, by a screen reader's click and by Mod+Enter", async ({ page }) => {
+test("a to-do's box checks it off, by pointer, by a screen reader's click and by Mod+Enter", { tag: "@engine" }, async ({ page }) => {
   // Named by its task; its state is aria-checked.
   const box = editor(page).getByRole("checkbox", { name: "Record the demo" })
   const item = editor(page).locator("li", { hasText: "Record the demo" })
@@ -258,7 +258,7 @@ test("a to-do's box checks it off, by pointer, by a screen reader's click and by
   expect(await markdown(page)).toContain("- [ ] Record the demo")
 })
 
-test("agents read the editor as Markdown and write it the same way", async ({ page }) => {
+test("agents read the editor as Markdown and write it the same way", { tag: "@engine" }, async ({ page }) => {
   type Result = { ok: boolean; error?: { message: string } }
   type Agent = {
     act: (x: unknown) => Promise<Result>
@@ -296,7 +296,7 @@ test("agents read the editor as Markdown and write it the same way", async ({ pa
   await expect(editor(page).locator("p", { hasText: "Signed, the agent" })).toHaveCount(0)
 })
 
-test("the count says when the text is over the limit, in words", async ({ page }) => {
+test("the count says when the text is over the limit, in words", { tag: "@engine" }, async ({ page }) => {
   const count = section(page).locator(".rich-text-count")
   await expect(count).toHaveText(/^\d+ \/ 2000 characters$/)
   await editor(page).getByText("Before we ship").click()
@@ -307,7 +307,7 @@ test("the count says when the text is over the limit, in words", async ({ page }
 })
 
 test.describe("review fixes", () => {
-  test("Escape closes the link popover and keeps the selection", async ({ page }) => {
+  test("Escape closes the link popover and keeps the selection", { tag: "@engine" }, async ({ page }) => {
     await clear(page)
     await page.keyboard.type("ship it")
     await page.keyboard.press(lineStart)
@@ -320,7 +320,7 @@ test.describe("review fixes", () => {
     await expect(editor(page)).toHaveText("send it")
   })
 
-  test('Enter still makes a new line when "/" or "@" matches nothing', async ({ page }) => {
+  test('Enter still makes a new line when "/" or "@" matches nothing', { tag: "@engine" }, async ({ page }) => {
     await clear(page)
     await page.keyboard.type("/usr")
     await page.keyboard.press("Enter")
@@ -328,7 +328,7 @@ test.describe("review fixes", () => {
     await expect(editor(page).locator("p")).toHaveText(["/usr", "next"])
   })
 
-  test("a link typed at the caret is checked like a selected one", async ({ page }) => {
+  test("a link typed at the caret is checked like a selected one", { tag: "@engine" }, async ({ page }) => {
     await clear(page)
     await page.keyboard.type("see ")
     await page.keyboard.press("ControlOrMeta+k")
@@ -341,7 +341,7 @@ test.describe("review fixes", () => {
     await expect(editor(page).locator("a")).toHaveAttribute("href", "https://example.com/")
   })
 
-  test("Enter twice at the end of a code block leaves it", async ({ page }) => {
+  test("Enter twice at the end of a code block leaves it", { tag: "@engine" }, async ({ page }) => {
     await editor(page).locator("pre").click()
     await page.keyboard.press("ControlOrMeta+End")
     await page.keyboard.press(lineEnd)
@@ -352,7 +352,7 @@ test.describe("review fixes", () => {
     await expect(editor(page).locator("p").last()).toHaveText("after")
   })
 
-  test("an agent's insert adds to the end and keeps mentions", async ({ page }) => {
+  test("an agent's insert adds to the end and keeps mentions", { tag: "@engine" }, async ({ page }) => {
     await clear(page)
     await page.keyboard.type("Thanks @gra")
     await page.getByRole("option", { name: "Grace Hopper" }).click()
@@ -369,7 +369,7 @@ test.describe("review fixes", () => {
 })
 
 test.describe("review fixes, part 2", () => {
-  test("the editor's own clipboard type is checked like any paste", async ({ page, browserName }) => {
+  test("the editor's own clipboard type is checked like any paste", { tag: "@engine" }, async ({ page, browserName }) => {
     test.skip(browserName === "firefox", "Firefox empties the data of a paste event made by a script")
     await clear(page)
     await editor(page).evaluate((el) => {
@@ -382,7 +382,7 @@ test.describe("review fixes, part 2", () => {
     await expect(editor(page).locator("a")).toHaveCount(0)
   })
 
-  test("undo puts the caret back where the change was", async ({ page }) => {
+  test("undo puts the caret back where the change was", { tag: "@engine" }, async ({ page }) => {
     await editor(page).getByText("Before we ship").click()
     await page.keyboard.press(lineEnd)
     await page.keyboard.type("X")
@@ -391,7 +391,7 @@ test.describe("review fixes, part 2", () => {
     await expect(editor(page).getByRole("heading", { level: 3 })).toHaveText("Before we shipY")
   })
 
-  test("text from an input method takes the marks typing would, not the code it follows", async ({ page, browserName }) => {
+  test("text from an input method takes the marks typing would, not the code it follows", { tag: "@engine" }, async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "drives the input method through Chrome's DevTools protocol")
     await clear(page)
     // Right after the closing backtick, the browser would write composed text into <code>.

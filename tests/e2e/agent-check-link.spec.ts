@@ -158,7 +158,7 @@ test.describe("the /check page", () => {
     expect(asked).toEqual([])
   })
 
-  test("a long address in an error wraps on a phone instead of widening the page", async ({ page }) => {
+  test("a long address in an error wraps on a phone instead of widening the page", { tag: "@engine" }, async ({ page }) => {
     const long = `https://exa mple.com/${"a".repeat(70)}`
     await answer(page, { error: `"${long}" isn't a web address. Enter one like example.com.` }, 422)
     await page.setViewportSize({ width: 375, height: 812 })
@@ -177,7 +177,7 @@ test.describe("the /check page", () => {
   })
 
   for (const theme of ["light", "dark"] as const) {
-    test(`passes axe in ${theme}, with a report and with an error`, async ({ page, browserName }) => {
+    test(`passes axe in ${theme}, with a report and with an error`, { tag: "@engine" }, async ({ page, browserName }) => {
       test.fixme(browserName === "firefox", "Playwright's Firefox crashes (signal 11) while automation inspects the readiness report; normal use doesn't (HISTORY.md decision log, 2026-11-15)")
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       const asked = await answer(page, report)

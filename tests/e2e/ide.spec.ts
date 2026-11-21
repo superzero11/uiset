@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
   await expect(ide(page)).toBeVisible()
 })
 
-test("open a file from the tree; its code shows in colors, line for line", async ({ page }) => {
+test("open a file from the tree; its code shows in colors, line for line", { tag: "@engine" }, async ({ page }) => {
   await file(page, "greet.ts").click()
   await expect(tab(page, "greet.ts")).toHaveAttribute("aria-selected", "true")
   await expect(editor(page, "src/lib/greet.ts")).toHaveValue(/export function greet/)
@@ -31,7 +31,7 @@ test("open a file from the tree; its code shows in colors, line for line", async
   expect(gutter.slice(0, 5)).toEqual(lines.slice(0, 5))
 })
 
-test("Tab indents, Enter keeps the indent, Escape then Tab leaves the editor", async ({ page }) => {
+test("Tab indents, Enter keeps the indent, Escape then Tab leaves the editor", { tag: "@engine" }, async ({ page }) => {
   const code = editor(page, "src/index.ts")
   await caretAt(page, "src/index.ts", "end")
   await page.keyboard.type("function hi() {")
@@ -51,7 +51,7 @@ test("Tab indents, Enter keeps the indent, Escape then Tab leaves the editor", a
   await expect(code).not.toBeFocused()
 })
 
-test("an edit marks the tab unsaved and the file modified; ⌘S saves", async ({ page }) => {
+test("an edit marks the tab unsaved and the file modified; ⌘S saves", { tag: "@engine" }, async ({ page }) => {
   await caretAt(page, "src/index.ts", "end")
   await page.keyboard.type("// done")
   await expect(tab(page, "index.ts, unsaved")).toBeVisible()
@@ -62,7 +62,7 @@ test("an edit marks the tab unsaved and the file modified; ⌘S saves", async ({
   await expect(file(page, "index.ts, modified")).toBeVisible()
 })
 
-test("the palette opens files, runs commands after >, and goes to a line after :", async ({ page }) => {
+test("the palette opens files, runs commands after >, and goes to a line after :", { tag: "@engine" }, async ({ page }) => {
   await editor(page, "src/index.ts").click()
   await page.keyboard.press("ControlOrMeta+p")
   const palette = page.getByRole("dialog", { name: "Go to file" })
@@ -85,7 +85,7 @@ test("the palette opens files, runs commands after >, and goes to a line after :
   await expect(tab(page, "format.ts")).toHaveCount(0)
 })
 
-test("problems: choosing one opens its file at the line; F8 walks them", async ({ page }) => {
+test("problems: choosing one opens its file at the line; F8 walks them", { tag: "@engine" }, async ({ page }) => {
   const problems = ide(page).getByRole("tabpanel", { name: /Problems/ })
   await problems.getByRole("button", { name: /Error: Expected "}"/ }).click()
   await expect(tab(page, "format.ts")).toHaveAttribute("aria-selected", "true")
@@ -98,7 +98,7 @@ test("problems: choosing one opens its file at the line; F8 walks them", async (
   await expect(status(page)).toContainText("Ln 7, Col 1")
 })
 
-test("new file, rename with F2, and delete with focus kept in the tree", async ({ page }) => {
+test("new file, rename with F2, and delete with focus kept in the tree", { tag: "@engine" }, async ({ page }) => {
   await file(page, "lib").click()
   await ide(page).getByRole("button", { name: "New file" }).click()
   let dialog = page.getByRole("dialog", { name: "New file" })
@@ -124,7 +124,7 @@ test("new file, rename with F2, and delete with focus kept in the tree", async (
   await expect(tab(page, /^clock\.ts/)).toHaveCount(0)
 })
 
-test("Delete on a tab closes it; closing an unsaved file asks first", async ({ page }) => {
+test("Delete on a tab closes it; closing an unsaved file asks first", { tag: "@engine" }, async ({ page }) => {
   await file(page, "config.ts").click()
   await tab(page, "config.ts").focus()
   await page.keyboard.press("Delete")
@@ -154,7 +154,7 @@ test("agents open files and edit code by the names people see", async ({ page })
   await expect(tab(page, "config.ts, unsaved")).toBeVisible()
 })
 
-test("in every skin the editor's text is drawn by its colors, not a skinned field over them", async ({ page }) => {
+test("in every skin the editor's text is drawn by its colors, not a skinned field over them", { tag: "@engine" }, async ({ page }) => {
   test.slow() // one page load per skin and theme
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     await page.goto(`/templates/ide-app?skin=${skin}&theme=dark`)
@@ -167,7 +167,7 @@ test("in every skin the editor's text is drawn by its colors, not a skinned fiel
   }
 })
 
-test("the file actions menu works from the keyboard", async ({ page }) => {
+test("the file actions menu works from the keyboard", { tag: "@engine" }, async ({ page }) => {
   await file(page, "config.ts").click()
   const more = ide(page).getByRole("button", { name: "More file actions for config.ts" })
   await more.focus()
@@ -180,14 +180,14 @@ test("the file actions menu works from the keyboard", async ({ page }) => {
 test.describe("review fixes", () => {
   const shownEditor = (page: Page) => ide(page).locator('[role="tabpanel"]:not([hidden])').getByRole("textbox")
 
-  test("closing the last tab focuses the empty pane, so ⌘S stays the IDE's", async ({ page }) => {
+  test("closing the last tab focuses the empty pane, so ⌘S stays the IDE's", { tag: "@engine" }, async ({ page }) => {
     await tab(page, "index.ts").focus()
     await page.keyboard.press("Delete")
     await expect(tab(page, /index\.ts/)).toHaveCount(0)
     await expect(ide(page).locator(".ide-editor-empty")).toBeFocused()
   })
 
-  test("Cancel on an unsaved close keeps that file shown and its tab focused", async ({ page }) => {
+  test("Cancel on an unsaved close keeps that file shown and its tab focused", { tag: "@engine" }, async ({ page }) => {
     await file(page, "config.ts").click()
     await tab(page, "index.ts").click()
     await caretAt(page, "src/index.ts", "end")
@@ -200,7 +200,7 @@ test.describe("review fixes", () => {
     await expect(shownEditor(page)).toHaveAccessibleName("src/index.ts")
   })
 
-  test("deleting the open file shows the next tab's editor, and Close all keeps unsaved files shown", async ({ page }) => {
+  test("deleting the open file shows the next tab's editor, and Close all keeps unsaved files shown", { tag: "@engine" }, async ({ page }) => {
     await file(page, "config.ts").click()
     await file(page, "index.ts").click()
     await page.keyboard.press("Delete")
@@ -216,7 +216,7 @@ test.describe("review fixes", () => {
     await expect(shownEditor(page)).toBeVisible()
   })
 
-  test("switching tabs keeps each editor's caret and undo", async ({ page }) => {
+  test("switching tabs keeps each editor's caret and undo", { tag: "@engine" }, async ({ page }) => {
     await file(page, "config.ts").click()
     await tab(page, "index.ts").click()
     await caretAt(page, "src/index.ts", 20)
@@ -230,7 +230,7 @@ test.describe("review fixes", () => {
     await expect(editor(page, "src/index.ts")).not.toHaveValue(/abc/)
   })
 
-  test("typing undoes as one step, and colors stay while you type", async ({ page }) => {
+  test("typing undoes as one step, and colors stay while you type", { tag: "@engine" }, async ({ page }) => {
     const shown = ide(page).locator('[role="tabpanel"]:not([hidden])')
     await expect(shown.locator(".ide-code-colors span[style]").first()).toBeVisible()
     await caretAt(page, "src/index.ts", "end")
@@ -240,7 +240,7 @@ test.describe("review fixes", () => {
     await expect(editor(page, "src/index.ts")).not.toHaveValue(/const w/)
   })
 
-  test("the palette returns focus where you were, and Escape closes it in any mode", async ({ page }) => {
+  test("the palette returns focus where you were, and Escape closes it in any mode", { tag: "@engine" }, async ({ page }) => {
     await caretAt(page, "src/index.ts", 5)
     await page.keyboard.press("ControlOrMeta+Shift+p")
     await expect(page.getByRole("dialog", { name: "Run a command" })).toBeVisible()
@@ -253,7 +253,7 @@ test.describe("review fixes", () => {
     await expect(editor(page, "src/index.ts")).toBeFocused()
   })
 
-  test("F2 and Delete act on the focused item, not the selected one", async ({ page }) => {
+  test("F2 and Delete act on the focused item, not the selected one", { tag: "@engine" }, async ({ page }) => {
     await file(page, "index.ts").click()
     await file(page, "lib").focus()
     await page.keyboard.press("Delete")
@@ -261,7 +261,7 @@ test.describe("review fixes", () => {
     await page.keyboard.press("Escape")
   })
 
-  test("Page Down moves the caret; Escape, a click, then Tab still indents", async ({ page }) => {
+  test("Page Down moves the caret; Escape, a click, then Tab still indents", { tag: "@engine" }, async ({ page }) => {
     await caretAt(page, "src/index.ts", "start")
     await page.keyboard.press("PageDown")
     await expect(status(page)).not.toContainText("Ln 1,")
@@ -273,7 +273,7 @@ test.describe("review fixes", () => {
     expect((await editor(page, "src/index.ts").inputValue()).length).toBe(before.length + 2)
   })
 
-  test("code stays left to right and untranslated, and a folder's ring is on its row", async ({ page }) => {
+  test("code stays left to right and untranslated, and a folder's ring is on its row", { tag: "@engine" }, async ({ page }) => {
     await expect(ide(page).locator(".ide-code").first()).toHaveAttribute("dir", "ltr")
     await expect(ide(page).locator(".ide-code").first()).toHaveAttribute("translate", "no")
     await file(page, "lib").focus()
@@ -287,7 +287,7 @@ test.describe("review fixes", () => {
   })
 })
 
-test("selected code keeps 4.5:1 in every skin and theme", async ({ page }) => {
+test("selected code keeps 4.5:1 in every skin and theme", { tag: "@engine" }, async ({ page }) => {
   test.slow() // one page load per skin and theme
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     for (const theme of ["light", "dark"]) {
@@ -353,7 +353,7 @@ async function dragRow(page: Page, path: string, onto: string, { hold = 0, relea
   if (release) await page.mouse.up()
 }
 
-test("dragging a file onto a folder moves it there, selects it and says so; its tab follows", async ({ page }) => {
+test("dragging a file onto a folder moves it there, selects it and says so; its tab follows", { tag: "@engine" }, async ({ page }) => {
   await dragRow(page, "src/index.ts", "src/lib", { release: false })
   await expect(row(page, "src/lib")).toHaveAttribute("data-drop-target", "")
   await expect(page.locator("[data-drag-preview]")).toBeVisible()
@@ -366,7 +366,7 @@ test("dragging a file onto a folder moves it there, selects it and says so; its 
   await expect(page.locator("[data-drop-target], [data-drag-preview]")).toHaveCount(0)
 })
 
-test("onto a file means its folder, below the rows means the top, and a folder can't go inside itself", async ({ page }) => {
+test("onto a file means its folder, below the rows means the top, and a folder can't go inside itself", { tag: "@engine" }, async ({ page }) => {
   // Clicks that reach the tree: the press that ends a drag mustn't count as one on the row.
   await tree(page).evaluate((el) => el.addEventListener("click", () => (el.dataset.clicks = String(Number(el.dataset.clicks ?? 0) + 1))))
   await dragRow(page, "README.md", "src/config.ts")
@@ -382,7 +382,7 @@ test("onto a file means its folder, below the rows means the top, and a folder c
   await expect(row(page, "src/lib")).toBeVisible()
 })
 
-test("a drag resting on a closed folder opens it, Escape puts it back, and a click still opens a file", async ({ page }) => {
+test("a drag resting on a closed folder opens it, Escape puts it back, and a click still opens a file", { tag: "@engine" }, async ({ page }) => {
   await row(page, "src/lib").locator("> .ide-tree-label .ide-tree-chevron").click()
   await expect(row(page, "src/lib")).toHaveAttribute("aria-expanded", "false")
   await dragRow(page, "package.json", "src/lib", { hold: 900, release: false })

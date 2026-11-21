@@ -13,7 +13,7 @@ async function home(page: Page) {
   return list
 }
 
-test("What's new puts the latest releases on one line, each linking to its page", async ({ page }) => {
+test("What's new puts the latest releases on one line, each linking to its page", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   const list = await home(page)
   const items = list.getByRole("listitem")
@@ -43,7 +43,7 @@ test("What's new puts the latest releases on one line, each linking to its page"
   await expect(items.nth(1)).toBeFocused()
 })
 
-test("on a phone the row scrolls by itself, and the page doesn't", async ({ page }) => {
+test("on a phone the row scrolls by itself, and the page doesn't", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 })
   const list = await home(page)
   expect(await list.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true)

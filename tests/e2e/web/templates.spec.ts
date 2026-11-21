@@ -21,7 +21,7 @@ for (const template of templates) {
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     for (const theme of ["light", "dark"] as const) {
       if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-      test(`${template} passes axe in ${skin}, ${theme}`, async ({ page }) => {
+      test(`${template} passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
         await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" })
         await open(page, template)
         await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
@@ -31,7 +31,7 @@ for (const template of templates) {
   }
 }
 
-test("templates fit a phone without scrolling sideways", async ({ page }) => {
+test("templates fit a phone without scrolling sideways", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 })
   for (const template of templates) {
     await open(page, template)
@@ -105,7 +105,7 @@ test("pricing: the billing switch changes every price; the table and questions r
   await expect(frame(page).getByText("Anyone who can sign in to your workspace.")).toBeVisible()
 })
 
-test("dashboard: the date range rescopes the figures, the charts and the table", async ({ page }) => {
+test("dashboard: the date range rescopes the figures, the charts and the table", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "dashboard")
   const orders = frame(page).locator("uiset-stat").nth(1).locator(".stat-value")
@@ -120,7 +120,7 @@ test("dashboard: the date range rescopes the figures, the charts and the table",
   await expect(frame(page).getByRole("listbox", { name: "Revenue" }).getByRole("option")).toHaveCount(90)
 })
 
-test("the app shell collapses to icons with Mod+B and remembers it; narrow screens get a drawer", async ({ page }) => {
+test("the app shell collapses to icons with Mod+B and remembers it; narrow screens get a drawer", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "dashboard")
   const nav = frame(page).getByRole("navigation", { name: "Dashboard sections" })
@@ -222,7 +222,7 @@ test("settings: tabs keep what you did, and an existing teammate can't be invite
   await expect(frame(page).getByText("5 people in Acme Cloud.")).toBeVisible()
 })
 
-test("inbox: arrow through messages, open one, archive it, undo", async ({ page }) => {
+test("inbox: arrow through messages, open one, archive it, undo", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "inbox")
   const list = frame(page).getByRole("listbox", { name: "Inbox messages" })
@@ -240,7 +240,7 @@ test("inbox: arrow through messages, open one, archive it, undo", async ({ page 
   await expect(frame(page).getByRole("heading", { level: 2, name: "Numbers for the board deck" })).toBeVisible()
 })
 
-test("inbox: folder links switch the list, and archived mail can come back", async ({ page }) => {
+test("inbox: folder links switch the list, and archived mail can come back", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "inbox")
   await frame(page).getByRole("button", { name: "Archive message" }).click()
@@ -252,7 +252,7 @@ test("inbox: folder links switch the list, and archived mail can come back", asy
   await expect(frame(page).getByText("Nothing here")).toBeVisible()
 })
 
-test("inbox on a phone: arrows browse, Enter opens and focuses the message, Back returns", async ({ page }) => {
+test("inbox on a phone: arrows browse, Enter opens and focuses the message, Back returns", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 800 })
   await open(page, "inbox")
   const list = frame(page).getByRole("listbox", { name: "Inbox messages" })
@@ -265,7 +265,7 @@ test("inbox on a phone: arrows browse, Enter opens and focuses the message, Back
   await expect(list.getByRole("option").first()).toBeFocused()
 })
 
-test("inbox: compose sends to Sent; / searches", async ({ page }) => {
+test("inbox: compose sends to Sent; / searches", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "inbox")
   await frame(page).getByRole("button", { name: "Compose" }).click()
@@ -345,7 +345,7 @@ const issueBoard = (page: Page) => frame(page).getByRole("group", { name: "Issue
 const issueColumn = (page: Page, name: string) => issueBoard(page).getByRole("listbox", { name })
 const undoButton = (page: Page) => page.getByRole("region", { name: "Notifications" }).getByRole("button", { name: "Undo", exact: true })
 
-test("project board: at 1440 all four columns fit beside the sidebars", async ({ page }) => {
+test("project board: at 1440 all four columns fit beside the sidebars", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 })
   await open(page, "project-board")
   const done = (await issueBoard(page).getByRole("listbox", { name: "Done" }).boundingBox())!
@@ -353,7 +353,7 @@ test("project board: at 1440 all four columns fit beside the sidebars", async ({
   expect(done.x + done.width).toBeLessThanOrEqual(board.x + board.width + 1)
 })
 
-test("project board: a card moves by keyboard, the progress follows, and Undo puts it back", async ({ page }) => {
+test("project board: a card moves by keyboard, the progress follows, and Undo puts it back", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "project-board")
   const progress = frame(page).getByRole("meter", { name: "Sprint progress" })
@@ -369,7 +369,7 @@ test("project board: a card moves by keyboard, the progress follows, and Undo pu
   await expect(progress).toHaveAttribute("aria-valuetext", "4 of 14 issues done")
 })
 
-test("project board: Undo focuses the card in the same task as the press", async ({ page }) => {
+test("project board: Undo focuses the card in the same task as the press", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "project-board")
   const moved = issueColumn(page, "In review").getByRole("option", { name: "Search results layout" })
@@ -387,7 +387,7 @@ test("project board: Undo focuses the card in the same task as the press", async
   expect(focused).toBe("Search results layout")
 })
 
-test("project board: the list shows the same issues, and Enter opens one in the card dialog", async ({ page }) => {
+test("project board: the list shows the same issues, and Enter opens one in the card dialog", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "project-board")
   await frame(page).getByRole("radiogroup", { name: "View" }).getByRole("radio", { name: "List" }).click()
@@ -415,7 +415,7 @@ test("project board: the list shows the same issues, and Enter opens one in the 
   await expect(issueBoard(page).getByRole("option")).toHaveCount(13)
 })
 
-test("project board: search and the person filter narrow the board and the list", async ({ page }) => {
+test("project board: search and the person filter narrow the board and the list", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "project-board")
   const search = frame(page).getByRole("searchbox", { name: "Search issues" })
@@ -430,7 +430,7 @@ test("project board: search and the person filter narrow the board and the list"
   await expect(frame(page).getByRole("grid", { name: "Issue list" })).toHaveAttribute("aria-rowcount", "4")
 })
 
-test("project board: the card dialog edits a card, and New issue adds one", async ({ page }) => {
+test("project board: the card dialog edits a card, and New issue adds one", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "project-board")
   await issueBoard(page).getByRole("option", { name: "Cookie consent banner" }).focus()
@@ -465,7 +465,7 @@ test("project board: the card dialog edits a card, and New issue adds one", asyn
 
 const week = (page: Page) => frame(page).getByRole("group", { name: "My calendar", exact: true })
 
-test("calendar: a phone starts on one day; at 1440 the week shows all seven days", async ({ page }) => {
+test("calendar: a phone starts on one day; at 1440 the week shows all seven days", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 800 })
   await open(page, "calendar-app")
   await expect(frame(page).getByRole("heading", { name: "Monday, November 16" })).toBeVisible()
@@ -478,7 +478,7 @@ test("calendar: a phone starts on one day; at 1440 the week shows all seven days
   expect(sunday.x + sunday.width).toBeLessThanOrEqual(calendar.x + calendar.width + 1)
 })
 
-test("calendar: unchecking a calendar hides its events, and checking it brings them back", async ({ page }) => {
+test("calendar: unchecking a calendar hides its events, and checking it brings them back", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "calendar-app")
   const lunch = week(page).getByRole("button", { name: /^Lunch with Ada, Monday/ })
@@ -491,7 +491,7 @@ test("calendar: unchecking a calendar hides its events, and checking it brings t
   await expect(lunch).toBeVisible()
 })
 
-test("calendar: the small month jumps the week to the day chosen", async ({ page }) => {
+test("calendar: the small month jumps the week to the day chosen", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "calendar-app")
   await frame(page).getByRole("grid", { name: "November 2026" }).getByRole("gridcell", { name: /November 25/ }).click()
@@ -501,7 +501,7 @@ test("calendar: the small month jumps the week to the day chosen", async ({ page
   await expect(frame(page).getByRole("heading", { name: "Nov 16 – 22, 2026" })).toBeVisible()
 })
 
-test("calendar: New event adds one to the week, and deleting it offers Undo", async ({ page }) => {
+test("calendar: New event adds one to the week, and deleting it offers Undo", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "calendar-app")
   await frame(page).getByRole("button", { name: "New event" }).click()
@@ -517,7 +517,7 @@ test("calendar: New event adds one to the week, and deleting it offers Undo", as
   await expect(event).toBeVisible()
 })
 
-test("calendar: the month lists each day's events; choosing a day opens it", async ({ page }) => {
+test("calendar: the month lists each day's events; choosing a day opens it", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 })
   await open(page, "calendar-app")
   await frame(page).getByRole("radiogroup", { name: "Calendar layout" }).getByRole("radio", { name: "Month" }).click()

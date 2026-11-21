@@ -12,7 +12,7 @@ test.beforeEach(async ({ page }) => {
 })
 
 for (const scheme of ["light", "dark"] as const) {
-  test(`passes axe in ${scheme} mode, with a tooltip up and a table open`, async ({ page }) => {
+  test(`passes axe in ${scheme} mode, with a tooltip up and a table open`, { tag: "@engine" }, async ({ page }) => {
     await page.emulateMedia({ colorScheme: scheme, reducedMotion: "reduce" })
     await chart(page, "Revenue and costs").locator('[tabindex="0"]').focus()
     await page.keyboard.press("ArrowRight")
@@ -50,7 +50,7 @@ test("Tab reaches a chart once, arrows read each month, Enter pins it", async ({
   expect(inside).toBe(false)
 })
 
-test("hovering a line chart snaps to the nearest month and shows every series", async ({
+test("hovering a line chart snaps to the nearest month and shows every series", { tag: "@engine" }, async ({
   page,
 }) => {
   // By name: the kit now opens with the Traffic sources bar, which has one row a part.
@@ -87,7 +87,7 @@ test("in the heatmap, Down moves a row and the reading names the cell", async ({
   await expect(heat.getByRole("option", { name: /^Tue, 2h: Sessions/ })).toBeFocused()
 })
 
-test("scatter hover finds the nearest point, even off its dot", async ({ page }) => {
+test("scatter hover finds the nearest point, even off its dot", { tag: "@engine" }, async ({ page }) => {
   const plot = section(page).locator(".scatter-chart .chart-plot")
   await plot.scrollIntoViewIfNeeded()
   const option = chart(page, "Deal size and time to close").getByRole("option").last()
@@ -98,7 +98,7 @@ test("scatter hover finds the nearest point, even off its dot", async ({ page })
   await expect(tooltip(page)).toContainText("Deal")
 })
 
-test("charts fit a phone without scrolling sideways", async ({ page }) => {
+test("charts fit a phone without scrolling sideways", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 })
   await page.reload()
   await expect(chart(page, "Revenue and costs")).toBeVisible()
@@ -108,7 +108,7 @@ test("charts fit a phone without scrolling sideways", async ({ page }) => {
   expect(svgWidth).toBeLessThanOrEqual(375)
 })
 
-test("right-to-left pages keep axis labels outside the plot", async ({ page }) => {
+test("right-to-left pages keep axis labels outside the plot", { tag: "@engine" }, async ({ page }) => {
   await page.evaluate(() => (document.documentElement.dir = "rtl"))
   const chartBox = section(page).locator(".line-chart").first()
   const label = (await chartBox.locator("[data-axis=y] text").first().boundingBox())!
@@ -116,7 +116,7 @@ test("right-to-left pages keep axis labels outside the plot", async ({ page }) =
   expect(label.x + label.width).toBeLessThanOrEqual(grid.x + 1)
 })
 
-test("in scatter, a click pins the point the tooltip shows", async ({ page }) => {
+test("in scatter, a click pins the point the tooltip shows", { tag: "@engine" }, async ({ page }) => {
   const listbox = chart(page, "Deal size and time to close")
   await listbox.scrollIntoViewIfNeeded()
   const option = listbox.getByRole("option").last()
@@ -126,7 +126,7 @@ test("in scatter, a click pins the point the tooltip shows", async ({ page }) =>
 })
 
 for (const scheme of ["light", "dark"] as const) {
-  test(`shares printed inside the segmented bar clear 4.5:1 in ${scheme} mode`, async ({ page }) => {
+  test(`shares printed inside the segmented bar clear 4.5:1 in ${scheme} mode`, { tag: "@engine" }, async ({ page }) => {
     await page.emulateMedia({ colorScheme: scheme, reducedMotion: "reduce" })
     const ratios = await section(page).evaluate(() => {
       const canvas = document.createElement("canvas")

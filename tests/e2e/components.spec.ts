@@ -7,7 +7,7 @@ const themes = ["light", "dark"]
 
 for (const skin of skins) {
   for (const theme of themes) {
-    test(`every component passes axe in ${skin}, ${theme}`, async ({ page }) => {
+    test(`every component passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
       // 79 live examples, and axe over all of them: WebKit and Firefox take longer.
       test.slow()
       await page.emulateMedia({

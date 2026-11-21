@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
   await tick(page)
 })
 
-test("drag a node: it moves, and its wires follow", async ({ page, browserName }) => {
+test("drag a node: it moves, and its wires follow", { tag: "@engine" }, async ({ page, browserName }) => {
   test.fixme(browserName === "firefox", "Playwright's Firefox crashes (signal 11) while automation inspects this page; normal use doesn't (HISTORY.md decision log, 2026-11-15)")
   const search = node(page, /^Search docs/)
   const before = (await search.boundingBox())!
@@ -36,7 +36,7 @@ test("drag a node: it moves, and its wires follow", async ({ page, browserName }
   await expect.poll(async () => (await search.boundingBox())!.y).toBeCloseTo(before.y, 0)
 })
 
-test("arrows go to the nearest node that way; Alt with arrows moves it", async ({ page }) => {
+test("arrows go to the nearest node that way; Alt with arrows moves it", { tag: "@engine" }, async ({ page }) => {
   await node(page, /^User question/).focus()
   await page.keyboard.press("ArrowRight")
   await expect(canvas(page).locator(":focus")).toHaveAccessibleName(/^(Answer template|Search docs)/)
@@ -50,7 +50,7 @@ test("arrows go to the nearest node that way; Alt with arrows moves it", async (
   await expect(node(page, /^Reply/)).toBeFocused()
 })
 
-test("Space selects; Delete removes the selection, focus moves on, and Undo brings it back with its wires", async ({ page }) => {
+test("Space selects; Delete removes the selection, focus moves on, and Undo brings it back with its wires", { tag: "@engine" }, async ({ page }) => {
   await node(page, /^Search docs/).focus()
   await page.keyboard.press("Space")
   await expect(node(page, /^Search docs/)).toHaveAttribute("aria-selected", "true")
@@ -64,7 +64,7 @@ test("Space selects; Delete removes the selection, focus moves on, and Undo brin
   await expect(canvas(page).locator('path[data-slot="canvas-wire"]')).toHaveCount(5)
 })
 
-test("Shift-drag across empty space selects a box of nodes", async ({ page }) => {
+test("Shift-drag across empty space selects a box of nodes", { tag: "@engine" }, async ({ page }) => {
   const a = (await node(page, /^Answer template/).boundingBox())!
   const b = (await node(page, /^Search docs/).boundingBox())!
   await page.keyboard.down("Shift")
@@ -79,7 +79,7 @@ test("Shift-drag across empty space selects a box of nodes", async ({ page }) =>
   await expect(demo(page).getByRole("button", { name: "Remove 2 nodes" })).toBeEnabled()
 })
 
-test("C starts a wire from the keyboard: arrows choose an input, Enter connects", async ({ page }) => {
+test("C starts a wire from the keyboard: arrows choose an input, Enter connects", { tag: "@engine" }, async ({ page }) => {
   // Remove the wire into Reply, then make it again by keyboard.
   await node(page, /^Reply/).focus()
   await page.keyboard.press("Space")
@@ -94,7 +94,7 @@ test("C starts a wire from the keyboard: arrows choose an input, Enter connects"
   await expect(node(page, /^Reply/)).toHaveAccessibleDescription(/Inputs: Text from Draft answer Text/)
 })
 
-test("drag from an output port to an input port to wire them", async ({ page }) => {
+test("drag from an output port to an input port to wire them", { tag: "@engine" }, async ({ page }) => {
   await canvas(page).getByRole("button", { name: "Zoom to fit" }).click()
   await canvas(page).locator('g[data-slot="canvas-unwire"]').last().click()
   await expect(canvas(page).locator('path[data-slot="canvas-wire"]')).toHaveCount(4)
@@ -110,7 +110,7 @@ test("drag from an output port to an input port to wire them", async ({ page }) 
 
 // The layout audit (2026-11-19): fitting the workflow into a phone opened it at 25%, with 12px
 // titles drawn at 3px. Too big to show whole at 60%, it opens at 80%, from where it starts.
-test("a canvas opens at a readable zoom on a phone, starting with the first node", async ({ page }) => {
+test("a canvas opens at a readable zoom on a phone, starting with the first node", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto("/docs/kits/canvas")
   const readout = canvas(page).locator("[data-canvas-zoom]")
@@ -120,7 +120,7 @@ test("a canvas opens at a readable zoom on a phone, starting with the first node
 
 // The skins audit (2026-11-20): opening no smaller than 80% left Reply past the edge on a
 // desktop, where the whole workflow fits at about 70%.
-test("a canvas on a desktop opens with the whole graph in view", async ({ page }) => {
+test("a canvas on a desktop opens with the whole graph in view", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 })
   await page.goto("/docs/kits/canvas")
   const frame = (await canvas(page).boundingBox())!
@@ -131,7 +131,7 @@ test("a canvas on a desktop opens with the whole graph in view", async ({ page }
   }
 })
 
-test("zoom with the buttons and keys, pan by dragging empty space", async ({ page }) => {
+test("zoom with the buttons and keys, pan by dragging empty space", { tag: "@engine" }, async ({ page }) => {
   const readout = canvas(page).locator("[data-canvas-zoom]")
   const start = await readout.getAttribute("data-zoom")
   await canvas(page).getByRole("button", { name: "Zoom in" }).click()
@@ -152,7 +152,7 @@ test("zoom with the buttons and keys, pan by dragging empty space", async ({ pag
   expect(await world.evaluate((el) => el.style.transform)).not.toBe(before)
 })
 
-test("Add node puts a new node in view and focuses it", async ({ page }) => {
+test("Add node puts a new node in view and focuses it", { tag: "@engine" }, async ({ page }) => {
   await demo(page).getByRole("button", { name: "Add node" }).click()
   await page.getByRole("menuitem", { name: "Tool" }).click()
   await expect(node(page, /^New tool/)).toBeFocused()
@@ -184,7 +184,7 @@ test("agents add, wire, move and select nodes by name", async ({ page }) => {
   expect(result.items).toEqual(expect.arrayContaining([expect.stringMatching(/^Log \(at 900, 320; Inputs: Text from Draft answer Text\.\)/)]))
 })
 
-test("node edges, wires and ports clear 3:1 in every skin and theme", async ({ page }) => {
+test("node edges, wires and ports clear 3:1 in every skin and theme", { tag: "@engine" }, async ({ page }) => {
   test.slow() // one page load per skin and theme
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     for (const theme of ["light", "dark"]) {
@@ -229,7 +229,7 @@ test("node edges, wires and ports clear 3:1 in every skin and theme", async ({ p
 })
 
 test.describe("review fixes", () => {
-  test("Add node works from the keyboard, and the new node takes focus", async ({ page }) => {
+  test("Add node works from the keyboard, and the new node takes focus", { tag: "@engine" }, async ({ page }) => {
     const add = demo(page).getByRole("button", { name: "Add node" })
     await add.focus()
     await page.keyboard.press("ArrowDown")
@@ -238,7 +238,7 @@ test.describe("review fixes", () => {
     await expect(node(page, /^New model/)).toBeFocused()
   })
 
-  test("the new node takes focus in the same task as the choice", async ({ page }) => {
+  test("the new node takes focus in the same task as the choice", { tag: "@engine" }, async ({ page }) => {
     await demo(page).getByRole("button", { name: "Add node" }).click()
     // Where focus is once the choice's task is done, before the next frame: a focus put off
     // to a later frame would still be on its way.
@@ -250,7 +250,7 @@ test.describe("review fixes", () => {
     await expect(node(page, /^New tool/)).toBeFocused()
   })
 
-  test("Enter on a node puts focus in its notes in the same task", async ({ page }) => {
+  test("Enter on a node puts focus in its notes in the same task", { tag: "@engine" }, async ({ page }) => {
     await node(page, /^Draft answer/).focus()
     // Checked as the key event returns: the notes render and take focus within it.
     const focused = await node(page, /^Draft answer/).evaluate((el) => {
@@ -260,7 +260,7 @@ test.describe("review fixes", () => {
     expect(focused).toBe("canvas-demo-detail")
   })
 
-  test("the inspector shows one set of fields per node, and renames the node shown", async ({ page }) => {
+  test("the inspector shows one set of fields per node, and renames the node shown", { tag: "@engine" }, async ({ page }) => {
     for (const name of [/^Search docs/, /^Draft answer/, /^Reply/, /^User question/]) {
       await node(page, name).focus()
       await page.keyboard.press("Space")
@@ -278,7 +278,7 @@ test.describe("review fixes", () => {
     await expect(node(page, /^Search docs/)).toBeVisible()
   })
 
-  test("Disconnect in the inspector hands focus to the next wire, then the node", async ({ page }) => {
+  test("Disconnect in the inspector hands focus to the next wire, then the node", { tag: "@engine" }, async ({ page }) => {
     await node(page, /^User question/).focus()
     await page.keyboard.press("Space")
     const inspector = page.locator(".canvas-inspector")
@@ -289,7 +289,7 @@ test.describe("review fixes", () => {
     await expect(node(page, /^User question/)).toBeFocused()
   })
 
-  test("removing from the toolbar and undoing an add never drop focus to the page", async ({ page }) => {
+  test("removing from the toolbar and undoing an add never drop focus to the page", { tag: "@engine" }, async ({ page }) => {
     await node(page, /^Reply/).focus()
     await page.keyboard.press("Space")
     await demo(page).getByRole("button", { name: "Remove node" }).click()
@@ -308,7 +308,7 @@ test.describe("review fixes", () => {
     await expect(demo(page).getByRole("button", { name: "Redo" })).not.toHaveAttribute("aria-disabled", "true")
   })
 
-  test("an agent's addNode leaves the person's focus where it is", async ({ page }) => {
+  test("an agent's addNode leaves the person's focus where it is", { tag: "@engine" }, async ({ page }) => {
     await node(page, /^Reply/).focus()
     await page.keyboard.press("Space")
     const notes = page.locator(".canvas-inspector").getByRole("textbox", { name: "Notes" })
@@ -330,7 +330,7 @@ test.describe("review fixes", () => {
     await expect(title).toHaveValue("User question")
   })
 
-  test("a keyboard wire ends when focus leaves the canvas", async ({ page }) => {
+  test("a keyboard wire ends when focus leaves the canvas", { tag: "@engine" }, async ({ page }) => {
     await node(page, /^Reply/).focus()
     await page.keyboard.press("Space")
     await node(page, /^Draft answer/).focus()
@@ -340,7 +340,7 @@ test.describe("review fixes", () => {
     await expect(canvas(page).locator('[data-connect="source"]')).toHaveCount(0)
   })
 
-  test("a keyboard wire lets Tab move on, and ends when focus leaves", async ({ page }) => {
+  test("a keyboard wire lets Tab move on, and ends when focus leaves", { tag: "@engine" }, async ({ page }) => {
     await node(page, /^Draft answer/).focus()
     await page.keyboard.press("c")
     await expect(canvas(page).locator('[data-connect="source"]')).toHaveCount(1)
@@ -349,7 +349,7 @@ test.describe("review fixes", () => {
     await expect(canvas(page).locator('[data-connect="source"]')).toHaveCount(0)
   })
 
-  test("the minimap pans steadily while dragged", async ({ page }) => {
+  test("the minimap pans steadily while dragged", { tag: "@engine" }, async ({ page }) => {
     const map = (await page.locator(".canvas-minimap svg").boundingBox())!
     const world = canvas(page).locator('[data-slot="canvas-world"]')
     await page.mouse.move(map.x + map.width - 4, map.y + map.height / 2)
@@ -363,7 +363,7 @@ test.describe("review fixes", () => {
     expect(new Set(seen).size).toBeLessThanOrEqual(2)
   })
 
-  test("pressing a node partly out of view doesn't pan the canvas", async ({ page }) => {
+  test("pressing a node partly out of view doesn't pan the canvas", { tag: "@engine" }, async ({ page }) => {
     const world = canvas(page).locator('[data-slot="canvas-world"]')
     await canvas(page).getByRole("button", { name: "Zoom in" }).click()
     await canvas(page).getByRole("button", { name: "Zoom in" }).click()
@@ -375,7 +375,7 @@ test.describe("review fixes", () => {
     expect(await world.evaluate((el) => el.style.transform)).toBe(before)
   })
 
-  test("in a right-to-left page, wires still meet their ports", async ({ page }) => {
+  test("in a right-to-left page, wires still meet their ports", { tag: "@engine" }, async ({ page }) => {
     await page.evaluate(() => (document.documentElement.dir = "rtl"))
     await tick(page)
     const gap = await canvas(page).evaluate((root) => {
@@ -388,7 +388,7 @@ test.describe("review fixes", () => {
     expect(gap).toBeLessThan(1.5)
   })
 
-  test("a selected node's edge clears 3:1 in every skin and theme", async ({ page }) => {
+  test("a selected node's edge clears 3:1 in every skin and theme", { tag: "@engine" }, async ({ page }) => {
     test.slow() // one page load per skin and theme
     for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
       for (const theme of ["light", "dark"]) {

@@ -75,7 +75,7 @@ for (const [skin, theme] of [
   ["phosphor", "dark"],
   ["ink", "light"],
 ] as const) {
-  test(`the demo with the agent's turn passes axe in ${skin}, ${theme}`, async ({ page }) => {
+  test(`the demo with the agent's turn passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
     await page.evaluate((s) => localStorage.setItem("uiset-site-skin", s), skin)
     await page.goto(`/docs/kits/chat?theme=${theme}`)

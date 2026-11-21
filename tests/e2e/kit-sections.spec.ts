@@ -10,7 +10,7 @@ for (const [kit, heading, control] of [
   ["forms", "upload", /Choose files/],
   ["app-shell", "table", /Invoices/],
 ] as const) {
-  test(`the ${kit} kit draws ${heading} live under its heading, and passes axe`, async ({ page }) => {
+  test(`the ${kit} kit draws ${heading} live under its heading, and passes axe`, { tag: "@engine" }, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" })
     await page.goto(`/docs/kits/${kit}`)
     const example = page.locator(`[id="${heading}"] + .docs-example`)

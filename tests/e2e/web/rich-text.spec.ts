@@ -23,7 +23,7 @@ test.beforeEach(async ({ page }) => {
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
     if (skin !== "base" && theme !== (skin === "ink" ? "light" : "dark")) continue // dark-only skins, and light-only Ink, look the same in both themes
-    test(`passes axe in ${skin}, ${theme}, with the "/" menu open`, async ({ page }) => {
+    test(`passes axe in ${skin}, ${theme}, with the "/" menu open`, { tag: "@engine" }, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.locator("uiset-root").evaluate((el, [s, t]) => (el.setAttribute("skin", s!), el.setAttribute("theme", t!)), [skin, theme])
       await editor(page).getByText("Before we ship").click()
@@ -44,7 +44,7 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   }
 }
 
-test("Markdown as you type, and the page hears each change as Markdown", async ({ page }) => {
+test("Markdown as you type, and the page hears each change as Markdown", { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("## Plan")
   await page.keyboard.press("Enter")
@@ -57,7 +57,7 @@ test("Markdown as you type, and the page hears each change as Markdown", async (
   await expect(page.locator("#preview").getByRole("img", { name: "Not done" })).toHaveCount(1)
 })
 
-test('"/" turns the line into a block; "@" mentions a person as one unit', async ({ page }) => {
+test('"/" turns the line into a block; "@" mentions a person as one unit', { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("/quo")
   const quote = page.getByRole("option", { name: /Quote/ })
@@ -70,7 +70,7 @@ test('"/" turns the line into a block; "@" mentions a person as one unit', async
   await expect(editor(page).locator(".rich-text-mention")).toHaveAttribute("data-mention", "grace")
 })
 
-test("the toolbar marks text, shows what's on, and keeps focus in the text", async ({ page }) => {
+test("the toolbar marks text, shows what's on, and keeps focus in the text", { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("make this loud")
   for (let i = 0; i < 4; i++) await page.keyboard.press("Shift+ArrowLeft")
@@ -92,7 +92,7 @@ test("the toolbar marks text, shows what's on, and keeps focus in the text", asy
   await expect(bold).toBeFocused()
 })
 
-test("Mod+K links the selection; unsafe addresses are refused", async ({ page }) => {
+test("Mod+K links the selection; unsafe addresses are refused", { tag: "@engine" }, async ({ page }) => {
   await clear(page)
   await page.keyboard.type("read the docs")
   for (let i = 0; i < 4; i++) await page.keyboard.press("Shift+ArrowLeft")
@@ -112,7 +112,7 @@ test("Mod+K links the selection; unsafe addresses are refused", async ({ page })
   await expect(toolbar(page).getByRole("button", { name: "Link" })).toHaveAttribute("aria-pressed", "true")
 })
 
-test("agents read the editor as Markdown and write it; undo takes an agent's edit back", async ({ page }) => {
+test("agents read the editor as Markdown and write it; undo takes an agent's edit back", { tag: "@engine" }, async ({ page }) => {
   type Agent = {
     act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }>
     snapshot: () => { label?: string; value?: unknown; actions?: string[] }[]
@@ -136,7 +136,7 @@ test("agents read the editor as Markdown and write it; undo takes an agent's edi
   await expect(editor(page).getByRole("heading", { name: "Release 2.4" })).toBeVisible()
 })
 
-test("in a form it submits HTML; read-only hides the toolbar and refuses edits", async ({ page }) => {
+test("in a form it submits HTML; read-only hides the toolbar and refuses edits", { tag: "@engine" }, async ({ page }) => {
   const field = page.locator('uiset-rich-text input[type="hidden"][name="notes"]')
   await expect(field).toHaveValue(/^<h2>Release 2\.4<\/h2>/)
   await page.locator("#notes").evaluate((el) => el.setAttribute("format", "markdown"))
@@ -161,7 +161,7 @@ test.describe("review fixes", () => {
     await expect(toolbar(page).getByRole("button", { name: "Insert image" })).toBeVisible()
   })
 
-  test("moved in the page, the editor keeps its text and works", async ({ page }) => {
+  test("moved in the page, the editor keeps its text and works", { tag: "@engine" }, async ({ page }) => {
     await clear(page)
     await page.keyboard.type("kept")
     await page.locator("#notes").evaluate((el) => {
