@@ -2262,3 +2262,7 @@ vercel-labs/ui#905 (2026-11-19).
   lists, the web shell parts and chat), and the WebKit and Firefox projects run only those
   (`grep: /@engine/`). Each engine goes from 1,030 runs to 715; Chrome is unchanged. Tagged by
   `research/bridge-testing/tag.mjs` from the classifier; one motion test by hand.
+- 2026-11-21 — Bridge testing, step 3: the gallery's axe scans go a group at a time
+  (`/gallery?group=`, the owner OK'd the run). WebKit at 1 worker: 10 passed, its biggest
+  process at 885 MB, where the whole gallery reached about 2 GB (5.4 GB per worker in the
+  crash). Chrome: 10 passed.

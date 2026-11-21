@@ -25,6 +25,13 @@ function preloadGallery() {
 
 const initialWanted = () => new Set(examples.slice(0, FIRST).map((_, index) => index))
 
+// `?group=Actions` draws one group: the axe scans visit the gallery a group at a time, so no
+// browser holds every example at once (design/bridge-testing-plan.md).
+const shownGroups = () => {
+  const only = new URLSearchParams(window.location.search).get("group")
+  return only ? exampleGroups.filter((group) => group.title === only) : exampleGroups
+}
+
 const Example = memo(function Example({ entry, index, wanted, onReady }: { entry: ExampleEntry; index: number; wanted: boolean; onReady: (index: number) => void }) {
   const [Component, setComponent] = useState<ComponentType | null>(() => loaded.get(entry.slug) ?? null)
   const [failed, setFailed] = useState(false)
@@ -58,6 +65,8 @@ const Example = memo(function Example({ entry, index, wanted, onReady }: { entry
 })
 
 function ComponentsGallery() {
+  const [groups] = useState(shownGroups)
+  const [list] = useState(() => groups.flatMap((group) => group.examples))
   const [wanted, setWanted] = useState(initialWanted)
   const [ready, setReady] = useState(() => new Set<number>())
   const gallery = useRef<HTMLDivElement>(null)
@@ -82,15 +91,15 @@ function ComponentsGallery() {
   // Once the wanted cards have drawn, the next few fill in while the browser is idle.
   const caughtUp = [...wanted].every((index) => ready.has(index))
   useEffect(() => {
-    if (!caughtUp || wanted.size === examples.length) return
-    const next = examples.map((_, index) => index).filter((index) => !wanted.has(index)).slice(0, BATCH)
+    if (!caughtUp || wanted.size >= list.length) return
+    const next = list.map((_, index) => index).filter((index) => !wanted.has(index)).slice(0, BATCH)
     const idle = window.requestIdleCallback ?? ((run: () => void) => window.setTimeout(run, 50))
     const cancel = window.cancelIdleCallback ?? window.clearTimeout
     const handle = idle(() => want(next))
     return () => cancel(handle)
-  }, [caughtUp, wanted, want])
+  }, [caughtUp, wanted, want, list])
 
-  const complete = ready.size === examples.length
+  const complete = list.every((_, index) => ready.has(index))
 
   // A link to an example stays on it as the cards above it draw, until the reader scrolls.
   // Chrome and Safari hold a link's target on their own; Firefox lets it drift.
@@ -113,7 +122,7 @@ function ComponentsGallery() {
   let index = 0
   return (
     <div className="gallery" ref={gallery} data-ready={complete ? "" : undefined}>
-      {exampleGroups.map((group) => (
+      {groups.map((group) => (
         <Fragment key={group.title}>
           <h2 className="gallery-group">{group.title}</h2>
           {group.examples.map((entry) => {

@@ -52,6 +52,10 @@ snapshot listed Allow, Deny, the composer and the tool.
   1,030; Chrome stays at 598 and web 429. Running only the 225 would take each engine to
   roughly a third; keeping UISet's own input tests in every engine is the margin.
 - **Pilot moved:** agent parts (5 tests) through the bridge in Vitest.
+- **Gallery scans split (2026-11-21).** `/gallery?group=Actions` draws one group; "every
+  component passes axe" visits the groups one page at a time. WebKit at 1 worker: 10 passed
+  in 4.7 minutes, its biggest process at 885 MB (the whole gallery reached about 2 GB, and
+  5.4 GB per worker when it crashed the Mac). Chrome: 10 passed in 1.7 minutes.
 
 ## Done when
 
