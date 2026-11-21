@@ -1,8 +1,9 @@
 import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
-// The content and form parts as web elements, on a page with no React: the table, avatar
-// group, count badge, code blocks, inline edit and upload.
+// The content and form parts as web elements, on a page with no React: the table's layout,
+// code blocks, inline edit, upload, the sortable lists and motion. The avatar group, count
+// badge, a code block's lines and the agent parts are in tests/unit/web-content.bridge.test.ts.
 type Agent = { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> }
 const act = (page: Page, steps: unknown[]) => page.evaluate((s) => (window as unknown as { agent: Agent }).agent.act({ steps: s }), steps)
 
@@ -57,69 +58,6 @@ test("the table: a named scroll area; stacked, each cell is labelled by its head
   })
   await expect(page.locator("#invoices td").filter({ hasText: "Wayne" })).toHaveAttribute("data-label", "Client")
   await expect(page.locator("#invoices td").filter({ hasText: "Initech" })).toHaveAttribute("data-label", "Client")
-})
-
-test("the table takes a framework's insert and remove, though the table now sits in its scroll area", async ({ page }) => {
-  const result = await page.evaluate(() => {
-    const host = document.getElementById("invoices")!
-    const table = host.querySelector("table")!
-    const steps: string[] = []
-    try {
-      // What Vue does for a v-if on the table: remove it from where it put it, and put it back.
-      host.removeChild(table)
-      steps.push(`removed:${!host.contains(table)}`)
-      host.insertBefore(table, null)
-      steps.push(`inserted:${host.contains(table)}`)
-    } catch (error) {
-      steps.push(`threw: ${String(error)}`)
-    }
-    return steps
-  })
-  expect(result).toEqual(["removed:true", "inserted:true"])
-  await expect(page.getByRole("region", { name: "Invoices" }).getByRole("table")).toBeVisible()
-})
-
-test("the avatar group shows max avatars and names the rest in words; new avatars join the count", async ({ page }) => {
-  const group = page.getByRole("group", { name: "Reviewers" })
-  await expect(group.locator("ui-avatar:visible")).toHaveCount(4)
-  await expect(group.getByRole("img", { name: "2 more" })).toHaveText("+2")
-  await page.evaluate(() => {
-    const avatar = document.createElement("ui-avatar")
-    avatar.innerHTML = "<ui-avatar-fallback>DK</ui-avatar-fallback>"
-    document.getElementById("reviewers")!.append(avatar)
-  })
-  await expect(group.getByRole("img", { name: "3 more" })).toHaveText("+3")
-  // The count stays last, after the avatar that just arrived.
-  expect(await group.evaluate((el) => el.lastElementChild!.classList.contains("avatar-group-more"))).toBe(true)
-  await group.evaluate((el) => el.setAttribute("max", "10"))
-  await expect(group.getByRole("img", { name: /more/ })).toHaveCount(0)
-  await expect(group.locator("ui-avatar:visible")).toHaveCount(6)
-})
-
-test("the count badge shows the count, 99+ past max, a dot, nothing at 0, and says what's counted", async ({ page }) => {
-  const inbox = page.locator("#inbox")
-  await expect(inbox.locator(".count-badge-count")).toHaveText("3")
-  await expect(inbox).toContainText("3 unread")
-  await expect(page.locator("uiset-count-badge").nth(1).locator(".count-badge-count")).toHaveText("99+")
-  await expect(page.locator("uiset-count-badge").nth(2).locator(".count-badge-count")).toHaveAttribute("data-dot", "")
-  await inbox.evaluate((el) => ((el as HTMLElement & { count: number }).count = 0))
-  await expect(inbox.locator(".count-badge-count")).toHaveCount(0)
-  await expect(inbox).not.toContainText("3 unread")
-  await inbox.evaluate((el) => el.setAttribute("show-zero", ""))
-  await expect(inbox.locator(".count-badge-count")).toHaveText("0")
-})
-
-test("a code block: its lines, a marked line, the caption and a copy button named for it", async ({ page }) => {
-  const block = page.locator("#snippet")
-  await expect(block.locator(".code-block-title")).toHaveText("app.tsx")
-  await expect(block.getByRole("group", { name: "app.tsx code" })).toBeVisible()
-  await expect(block.locator(".code-line")).toHaveCount(5)
-  await expect(block.locator(".code-line").nth(2)).toHaveAttribute("data-highlighted", "")
-  await expect(block.getByRole("button", { name: "Copy app.tsx" })).toBeVisible()
-  await block.evaluate((el) => ((el as HTMLElement & { code: string }).code = "one\ntwo\n"))
-  await expect(block.locator(".code-line")).toHaveCount(2)
-  await block.evaluate((el) => el.setAttribute("copy", "false"))
-  await expect(block.getByRole("button", { name: /Copy/ })).toHaveCount(0)
 })
 
 test("copy puts the code on the clipboard", async ({ page, context, browserName }) => {
@@ -245,25 +183,6 @@ test("upload: v-model's events fire once per change, and `value` is the files", 
   await expect.poll(() => page.evaluate(() => (window as unknown as { heard: string[] }).heard)).toEqual(["valuechange:1", "input:a.pdf"])
 })
 
-test("upload: `upload` and `value` set before the element upgrades are kept", async ({ page }) => {
-  const result = await page.evaluate(async () => {
-    // An element in a template's content isn't upgraded: what a framework sets on it then
-    // is an own property, there when the element upgrades as it joins the page.
-    const template = document.createElement("template")
-    template.innerHTML = `<uiset-upload label="Early"></uiset-upload>`
-    const el = template.content.firstElementChild as HTMLElement & { upload: unknown; value: File[] }
-    let sent = ""
-    el.upload = async (file: File) => {
-      sent = file.name
-    }
-    el.value = [new File(["x"], "early.pdf", { type: "application/pdf" })]
-    document.querySelector("main")!.append(document.adoptNode(el))
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    return { sent, files: el.value.map((file) => file.name) }
-  })
-  expect(result).toEqual({ sent: "early.pdf", files: ["early.pdf"] })
-})
-
 test("the sortable list moves by keys, reports the new order, and an agent moves an item by name", async ({ page }) => {
   const list = page.locator("#priorities")
   await list.getByRole("option", { name: "Faster search" }).focus()
@@ -335,24 +254,4 @@ test("Motion: a sale moves the figure, an answer streams in, Thinking is a statu
   await page.getByRole("button", { name: "Team", exact: true }).click()
   await expect(page.locator('#plan > [data-value="team"]')).toBeVisible()
   await expect(page.locator('#plan > [data-value="pro"]')).toBeHidden()
-})
-
-test("Agent parts: a tool waits for approval, a checkpoint restores, the queue removes and sends", async ({ page }) => {
-  const run = page.locator("#agent-run")
-  const tool = () => run.locator(".chat-tool").filter({ hasText: "Deploy preview" })
-  await expect(tool()).toHaveAttribute("data-status", "approval")
-  await expect(tool().getByRole("button", { name: "Allow" })).toHaveAttribute("data-agent-confirm", "Runs Deploy preview")
-  await tool().getByRole("button", { name: "Deny" }).click()
-  await expect(tool()).toHaveAttribute("data-status", "denied")
-  const restore = run.getByRole("button", { name: /^Restore Checkpoint/ })
-  await expect(restore).toHaveAttribute("data-agent-confirm", "Puts the conversation back to this checkpoint")
-  await restore.click()
-  await expect(page.locator("#agent-note")).toHaveText("Restored to the checkpoint.")
-  await expect(tool()).toHaveAttribute("data-status", "approval")
-  await expect(run.locator(".chat-subagent")).toHaveAttribute("data-status", "done")
-  const queue = page.getByRole("region", { name: "Queued messages" })
-  await queue.getByRole("button", { name: "Remove from queue: Then open a pull request" }).click()
-  await expect(queue).toContainText("1 queued")
-  await queue.getByRole("button", { name: "Send now: Also check the French locale" }).click()
-  await expect(page.locator("#queue")).toBeHidden()
 })

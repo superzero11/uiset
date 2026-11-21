@@ -148,10 +148,3 @@ test("a picked-up card looks different from a focused one", { tag: "@engine" }, 
   await expect(board(page)).toHaveAttribute("data-moving", "")
   await page.keyboard.press("Escape")
 })
-
-test("filtering by person hides the others' cards", async ({ page }) => {
-  await page.getByRole("combobox", { name: "Cards for" }).click()
-  await page.getByRole("option", { name: "Grace Hopper" }).click()
-  await expect(board(page).getByRole("option")).toHaveCount(2)
-  await expect(card(page, "Rate-limit the public API")).toBeVisible()
-})

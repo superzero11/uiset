@@ -159,31 +159,6 @@ test("Add node puts a new node in view and focuses it", { tag: "@engine" }, asyn
   await expect(node(page, /^New tool/)).toBeInViewport()
 })
 
-test("agents add, wire, move and select nodes by name", async ({ page }) => {
-  const result = await page.evaluate(async () => {
-    const agent = (window as unknown as { agent: { act: (p: unknown) => Promise<{ ok: boolean; error?: { message: string } }>; query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]> } }).agent
-    const run = (action: string, ...args: unknown[]) => agent.act({ steps: [{ ref: "Workflow", action, args }] })
-    const steps = [
-      await run("addNode", "Output", "Log"),
-      await run("connect", "Draft answer", "Log"),
-      await run("connect", "Draft answer", "Draft answer"),
-      await run("moveNode", "Log", 900, 320),
-      await run("select", "Log", "Reply"),
-    ]
-    // Nodes on the page stay out of the snapshot; agents read them with query.
-    const items = (await agent.query({ within: "Workflow" })).find((c) => c.label === "Workflow")?.items?.map((i) => i.label)
-    return { steps: steps.map((s) => s.ok || s.error?.message), items }
-  })
-  expect(result.steps[0]).toBe(true)
-  expect(result.steps[1]).toBe(true)
-  expect(result.steps[2]).toMatch(/can't connect/)
-  expect(result.steps[3]).toBe(true)
-  expect(result.steps[4]).toBe(true)
-  await expect(node(page, /^Log/)).toHaveAttribute("aria-selected", "true")
-  await expect(node(page, /^Log/)).toHaveAccessibleDescription(/Inputs: Text from Draft answer Text/)
-  expect(result.items).toEqual(expect.arrayContaining([expect.stringMatching(/^Log \(at 900, 320; Inputs: Text from Draft answer Text\.\)/)]))
-})
-
 test("node edges, wires and ports clear 3:1 in every skin and theme", { tag: "@engine" }, async ({ page }) => {
   test.slow() // one page load per skin and theme
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
@@ -320,14 +295,6 @@ test.describe("review fixes", () => {
     )
     await expect(node(page, /^Fetch/)).toBeVisible()
     await expect(notes).toBeFocused()
-  })
-
-  test("the inspector's fields start over when the selection moves straight to another node", async ({ page }) => {
-    await node(page, /^Search docs/).click()
-    const title = page.locator(".canvas-inspector").getByRole("textbox", { name: "Title" })
-    await expect(title).toHaveValue("Search docs")
-    await node(page, /^User question/).click()
-    await expect(title).toHaveValue("User question")
   })
 
   test("a keyboard wire ends when focus leaves the canvas", { tag: "@engine" }, async ({ page }) => {

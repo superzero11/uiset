@@ -2,15 +2,13 @@ import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
 // The Scheduler as web elements, on a page with no React: a UTC team week (Monday, Nov 16
-// to Friday, Nov 20, 8 AM to 6 PM), rooms as a timeline, and the month.
+// to Friday, Nov 20, 8 AM to 6 PM), rooms as a timeline, and the month. Pointer, keys, focus
+// and axe here; its behavior through the bridge is in tests/unit/web-scheduler.bridge.test.ts.
 const schedule = (page: Page) => page.getByRole("group", { name: "Team week", exact: true })
 const track = (page: Page, name: string) => schedule(page).getByRole("group", { name, exact: true })
 // The schedule on show: the week, or the rooms timeline (its own schedule).
 const event = (page: Page, name: RegExp) => page.locator("uiset-schedule:not([hidden])").getByRole("button", { name })
-type Agent = {
-  act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }>
-  query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]>
-}
+type Agent = { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> }
 const act = (page: Page, steps: unknown[]) =>
   page.evaluate((s) => (window as unknown as { agent: Agent }).agent.act({ steps: s }), steps)
 const view = (page: Page, name: string) => page.getByRole("radio", { name }).click()
@@ -103,85 +101,4 @@ test("New event opens a form that checks its times", { tag: "@engine" }, async (
   await dialog.getByLabel("Ends").fill("12:00")
   await dialog.getByRole("button", { name: "Save" }).click()
   await expect(event(page, /^Pairing, Monday, Nov 16, 11:00 AM to 12:00 PM/)).toBeFocused()
-})
-
-test("the month names each day's events; choosing a day opens it", async ({ page }) => {
-  await view(page, "Month")
-  const day = page.getByRole("gridcell", { name: /Monday, November 16, 2026, 2 events: Standup at 9:00 AM, Design review at 1:00 PM/ })
-  await expect(day).toBeVisible()
-  await expect(day.locator(".schedule-month-chip")).toHaveCount(2)
-  // A new timeLabel rewrites every chip and day name.
-  await page.locator("uiset-schedule-month").evaluate((m) => ((m as unknown as { timeLabel: (n: number) => string }).timeLabel = (n) => `${n / 60}h`))
-  await expect(page.locator('ui-calendar-day[value="2026-11-16"] .schedule-month-chip').first()).toHaveText("9h Standup")
-  await expect(page.getByRole("gridcell", { name: /2 events: Standup at 9h/ })).toBeVisible()
-  await page.getByRole("gridcell", { name: /Wednesday, November 18/ }).click()
-  await expect(page.getByRole("heading", { name: "Wednesday, Nov 18" })).toBeVisible()
-  await expect(event(page, /^Customer call, Wednesday, Nov 18/)).toBeVisible()
-})
-
-test("room bookings refuse an overlap, by keyboard and for agents", async ({ page }) => {
-  await view(page, "Rooms")
-  await expect(event(page, /^Workshop, Atlas room/)).toBeVisible()
-  const refused = await act(page, [{ ref: "Rooms", action: "moveEvent", args: ["Lunch and learn", "Atlas room", "10:00"] }])
-  expect(refused.ok).toBe(false)
-  const moved = await act(page, [{ ref: "Rooms", action: "moveEvent", args: ["Lunch and learn", "Bolt room", "10:00"] }])
-  expect(moved.ok, moved.error?.message).toBe(true)
-  await expect(event(page, /^Lunch and learn, Bolt room, 10:00 AM to 11:00 AM/)).toBeVisible()
-})
-
-test("agents add, move and resize events by the names people see, and read the week", async ({ page }) => {
-  const added = await act(page, [{ ref: "Team week", action: "addEvent", args: ["Friday, Nov 20", "14:00", "15:00", "Demo"] }])
-  expect(added.ok, added.error?.message).toBe(true)
-  await expect(event(page, /^Demo, Friday, Nov 20, 2:00 PM to 3:00 PM/)).toBeVisible()
-  expect((await act(page, [{ ref: "Team week", action: "resizeEvent", args: ["Demo", "16:00"] }])).ok).toBe(true)
-  await expect(event(page, /^Demo, Friday, Nov 20, 2:00 PM to 4:00 PM/)).toBeVisible()
-  const items = await page.evaluate(async () => {
-    const found = await (window as unknown as { agent: Agent }).agent.query({ within: "Team week" })
-    return found.find((c) => c.label === "Team week")?.items?.map((i) => i.label)
-  })
-  expect(items?.some((label) => label.startsWith("Standup"))).toBe(true)
-})
-
-test("attributes and new functions redraw: today, hours, renderEvent; the page's description stays", async ({ page }) => {
-  const el = page.locator("#schedule")
-  await el.evaluate((s) => s.setAttribute("today", "2026-11-18"))
-  await expect(track(page, "Wednesday, Nov 18")).toHaveAttribute("data-today", "")
-  await expect(track(page, "Monday, Nov 16")).not.toHaveAttribute("data-today", "")
-  await el.evaluate((s) => s.setAttribute("start-hour", "9"))
-  await expect(el.locator(".schedule-gutter .schedule-hour-name").first()).toHaveText("9 AM")
-  await el.evaluate((s) => ((s as unknown as { renderEvent: (e: { title: string }) => Node }).renderEvent = (e) => Object.assign(document.createElement("strong"), { textContent: e.title.toUpperCase() })))
-  await expect(el.locator("strong", { hasText: "STANDUP" })).toBeVisible()
-  // A new renderEvent replaces the last one's faces.
-  await el.evaluate((s) => ((s as unknown as { renderEvent: (e: { title: string }) => Node }).renderEvent = (e) => Object.assign(document.createElement("em"), { textContent: `${e.title}!` })))
-  await expect(el.locator("em", { hasText: "Standup!" })).toBeVisible()
-  await expect(el.locator("strong")).toHaveCount(0)
-  await el.evaluate((s) => {
-    s.before(Object.assign(document.createElement("p"), { id: "week-note", textContent: "All times UTC." }))
-    s.setAttribute("aria-describedby", "week-note")
-  })
-  await expect(schedule(page)).toHaveAccessibleDescription(/^All times UTC\. Each event is a button/)
-})
-
-test("properties set before the elements are defined draw once they are", async ({ page }) => {
-  await page.route("**/early-schedule.html", (route) =>
-    route.fulfill({
-      contentType: "text/html",
-      body: `<uiset-root>
-          <uiset-schedule id="s" aria-label="Early week" start-hour="8" end-hour="12"></uiset-schedule>
-          <uiset-schedule-month id="m" month="2026-11" label="Early month"></uiset-schedule-month>
-        </uiset-root>
-        <script>
-          const s = document.getElementById("s")
-          s.tracks = [{ id: "2026-11-16", label: "Monday" }]
-          s.events = [{ id: "a", track: "2026-11-16", start: 540, end: 600, title: "Early standup" }]
-          const m = document.getElementById("m")
-          m.events = [{ id: "a", track: "2026-11-16", start: 540, end: 600, title: "Early standup" }]
-          m.timeLabel = (n) => String(n / 60) + "h"
-        </script>
-        <script type="module" src="/src/uiset.ts"></script>`,
-    }),
-  )
-  await page.goto("/early-schedule.html")
-  await expect(page.getByRole("button", { name: /^Early standup, Monday/ })).toBeVisible()
-  await expect(page.getByRole("gridcell", { name: /November 16, 2026, 1 event: Early standup at 9h/ })).toBeVisible()
 })

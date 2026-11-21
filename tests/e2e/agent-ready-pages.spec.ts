@@ -4,9 +4,12 @@ import { captureAgentTools, checkPage } from "@/registry/uiset/ui/agent-check/pl
 
 // UISet holds its own pages to its agent-readiness check: on every template, an agent finds
 // every control by name, site header included. The check reaches the bridge as the browser's
-// agent does, through the tools the site registers with WebMCP.
+// agent does, through the tools the site registers with WebMCP. The other templates, the home
+// page and the library's tabs are checked in jsdom (tests/unit/agent-ready-pages.bridge.test.tsx);
+// the calendar stays here, as on a wide screen its stylesheet hides the toolbar's New event
+// beside the sidebar's, and jsdom draws no styles.
 
-const templates = ["auth", "dashboard", "settings", "admin", "inbox", "chat-app", "project-board", "calendar-app", "pricing", "ide-app"]
+const templates = ["calendar-app"]
 
 for (const template of templates) {
   test(`the ${template} template scores 100`, async ({ page }) => {
@@ -17,40 +20,6 @@ for (const template of templates) {
     await page.waitForTimeout(500)
     const report = await checkPage(page)
     expect(report.score, formatAgentReadiness(report, template)).toBe(100)
-  })
-}
-
-// The home page puts the hero form, a kit demo and the install steps side by side, so a short
-// name like "Sound" or "Output" meets the same word in another control or a step's text.
-test("the home page scores 100 with each kit demo open", async ({ page }) => {
-  await captureAgentTools(page)
-  await page.goto("/")
-  const kits = page.getByRole("tablist", { name: "Kit demos" })
-  await kits.getByRole("tab").first().waitFor()
-  const names = await kits.getByRole("tab").allTextContents()
-  expect(names.length).toBeGreaterThan(1)
-  const found: string[] = []
-  for (const name of names) {
-    await kits.getByRole("tab", { name, exact: true }).click()
-    // The demos load when their tab opens, and their components join the bridge as they mount.
-    await page.locator(".home-kit-panel .grid-stage > :not(.home-kit-loading)").waitFor()
-    await page.waitForTimeout(500)
-    const report = await checkPage(page, { mode: "bridge" })
-    if (report.score < 100) found.push(formatAgentReadiness(report, `home with the ${name} demo`))
-  }
-  expect(found).toEqual([])
-})
-
-// The library's tabs: each card is a picture of its piece (hidden from agents) with a link and
-// a copy button named for it, so every name on the page is its own.
-for (const path of ["/components", "/kits", "/templates", "/themes"]) {
-  test(`the library's ${path.slice(1)} tab scores 100`, async ({ page }) => {
-    await captureAgentTools(page)
-    await page.goto(path)
-    await page.locator(".lib-card").first().waitFor()
-    await page.waitForTimeout(500)
-    const report = await checkPage(page, { mode: "bridge" })
-    expect(report.score, formatAgentReadiness(report, path)).toBe(100)
   })
 }
 

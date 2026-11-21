@@ -56,18 +56,6 @@ test("auth: an empty sign-in shows field messages, a wrong password the server's
   await expect(form.getByRole("alert")).toContainText("don't match")
 })
 
-test("auth: links move between screens, and sign-up checks the password", async ({ page }) => {
-  await open(page, "auth")
-  await frame(page).getByRole("link", { name: "Create an account" }).click()
-  const form = frame(page).getByRole("form", { name: "Create an account" })
-  await form.getByRole("textbox", { name: "Full name" }).fill("Ada Lovelace")
-  await form.getByRole("textbox", { name: "Work email" }).fill("ada@example.com")
-  await form.locator("input[autocomplete=new-password]").fill("short")
-  await expect(form.getByRole("meter", { name: "New password strength" })).toHaveAttribute("aria-valuetext", "Weak")
-  await form.getByRole("button", { name: "Create account" }).click()
-  await expect(form.getByText("Use at least 10 characters.")).toBeVisible()
-})
-
 test("auth: a partial code says what's missing", async ({ page }) => {
   await open(page, "auth", "#verify")
   const form = frame(page).getByRole("form", { name: "Enter your code" })
@@ -91,18 +79,6 @@ test("auth: a new password must be typed the same twice; a reset link is sent", 
   await reset.getByRole("button", { name: "Send reset link" }).click()
   await expect(frame(page).getByRole("status").filter({ hasText: "Link sent" })).toBeVisible()
   await expect(frame(page).getByRole("heading", { name: "Check your email" })).toBeVisible()
-})
-
-test("pricing: the billing switch changes every price; the table and questions read", async ({ page }) => {
-  await open(page, "pricing")
-  const pro = frame(page).locator(".pricing-plan").nth(1)
-  await expect(pro.locator(".pricing-amount")).toHaveText("$41")
-  await frame(page).getByRole("radiogroup", { name: "Billing period" }).getByRole("radio", { name: "Monthly" }).click()
-  await expect(pro.locator(".pricing-amount")).toHaveText("$49")
-  await expect(frame(page).getByRole("link", { name: "Start a 14-day trial: Pro" })).toBeVisible()
-  await expect(frame(page).getByRole("row", { name: /Single sign-on/ }).getByRole("cell").nth(0)).toHaveAccessibleName(/Not included/)
-  await frame(page).getByRole("button", { name: "What counts as a seat?" }).click()
-  await expect(frame(page).getByText("Anyone who can sign in to your workspace.")).toBeVisible()
 })
 
 test("dashboard: the date range rescopes the figures, the charts and the table", { tag: "@engine" }, async ({ page }) => {
@@ -136,21 +112,6 @@ test("the app shell collapses to icons with Mod+B and remembers it; narrow scree
   await page.setViewportSize({ width: 600, height: 900 })
   await frame(page).getByRole("button", { name: "Open navigation" }).click()
   await expect(page.getByRole("dialog").getByRole("link", { name: "Orders" })).toBeVisible()
-})
-
-test("admin: create a customer in the drawer, then find them", async ({ page }) => {
-  await open(page, "admin")
-  await frame(page).getByRole("button", { name: "New customer" }).click()
-  const form = page.getByRole("form", { name: "New customer" })
-  await form.getByRole("button", { name: "Add customer" }).click()
-  await expect(form.getByText("Enter a name.")).toBeVisible()
-  await form.getByRole("textbox", { name: "Full name" }).fill("Joan Clarke")
-  await form.getByRole("textbox", { name: "Email" }).fill("joan@example.com")
-  await form.getByRole("textbox", { name: "Company" }).fill("Codebreak Ltd")
-  await form.getByRole("button", { name: "Add customer" }).click()
-  await expect(page.locator("[data-slot=toast-title]", { hasText: "Added Joan Clarke" })).toBeVisible()
-  await frame(page).getByRole("searchbox", { name: "Search customers" }).fill("joan")
-  await expect(frame(page).getByRole("grid", { name: "Customers" })).toContainText("Codebreak Ltd")
 })
 
 test("admin: Enter on a row opens it for editing; selected rows delete after a confirm", async ({ page }) => {
@@ -187,18 +148,6 @@ test("settings: tabs by keyboard, and a save says so", async ({ page }) => {
   await expect(tabs.getByRole("tab", { name: "Notifications" })).toHaveAttribute("aria-selected", "true")
   await frame(page).getByRole("button", { name: "Save notification settings" }).click()
   await expect(page.locator("[data-slot=toast-title]", { hasText: "Notification settings saved" })).toBeVisible()
-})
-
-test("settings: deleting the workspace waits for its name", async ({ page }) => {
-  await open(page, "settings")
-  await frame(page).getByRole("tab", { name: "Workspace" }).click()
-  await frame(page).getByRole("button", { name: "Delete workspace" }).click()
-  const dialog = page.getByRole("alertdialog", { name: "Delete Acme Cloud?" })
-  const confirm = dialog.getByRole("button", { name: "Delete forever" })
-  await expect(confirm).toBeDisabled()
-  await dialog.getByRole("textbox", { name: "Workspace name to confirm" }).fill("Acme Cloud")
-  await expect(confirm).toBeEnabled()
-  await expect(confirm).toHaveAttribute("data-agent-confirm", /Deletes Acme Cloud/)
 })
 
 test("settings: tabs keep what you did, and an existing teammate can't be invited twice", async ({ page }) => {
@@ -283,18 +232,6 @@ test("inbox: compose sends to Sent; / searches", { tag: "@engine" }, async ({ pa
   await expect(frame(page).getByRole("searchbox", { name: "Search mail" })).toBeFocused()
 })
 
-test("chat app: a suggestion streams an answer with reasoning, a tool and sources", async ({ page }) => {
-  await open(page, "chat-app")
-  await frame(page).getByRole("button", { name: "Explain AbortController" }).click()
-  const thread = frame(page).getByRole("region", { name: "Conversation" })
-  await expect(thread).toContainText("Here's a short answer", { timeout: 15000 })
-  await expect(thread.getByText("Searched the docs")).toBeVisible()
-  await expect(thread.getByText(/2 sources/i).first()).toBeVisible()
-  // The chat takes its name from the question, and the usage meter counts the turn.
-  await expect(frame(page).getByRole("navigation", { name: "Chats" }).getByRole("button", { name: "Open Explain AbortController", exact: true })).toHaveAttribute("aria-current", "page")
-  await expect(frame(page).getByRole("meter", { name: "Context used" })).toHaveAttribute("aria-valuetext", /^[1-9].* of 200K tokens$/)
-})
-
 test("chat app: Stop ends an answer, New chat starts an empty one, and deleting the last chat leaves one", async ({ page }) => {
   await open(page, "chat-app")
   const composer = frame(page).getByRole("textbox", { name: "Message" })
@@ -319,21 +256,6 @@ test("chat app: Stop ends an answer, New chat starts an empty one, and deleting 
   }
   // A new chat takes the next number: none is ever reused.
   await expect(chats.getByRole("button", { name: "Open Untitled chat 3", exact: true })).toHaveAttribute("aria-current", "page")
-})
-
-test("chat app: the model picker chooses a model, by keyboard or by an agent", async ({ page }) => {
-  await open(page, "chat-app")
-  const picker = frame(page).locator("uiset-chat-model-picker")
-  const trigger = frame(page).getByRole("combobox", { name: "Model" })
-  await expect(trigger).toHaveText(/Balanced/)
-  await trigger.click()
-  await page.getByRole("option", { name: /Deep/ }).click()
-  await expect(trigger).toHaveText(/Deep/)
-  await expect(picker).toHaveAttribute("value", "deep")
-  const result = await page.evaluate(() => (window as unknown as { agent: { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> } }).agent.act({ steps: [{ ref: "Model", action: "setValue", args: ["fast"] }] }))
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(trigger).toHaveText(/Fast/)
-  await expect(picker).toHaveAttribute("value", "fast")
 })
 
 /* ------------------------------------------------------------ project board */

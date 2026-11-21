@@ -1,5 +1,5 @@
 import { act } from "@testing-library/react"
-import { createAgent, type AgentComponent } from "@ui-sdk/react/agent"
+import { createAgent as createReactAgent, type AgentComponent } from "@ui-sdk/react/agent"
 
 // Behavior tests through UI SDK's agent bridge, in jsdom: find components by the names people
 // see and act on them the way an agent does. A step on a control marked data-agent-confirm
@@ -9,7 +9,8 @@ import { createAgent, type AgentComponent } from "@ui-sdk/react/agent"
 /** Lets effects, timers under `ms` and the bridge's own bookkeeping run. */
 export const settle = (ms = 50) => act(() => new Promise((resolve) => setTimeout(resolve, ms)))
 
-export function createBridge() {
+/** A bridge for React (the default) or, given `@ui-sdk/web/agent`'s createAgent, the web. */
+export function createBridge(createAgent: typeof createReactAgent = createReactAgent) {
   const asked: string[] = []
   const agent = createAgent({
     allow: (step) => {
@@ -19,8 +20,9 @@ export function createBridge() {
   })
   const unattended = createAgent()
 
+  // A component from an earlier test in the same file stays in the snapshot as offPage.
   const matches = (entry: AgentComponent, label: string | RegExp) =>
-    typeof label === "string" ? entry.label === label : label.test(entry.label ?? "")
+    !entry.offPage && (typeof label === "string" ? entry.label === label : label.test(entry.label ?? ""))
   const find = (label: string | RegExp) => agent.snapshot().find((entry) => matches(entry, label))
   const entry = (label: string | RegExp) => {
     const found = find(label)

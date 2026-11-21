@@ -25,12 +25,6 @@ async function moveTo(page: Page, row: number, col: number) {
 }
 const cellAt = (page: Page, row: number, col: number) =>
   grid(page).locator(`[role=row][aria-rowindex="${row}"] [aria-colindex="${col}"]`)
-type Agent = {
-  act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }>
-  query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]>
-}
-const act = (page: Page, steps: unknown[]) =>
-  page.evaluate((s) => (window as unknown as { agent: Agent }).agent.act({ steps: s }), steps)
 const footer = (page: Page) => host(page).locator(".data-grid-footer")
 
 test.beforeEach(async ({ page }) => {
@@ -303,33 +297,6 @@ test("Enter on a cell that isn't edited in place fires rowaction", { tag: "@engi
   await expect(page.getByRole("region", { name: "Notifications" }).getByText("Opened Acme")).toBeVisible()
 })
 
-test("agents sort, filter, select, edit, group and hide by the names people see", async ({ page }) => {
-  const sorted = await act(page, [{ ref: "Customers", action: "sortBy", args: ["MRR", "descending"] }])
-  expect(sorted.ok, sorted.error?.message).toBe(true)
-  await expect(grid(page).getByRole("columnheader", { name: /MRR/ })).toHaveAttribute("aria-sort", "descending")
-  const edited = await act(page, [{ ref: "Customers", action: "editCell", args: ["Acme", "Seats", "12"] }])
-  expect(edited.ok, edited.error?.message).toBe(true)
-  const bad = await act(page, [{ ref: "Customers", action: "editCell", args: ["Acme", "Seats", "lots"] }])
-  expect(bad.error?.message).toContain("Seats needs a number")
-  const selected = await act(page, [{ ref: "Customers", action: "selectRows", args: [["Acme", "Globex"]] }])
-  expect(selected.ok, selected.error?.message).toBe(true)
-  await expect(footer(page)).toContainText("2 selected")
-  const filtered = await act(page, [{ ref: "Customers", action: "filter", args: ["Acme"] }])
-  expect(filtered.ok, filtered.error?.message).toBe(true)
-  await expect(footer(page)).toContainText("of 60 rows")
-  const hidden = await act(page, [{ ref: "Customers", action: "showColumn", args: ["Name", false] }])
-  expect(hidden.error?.message).toContain("Name can't be hidden")
-  // "Customers" also names the search field and the filters ("Search customers"), so the
-  // grid is read by its ref.
-  const items = await page.evaluate(async () => {
-    const agent = (window as unknown as { agent: Agent & { snapshot: () => Promise<{ ref: string; component: string; label: string }[]> } }).agent
-    const ref = (await agent.snapshot()).find((c) => c.component === "data-grid" && c.label === "Customers")!.ref
-    const found = await agent.query({ within: ref })
-    return found.find((c) => c.label === "Customers")?.items?.map((i) => i.label)
-  })
-  expect(items).toContainEqual(expect.stringContaining("Acme (Plan: Free, Region: Americas, Seats: 12,"))
-})
-
 type GridEl = HTMLElement & Record<string, unknown>
 const header = (page: Page, name: string) => grid(page).getByRole("columnheader", { name, exact: false }).filter({ hasText: name })
 const listen = (page: Page) =>
@@ -345,30 +312,6 @@ const listen = (page: Page) =>
   })
 const said = (page: Page) => page.evaluate(() => (window as unknown as { said: string[] }).said)
 const tabStops = (page: Page) => grid(page).locator('[tabindex="0"]').count()
-
-test("properties set before the element is defined are picked up, and later sets still work", async ({ page }) => {
-  await page.route("**/early-grid.html", (route) =>
-    route.fulfill({
-      contentType: "text/html",
-      body: `<uiset-root><uiset-data-grid id="g" label="Early" selectable></uiset-data-grid></uiset-root>
-        <script>
-          const g = document.getElementById("g")
-          g.columns = [{ id: "name", header: "Name", value: (r) => r.name }]
-          g.rows = [{ id: "a", name: "Beta" }, { id: "b", name: "Alpha" }]
-          g.sort = [{ column: "name", direction: "ascending" }]
-          g.selected = ["a"]
-        </script>
-        <script type="module" src="/src/uiset.ts"></script>`,
-    }),
-  )
-  await page.goto("/early-grid.html")
-  const early = page.getByRole("grid", { name: "Early" })
-  await expect(early).toHaveAttribute("aria-rowcount", "3")
-  await expect(early.getByRole("row").nth(1)).toContainText("Alpha")
-  await expect(early.getByRole("row", { name: /Beta/ })).toHaveAttribute("aria-selected", "true")
-  await page.evaluate(() => ((document.getElementById("g") as unknown as { selected: string[] }).selected = ["b"]))
-  await expect(early.getByRole("row", { name: /Alpha/ })).toHaveAttribute("aria-selected", "true")
-})
 
 test("the grid keeps a tab stop when its active cell's row or column goes away", { tag: "@engine" }, async ({ page }) => {
   await moveTo(page, 30, 3)

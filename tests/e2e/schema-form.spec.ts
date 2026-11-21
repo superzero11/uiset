@@ -2,13 +2,9 @@ import AxeBuilder from "./axe"
 import { expect, test, type Page } from "@playwright/test"
 import { openGallery } from "./gallery"
 
-// The schema form on the gallery: a person through its steps, the server's answer, an agent
-// filling it with the person approving the send, and axe in every skin and theme.
+// The schema form on the gallery: a person through its steps, the server's answer, and axe in
+// every skin and theme. An agent filling it is in tests/unit/schema-form.bridge.test.tsx.
 
-type Agent = {
-  act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }>
-  query: (q: unknown) => Promise<{ label?: string; confirm?: string }[]>
-}
 const form = (page: Page) => page.getByRole("form", { name: "Invite a teammate" })
 const actions = (page: Page) => form(page).locator(".schema-form-actions")
 
@@ -89,43 +85,6 @@ test("a problem the server sends back shows on its step, with focus on the field
   await expect(email).toBeFocused()
   await expect(form(page)).toContainText("Ada is already in this workspace.")
   await expect(form(page).getByRole("navigation", { name: "Steps" }).locator("[aria-current=step]")).toContainText("Who")
-})
-
-test("an agent fills it by label; its press on Send waits for the person, who sends it", async ({ page }) => {
-  await open(page)
-  const filled = await page.evaluate(() =>
-    (window as unknown as { agent: Agent }).agent.act({
-      steps: [
-        { ref: "Invite a teammate", action: "fill", args: [{ Email: "grace@example.com", Role: "Admin", seats: "3", "Email me when they join": "no" }] },
-        { ref: "Invite a teammate", action: "goTo", args: [3] },
-      ],
-    }),
-  )
-  expect(filled.ok, filled.error?.message).toBe(true)
-  const access = form(page).getByRole("region", { name: "Access" })
-  await expect(access).toContainText("Admin")
-  await expect(access).toContainText("3")
-  const send = await page.evaluate(async () => (await (window as unknown as { agent: Agent }).agent.query({ text: "Send invite" }))[0])
-  expect(send?.confirm).toBe("Sends an invite email to the address given")
-  // The agent's press waits for the person's answer: nothing is sent meanwhile.
-  await page.evaluate(() => {
-    void (window as unknown as { agent: Agent }).agent.act({ steps: [{ ref: "Send invite", action: "press" }] })
-  })
-  await page.waitForTimeout(800)
-  await expect(form(page)).toHaveAttribute("data-status", "idle")
-  await actions(page).getByRole("button", { name: "Send invite" }).click()
-  await expect(form(page)).toContainText("Invite sent.")
-})
-
-test("an agent's fill with problems shows them under the fields, and tells the agent", async ({ page }) => {
-  await open(page)
-  const result = await page.evaluate(() =>
-    (window as unknown as { agent: Agent }).agent.act({ steps: [{ ref: "Invite a teammate", action: "fill", args: [{ email: "grace@", seats: 99 }] }] }),
-  )
-  expect(result.ok).toBe(false)
-  expect(result.error?.message).toContain("Email: Enter an email address, like name@example.com.")
-  expect(result.error?.message).toContain("Seats is at most 50.")
-  await expect(form(page).getByRole("textbox", { name: "Email" })).toHaveAttribute("aria-invalid", "true")
 })
 
 test("the form fits a phone's width, and its review stacks", { tag: "@engine" }, async ({ page }) => {

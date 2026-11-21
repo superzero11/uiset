@@ -69,17 +69,6 @@ test("auth: links move between screens, and sign-up checks the password", async 
   await expect(form.getByText("Use at least 10 characters.")).toBeVisible()
 })
 
-test("dashboard: the date range rescopes the figures and the table", async ({ page }) => {
-  await open(page, "dashboard")
-  const range = frame(page).getByRole("radiogroup", { name: "Date range" })
-  const orders = frame(page).locator(".stat").nth(1).locator(".stat-value")
-  const thirty = await orders.textContent()
-  await range.getByRole("radio", { name: "7 days" }).click()
-  await expect(orders).not.toHaveText(thirty!)
-  await expect(frame(page).getByRole("grid", { name: "Recent orders" })).toBeVisible()
-  await expect(frame(page).getByRole("listbox", { name: "Revenue" }).getByRole("option")).toHaveCount(7)
-})
-
 test("settings: tabs by keyboard, and a save says so", async ({ page }) => {
   await open(page, "settings")
   const tabs = frame(page).getByRole("tablist", { name: "Settings sections" })
@@ -89,33 +78,6 @@ test("settings: tabs by keyboard, and a save says so", async ({ page }) => {
   await expect(tabs.getByRole("tab", { name: "Notifications" })).toHaveAttribute("aria-selected", "true")
   await frame(page).getByRole("button", { name: "Save notification settings" }).click()
   await expect(page.locator("[data-slot=toast-title]", { hasText: "Notification settings saved" })).toBeVisible()
-})
-
-test("settings: deleting the workspace waits for its name", async ({ page }) => {
-  await open(page, "settings")
-  await frame(page).getByRole("tab", { name: "Workspace" }).click()
-  await frame(page).getByRole("button", { name: "Delete workspace" }).click()
-  const dialog = page.getByRole("alertdialog", { name: "Delete Acme Cloud?" })
-  const confirm = dialog.getByRole("button", { name: "Delete forever" })
-  await expect(confirm).toBeDisabled()
-  await dialog.getByRole("textbox", { name: "Workspace name to confirm" }).fill("Acme Cloud")
-  await expect(confirm).toBeEnabled()
-  await expect(confirm).toHaveAttribute("data-agent-confirm", /Deletes Acme Cloud/)
-})
-
-test("admin: create a customer in the drawer, then find them", async ({ page }) => {
-  await open(page, "admin")
-  await frame(page).getByRole("button", { name: "New customer" }).click()
-  const form = page.getByRole("form", { name: "New customer" })
-  await form.getByRole("button", { name: "Add customer" }).click()
-  await expect(form.getByText("Enter a name.")).toBeVisible()
-  await form.getByRole("textbox", { name: "Full name" }).fill("Joan Clarke")
-  await form.getByRole("textbox", { name: "Email" }).fill("joan@example.com")
-  await form.getByRole("textbox", { name: "Company" }).fill("Codebreak Ltd")
-  await form.getByRole("button", { name: "Add customer" }).click()
-  await expect(page.locator("[data-slot=toast-title]", { hasText: "Added Joan Clarke" })).toBeVisible()
-  await frame(page).getByRole("searchbox", { name: "Search customers" }).fill("joan")
-  await expect(frame(page).getByRole("grid", { name: "Customers" })).toContainText("Codebreak Ltd")
 })
 
 test("admin: Enter on a row opens it for editing", async ({ page }) => {
@@ -143,24 +105,6 @@ test("inbox: arrow through messages, open one, archive it, undo", async ({ page 
   await expect(list.getByRole("option", { name: /Invoice INV-1042/ })).toHaveCount(1)
 })
 
-test("chat app: a suggestion streams an answer with reasoning, a tool and sources", async ({ page }) => {
-  await open(page, "chat-app")
-  await frame(page).getByRole("button", { name: "Explain AbortController" }).click()
-  const thread = frame(page).getByRole("region", { name: "Conversation" })
-  await expect(thread).toContainText("Here's a short answer", { timeout: 15000 })
-  await expect(thread.getByText("Searched the docs")).toBeVisible()
-  await expect(thread.getByText(/2 sources/i).first()).toBeVisible()
-})
-
-test("pricing: the billing switch changes every price", async ({ page }) => {
-  await open(page, "pricing")
-  const pro = frame(page).locator(".pricing-plan").nth(1)
-  await expect(pro.locator(".pricing-amount")).toHaveText("$41")
-  await frame(page).getByRole("radiogroup", { name: "Billing period" }).getByRole("radio", { name: "Monthly" }).click()
-  await expect(pro.locator(".pricing-amount")).toHaveText("$49")
-  await expect(frame(page).getByRole("link", { name: "Start a 14-day trial: Pro" })).toBeVisible()
-})
-
 test("templates fit a phone without scrolling sideways", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 })
   for (const template of templates) {
@@ -168,40 +112,6 @@ test("templates fit a phone without scrolling sideways", { tag: "@engine" }, asy
     const overflow = await frame(page).evaluate((el) => el.scrollWidth - el.clientWidth)
     expect(overflow, template).toBeLessThanOrEqual(1)
   }
-})
-
-test("agents drive templates by the names people see", async ({ page }) => {
-  type Act = { ok: boolean; error?: { message: string } }
-  const act = (steps: unknown[]) =>
-    page.evaluate((s) => (window as unknown as { agent: { act: (x: unknown) => Promise<Act> } }).agent.act({ steps: s }), steps)
-
-  await open(page, "dashboard")
-  const orders = frame(page).locator(".stat").nth(1).locator(".stat-value")
-  const before = await orders.textContent()
-  let result = await act([{ ref: "Date range", action: "setValue", args: ["7 days"] }])
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(orders).not.toHaveText(before!)
-
-  await open(page, "admin")
-  result = await act([{ ref: "Customers", action: "filter", args: ["hopper"] }])
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(frame(page).locator(".data-grid-footer")).toContainText("1 of 8 rows")
-
-  await open(page, "inbox")
-  result = await act([{ ref: "Inbox messages", action: "setValue", args: ["msg-4"] }])
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(frame(page).getByRole("heading", { level: 2, name: "Numbers for the board deck" })).toBeVisible()
-})
-
-test("inbox: folder links switch the list, and archived mail can come back", async ({ page }) => {
-  await open(page, "inbox")
-  await frame(page).getByRole("button", { name: "Archive message" }).click()
-  await frame(page).getByRole("link", { name: "Archive" }).click()
-  const archived = frame(page).getByRole("listbox", { name: "Archive messages" })
-  await expect(archived.getByRole("option")).toHaveCount(1)
-  await archived.getByRole("option").first().click()
-  await frame(page).getByRole("button", { name: "Move to Inbox" }).click()
-  await expect(frame(page).getByText("Nothing here")).toBeVisible()
 })
 
 test("inbox on a phone: arrows browse, Enter opens and focuses the message, Back returns", { tag: "@engine" }, async ({ page }) => {
@@ -215,22 +125,6 @@ test("inbox on a phone: arrows browse, Enter opens and focuses the message, Back
   await expect(frame(page).getByRole("heading", { level: 2, name: "Invoice INV-1042 is due" })).toBeFocused()
   await frame(page).getByRole("button", { name: "Back to messages" }).click()
   await expect(list.getByRole("option").first()).toBeFocused()
-})
-
-test("settings: tabs keep what you did, and an existing teammate can't be invited twice", async ({ page }) => {
-  await open(page, "settings")
-  await frame(page).getByRole("tab", { name: "Security" }).click()
-  await frame(page).getByRole("button", { name: "Sign out Safari on iPhone" }).click()
-  await frame(page).getByRole("tab", { name: "Team" }).click()
-  await frame(page).getByRole("tab", { name: "Security" }).click()
-  await expect(frame(page).getByRole("button", { name: "Sign out Safari on iPhone" })).toHaveCount(0)
-
-  await frame(page).getByRole("tab", { name: "Team" }).click()
-  await frame(page).getByRole("button", { name: "Invite people" }).click()
-  const invite = page.getByRole("form", { name: "Invite people" })
-  await invite.getByRole("textbox", { name: "Email address" }).fill("grace@example.com")
-  await invite.getByRole("button", { name: "Send invite" }).click()
-  await expect(invite.getByText("grace@example.com is already on the team.")).toBeVisible()
 })
 
 test("auth: a partial code says what's missing", async ({ page }) => {
@@ -316,20 +210,6 @@ test("project board: the list shows the same issues, and Enter opens one in the 
   await expect(issueBoard(page).getByRole("option")).toHaveCount(13)
 })
 
-test("project board: search and the person filter narrow the board and the list", async ({ page }) => {
-  await open(page, "project-board")
-  const search = frame(page).getByRole("searchbox", { name: "Search issues" })
-  await search.fill("safari")
-  await expect(issueBoard(page).getByRole("option")).toHaveCount(1)
-  await expect(issueBoard(page).getByRole("option", { name: "Fix the contact form on Safari" })).toBeVisible()
-  await search.fill("")
-  await frame(page).getByRole("combobox", { name: "Cards for" }).click()
-  await page.getByRole("option", { name: "Ada Lovelace" }).click()
-  await expect(issueBoard(page).getByRole("option")).toHaveCount(3)
-  await frame(page).getByRole("radio", { name: "List" }).click()
-  await expect(frame(page).getByRole("grid", { name: "Issue list" })).toHaveAttribute("aria-rowcount", "4")
-})
-
 test("project board: the card dialog edits a card, and New issue adds one", async ({ page }) => {
   await open(page, "project-board")
   await issueBoard(page).getByRole("option", { name: "Cookie consent banner" }).focus()
@@ -371,27 +251,6 @@ test("calendar: a phone starts on one day; at 1440 the week shows all seven days
   expect(sunday.x + sunday.width).toBeLessThanOrEqual(calendar.x + calendar.width + 1)
 })
 
-test("calendar: unchecking a calendar hides its events, and checking it brings them back", async ({ page }) => {
-  await open(page, "calendar-app")
-  const lunch = week(page).getByRole("button", { name: /^Lunch with Ada, Monday/ })
-  await expect(lunch).toBeVisible()
-  await frame(page).getByRole("checkbox", { name: "Personal" }).click()
-  await expect(lunch).toHaveCount(0)
-  await expect(week(page).getByRole("button", { name: /^Design review, Monday/ })).toBeVisible()
-  await expect(frame(page).getByRole("list", { name: "Upcoming" })).not.toContainText("Lunch with Ada")
-  await frame(page).getByRole("checkbox", { name: "Personal" }).click()
-  await expect(lunch).toBeVisible()
-})
-
-test("calendar: the small month jumps the week to the day chosen", async ({ page }) => {
-  await open(page, "calendar-app")
-  await frame(page).getByRole("grid", { name: "November 2026" }).getByRole("gridcell", { name: /November 25/ }).click()
-  await expect(frame(page).getByRole("heading", { name: "Nov 23 – 29, 2026" })).toBeVisible()
-  await expect(week(page).getByRole("button", { name: /^Design critique, Wednesday, November 25/ })).toBeVisible()
-  await frame(page).getByRole("button", { name: "Today", exact: true }).click()
-  await expect(frame(page).getByRole("heading", { name: "Nov 16 – 22, 2026" })).toBeVisible()
-})
-
 test("calendar: New event adds one to the week, and deleting it offers Undo", async ({ page }) => {
   await open(page, "calendar-app")
   await frame(page).getByRole("button", { name: "New event" }).click()
@@ -405,33 +264,4 @@ test("calendar: New event adds one to the week, and deleting it offers Undo", as
   await expect(event).toHaveCount(0)
   await undoButton(page).click()
   await expect(event).toBeVisible()
-})
-
-test("calendar: the month lists each day's events; choosing a day opens it", async ({ page }) => {
-  await open(page, "calendar-app")
-  await frame(page).getByRole("radiogroup", { name: "Calendar layout" }).getByRole("radio", { name: "Month" }).click()
-  const month = frame(page).getByRole("grid", { name: "Month of events" })
-  const day = month.getByRole("gridcell", { name: /November 18/ })
-  await expect(day).toHaveAccessibleName(/3 events: Standup at 9:00 AM, 1:1 with Grace at 11:00 AM, Launch rehearsal at 3:00 PM/)
-  await day.click()
-  await expect(frame(page).getByRole("radio", { name: "Day" })).toBeChecked()
-  await expect(frame(page).getByRole("heading", { name: "Wednesday, November 18" })).toBeVisible()
-  await expect(week(page).getByRole("button", { name: /^Launch rehearsal, Wednesday/ })).toBeVisible()
-})
-
-test("agents move issues and add events by the names people see", async ({ page }) => {
-  type Act = { ok: boolean; error?: { message: string } }
-  const act = (steps: unknown[]) =>
-    page.evaluate((s) => (window as unknown as { agent: { act: (x: unknown) => Promise<Act> } }).agent.act({ steps: s }), steps)
-
-  await open(page, "project-board")
-  let result = await act([{ ref: "Issue board", action: "moveCard", args: ["Search results layout", "Done"] }])
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(issueColumn(page, "Done").getByRole("option", { name: "Search results layout" })).toBeVisible()
-  await expect(frame(page).getByRole("meter", { name: "Sprint progress" })).toHaveAttribute("aria-valuetext", "5 of 14 issues done")
-
-  await open(page, "calendar-app")
-  result = await act([{ ref: "My calendar", action: "addEvent", args: ["Thursday", "14:00", "15:00", "Pairing"] }])
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(week(page).getByRole("button", { name: /^Pairing, Thursday, November 19, 2:00 PM to 3:00 PM/ })).toBeVisible()
 })

@@ -98,13 +98,6 @@ test("a failing color offers a fix, and the fix passes", async ({ page }) => {
   await expect(page).toHaveURL(/key=0\.\d+%2C0\.\d+%2C79\.\d+/)
 })
 
-test("fix all, from the inputs, passes too", async ({ page }) => {
-  await page.goto("/themes/generator?key=0.9,0.2,200")
-  await expect(status(page)).toContainText("fails")
-  await status(page).getByRole("button", { name: /^Fix/ }).click()
-  await expect(status(page)).toContainText("All 32 checks pass")
-})
-
 test("the URL restores the inputs", async ({ page }) => {
   await page.goto("/themes/generator")
   await page.getByRole("textbox", { name: "Hex" }).fill("#c026d3")
@@ -130,28 +123,4 @@ test("the URL restores the inputs", async ({ page }) => {
   await expect(page.locator(".generator-screen-frame")).toHaveAttribute("aria-label", "Dark preview")
   await page.getByRole("radiogroup", { name: "Preview mode" }).getByRole("radio", { name: "Light" }).click()
   await expect(page.locator(".generator-screen-frame")).toHaveAttribute("aria-label", "Light preview")
-})
-
-test("the skin downloads under its own name, and the preview uses that name", async ({ page }) => {
-  await page.goto("/themes/generator")
-  await page.getByRole("textbox", { name: "Skin name" }).fill("harbor")
-  await expect(preview(page, "Light").locator("[data-uiset]").first()).toHaveAttribute("data-skin", "harbor")
-  const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download harbor.css" }).click()])
-  expect(download.suggestedFilename()).toBe("harbor.css")
-  const text = await new Promise<string>((resolve, reject) => {
-    void download.createReadStream().then((stream) => {
-      let body = ""
-      stream.on("data", (chunk) => (body += chunk))
-      stream.on("end", () => resolve(body))
-      stream.on("error", reject)
-    })
-  })
-  expect(text).toContain('[data-uiset][data-skin="harbor"]')
-  expect(text).toContain("--chart-seq-7: light-dark(")
-
-  // A name UISet already uses is refused, and the preview keeps a safe one.
-  await page.getByRole("textbox", { name: "Skin name" }).fill("ink")
-  // The field's own error: UI SDK's announcer may say the same words for a moment.
-  await expect(page.locator('[data-slot="field-error"]', { hasText: "UISet already has a skin called ink." })).toBeVisible()
-  await expect(preview(page, "Light").locator("[data-uiset]").first()).toHaveAttribute("data-skin", "custom")
 })

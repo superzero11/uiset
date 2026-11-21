@@ -2266,3 +2266,15 @@ vercel-labs/ui#905 (2026-11-19).
   (`/gallery?group=`, the owner OK'd the run). WebKit at 1 worker: 10 passed, its biggest
   process at 885 MB, where the whole gallery reached about 2 GB (5.4 GB per worker in the
   crash). Chrome: 10 passed.
+- 2026-11-21 — Bridge testing, step 4: behavior tests moved (the owner said move them all).
+  Four background batches, each on its own spec files, moved 151 of the 193 behavior tests to
+  Vitest through the agent bridge (39 new `*.bridge.test.*` files; each failed on a deliberate
+  break before its browser test was deleted; no product file left changed). 42 stay in the
+  browser because they need one (listed in the plan). Vitest now runs 758 tests in 106 s at 2
+  workers; Chrome runs 862 browser tests (from 1,032), WebKit and Firefox 715 each (from 1,030).
+  `bridge.ts` skips components left from an earlier test (offPage); the unit setup gives
+  jsdom's ElementInternals a form value. Two browser tests fixed on review: the web v-model
+  test read the index page's own `#stepper` (now scoped to what it mounts), and the agent
+  console's cards-above-a-modal test is `@engine` (the top layer). Found, not yet fixed: the
+  month grids have no agent name, the pricing questions reach agents as q0 to q3, Mod+B is
+  registered twice on template pages, the web IDE lists a file twice as Recent.

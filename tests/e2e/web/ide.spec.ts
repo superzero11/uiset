@@ -158,20 +158,6 @@ test("Delete on a tab closes it; closing an unsaved file asks first", { tag: "@e
   await expect(tab(page, "index.ts, unsaved")).toBeVisible()
 })
 
-test("agents open files and edit code by the names people see", async ({ page }) => {
-  type Act = { ok: boolean; error?: { message: string } }
-  const act = (steps: unknown[]) =>
-    page.evaluate((s) => (window as unknown as { agent: { act: (x: unknown) => Promise<Act> } }).agent.act({ steps: s }), steps)
-  let result = await act([{ ref: "Project files", action: "setValue", args: ["src/config.ts"] }])
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(file(page, "config.ts")).toHaveAttribute("aria-selected", "true")
-  // An agent's choice of a file opens it, so its editor is there to write in.
-  await expect(tab(page, "config.ts")).toHaveAttribute("aria-selected", "true")
-  result = await act([{ ref: "src/config.ts", action: "setValue", args: ['export const config = {}\n'] }])
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(tab(page, "config.ts, unsaved")).toBeVisible()
-})
-
 test("in every skin the editor's text is drawn by its colors, not a skinned field over them", { tag: "@engine" }, async ({ page }) => {
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     await page.locator("uiset-root").evaluate((el, s) => (el.setAttribute("skin", s), el.setAttribute("theme", "dark")), skin)
@@ -192,33 +178,6 @@ test("the file actions menu works from the keyboard", { tag: "@engine" }, async 
   await page.getByRole("menuitem", { name: /Rename/ }).focus()
   await page.keyboard.press("Enter")
   await expect(page.getByRole("dialog", { name: "Rename config.ts" })).toBeVisible()
-})
-
-test("properties set before the elements are defined are picked up", async ({ page }) => {
-  await page.route("**/early-ide.html", (route) =>
-    route.fulfill({
-      contentType: "text/html",
-      body: `<uiset-root>
-          <uiset-file-tree id="t" label="Early files"></uiset-file-tree>
-          <uiset-editor-tabs id="e"></uiset-editor-tabs>
-          <uiset-problems id="p"></uiset-problems>
-        </uiset-root>
-        <script>
-          document.getElementById("t").paths = ["a.ts", "b/"]
-          document.getElementById("t").status = { "a.ts": "modified" }
-          const e = document.getElementById("e")
-          e.files = [{ path: "a.ts", dirty: true }]
-          e.renderPanel = (path) => Object.assign(document.createElement("p"), { textContent: "Panel for " + path })
-          document.getElementById("p").problems = [{ path: "a.ts", line: 2, severity: "error", message: "Early problem" }]
-        </script>
-        <script type="module" src="/src/uiset.ts"></script>`,
-    }),
-  )
-  await page.goto("/early-ide.html")
-  await expect(page.getByRole("treeitem", { name: "a.ts, modified" })).toBeVisible()
-  await expect(page.getByRole("tab", { name: "a.ts, unsaved" })).toBeVisible()
-  await expect(page.getByText("Panel for a.ts")).toBeVisible()
-  await expect(page.getByRole("button", { name: /Error: Early problem/ })).toBeVisible()
 })
 
 test("Move puts a file in another folder, and a refused rename says why", { tag: "@engine" }, async ({ page }) => {

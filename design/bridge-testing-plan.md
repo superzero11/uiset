@@ -57,6 +57,20 @@ snapshot listed Allow, Deny, the composer and the tool.
   in 4.7 minutes, its biggest process at 885 MB (the whole gallery reached about 2 GB, and
   5.4 GB per worker when it crashed the Mac). Chrome: 10 passed in 1.7 minutes.
 
+- **Behavior moved (2026-11-21).** 151 of the 193 behavior tests now drive their page or
+  component through the bridge in Vitest (39 `*.bridge.test.*` files, each mutation-checked
+  before its browser test went); `tests/unit/web-page.ts` loads a web page's markup and script
+  into jsdom. Vitest: 758 tests in 88 files, 106 seconds at 2 workers. Browser runs: Chrome
+  862 (from 1,032), WebKit and Firefox 715 each (from 1,030).
+- **Stay in the browser (42):** a real browser is the point: the link checker launches its
+  own Chrome; WebMCP and the bookmarklet; the Tailwind cascade; motion and its pieces;
+  native form validation and submits with JavaScript off; a swipe; the gallery's lazy
+  loading; the site-wide crawl; scores that hang on CSS media queries or hidden scroll areas;
+  the top layer above a modal (now `@engine`); `web/dist` read in Node.
+- **Found while moving:** the scheduler's and calendar's month grids have no name for agents;
+  the pricing questions reach agents as q0 to q3; on template pages the site's app shell and
+  the template's both register Mod+B; the web IDE's palette lists one file twice as Recent.
+
 ## Done when
 
 - WebKit and Firefox run about a third of today's tests, Chrome about two thirds, and the

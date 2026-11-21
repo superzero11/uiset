@@ -51,11 +51,6 @@ test("by keyboard: arrows between rows, Left to the actions, Escape back, Enter 
   await expect(row(page, "^Grace Hopper")).toBeVisible()
 })
 
-test("hidden actions are out of reach until shown", async ({ page }) => {
-  const actions = row(page, "Grace Hopper").locator("[data-swipe-actions]").first()
-  await expect(actions).toHaveAttribute("inert", "")
-})
-
 test("pull down at the top to refresh; the tab bar counts what's new", { tag: "@engine" }, async ({ page }) => {
   await expect(phone(page).getByRole("button", { name: "Inbox, 2 new" })).toHaveAttribute("aria-current", "page")
   const box = (await list(page).boundingBox())!
@@ -161,14 +156,6 @@ test("a sheet with two snap points rests at half the screen; its handle takes it
   await expect.poll(top).toBeLessThan(height * 0.2)
 })
 
-test("the action sheet returns what was chosen", async ({ page }) => {
-  await phone(page).getByRole("button", { name: "Inbox options" }).click()
-  const sheet = page.getByRole("dialog", { name: "Inbox" })
-  await sheet.getByRole("button", { name: "Mark all as read" }).click()
-  await expect(phone(page).getByRole("button", { name: "Inbox", exact: true })).toBeVisible()
-  await expect(row(page, "^Grace Hopper")).toBeVisible()
-})
-
 test("an action hands focus back: to its row, or to the row now in its place", { tag: "@engine" }, async ({ page }) => {
   await row(page, "Grace Hopper").focus()
   await page.keyboard.press("ArrowRight")
@@ -203,44 +190,6 @@ test("past a full swipe, only the swiped side's first action fills the row", { t
   await page.mouse.move(x, y, { steps: 5 })
   await page.mouse.up()
   await expect(r).toBeVisible()
-})
-
-test("agents run a row's safe actions and open rows by name; dangerous ones need the person", async ({ page }) => {
-  type Result = { ok: boolean; error?: { message: string } }
-  type Agent = {
-    act: (x: unknown) => Promise<Result>
-    query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]>
-  }
-  const act = (steps: unknown[]) => page.evaluate((s) => (window as unknown as { agent: Agent }).agent.act({ steps: s }), steps)
-  const archived = await act([{ ref: "Messages", action: "runAction", args: ["Ada Lovelace", "Archive"] }])
-  expect(archived.ok, archived.error?.message).toBe(true)
-  await expect(row(page, "Ada Lovelace")).toHaveCount(0)
-  const refused = await act([{ ref: "Messages", action: "runAction", args: ["Linus", "Delete"] }])
-  expect(refused.ok).toBe(false)
-  expect(refused.error?.message).toContain('Needs a person: "Delete: Linus Pauling')
-  expect(refused.error?.message).toContain('in "Actions for Linus Pauling')
-  await expect(row(page, "Linus Pauling")).toBeVisible()
-  const opened = await act([{ ref: "Messages", action: "openRow", args: ["Grace Hopper"] }])
-  expect(opened.ok, opened.error?.message).toBe(true)
-  // The toast's own text (UI SDK's page announcer says it too, for a moment).
-  await expect(page.getByRole("region", { name: "Notifications" }).getByText("Opened “Compiler notes for Friday”")).toBeVisible()
-  const items = await page.evaluate(async () => {
-    const found = await (window as unknown as { agent: Agent }).agent.query({ within: "Messages" })
-    return found.find((c) => c.label === "Messages")?.items?.map((i) => i.label)
-  })
-  expect(items).toContain("Linus Pauling: Lab booking moved, Yesterday (actions: Unread, Archive, Delete)")
-  // The tab bar's sections are buttons agents can press.
-  const switched = await act([{ ref: "Alarms", action: "press" }])
-  expect(switched.ok, switched.error?.message).toBe(true)
-  await expect(phone(page).getByRole("heading", { name: "Alarms" })).toBeVisible()
-})
-
-test("Delete all can be undone", async ({ page }) => {
-  await phone(page).getByRole("button", { name: "Inbox options" }).click()
-  await page.getByRole("dialog", { name: "Inbox" }).getByRole("button", { name: "Delete all" }).click()
-  await expect(list(page).getByRole("listitem")).toHaveCount(0)
-  await page.getByRole("region", { name: "Notifications" }).getByRole("button", { name: "Undo" }).click()
-  await expect(row(page, "Grace Hopper")).toBeVisible()
 })
 
 test.describe("on a touch screen", () => {

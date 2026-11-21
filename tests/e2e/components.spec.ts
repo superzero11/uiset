@@ -39,25 +39,3 @@ for (const skin of skins) {
     })
   }
 }
-
-test("no component on the page is nameless to agents", async ({ page }) => {
-  await openGallery(page, "/gallery")
-  const unnamed = await page.evaluate(() =>
-    (
-      window as unknown as {
-        agent: {
-          snapshot(): {
-            label?: string
-            component: string
-            ref: string
-            offPage?: boolean
-          }[]
-        }
-      }
-    ).agent
-      .snapshot()
-      .filter((entry) => !entry.offPage && entry.component !== "more" && !entry.label)
-      .map((entry) => `${entry.component} ${entry.ref}`),
-  )
-  expect(unnamed).toEqual([])
-})

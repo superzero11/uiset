@@ -11,12 +11,6 @@ async function choose(page: Page, group: string, option: string) {
     .click()
 }
 
-/** The site's skin, from the select beside the theme switch. */
-async function chooseSkin(page: Page, skin: string) {
-  await page.getByRole("combobox", { name: "Site skin", exact: true }).click()
-  await page.getByRole("option", { name: skin, exact: true }).click()
-}
-
 for (const skin of skins) {
   for (const theme of themes) {
     test(`${skin} skin in ${theme.toLowerCase()} theme passes axe, contrast included`, { tag: "@engine" }, async ({
@@ -232,20 +226,6 @@ test("theme cards show each skin on its own, fitted below the tag, on a page in 
     expect(form!.x + form!.width, skin).toBeLessThan(box!.x + box!.width - 8)
     expect(form!.y + form!.height, skin).toBeLessThanOrEqual(box!.y + box!.height)
   }
-})
-
-// The Studio kit follows the page's skin like every other kit (it was once pinned to its own
-// skin while the page showed Base), and its stage paints no Studio-only surface in other skins
-// (it once left Blueprint, Phosphor and Ink text at about 1.1:1 on the page behind it).
-test("the Studio rack and the whole site follow the skin picker", async ({ page }) => {
-  await page.goto("/docs/kits/studio")
-  const stage = page.locator(".studio-stage")
-  await expect(stage).toHaveAttribute("data-skin", "base")
-  await chooseSkin(page, "Ink")
-  await expect(stage).toHaveAttribute("data-skin", "ink")
-  await expect(page.locator(".site")).toHaveAttribute("data-skin", "ink")
-  await chooseSkin(page, "Studio")
-  await expect(stage).toHaveAttribute("data-skin", "studio")
 })
 
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
@@ -512,35 +492,6 @@ test.describe("Studio", () => {
     await expect(second).toHaveAttribute("aria-pressed", "true")
   })
 
-  test("an agent plays the rack: beat, filter, cable, pattern", async ({ page }) => {
-    const section = page.locator(".item-stage")
-    for (const prompt of [
-      "Start the beat",
-      "Make it darker",
-      "Add a slow wobble to the filter",
-      "Four on the floor",
-    ]) {
-      await section.getByRole("button", { name: prompt }).click()
-    }
-    await expect(section.locator(".agent-log span")).toHaveCount(4)
-    await expect(section.locator(".agent-log span", { hasText: "✕" })).toHaveCount(0)
-    await expect(page.getByRole("switch", { name: "Play" })).toHaveAttribute(
-      "aria-checked",
-      "true",
-    )
-    await expect(page.getByRole("slider", { name: "Cutoff" })).toHaveAttribute(
-      "aria-valuetext",
-      "260 Hz",
-    )
-    await expect(page.getByRole("button", { name: "Filter mod in" })).toHaveAttribute(
-      "aria-description",
-      "Patched to LFO out",
-    )
-    await expect(
-      page.getByRole("button", { name: "Step 5", exact: true }),
-    ).toHaveAttribute("aria-pressed", "true")
-    await page.getByRole("switch", { name: "Play" }).click()
-  })
 })
 
 test.describe("Agent Console", () => {
@@ -573,71 +524,6 @@ test.describe("Agent Console", () => {
     )
   })
 
-  test("one sentence changes two settings, and Activity lists both", async ({ page }) => {
-    const started = Date.now()
-    await ask(page, "Make it public and move it to Europe")
-    await expect(page.getByRole("combobox", { name: "Visibility" })).toHaveText(/Public/)
-    await expect(page.getByRole("combobox", { name: "Region" })).toHaveText(/Europe/)
-    expect(Date.now() - started, "two agent steps took too long").toBeLessThan(4000)
-    await expect(
-      console_(page).getByText("Done: 2 changes.", { exact: false }),
-    ).toBeVisible()
-
-    await console_(page).getByRole("tab", { name: "Activity" }).click()
-    await expect(console_(page).getByText("2 changes by the agent")).toBeVisible()
-    await expect(console_(page).getByText("Agent set Region to europe")).toBeVisible()
-  })
-
-  test("a destructive step waits for approval in the console, even over the agent's dialog", async ({
-    page,
-  }) => {
-    await ask(page, "Delete the project")
-    const card = console_(page).locator(".agent-approval")
-    await expect(card).toContainText("Deletes the Apollo project")
-    await expect(page.getByRole("alertdialog", { name: "Delete Apollo?" })).toBeVisible()
-    await expect(console_(page)).toHaveAttribute("data-status", "waiting")
-    await card.getByRole("button", { name: "Allow", exact: true }).click()
-    await expect(page.getByText("The project was deleted.")).toBeVisible()
-    await expect(card).toHaveCount(0)
-  })
-
-  test("Don't allow refuses the step and keeps the project", async ({ page }) => {
-    await ask(page, "Delete the project")
-    const card = console_(page).locator(".agent-approval")
-    await card.getByRole("button", { name: /^Don.t allow$/ }).click()
-    await expect(
-      console_(page).locator('.agent-step[data-status="refused"]'),
-    ).toHaveCount(1)
-    await expect(page.getByRole("textbox", { name: "Project name" })).toHaveValue(
-      "Apollo",
-    )
-    await expect(page.getByRole("alertdialog")).toBeHidden()
-  })
-
-  test("undo puts the agent's changes back and keeps the person's", async ({ page }) => {
-    await ask(page, "Rename it to Atlas and turn off deploy on push")
-    await expect(page.getByRole("textbox", { name: "Project name" })).toHaveValue("Atlas")
-    await expect(page.getByRole("switch", { name: "Deploy on push" })).toHaveAttribute(
-      "aria-checked",
-      "false",
-    )
-    await page.getByRole("switch", { name: "Weekly digest" }).click()
-
-    await console_(page).getByRole("tab", { name: "Activity" }).click()
-    await console_(page).getByRole("button", { name: "Undo agent changes" }).click()
-    await expect(page.getByRole("textbox", { name: "Project name" })).toHaveValue(
-      "Apollo",
-    )
-    await expect(page.getByRole("switch", { name: "Deploy on push" })).toHaveAttribute(
-      "aria-checked",
-      "true",
-    )
-    await expect(page.getByRole("switch", { name: "Weekly digest" })).toHaveAttribute(
-      "aria-checked",
-      "true",
-    )
-  })
-
   test("the prompt brings back earlier messages with ArrowUp", async ({ page }) => {
     await ask(page, "Turn on the weekly digest")
     await expect(console_(page).getByText(/Done: one change/)).toBeVisible()
@@ -647,18 +533,6 @@ test.describe("Agent Console", () => {
     await expect(box).toHaveValue("Turn on the weekly digest")
   })
 
-  test("an agent can't see or press anything in the console", async ({ page }) => {
-    const labels = await page.evaluate(() =>
-      (window as unknown as { agent: { snapshot(): { label?: string }[] } }).agent
-        .snapshot()
-        .map((entry) => entry.label),
-    )
-    for (const label of ["Allow", "Undo agent changes", "Agent views", "What it sees"]) {
-      expect(labels).not.toContain(label)
-    }
-    // The console's own message box is hidden from agents too.
-    expect(labels).not.toContain("Message")
-  })
 })
 
 test.describe("Chat kit", () => {
@@ -724,25 +598,6 @@ test.describe("Chat kit", () => {
     })
   }
 
-  test("a message streams a reply with reasoning, a tool call and markdown", async ({
-    page,
-  }) => {
-    await box(page).fill("How do I cancel a fetch?")
-    await box(page).press("Enter")
-    await expect(chat(page).getByRole("button", { name: "Stop" })).toBeVisible()
-    const reply = chat(page).locator(".chat-message[data-from=assistant]").last()
-    await expect(reply).toContainText("This is a simulated assistant", {
-      timeout: 10_000,
-    })
-    await expect(reply.getByRole("button", { name: /Thought for/ })).toBeVisible()
-    await expect(reply.getByRole("button", { name: /Searched the docs/ })).toContainText(
-      "Done",
-    )
-    // The reply keeps streaming after the tool call; Send comes back when it ends.
-    await expect(chat(page).getByRole("button", { name: "Send" })).toBeVisible({ timeout: 10_000 })
-    await expect(box(page)).toHaveValue("")
-  })
-
   test("a slash command is chosen with the keyboard, then Enter sends", async ({
     page,
   }) => {
@@ -771,28 +626,4 @@ test.describe("Chat kit", () => {
     await expect(chat(page).getByText("notes.txt")).toHaveCount(0)
   })
 
-  test("a new chat starts empty with suggestions, and chats can be renamed", async ({
-    page,
-  }) => {
-    await chat(page).getByRole("button", { name: "New chat" }).click()
-    await expect(chat(page).getByText("What are we working on?")).toBeVisible()
-    await chat(page).getByRole("button", { name: "More for Launch checklist" }).click()
-    await page.getByRole("menuitem", { name: "Rename" }).click()
-    const field = chat(page).getByRole("textbox", { name: "Rename Launch checklist" })
-    await field.fill("Launch plan v2")
-    await field.press("Enter")
-    await expect(
-      chat(page).getByRole("button", { name: "Open Launch plan v2", exact: true }),
-    ).toBeVisible()
-  })
-
-  test("the model picker and usage meter are named for everyone", async ({ page }) => {
-    await expect(chat(page).getByRole("combobox", { name: "Model" })).toHaveText(
-      /Balanced/,
-    )
-    await expect(chat(page).getByRole("meter", { name: "Context used" })).toHaveAttribute(
-      "aria-valuetext",
-      /of 200K tokens/,
-    )
-  })
 })

@@ -85,19 +85,6 @@ test("a radio card chooses its option wherever it's pressed, named by its title 
   expect(rings).toEqual(["none", "solid"])
 })
 
-test("an agent chooses a radio card's option by the group's name", async ({ page }) => {
-  await page.goto("/docs/components/radio")
-  const radio = page.locator(".example[data-ready]")
-  await expect(radio.getByRole("radio", { name: "Pro", exact: true })).toBeChecked()
-  const done = await page.evaluate(() =>
-    (window as unknown as { agent: { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> } }).agent.act({
-      steps: [{ ref: "Plan", action: "setValue", args: ["hobby"] }],
-    }),
-  )
-  expect(done.ok, done.error?.message).toBe(true)
-  await expect(radio.getByRole("radio", { name: "Hobby", exact: true })).toBeChecked()
-})
-
 /* ------------------------------------------------------------------ rings */
 
 test("a ring meter fills to its value, and its label names it", { tag: "@engine" }, async ({ page }) => {
@@ -182,20 +169,6 @@ test("a confirm button arms on the first press, says so, and acts on the second"
   await page.waitForTimeout(700)
   await page.keyboard.press("Enter")
   await expect(area.getByRole("status")).toHaveText("Atlas deleted.")
-})
-
-test("an agent's press on a confirm button waits for the person, and nothing happens meanwhile", async ({ page }) => {
-  await page.goto("/docs/components/button")
-  const area = page.locator(".example[data-ready]")
-  await expect(area.getByRole("button", { name: "Delete project" })).toBeVisible()
-  const target = await page.evaluate(async () => (await (window as unknown as { agent: { query: (q: unknown) => Promise<{ confirm?: string }[]> } }).agent.query({ text: "Delete project" }))[0])
-  expect(target?.confirm).toBe("Deletes the Atlas project and its deploys")
-  await page.evaluate(() => {
-    void (window as unknown as { agent: { act: (x: unknown) => Promise<unknown> } }).agent.act({ steps: [{ ref: "Delete project", action: "press" }] })
-  })
-  await page.waitForTimeout(800)
-  await expect(area.getByRole("button", { name: "Delete project" })).not.toHaveAttribute("data-armed")
-  await expect(area.getByRole("status")).toHaveText("")
 })
 
 /* ------------------------------------------------------------------ table */

@@ -1,13 +1,12 @@
 import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
-// The Mobile kit as web elements, on a page with no React: data in, events out.
+// The Mobile kit as web elements, on a page with no React: data in, events out. Gestures,
+// keys, focus and the wheels here; the agent's actions and the action sheet are in
+// tests/unit/web-mobile.bridge.test.ts.
 const list = (page: Page) => page.getByRole("list", { name: "Messages" })
 const row = (page: Page, name: string) => list(page).getByRole("listitem", { name: new RegExp(name) })
-type Agent = {
-  act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }>
-  query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]>
-}
+type Agent = { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> }
 const act = (page: Page, steps: unknown[]) =>
   page.evaluate((s) => (window as unknown as { agent: Agent }).agent.act({ steps: s }), steps)
 
@@ -72,23 +71,6 @@ test("each row's actions menu is there for screen readers, named for its row", {
   await expect(page.getByText(/^Opened/)).toHaveCount(0)
 })
 
-test("agents run safe actions and open rows by name; Delete needs the person", async ({ page }) => {
-  const archived = await act(page, [{ ref: "Messages", action: "runAction", args: ["Ada Lovelace", "Archive"] }])
-  expect(archived.ok, archived.error?.message).toBe(true)
-  await expect(row(page, "Ada Lovelace")).toHaveCount(0)
-  const refused = await act(page, [{ ref: "Messages", action: "runAction", args: ["Linus", "Delete"] }])
-  expect(refused.ok).toBe(false)
-  expect(refused.error?.message).toContain('Needs a person: "Delete: Linus Pauling')
-  const opened = await act(page, [{ ref: "Messages", action: "openRow", args: ["Grace Hopper"] }])
-  expect(opened.ok, opened.error?.message).toBe(true)
-  await expect(page.getByRole("region", { name: "Notifications" }).getByText("Opened “Compiler notes for Friday”")).toBeVisible()
-  const items = await page.evaluate(async () => {
-    const found = await (window as unknown as { agent: Agent }).agent.query({ within: "Messages" })
-    return found.find((c) => c.label === "Messages")?.items?.map((i) => i.label)
-  })
-  expect(items).toContain("Linus Pauling: Lab booking moved (actions: Unread, Archive, Delete)")
-})
-
 test("pull down to refresh; the keyboard has a Refresh button; a failure is announced", { tag: "@engine" }, async ({ page }) => {
   const box = (await page.locator("uiset-pull-refresh").boundingBox())!
   await page.mouse.move(box.x + box.width / 2, box.y + 30)
@@ -109,18 +91,6 @@ test("pull down to refresh; the keyboard has a Refresh button; a failure is anno
   await expect.poll(() => page.evaluate(() => (window as unknown as { failed?: string }).failed)).toBe("offline")
   await expect(page.getByText("Couldn't refresh.")).toBeAttached()
   await expect(refresh).toBeEnabled()
-})
-
-test("the action sheet returns its choice; Delete all can be undone", async ({ page }) => {
-  await page.getByRole("button", { name: "Inbox options" }).click()
-  await page.getByRole("dialog", { name: "Inbox" }).getByRole("button", { name: "Mark all as read" }).click()
-  await expect(page.getByRole("button", { name: "Inbox", exact: true })).toBeVisible()
-  await expect(page.getByRole("dialog", { name: "Inbox" })).toBeHidden()
-  await page.getByRole("button", { name: "Inbox options" }).click()
-  await page.getByRole("dialog", { name: "Inbox" }).getByRole("button", { name: "Delete all" }).click()
-  await expect(list(page).getByRole("listitem")).toHaveCount(0)
-  await page.getByRole("region", { name: "Notifications" }).getByRole("button", { name: "Undo" }).click()
-  await expect(row(page, "Grace Hopper")).toBeVisible()
 })
 
 test("the tab bar switches screens; wheels in a sheet set a time by keys and by agents", { tag: "@engine" }, async ({ page }) => {
@@ -251,21 +221,4 @@ test("pull to refresh keeps its Refresh button focused while busy, takes words a
   })
   await expect(refresh.locator(".mobile-refresh-indicator")).toHaveCount(1)
   await expect(page.getByRole("button", { name: "Actualizar" })).toBeAttached()
-})
-
-test("properties set before the elements are defined still apply", async ({ page }) => {
-  await page.route("**/early-mobile.html", (route) =>
-    route.fulfill({
-      contentType: "text/html",
-      body: `<uiset-root><uiset-pull-refresh id="r"><uiset-swipe-list id="l" aria-label="Early"></uiset-swipe-list></uiset-pull-refresh></uiset-root>
-        <script>
-          document.getElementById("r").messages = { refresh: "Neu laden" }
-          document.getElementById("l").items = [{ id: "a", label: "First", content: "First", end: [{ id: "x", label: "Archive" }] }]
-        </script>
-        <script type="module" src="/src/uiset.ts"></script>`,
-    }),
-  )
-  await page.goto("/early-mobile.html")
-  await expect(page.getByRole("listitem", { name: "First" })).toBeVisible()
-  await expect(page.getByRole("button", { name: "Neu laden" })).toBeAttached()
 })

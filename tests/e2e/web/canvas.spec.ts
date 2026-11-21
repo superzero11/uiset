@@ -2,17 +2,15 @@ import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
 // The Canvas as web elements, on a page with no React: an agent workflow with a toolbar and
-// an inspector beside it, and undo through the canvas's `history`.
+// an inspector beside it, and undo through the canvas's `history`. Agents' steps are in
+// tests/unit/web-canvas.bridge.test.ts.
 const canvas = (page: Page) => page.getByRole("group", { name: "Workflow", exact: true })
 const node = (page: Page, name: string | RegExp) => canvas(page).getByRole("option", { name })
 const wires = (page: Page) => canvas(page).locator('path[data-slot="canvas-wire"]')
 const tools = (page: Page) => page.getByRole("toolbar", { name: "Canvas tools" })
 const inspector = (page: Page) => page.locator("uiset-canvas-inspector")
 const tick = (page: Page) => page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))))
-type Agent = {
-  act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }>
-  query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]>
-}
+type Agent = { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> }
 const act = (page: Page, action: string, ...args: unknown[]) =>
   page.evaluate(([a, s]) => (window as unknown as { agent: Agent }).agent.act({ steps: [{ ref: "Workflow", action: a, args: s }] }), [action, args] as const)
 
@@ -198,17 +196,6 @@ test("the inspector renames the node shown, keeps fields per node, and Enter ope
   await expect(inspector(page).getByRole("textbox", { name: "Notes" })).toHaveValue("Sent to the chat")
 })
 
-test("agents add, wire, move and select nodes by name, and read them", async ({ page }) => {
-  expect((await act(page, "addNode", "Output", "Log")).ok).toBe(true)
-  expect((await act(page, "connect", "Draft answer", "Log")).ok).toBe(true)
-  expect((await act(page, "connect", "Draft answer", "Draft answer")).error?.message).toMatch(/can't connect/)
-  expect((await act(page, "moveNode", "Log", 900, 320)).ok).toBe(true)
-  expect((await act(page, "select", "Log", "Reply")).ok).toBe(true)
-  await expect(node(page, /^Log/)).toHaveAttribute("aria-selected", "true")
-  const items = await page.evaluate(async () => (await (window as unknown as { agent: Agent }).agent.query({ within: "Workflow" })).find((c) => c.label === "Workflow")?.items?.map((i) => i.label))
-  expect(items).toEqual(expect.arrayContaining([expect.stringMatching(/^Log \(at 900, 320; Inputs: Text from Draft answer Text\.\)/)]))
-})
-
 test("without openable, history or controls the canvas does without them", { tag: "@engine" }, async ({ page }) => {
   const el = page.locator("uiset-canvas")
   await el.evaluate((c) => (c.removeAttribute("openable"), c.removeAttribute("history"), c.setAttribute("controls", "false")))
@@ -231,30 +218,6 @@ test("a refused change leaves the canvas as it was; the page's description stays
     c.setAttribute("aria-describedby", "flow-note")
   })
   await expect(canvas(page)).toHaveAccessibleDescription(/^Runs on every chat message\. Arrow keys go to the nearest node/)
-})
-
-test("properties set before the elements are defined draw once they are", async ({ page }) => {
-  await page.route("**/early-canvas.html", (route) =>
-    route.fulfill({
-      contentType: "text/html",
-      body: `<uiset-root><uiset-canvas id="c" label="Early flow"></uiset-canvas><uiset-canvas-inspector for="c"></uiset-canvas-inspector></uiset-root>
-        <script>
-          const c = document.getElementById("c")
-          c.nodes = [{ id: "a", title: "Early node", x: 40, y: 40, outputs: [{ id: "o", label: "Out" }] }, { id: "b", title: "Later node", x: 320, y: 40, inputs: [{ id: "i", label: "In" }] }]
-          c.edges = [{ id: "a->b", from: "a:out:o", to: "b:in:i" }]
-          c.renderNode = (n) => n.id === "a" ? "First" : null
-          document.querySelector("uiset-canvas-inspector").renderFields = (n) => Object.assign(document.createElement("p"), { textContent: "Fields for " + n.title })
-        </script>
-        <script type="module" src="/src/uiset.ts"></script>`,
-    }),
-  )
-  await page.goto("/early-canvas.html")
-  const flow = page.getByRole("group", { name: "Early flow", exact: true })
-  await expect(flow.getByRole("option", { name: /^Early node/ })).toBeVisible()
-  await expect(flow.locator('path[data-slot="canvas-wire"]')).toHaveCount(1)
-  await expect(flow.getByText("First")).toBeVisible()
-  await flow.getByRole("option", { name: /^Later node/ }).click()
-  await expect(page.getByText("Fields for Later node")).toBeVisible()
 })
 
 test("pressing the minimap looks elsewhere", { tag: "@engine" }, async ({ page }) => {

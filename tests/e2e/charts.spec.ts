@@ -64,21 +64,6 @@ test("hovering a line chart snaps to the nearest month and shows every series", 
   await expect(tooltip(page)).toBeHidden()
 })
 
-test("the legend isolates a series, for pointer and keyboard alike", async ({ page }) => {
-  const legend = section(page).getByRole("group", { name: "Revenue and costs series" })
-  await legend.getByRole("button", { name: "Costs" }).click()
-  await expect(legend.getByRole("button", { name: "Costs" })).toHaveAttribute("aria-pressed", "true")
-  await expect(chart(page, "Revenue and costs").getByRole("option").first()).toHaveAttribute(
-    "aria-label",
-    "Jan: Costs $38,000",
-  )
-  await legend.getByRole("button", { name: "Costs" }).press("Enter")
-  await expect(chart(page, "Revenue and costs").getByRole("option").first()).toHaveAttribute(
-    "aria-label",
-    "Jan: Revenue $42,000, Costs $38,000",
-  )
-})
-
 test("in the heatmap, Down moves a row and the reading names the cell", async ({ page }) => {
   const heat = chart(page, "Sessions by day and hour")
   await heat.locator('[tabindex="0"]').focus()

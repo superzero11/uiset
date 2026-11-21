@@ -2,7 +2,8 @@ import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
 // The Terminal as a web element, on a page with no React: the gallery's commands, on the
-// same screen and session as the React Terminal.
+// same screen and session as the React Terminal. Keys, focus, scrolling and colors here; what
+// commands print, through the bridge, is in tests/unit/web-terminal.bridge.test.ts.
 
 const term = (page: Page) => page.getByRole("group", { name: "Shell", exact: true })
 const input = (page: Page) => term(page).getByRole("textbox", { name: /Command/ })
@@ -36,17 +37,6 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     })
   }
 }
-
-test("run commands; output keeps its colors and links; errors read in the danger tone", async ({ page }) => {
-  await run(page, "cat README.md")
-  await expect(output(page).getByRole("link", { name: "https://example.com/greeter" })).toBeVisible()
-  await run(page, "colors")
-  await expect(output(page).locator('[data-fg="red"]').first()).toHaveText("red")
-  await run(page, "cat nope")
-  await expect(output(page).locator('[data-fg="red"]').last()).toHaveText("cat: nope: no such file")
-  await run(page, "frobnicate")
-  await expect(output(page)).toContainText("frobnicate: command not found. Type help for the list.")
-})
 
 test("Up brings back earlier commands; history lists them", { tag: "@engine" }, async ({ page }) => {
   await run(page, "echo one")
@@ -102,20 +92,6 @@ test("Ctrl+L clears the screen", { tag: "@engine" }, async ({ page }) => {
   await expect(output(page).locator(".terminal-line")).toHaveCount(0)
 })
 
-test("agents run commands and read the output", async ({ page }) => {
-  type Act = { ok: boolean; error?: { message: string } }
-  const act = (steps: unknown[]) =>
-    page.evaluate((s) => (window as unknown as { agent: { act: (x: unknown) => Promise<Act> } }).agent.act({ steps: s }), steps)
-  const result = await act([{ ref: "Shell", action: "runCommand", args: ["echo from an agent"] }])
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(output(page)).toContainText("from an agent")
-  const items = await page.evaluate(async () => {
-    const found = await (window as unknown as { agent: { query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]> } }).agent.query({ within: "Shell" })
-    return found.find((c) => c.label === "Shell")?.items?.map((i) => i.label)
-  })
-  expect(items).toEqual(expect.arrayContaining(["~/greeter $ echo from an agent", "from an agent"]))
-})
-
 test("every ANSI color clears 4.5:1 on the terminal in every skin and theme", { tag: "@engine" }, async ({ page }) => {
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
     for (const theme of ["light", "dark"]) {
@@ -154,12 +130,6 @@ test("every ANSI color clears 4.5:1 on the terminal in every skin and theme", { 
 })
 
 test.describe("review fixes", () => {
-  test("a spinner that erases and rewrites its line leaves one line", async ({ page }) => {
-    await run(page, "install")
-    await expect(output(page)).toContainText("✓ Installed 5 packages")
-    await expect(output(page).locator('.terminal-line[data-kind="out"]', { hasText: /Install/ })).toHaveCount(1)
-  })
-
   test("Ctrl+C gives the prompt back at once, even from a command that ignores it", { tag: "@engine" }, async ({ page }) => {
     await run(page, "sleep 5")
     await expect(term(page)).toHaveAttribute("data-running", "")
@@ -167,21 +137,6 @@ test.describe("review fixes", () => {
     await expect(term(page)).not.toHaveAttribute("data-running", "", { timeout: 1000 })
     await run(page, "echo back")
     await expect(output(page)).toContainText("back")
-  })
-
-  test("names on Object's prototype aren't commands", async ({ page }) => {
-    await run(page, "toString")
-    await expect(output(page)).toContainText("toString: command not found")
-  })
-
-  test("agents can't fake the echoed line with control characters", async ({ page }) => {
-    const result = await page.evaluate(() =>
-      (window as unknown as { agent: { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> } }).agent.act({
-        steps: [{ ref: "Shell", action: "runCommand", args: ["echo rm -rf /tmp/x\rls"] }],
-      }),
-    )
-    expect(result.ok).toBe(false)
-    expect(result.error?.message).toMatch(/one line of plain text/)
   })
 
   test("the log announces new lines, not redraws; the prompt is named Command line", { tag: "@engine" }, async ({ page }) => {

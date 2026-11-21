@@ -140,20 +140,6 @@ test("Delete on a tab closes it; closing an unsaved file asks first", { tag: "@e
   await expect(tab(page, "index.ts, unsaved")).toBeVisible()
 })
 
-test("agents open files and edit code by the names people see", async ({ page }) => {
-  type Act = { ok: boolean; error?: { message: string } }
-  const act = (steps: unknown[]) =>
-    page.evaluate((s) => (window as unknown as { agent: { act: (x: unknown) => Promise<Act> } }).agent.act({ steps: s }), steps)
-  let result = await act([{ ref: "Project files", action: "setValue", args: ["src/config.ts"] }])
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(file(page, "config.ts")).toHaveAttribute("aria-selected", "true")
-  // An agent's choice of a file opens it, so its editor is there to write in.
-  await expect(tab(page, "config.ts")).toHaveAttribute("aria-selected", "true")
-  result = await act([{ ref: "src/config.ts", action: "setValue", args: ['export const config = {}\n'] }])
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(tab(page, "config.ts, unsaved")).toBeVisible()
-})
-
 test("in every skin the editor's text is drawn by its colors, not a skinned field over them", { tag: "@engine" }, async ({ page }) => {
   test.slow() // one page load per skin and theme
   for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {

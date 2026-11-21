@@ -1,7 +1,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test"
 
-// The home page's What's new row (UI SDK's Timeline, laid out horizontally by base.css), and
-// the footer's link to the URL checker. Layout needs a real browser: jsdom has no boxes.
+// The home page's What's new row (UI SDK's Timeline, laid out horizontally by base.css). Layout
+// needs a real browser: jsdom has no boxes. The footer's link to the URL checker is tested in
+// tests/unit/site.bridge.test.tsx.
 
 const box = async (locator: Locator) => (await locator.boundingBox())!
 
@@ -58,13 +59,3 @@ test("on a phone the row scrolls by itself, and the page doesn't", { tag: "@engi
   expect(last.x).toBeGreaterThanOrEqual(view.x - 1)
   expect(last.x + last.width).toBeLessThanOrEqual(view.x + view.width + 1)
 })
-
-for (const path of ["/", "/docs/installation"]) {
-  test(`the footer links to the URL checker on ${path}`, async ({ page }) => {
-    await page.goto(path)
-    const link = page.getByRole("contentinfo").getByRole("link", { name: "Agent readiness checker" })
-    await expect(link).toHaveAttribute("href", "/check")
-    // The owner's X account, under the tagline.
-    await expect(page.getByRole("contentinfo").getByRole("link", { name: "@IAMSuperZero11 on X" })).toHaveAttribute("href", "https://x.com/IAMSuperZero11")
-  })
-}

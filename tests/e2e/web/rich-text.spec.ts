@@ -155,12 +155,6 @@ test("in a form it submits HTML; read-only hides the toolbar and refuses edits",
 })
 
 test.describe("review fixes", () => {
-  test("uploadImage set after the editor is on the page adds the image button", async ({ page }) => {
-    await expect(toolbar(page).getByRole("button", { name: "Insert image" })).toHaveCount(0)
-    await page.locator("#notes").evaluate((el) => ((el as HTMLElement & { uploadImage: unknown }).uploadImage = async () => null))
-    await expect(toolbar(page).getByRole("button", { name: "Insert image" })).toBeVisible()
-  })
-
   test("moved in the page, the editor keeps its text and works", { tag: "@engine" }, async ({ page }) => {
     await clear(page)
     await page.keyboard.type("kept")
@@ -174,11 +168,5 @@ test.describe("review fixes", () => {
     await page.keyboard.press("End")
     await page.keyboard.type("!")
     await expect(editor(page)).toContainText("kept")
-  })
-
-  test("a read-only editor stays in the Tab order for reading", async ({ page }) => {
-    await page.locator("#notes").evaluate((el) => el.setAttribute("readonly", ""))
-    await expect(editor(page)).toHaveAttribute("tabindex", "0")
-    await expect(editor(page)).toHaveAttribute("contenteditable", "false")
   })
 })

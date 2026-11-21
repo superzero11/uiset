@@ -17,6 +17,16 @@ Element.prototype.getClientRects = () => [] as unknown as DOMRectList
 Range.prototype.getBoundingClientRect ??= () => new DOMRect()
 Range.prototype.getClientRects ??= () => [] as unknown as DOMRectList
 document.elementFromPoint = () => null
+// jsdom's ElementInternals has no form value or validity: form-associated web elements set both.
+const attachInternals = HTMLElement.prototype.attachInternals
+HTMLElement.prototype.attachInternals = function (this: HTMLElement) {
+  const internals = (attachInternals?.call(this) ?? {}) as ElementInternals & Record<string, unknown>
+  internals.setFormValue ??= () => {}
+  internals.setValidity ??= () => {}
+  internals.checkValidity ??= () => true
+  internals.reportValidity ??= () => true
+  return internals
+}
 document.elementsFromPoint = () => []
 globalThis.ResizeObserver ??= class {
   observe() {}

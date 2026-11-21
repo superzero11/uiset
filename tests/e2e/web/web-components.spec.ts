@@ -22,15 +22,6 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   }
 }
 
-test("<uiset-root> carries the skin, theme and feedback settings", async ({ page }) => {
-  await expect(root(page)).toHaveAttribute("data-uiset", "")
-  await expect(root(page)).toHaveAttribute("data-sound", "off")
-  await page.getByRole("radio", { name: "Studio" }).click()
-  await page.getByRole("radio", { name: "Dark" }).click()
-  await expect(root(page)).toHaveAttribute("data-skin", "studio")
-  await expect(root(page)).toHaveAttribute("data-theme", "dark")
-})
-
 test("skins restyle UI SDK's own elements, with no React on the page", { tag: "@engine" }, async ({ page }) => {
   const save = page.getByRole("button", { name: "Save" })
   const look = () => save.evaluate((el) => [getComputedStyle(el).backgroundColor, getComputedStyle(el).textTransform].join(" "))
@@ -83,20 +74,6 @@ test("a textarea's count follows typing, describes it, and near the limit says w
   await expect(count).toHaveText("160 / 160 characters")
   await expect(count).toHaveAttribute("data-full", "")
   await expect.poll(spoken).toContain("No characters left")
-})
-
-test("password rules tick off as it's typed, and each change is said once", async ({ page }) => {
-  const rules = page.getByRole("list", { name: "Password rules" })
-  const rule = (name: string) => rules.getByRole("listitem").filter({ hasText: name })
-  const password = page.locator("ui-password-input input")
-  const spoken = () => page.evaluate(() => Array.from(document.querySelectorAll("[aria-live]"), (el) => el.textContent ?? "").join(" | "))
-  await expect(rule("A number")).toHaveText("To do: A number")
-  await password.fill("hello1")
-  await expect(rule("A number")).toHaveAttribute("data-met", "")
-  await expect(rule("A number")).toHaveText("Done: A number")
-  await expect.poll(spoken).toContain("Done: A number")
-  await password.fill("Hello1world!")
-  await expect.poll(spoken).toContain("Every rule is met")
 })
 
 test("a confirm button arms on the first press, says so, and fires confirm on the second", async ({ page }) => {
@@ -166,13 +143,6 @@ test('<uiset-root motion="reduce"> fades a dialog and moves nothing, with the sy
   await expect(root(page)).not.toHaveAttribute("data-motion")
 })
 
-type Agent = {
-  act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }>
-  query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]>
-}
-const act = (page: Page, steps: unknown[]) =>
-  page.evaluate((s) => (window as unknown as { agent: Agent }).agent.act({ steps: s }), steps)
-
 test("the patch bay patches by keyboard, draws the cable and reports it", async ({ page }) => {
   const bay = page.locator("uiset-patch-bay")
   const changes: unknown[] = []
@@ -219,13 +189,6 @@ test("a cable meets its jacks inside a scaled container", { tag: "@engine" }, as
     return ends.map((end) => Math.min(...jacks.map((jack) => Math.hypot(end.x - jack.x, end.y - jack.y))))
   })
   for (const gap of gaps) expect(gap).toBeLessThan(2)
-})
-
-test("agents patch by the jacks' names, taken from the page", async ({ page }) => {
-  const result = await act(page, [{ ref: "Patch bay", action: "plug", args: ["Oscillator out", "Output in"] }])
-  expect(result.ok, result.error?.message).toBe(true)
-  await expect(page.getByRole("button", { name: "Output in" })).toHaveAttribute("aria-description", "Patched to Oscillator out")
-  await expect(page.locator("uiset-patch-bay svg .patch-bay-cable")).toHaveCount(1)
 })
 
 test("faders, meters and step sequencers are UI SDK's elements in UISet's classes", { tag: "@engine" }, async ({ page }) => {

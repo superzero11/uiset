@@ -3,10 +3,7 @@ import { expect, test, type Page } from "@playwright/test"
 
 // Charts as web elements, on a page with no React: the same geometry as the React charts.
 const listbox = (page: Page, name: string) => page.getByRole("listbox", { name, exact: true })
-type Agent = {
-  act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }>
-  query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]>
-}
+type Agent = { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> }
 const act = (page: Page, steps: unknown[]) =>
   page.evaluate((s) => (window as unknown as { agent: Agent }).agent.act({ steps: s }), steps)
 
@@ -43,30 +40,6 @@ test("a line chart is a listbox of its x positions: arrows move, the tooltip fol
   expect(await chart.evaluate((el) => (el as unknown as { selected: string }).selected)).toBe("1")
 })
 
-test("the legend isolates a series; single-series charts have no legend", async ({ page }) => {
-  const chart = page.locator("uiset-line-chart")
-  await expect(chart.locator(".chart-line")).toHaveCount(2)
-  await chart.getByRole("button", { name: "Costs" }).click()
-  await expect(chart.getByRole("button", { name: "Costs" })).toHaveAttribute("aria-pressed", "true")
-  await expect(chart.locator(".chart-line")).toHaveCount(1)
-  await expect(listbox(page, "Revenue").getByRole("option").first()).toHaveAccessibleName("Jan: Costs $9.1k")
-  await chart.getByRole("button", { name: "Costs" }).click()
-  await expect(chart.locator(".chart-line")).toHaveCount(2)
-  await expect(page.locator("uiset-bar-chart .chart-legend")).toBeHidden()
-  await expect(page.locator("uiset-line-chart .chart-tooltip")).toBeHidden()
-})
-
-test("Chart and Table switch to the table twin and back", async ({ page }) => {
-  const chart = page.locator("uiset-bar-chart")
-  await chart.getByRole("radio", { name: "Table" }).click()
-  const table = chart.getByRole("group", { name: "Data table" })
-  await expect(table.getByRole("row", { name: "North America 4,210" })).toBeVisible()
-  await expect(chart.locator(".chart-plot")).toBeHidden()
-  await chart.getByRole("radio", { name: "Chart" }).click()
-  await expect(chart.locator(".chart-plot")).toBeVisible()
-  await expect(table).toBeHidden()
-})
-
 test("horizontal bars move with Up and Down; a heatmap's Up and Down move by a row", async ({ page }) => {
   const bars = listbox(page, "Signups by region")
   await expect(bars).toHaveAttribute("aria-orientation", "vertical")
@@ -89,68 +62,8 @@ test("a scatter chart's tooltip follows the nearest point to the pointer", { tag
   await expect(chart.locator(".chart-tooltip")).toContainText("Umbrella")
 })
 
-test("new data from script redraws the chart", async ({ page }) => {
-  await page.locator("uiset-line-chart").evaluate((el) => {
-    const chart = el as unknown as { data: { month: string; revenue: number; costs: number }[] }
-    chart.data = [...chart.data, { month: "Jul", revenue: 21000, costs: 12100 }]
-  })
-  await expect(listbox(page, "Revenue").getByRole("option")).toHaveCount(7)
-  await expect(listbox(page, "Revenue").getByRole("option").last()).toHaveAccessibleName("Jul: Revenue $21k, Costs $12.1k")
-})
-
-test("agents select by reading, isolate a series, show the table, and read the data", async ({ page }) => {
-  const selected = await act(page, [{ ref: "Revenue", action: "select", args: ["Mar"] }])
-  expect(selected.ok, selected.error?.message).toBe(true)
-  await expect(listbox(page, "Revenue").getByRole("option", { name: /^Mar:/ })).toHaveAttribute("aria-selected", "true")
-  const isolated = await act(page, [{ ref: "Revenue", action: "isolate", args: ["Costs"] }])
-  expect(isolated.ok, isolated.error?.message).toBe(true)
-  await expect(page.locator("uiset-line-chart .chart-line")).toHaveCount(1)
-  const missing = await act(page, [{ ref: "Revenue", action: "isolate", args: ["Profit"] }])
-  expect(missing.error?.message).toContain("Its series: Revenue, Costs")
-  const table = await act(page, [{ ref: "Plans", action: "showTable", args: [true] }])
-  expect(table.ok, table.error?.message).toBe(true)
-  await expect(page.getByRole("group", { name: "Data table" })).toBeVisible()
-  const items = await page.evaluate(async () => {
-    const found = await (window as unknown as { agent: Agent }).agent.query({ within: "Revenue" })
-    return found.find((c) => c.label === "Revenue")?.items?.map((i) => i.label)
-  })
-  expect(items).toContain("Jan (Revenue: $12.4k, Costs: $9.1k)")
-})
-
 type ChartEl = HTMLElement & Record<string, unknown>
 const chartOf = (page: Page, id: string) => page.locator(`#${id}`)
-
-test("properties set before the elements are defined draw once they are", async ({ page }) => {
-  await page.route("**/early-charts.html", (route) =>
-    route.fulfill({
-      contentType: "text/html",
-      body: `<uiset-root><main id="main"><uiset-line-chart id="early" label="Early"></uiset-line-chart></main></uiset-root>
-        <script>
-          const months = [{ m: "Jan", v: 1 }, { m: "Feb", v: 2 }, { m: "Mar", v: 3 }]
-          Object.assign(document.getElementById("early"), { data: months, x: (d) => d.m, series: [{ key: "v", label: "Visits", value: (d) => d.v }], selected: "1" })
-          const made = document.createElement("uiset-bar-chart")
-          made.setAttribute("label", "Made early")
-          Object.assign(made, { data: months, x: (d) => d.m, series: [{ key: "v", label: "Visits", value: (d) => d.v }] })
-          document.getElementById("main").append(made)
-        </script>
-        <script type="module" src="/src/uiset.ts"></script>`,
-    }),
-  )
-  await page.goto("/early-charts.html")
-  await expect(listbox(page, "Early").getByRole("option")).toHaveCount(3)
-  await expect(listbox(page, "Early").getByRole("option", { name: /^Feb:/ })).toHaveAttribute("aria-selected", "true")
-  await expect(listbox(page, "Made early").getByRole("option")).toHaveCount(3)
-})
-
-test("a scatter chart's title is `label`, set as a property too; its point names are `pointLabel`", async ({ page }) => {
-  await chartOf(page, "accounts").evaluate((el) => ((el as ChartEl).label = "Customers"))
-  await expect(listbox(page, "Customers").getByRole("option", { name: /^Initech: Seats 12/ })).toHaveCount(1)
-  await expect(chartOf(page, "accounts").locator(".chart-title")).toHaveText("Customers")
-  // Attributes reflect: a property set writes the attribute, and back.
-  await chartOf(page, "regions").evaluate((el) => ((el as ChartEl).orientation = "vertical"))
-  await expect(listbox(page, "Signups by region")).toHaveAttribute("aria-orientation", "horizontal")
-  expect(await chartOf(page, "regions").getAttribute("orientation")).toBe("vertical")
-})
 
 test("the legend keeps focus on the button pressed, and hover leaves the legend alone", async ({ page }) => {
   const costs = chartOf(page, "revenue").getByRole("button", { name: "Costs" })
@@ -197,14 +110,6 @@ test("a chart waiting for data shows its title only, and passes axe", { tag: "@e
   expect(results.violations.map((v) => v.id)).toEqual([])
 })
 
-test("with the table showing, agents can switch back and act on the chart again", async ({ page }) => {
-  expect((await act(page, [{ ref: "Revenue", action: "showTable", args: [true] }])).ok).toBe(true)
-  const back = await act(page, [{ ref: "Show Revenue as", action: "setValue", args: ["chart"] }])
-  expect(back.ok, back.error?.message).toBe(true)
-  const selected = await act(page, [{ ref: "Revenue", action: "select", args: ["Feb"] }])
-  expect(selected.ok, selected.error?.message).toBe(true)
-})
-
 test("new data drops a pin and focus it no longer has, and says so once", async ({ page }) => {
   const chart = chartOf(page, "revenue")
   await chart.evaluate((el) => {
@@ -246,19 +151,4 @@ test("agents select by reading before key; the page can refuse a pin", async ({ 
   expect(await page.evaluate(() => (window as unknown as { detail: unknown }).detail)).toEqual({ value: "0", source: "keyboard", reason: "toggle" })
   const refused = await act(page, [{ ref: "Revenue", action: "select", args: ["Feb"] }])
   expect(refused.ok).toBe(false)
-})
-
-test("stats say their change in words; sparklines say where the values went", async ({ page }) => {
-  const stats = page.getByRole("group", { name: "This month" })
-  await expect(stats.locator("uiset-stat").first().locator(".stat-change")).toHaveText(/^Up 12% vs last month$/)
-  // A rise in errors is bad, and says so in its tone as well as its words.
-  await expect(stats.locator("uiset-stat").nth(1).locator(".stat-change")).toHaveAttribute("data-bad", "")
-  await expect(stats.getByRole("img", { name: "Revenue trend: from 31 to 48, low 31, high 48" })).toBeVisible()
-  // A gap stays a gap, and the name skips it.
-  const inline = page.getByRole("img", { name: /^Signups, last 7 days: from 12 to 31/ })
-  await expect(inline).toBeVisible()
-  expect(await inline.locator("path.chart-area").getAttribute("d")).toMatch(/Z.*M/)
-  // Values and a format set as properties redraw.
-  await page.locator(".web-inline-trend uiset-sparkline").evaluate((el) => Object.assign(el, { values: [1, 2, 3], format: (n: number) => `${n} people` }))
-  await expect(page.getByRole("img", { name: "Signups, last 7 days: from 1 people to 3 people, low 1 people, high 3 people" })).toBeVisible()
 })

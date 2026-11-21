@@ -90,6 +90,11 @@ Project skills live in `.claude/skills/` (installed with `npx skills add`, pinne
 `pnpm dev` · `pnpm lint` (the project lint; `--rules` lists why each rule exists) · `pnpm check`
 (lint + typecheck + unit + e2e) · `pnpm registry:build` ·
 `scripts/install-test.sh` (fresh-app install, typecheck and build).
+Where a test goes (`design/bridge-testing-plan.md`): behavior (state and names) in Vitest
+through the agent bridge (`tests/unit/bridge.ts`, and `tests/unit/web-page.ts` for web
+pages); what needs a real page in Playwright, which runs in Chrome; and `{ tag: "@engine" }`
+on a browser test when engines can differ (layout, CSS, contrast, motion, scrolling, or input
+UISet wrote itself): only those run in WebKit and Firefox.
 Local Playwright uses installed Google Chrome (`channel: "chrome"`); CI installs Chromium.
 The e2e suite also runs in WebKit and Firefox (projects `webkit`, `firefox`, `web-webkit`,
 `web-firefox`). On this Mac Playwright's Firefox won't start, so run it with

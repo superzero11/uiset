@@ -1,14 +1,12 @@
 import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
-// <uiset-schema-form> on the Content page, with no React: a person through its steps, the
-// server's answer, an agent filling it while the person approves the send, its value for
-// v-model, every kind of control, and axe in every skin and theme.
+// <uiset-schema-form> on the Content page, with no React: a person through its steps, where
+// focus goes, the server's answer, its value for v-model, a native submit before it's defined,
+// and axe in every skin and theme. An agent filling it, each control, `disabled` and a framework
+// moving it are in tests/unit/web-schema-form.bridge.test.ts.
 
-type Agent = {
-  act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }>
-  query: (q: unknown) => Promise<{ label?: string; confirm?: string }[]>
-}
+type Agent = { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> }
 type FormElement = HTMLElement & { value: Record<string, unknown>; form?: unknown; send?: unknown; api: { reset(): void } }
 const form = (page: Page) => page.getByRole("form", { name: "Invite a teammate" })
 const actions = (page: Page) => form(page).locator(".schema-form-actions")
@@ -100,80 +98,6 @@ test("a problem the server sends back shows on its step, with focus on the field
   await expect(form(page).getByRole("navigation", { name: "Steps" }).locator("[aria-current=step]")).toContainText("Who")
 })
 
-test("each control sets its field: a radio, the number's buttons, a date, a text area and a switch", async ({ page }) => {
-  await form(page).getByRole("textbox", { name: "Email" }).fill("grace@example.com")
-  await next(page)
-  await form(page).getByRole("radio", { name: "Admin" }).click()
-  await form(page).getByRole("button", { name: "Increase" }).click()
-  await form(page).getByRole("button", { name: "Increase" }).click()
-  await expect(form(page).getByRole("textbox", { name: "Seats" })).toHaveValue("3")
-  await page.evaluate(() => ((document.getElementById("invite") as FormElement).value = { ...(document.getElementById("invite") as FormElement).value, start: "2026-12-01" }))
-  await next(page)
-  await form(page).getByRole("textbox", { name: "Message" }).fill("Welcome aboard.")
-  await form(page).getByRole("switch", { name: "Email me when they join" }).click()
-  await next(page)
-  const access = form(page).getByRole("region", { name: "Access" })
-  await expect(access).toContainText("Admin")
-  await expect(access).toContainText("3")
-  await expect(access).toContainText("Dec 1, 2026")
-  const message = form(page).getByRole("region", { name: "Message" })
-  await expect(message).toContainText("Welcome aboard.")
-  await expect(message).toContainText("No")
-  expect(await page.evaluate(() => (document.getElementById("invite") as FormElement).value)).toEqual({
-    email: "grace@example.com",
-    name: "",
-    role: "admin",
-    seats: 3,
-    start: "2026-12-01",
-    message: "Welcome aboard.",
-    notify: false,
-  })
-})
-
-test("an agent fills it by label; its press on Send waits for the person, who sends it", async ({ page }) => {
-  const filled = await page.evaluate(() =>
-    (window as unknown as { agent: Agent }).agent.act({
-      steps: [
-        { ref: "Invite a teammate", action: "fill", args: [{ Email: "grace@example.com", Role: "Admin", seats: "3", "Email me when they join": "no" }] },
-        { ref: "Invite a teammate", action: "goTo", args: [3] },
-      ],
-    }),
-  )
-  expect(filled.ok, filled.error?.message).toBe(true)
-  const access = form(page).getByRole("region", { name: "Access" })
-  await expect(access).toContainText("Admin")
-  await expect(access).toContainText("3")
-  const send = await page.evaluate(async () => (await (window as unknown as { agent: Agent }).agent.query({ text: "Send invite" }))[0])
-  expect(send?.confirm).toBe("Sends an invite email to the address given")
-  const pressed = await page.evaluate(() => (window as unknown as { agent: Agent }).agent.act({ steps: [{ ref: "Send invite", action: "press" }] }))
-  expect(pressed.ok).toBe(false)
-  expect(pressed.error?.message).toContain("Needs a person")
-  await expect(form(page)).toHaveAttribute("data-status", "idle")
-  await actions(page).getByRole("button", { name: "Send invite" }).click()
-  await expect(form(page)).toContainText("Invite sent.")
-})
-
-test("an agent's fill with problems shows them under the fields, and tells the agent", async ({ page }) => {
-  const result = await page.evaluate(() =>
-    (window as unknown as { agent: Agent }).agent.act({ steps: [{ ref: "Invite a teammate", action: "fill", args: [{ email: "grace@", seats: 99 }] }] }),
-  )
-  expect(result.ok).toBe(false)
-  expect(result.error?.message).toContain("Email: Enter an email address, like name@example.com.")
-  expect(result.error?.message).toContain("Seats is at most 50.")
-  await expect(form(page).getByRole("textbox", { name: "Email" })).toHaveAttribute("aria-invalid", "true")
-})
-
-test("formTool: the same definition as a tool fills the element through the bridge", async ({ page }) => {
-  const result = await page.evaluate(async () => {
-    const { formTool } = await import("/src/uiset.ts" as string)
-    const el = document.getElementById("invite") as FormElement
-    const tool = formTool(el.form, (window as unknown as { agent: Agent }).agent)
-    return { name: tool.name, required: tool.inputSchema.required, result: await tool.execute({ email: "grace@example.com", role: "viewer" }) }
-  })
-  expect(result).toEqual({ name: "invite_teammate", required: ["email", "role"], result: { ok: true, filled: ["email", "role"] } })
-  await expect(form(page).getByRole("textbox", { name: "Email" })).toHaveValue("grace@example.com")
-})
-
 // Vue's v-model on a custom element sets `value` and reads it back on `input`.
 test("v-model: `value` is live, setting it fills the fields, and `input` fires once per change that's in", async ({ page }) => {
   await page.evaluate(() => {
@@ -247,38 +171,6 @@ test("a select and a checkbox, in a form made from script", async ({ page }) => 
   await contact.getByRole("button", { name: "Submit" }).click()
   await expect(contact).toHaveAttribute("data-status", "done")
   expect(await page.evaluate(() => (window as unknown as { sent: unknown[] }).sent)).toEqual([{ plan: "enterprise", terms: true }])
-})
-
-test("`disabled` turns every control off and the send can't send; `heading=\"false\"` with `label` names the form", async ({ page }) => {
-  await page.evaluate(() => {
-    const el = document.getElementById("invite")!
-    el.setAttribute("heading", "false")
-    el.setAttribute("label", "Invite")
-    el.setAttribute("disabled", "")
-  })
-  const named = page.getByRole("form", { name: "Invite", exact: true })
-  await expect(named).toHaveAttribute("data-disabled", "")
-  await expect(named.getByRole("heading", { name: "Invite a teammate" })).toHaveCount(0)
-  await expect(named.getByRole("textbox", { name: "Email" })).toBeDisabled()
-  await page.evaluate(() => document.getElementById("invite")!.removeAttribute("disabled"))
-  await expect(named.getByRole("textbox", { name: "Email" })).toBeEnabled()
-})
-
-test("taken off the page and put back, as a framework may, it keeps its values and still works", async ({ page }) => {
-  await form(page).getByRole("textbox", { name: "Email" }).fill("grace@example.com")
-  // Long enough out that it's given a new instance on its return.
-  await page.evaluate(async () => {
-    const el = document.getElementById("invite")!
-    el.remove()
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    document.querySelector("main")!.prepend(el)
-  })
-  const email = form(page).getByRole("textbox", { name: "Email" })
-  await expect(email).toHaveValue("grace@example.com")
-  await email.fill("ada@example.com")
-  await expect.poll(() => page.evaluate(() => (document.getElementById("invite") as FormElement).value.email)).toBe("ada@example.com")
-  await next(page)
-  await expect(form(page).getByRole("radio", { name: "Editor" })).toBeVisible()
 })
 
 test("the form fits a phone's width, and its review stacks", { tag: "@engine" }, async ({ page }) => {

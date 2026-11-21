@@ -41,30 +41,6 @@ test("drag an event to move it, and its bottom edge to resize it", { tag: "@engi
   await expect(event(page, /^Board prep, Thursday, November 19, 12:00 PM to 2:00 PM/)).toBeVisible()
 })
 
-test("New event opens a form that checks its times", async ({ page }) => {
-  await example(page).getByRole("button", { name: "New event" }).click()
-  const form = page.getByRole("form", { name: "New event" })
-  await form.getByRole("textbox", { name: "Title" }).fill("Retro")
-  await form.locator("input[type=time]").first().fill("16:00")
-  await form.locator("input[type=time]").last().fill("15:00")
-  await form.getByRole("button", { name: "Add event" }).click()
-  await expect(form.getByText("It has to end after it starts.")).toBeVisible()
-  await form.locator("input[type=time]").last().fill("17:00")
-  await form.getByRole("button", { name: "Add event" }).click()
-  await expect(event(page, /^Retro, Monday, November 16, 4:00 PM to 5:00 PM/)).toBeVisible()
-})
-
-test("the month shows each day's events; choosing a day opens it", async ({ page }) => {
-  await example(page).getByRole("radio", { name: "Month" }).click()
-  const month = example(page).getByRole("grid")
-  await expect(month).toContainText("Launch rehearsal")
-  const day = month.getByRole("gridcell", { name: /November 18/ })
-  await expect(day).toHaveAccessibleName(/2 events: Standup at 9:00 AM, Launch rehearsal at 3:00 PM/)
-  await day.click()
-  await expect(example(page).getByRole("radio", { name: "Day" })).toBeChecked()
-  await expect(event(page, /^Launch rehearsal, Wednesday/)).toBeVisible()
-})
-
 test("room bookings refuse an overlap", { tag: "@engine" }, async ({ page }) => {
   const rooms = page.getByRole("group", { name: "Room bookings", exact: true })
   await rooms.scrollIntoViewIfNeeded()
@@ -115,20 +91,6 @@ test("the dialog hands focus back: to the moved event, or a deleted one's neighb
   await expect(event(page, /^Interview: platform/)).toBeFocused()
 })
 
-test("the dialog keeps the schedule's hours and steps", async ({ page }) => {
-  await example(page).getByRole("button", { name: "New event" }).click()
-  const form = page.getByRole("form", { name: "New event" })
-  await form.getByRole("textbox", { name: "Title" }).fill("Too early")
-  await form.locator("input[type=time]").first().fill("07:00")
-  await form.locator("input[type=time]").last().fill("07:30")
-  await form.getByRole("button", { name: "Add event" }).click()
-  await expect(form.getByText("Starts at 8:00 AM or later.")).toBeVisible()
-  await form.locator("input[type=time]").first().fill("09:10")
-  await form.locator("input[type=time]").last().fill("09:40")
-  await form.getByRole("button", { name: "Add event" }).click()
-  await expect(form.getByText("Times go in steps of 15 minutes.").first()).toBeVisible()
-})
-
 test("an end before the start is tied to the Ends field, which takes focus", { tag: "@engine" }, async ({ page }) => {
   await example(page).getByRole("button", { name: "New event" }).click()
   const form = page.getByRole("form", { name: "New event" })
@@ -149,12 +111,6 @@ test("choosing a day in the month by keyboard focuses that day's first event", {
   await page.keyboard.press("Enter")
   await expect(example(page).getByRole("radio", { name: "Day" })).toBeChecked()
   await expect(event(page, /^Standup, Wednesday/)).toBeFocused()
-})
-
-test("names stay current after paging weeks", async ({ page }) => {
-  await example(page).getByRole("button", { name: "Next week" }).click()
-  await example(page).getByRole("button", { name: "Previous week" }).click()
-  await expect(event(page, /^Standup, Monday, November 16, 9:00 AM to 9:30 AM, Atlas room$/)).toBeVisible()
 })
 
 test("room bookings take a new booking by keyboard, and refuse one that overlaps", { tag: "@engine" }, async ({ page }) => {

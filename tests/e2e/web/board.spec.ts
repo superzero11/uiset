@@ -1,15 +1,13 @@
 import AxeBuilder from "../axe"
 import { expect, test, type Page } from "@playwright/test"
 
-// The Board as a web element, on a page with no React: data in, events out.
+// The Board as a web element, on a page with no React: data in, events out. Keys, drags and
+// focus here; agents' moves and redraws are in tests/unit/web-board.bridge.test.ts.
 const board = (page: Page) => page.getByRole("group", { name: "Sprint board", exact: true })
 const column = (page: Page, name: string) => board(page).getByRole("listbox", { name })
 const card = (page: Page, name: string) => board(page).getByRole("option", { name })
 const undo = (page: Page) => page.getByRole("region", { name: "Notifications" }).getByRole("button", { name: "Undo" })
-type Agent = {
-  act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }>
-  query: (q: unknown) => Promise<{ label?: string; items?: { label: string }[] }[]>
-}
+type Agent = { act: (x: unknown) => Promise<{ ok: boolean; error?: { message: string } }> }
 const act = (page: Page, steps: unknown[]) =>
   page.evaluate((s) => (window as unknown as { agent: Agent }).agent.act({ steps: s }), steps)
 
@@ -122,26 +120,9 @@ test("search hides cards in place; focus skips them", { tag: "@engine" }, async 
   await expect(board(page)).not.toHaveAttribute("data-moving", "")
 })
 
-test("agents move cards by the names people see, within the limits, and read where cards are", async ({ page }) => {
-  const moved = await act(page, [{ ref: "Sprint board", action: "moveCard", args: ["Ship the beta", "Backlog"] }])
-  expect(moved.ok, moved.error?.message).toBe(true)
-  await expect(column(page, "Backlog").getByRole("option", { name: "Ship the beta" })).toBeVisible()
-  const full = await act(page, [{ ref: "Sprint board", action: "moveCard", args: ["Ship the beta", "In review"] }])
-  expect(full.ok).toBe(false)
-  expect(full.error?.message).toContain("In review is full")
-  const items = await page.evaluate(async () => {
-    const found = await (window as unknown as { agent: Agent }).agent.query({ within: "Sprint board" })
-    return found.find((c) => c.label === "Sprint board")?.items?.map((i) => i.label)
-  })
-  expect(items).toContain("Rate-limit the public API (Doing, Ada Lovelace)")
-})
-
 type Live = HTMLElement & {
   cards: Record<string, Record<string, unknown>>
-  columns: { id: string; title: string; limit?: number }[]
-  lanes: Record<string, string[]>
   hiddenCards: string[]
-  renderCard?: (card: { title: string }) => Node
 }
 const live = (page: Page, run: (el: Live) => unknown) => board(page).evaluate((el, code) => new Function("el", `return (${code})(el)`)(el), run.toString())
 
@@ -155,25 +136,6 @@ test("a card whose details change is patched in place and keeps focus; `today` i
   await expect(card(page, "Ship the beta now")).toBeFocused()
 })
 
-test("renamed columns and a new renderCard redraw; counts include every id, in words", async ({ page }) => {
-  await live(page, (el) => (el.columns = el.columns.map((c) => (c.id === "backlog" ? { ...c, title: "Icebox" } : c))))
-  await expect(column(page, "Icebox")).toBeVisible()
-  await expect(board(page).getByRole("heading", { name: "Icebox" })).toBeVisible()
-  await expect(board(page).getByRole("button", { name: "Add a card to Icebox" })).toBeVisible()
-  await live(page, (el) => (el.renderCard = (c) => Object.assign(document.createElement("strong"), { textContent: c.title.toUpperCase() })))
-  await expect(board(page).locator("strong", { hasText: "SHIP THE BETA" })).toBeVisible()
-  const count = board(page).locator('[data-column="done"] .board-column-count')
-  const shown = count.locator('[aria-hidden="true"]')
-  const spoken = count.locator(".uiset-visually-hidden")
-  await expect(shown).toHaveText("1")
-  await expect(spoken).toHaveText("1 card")
-  await live(page, (el) => (el.lanes = { ...el.lanes, done: [...(el.lanes.done ?? []), "ghost"] }))
-  await expect(shown).toHaveText("2")
-  await expect(spoken).toHaveText("2 cards")
-  // What `lanes` reads back is a copy: changing it changes nothing.
-  expect(await live(page, (el) => (el.lanes.done!.push("c1"), el.lanes.done!.includes("c1")))).toBe(false)
-})
-
 test("without addable and openable the board neither adds nor opens, and agents are told", { tag: "@engine" }, async ({ page }) => {
   await board(page).evaluate((el) => (el.removeAttribute("addable"), el.removeAttribute("openable")))
   await expect(board(page).getByRole("button", { name: /Add a card/ })).toHaveCount(0)
@@ -185,15 +147,6 @@ test("without addable and openable the board neither adds nor opens, and agents 
   const added = await act(page, [{ ref: "Sprint board", action: "addCard", args: ["Backlog", "Sneaky card"] }])
   expect(added.ok).toBe(false)
   await expect(card(page, "Sneaky card")).toHaveCount(0)
-})
-
-test("the page's own description stays; the board's help is added to it", async ({ page }) => {
-  await board(page).evaluate((el) => {
-    const note = Object.assign(document.createElement("p"), { id: "board-note", textContent: "Team Atlas." })
-    el.before(note)
-    el.setAttribute("aria-describedby", "board-note")
-  })
-  await expect(board(page)).toHaveAccessibleDescription(/^Team Atlas\. Arrow keys move/)
 })
 
 test("a focused card the filter hides hands focus on; a stale hidden id doesn't stop moves", { tag: "@engine" }, async ({ page }) => {

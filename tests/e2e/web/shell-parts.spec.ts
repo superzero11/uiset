@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test"
 
-// The search field, copy button and stepper as web elements, on the plain HTML index: the
-// same parts and behavior as their React twins.
+// The search field and copy button as web elements, on the plain HTML index: the same parts
+// and behavior as their React twins. The stepper is in tests/unit/web-shell-parts.bridge.test.ts.
 test.beforeEach(async ({ page }) => {
   await page.goto("/")
 })
@@ -39,15 +39,4 @@ test("the copy button copies its value and says Copied", { tag: "@engine" }, asy
   await expect(page.getByRole("button", { name: "Copied" })).toBeVisible()
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("npm i @uiset/web")
   await expect(page.getByRole("button", { name: "Copy install command" })).toBeVisible({ timeout: 4000 })
-})
-
-test("the stepper: the current step is marked, later steps wait, earlier ones can be chosen", async ({ page }) => {
-  const nav = page.getByRole("navigation", { name: "Setup progress" })
-  await expect(nav.getByRole("button", { name: /Details/ })).toHaveAttribute("aria-current", "step")
-  await expect(nav.getByRole("button", { name: /Review/ })).toBeDisabled()
-  await expect(nav.getByRole("button", { name: /Account/ })).toContainText("(done)")
-  await nav.getByRole("button", { name: /Account/ }).click()
-  await expect(nav.getByRole("button", { name: /Account/ })).toHaveAttribute("aria-current", "step")
-  await expect(page.locator("#stepper")).toHaveAttribute("value", "account")
-  await expect(nav.getByRole("button", { name: /Details/ })).toBeDisabled()
 })
