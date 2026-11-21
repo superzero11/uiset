@@ -2217,3 +2217,5 @@ vercel-labs/ui#905 (2026-11-19).
   container) stopped runs before harm several times while the owner's Chrome and jobs ran.
   Dated 2026-11-21, What's new too. The tarball packs 89 files, 300.9 kB; the fresh-app
   install test passed (122 items). The owner publishes (`npm login` first).
+- 2026-11-21 — `@uiset/web` 0.6.0 on npm (the owner published; `latest`, 89 files, 1.24 MB
+  unpacked). The registry and the site ship with the push, after the owner's check.
