@@ -2227,3 +2227,6 @@ vercel-labs/ui#905 (2026-11-19).
   in every skin, per shadcn-ui/ui#12788), then the bridge testing. "Following UI SDK" now
   lists #927 and #928 open and #929 fixed for the next beta. A reply to the contributor on
   #927 is drafted for the owner to post (`research/upstream/927-reply.md`).
+- 2026-11-21 — Replied on vercel-labs/ui#927 (the owner said post): option 1 (treat a
+  sub-pixel stop short of the end as at the end) fixes UISet's case, with the repro for the
+  contributor's spec; re-arming on a scroll back to the end suggested as a separate follow-up.
