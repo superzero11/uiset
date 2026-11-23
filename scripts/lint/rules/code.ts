@@ -189,3 +189,34 @@ export const noOnly: FileRule = {
       message: "Remove .only: it skips the other tests in this file.",
     })),
 }
+
+const arrayCallback = /\.(?:find|findIndex|findLast|map|flatMap|filter|some|every|forEach|reduce|sort)\(/g
+
+export const hooksAtTopLevel: FileRule = {
+  id: "react/hooks-at-top-level",
+  why: "2026-11-23: the site's install text called useManager() inside managers.find(), so a card's copy button called it 1 to 4 times by the package manager chosen; switching it crashed the home page on uiset.dev for four days (React error #310). No lint knew React's rule and no test switched it where cards were.",
+  appliesTo: (path) => /^(registry|src|web\/src)\//.test(path) && /\.tsx?$/.test(path),
+  check(text) {
+    const findings: Finding[] = []
+    for (const m of text.matchAll(arrayCallback)) {
+      const start = m.index! + m[0].length
+      const body = callBody(text, start)
+      // A call whose end wasn't found (an apostrophe in JSX text reads as a quote) proves nothing.
+      if (start + body.length >= text.length) continue
+      const hook = /(?<!function\s+)\buse[A-Z]\w*\(/.exec(body)
+      if (hook) {
+        findings.push({
+          line: lineOf(text, start + hook.index),
+          message: `${hook[0].slice(0, -1)} is called inside a callback, so it runs once per item it reaches: React needs the same hooks in the same order every render. Call it once at the top of the component and use its value in the callback.`,
+        })
+      }
+    }
+    // A hook behind a condition: cond && useX(), cond ? useX() : …
+    for (const m of text.matchAll(/(?:&&|\|\||\?\?|[^?]\?)\s*(use[A-Z]\w*)\(/g)) {
+      if (/^\s*\/\//.test(text.slice(text.lastIndexOf("\n", m.index!) + 1, m.index!))) continue
+      findings.push({ line: lineOf(text, m.index!), message: `${m[1]} is called behind a condition, so some renders skip it: React needs the same hooks in the same order every render. Call it unconditionally and use its value conditionally.` })
+    }
+    return findings
+  },
+}
+

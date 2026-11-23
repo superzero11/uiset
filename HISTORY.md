@@ -2463,3 +2463,18 @@ vercel-labs/ui#905 (2026-11-19).
   imports since f7f9312; `registry-closure.test.ts` catches it, and wasn't run with that
   commit. It's now in the affected tests for any change to `scripts/registry.mjs`.
 
+- 2026-11-23 — **Hotfix: switching the package manager crashed the home page** on
+  uiset.dev, from the site's new layout (0033e4b, 2026-11-19) until today: four days. (The
+  Library tabs have the same cards but no switch, so they never crashed.) `useInstallText`
+  called the hook `useManager()` inside `managers.find()`, so each library card's copy
+  button called it once per manager it checked (1 for pnpm, 4 for bun); a switch changed
+  the count and React threw (error #310), and with no error boundary the page went blank.
+  The owner found it. Why nothing caught it: no lint knew React's rules of hooks (the repo
+  had no ESLint, only its own rules), the one test that switched managers had no library
+  card beside it, the full suite loads the home page but never clicked those tabs, and the
+  layout was checked by screenshots and axe, not by using each control. Fixed: the hook is
+  called once; `react/hooks-at-top-level` flags a hook in a callback or behind a condition
+  (it flags the old line); a unit test switches all four managers beside a card and a
+  Chrome test does it on the home page (both fail on the old code); each page draws inside
+  an error boundary, so a crash shows a message, not a blank site. Shipped alone on top of
+  0.6.1's site; 0.7.0 stays unpushed until Wednesday.

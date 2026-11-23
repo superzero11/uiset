@@ -627,3 +627,19 @@ test.describe("Chat kit", () => {
   })
 
 })
+
+// 2026-11-23: switching the package manager crashed the home page, whose library cards each
+// have a copy button that follows it. Every manager, and back, with the cards on the page.
+test("every package manager on the home page keeps the page and its cards", async ({ page }) => {
+  const failed: string[] = []
+  page.on("pageerror", (error) => failed.push(error.message))
+  await page.goto("/")
+  const managers = page.getByRole("radiogroup", { name: /^Package manager/ }).first()
+  await managers.scrollIntoViewIfNeeded()
+  for (const pm of ["npm", "yarn", "bun", "pnpm", "npm"]) {
+    await managers.getByRole("radio", { name: pm, exact: true }).click()
+    await expect(managers.getByRole("radio", { name: pm, exact: true })).toBeChecked()
+    await expect(page.locator(".lib-card").first()).toBeVisible()
+  }
+  expect(failed).toEqual([])
+})

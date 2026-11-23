@@ -1,4 +1,4 @@
-import { createContext, lazy, Suspense, useContext, useEffect, useRef, useState, type ComponentType, type ReactNode, type RefObject } from "react"
+import { Component, createContext, lazy, Suspense, useContext, useEffect, useRef, useState, type ComponentType, type ReactNode, type RefObject } from "react"
 import { UISet } from "@/registry/uiset/ui/uiset"
 import { Footer, SearchDialog } from "./chrome"
 import { followLink, useLocation, warmLink } from "./router"
@@ -52,6 +52,32 @@ function MarketingFrame({ theme, setTheme, main, children }: FrameProps) {
 }
 
 /* ------------------------------------------------------------------ the layout */
+
+/**
+ * A page that throws while it draws shows this, inside the site's frame, instead of a blank
+ * window: on 2026-11-23 a library card's copy button took the whole home page down. Keyed by the
+ * path, so another page draws fresh.
+ */
+class PageBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false }
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+  render() {
+    if (!this.state.failed) return this.props.children
+    return (
+      <section className="page-failed" role="alert">
+        <h1>This page hit a problem</h1>
+        <p>Part of it failed to draw. Reload the page to try again; the rest of the site still works.</p>
+        <p>
+          <a href={typeof location === "undefined" ? "/" : location.pathname} data-reload="">
+            Reload the page
+          </a>
+        </p>
+      </section>
+    )
+  }
+}
 
 function SiteLayout({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<SiteTheme>(initialTheme)
@@ -112,12 +138,12 @@ function SiteLayout({ children }: { children: ReactNode }) {
         {isAppPath(pathname) ? (
           <Suspense>
             <AppFrame theme={theme} setTheme={setTheme} main={main}>
-              {children}
+              <PageBoundary key={pathname}>{children}</PageBoundary>
             </AppFrame>
           </Suspense>
         ) : (
           <MarketingFrame theme={theme} setTheme={setTheme} main={main}>
-            {children}
+            <PageBoundary key={pathname}>{children}</PageBoundary>
           </MarketingFrame>
         )}
         <SearchDialog />
@@ -126,5 +152,5 @@ function SiteLayout({ children }: { children: ReactNode }) {
   )
 }
 
-export { isAppPath, loadAppFrame, SiteLayout, useSiteTheme }
+export { isAppPath, loadAppFrame, PageBoundary, SiteLayout, useSiteTheme }
 export type { SiteTheme }

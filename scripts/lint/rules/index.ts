@@ -1,5 +1,5 @@
 import type { Rule } from "../core.ts"
-import { axeWaits, exampleFrames, internalPrimitives, noDeferredFocus, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports, toastsVisible } from "./code.ts"
+import { axeWaits, exampleFrames, hooksAtTopLevel, internalPrimitives, noDeferredFocus, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports, toastsVisible } from "./code.ts"
 import { currentUiSdk, installVersions, kitInstall, kitLive, statedCounts, whatsNewCurrent } from "./facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "./plan.ts"
 
@@ -10,6 +10,7 @@ export const rules: Rule[] = [
   roadmapFresh,
   landingRecorded,
   noDeferredFocus,
+  hooksAtTopLevel,
   noHandRolledRoles,
   relativeImports,
   noImportant,
