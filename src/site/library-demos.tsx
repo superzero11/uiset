@@ -11,6 +11,7 @@ const kitDemos: Record<string, Demo> = {
   forms: from(() => import("./examples/schema-form"), (m) => m.default),
   lists: from(() => import("./lists-demo"), (m) => m.ListsDemo),
   payments: from(() => import("./payments-demo"), (m) => m.PaymentsDemo),
+  address: from(() => import("./address-demo"), (m) => m.AddressDemo),
   motion: from(() => import("./motion-demo"), (m) => m.MotionDemo),
   chat: from(() => import("./chat-demo"), (m) => m.ChatDemo),
   "rich-text": from(() => import("./editor-demo"), (m) => m.EditorDemo),

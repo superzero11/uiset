@@ -1111,6 +1111,17 @@ main > section,
   min-width: 0;
 }
 
+.address-demo {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 36rem;
+  min-width: 0;
+}
+
+.address-demo-save {
+  justify-self: start;
+}
+
 .scheduler-demo {
   display: grid;
   gap: 1rem;

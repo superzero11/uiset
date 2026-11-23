@@ -50,7 +50,7 @@ where UISet starts.
       <ul>
         <li><b>Looks:</b> five skins, a theme generator, sound and haptics</li>
         <li><b>55 styled components</b> and 31 app parts</li>
-        <li><b>13 kits:</b> chat, rich text, data grid, charts, payments and more</li>
+        <li><b>14 kits:</b> chat, rich text, data grid, charts, payments, addresses and more</li>
         <li><b>10 page templates</b> to start from</li>
         <li><b>Web Components</b> for Vue, Svelte, Solid and HTML</li>
         <li><b>A skill and llms.txt</b> for coding agents</li>
@@ -109,8 +109,8 @@ mix in a second UI library.
     <td valign="top">Every UI SDK component, styled, plus the app frame and data display parts: sidebar layout, page header, cards, badges, stats, alerts.</td>
   </tr>
   <tr>
-    <td width="24%" valign="top"><a href="https://uiset.dev/kits"><b>13 kits</b></a></td>
-    <td valign="top">The big pieces apps need and UI SDK leaves to you: chat, rich text, a data grid, charts, a board, a scheduler, a canvas, an IDE, a terminal, mobile patterns, Studio, the Agent Console and payments.</td>
+    <td width="24%" valign="top"><a href="https://uiset.dev/kits"><b>14 kits</b></a></td>
+    <td valign="top">The big pieces apps need and UI SDK leaves to you: chat, rich text, a data grid, charts, a board, a scheduler, a canvas, an IDE, a terminal, mobile patterns, Studio, the Agent Console, payments and addresses.</td>
   </tr>
   <tr>
     <td width="24%" valign="top"><a href="https://uiset.dev/templates"><b>10 templates</b></a></td>

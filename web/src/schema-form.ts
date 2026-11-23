@@ -18,6 +18,7 @@ import { schemaForm, type SchemaFormStepReason, type SchemaFormValueReason, type
 import { autocompleteFor, controlIn, defaultLabels, shownValue, type SchemaFormLabels } from "@/registry/uiset/ui/schema-form/labels"
 import type { FieldSpec, FormDefinition, FormErrors } from "@/registry/uiset/ui/schema-form/schema"
 import "@/registry/uiset/ui/schema-form/schema-form.css"
+import { afterPress } from "@/registry/uiset/ui/shell/after-press"
 import { attr, h, holdRender, keepInputInside, place, reportPartInput, showIn, uid } from "./dom"
 import type { UISetStepper } from "./shell-parts"
 import type { MaskedInputElement } from "./input-mask"
@@ -93,7 +94,7 @@ function buildField(name: string, spec: FieldSpec, apiOf: () => Api, labels: Sch
   const set = (next: unknown, event?: Event) => apiOf().setField(name, next, event)
   const leaveOn = (control: HTMLElement) =>
     control.addEventListener("focusout", (event) => {
-      if (!control.contains(event.relatedTarget as Node | null)) apiOf().leaveField(name)
+      if (!control.contains(event.relatedTarget as Node | null)) afterPress(() => apiOf().leaveField(name))
     })
   const label = h("ui-field-label", null, spec.label)
   const description = spec.description ? h("ui-field-description", null, spec.description) : null

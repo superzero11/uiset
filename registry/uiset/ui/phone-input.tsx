@@ -21,6 +21,7 @@ import {
   ComboboxTrigger,
 } from "./combobox"
 import { Field, FieldDescription, FieldError, FieldLabel, Input } from "./field"
+import { afterPress } from "./shell/after-press"
 import { Icon } from "./shell/icons"
 import { phoneInput, type PhoneInputReason } from "./phone-input/phone-input"
 import {
@@ -327,7 +328,7 @@ function PhoneInput({
             disabled={disabled}
             onChange={onInput}
             onBlur={() => {
-              refuse(check())
+              afterPress(() => refuse(check()))
               onBlur?.()
             }}
           />

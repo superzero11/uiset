@@ -20,6 +20,7 @@ import type { Fields, FieldSpec, FormDefinition, FormErrors, FormValues } from "
 import { maskNamed } from "./input-mask/masks"
 import { autocompleteFor, controlIn, defaultLabels, shownValue, type SchemaFormLabels } from "./schema-form/labels"
 import type { ChangeDetails } from "@ui-sdk/core"
+import { afterPress } from "./shell/after-press"
 import "./shell/shell.css"
 import "./schema-form/schema-form.css"
 
@@ -76,7 +77,7 @@ function FormField({
   words: FormDefinition["words"]
 }) {
   const set = (next: unknown) => api.setField(name, next)
-  const leave = () => api.leaveField(name)
+  const leave = () => afterPress(() => api.leaveField(name))
   const required = field.required || undefined
   const description = field.description && <FieldDescription>{field.description}</FieldDescription>
   const problem = error && <FieldError match>{error}</FieldError>

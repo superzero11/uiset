@@ -48,6 +48,10 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 
 - `payments`: How to pay and what it pays for: payment methods as cards to choose from, card fields whose security code follows the brand, a bank account by IBAN with its mandate, an order summary with a discount code and totals in the shop's currency, and a Pay button an agent can't press without a person.
 
+## Address (docs/address.md)
+
+- `address`: An address whose fields follow its country: the order it writes them in, its names for them (ZIP code, Eircode, Prefecture), the ones it requires, a list of regions where it has one, and its postal code's shape, from Google's address data for 252 countries. Autofill fills it; an agent fills it in one step by field name.
+
 ## Motion (docs/motion.md)
 
 - `number-ticker`: A number that moves to its new value, each skin its own way: Base rolls its digits, Blueprint counts, Studio steps, Phosphor types it, Ink redraws. It can count up once when first seen. People and agents read the value itself.

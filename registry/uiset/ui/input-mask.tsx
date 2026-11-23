@@ -6,6 +6,7 @@ import { useLayoutEffect, useRef, useState, type ChangeEvent, type ReactNode } f
 import { Field, FieldDescription, FieldError, FieldLabel, Input } from "./field"
 import { maskedInput, type MaskedInputReason } from "./input-mask/input-mask"
 import { maskMessages, type Mask, type MaskMessages } from "./input-mask/masks"
+import { afterPress } from "./shell/after-press"
 import { formatEdit } from "./shell/format-as-you-type"
 import "./shell/shell.css"
 import "./input-mask/input-mask.css"
@@ -173,7 +174,7 @@ function MaskedInput({
             disabled={disabled}
             onChange={onInput}
             onBlur={() => {
-              refuse(check())
+              afterPress(() => refuse(check()))
               onBlur?.()
             }}
           />

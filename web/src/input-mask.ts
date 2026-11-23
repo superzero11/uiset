@@ -9,6 +9,7 @@ import "@ui-sdk/web/input"
 import { createParts, type UiChangeEvent, type UiElement } from "@ui-sdk/web"
 import { maskedInput, type MaskedInputReason } from "@/registry/uiset/ui/input-mask/input-mask"
 import { maskMessages, maskNamed, type Mask, type MaskMessages } from "@/registry/uiset/ui/input-mask/masks"
+import { afterPress } from "@/registry/uiset/ui/shell/after-press"
 import { formatEdit } from "@/registry/uiset/ui/shell/format-as-you-type"
 import "@/registry/uiset/ui/input-mask/input-mask.css"
 import { attr, h, holdRender, isOn, reportPartInput } from "./dom"
@@ -104,7 +105,7 @@ function draw(el: MaskedInputElement, instance: MaskedInputInstance) {
     }
     if (error) refuse(null)
   })
-  input.addEventListener("blur", () => refuse(check()))
+  input.addEventListener("blur", () => afterPress(() => refuse(check())))
 
   let maskFor = ""
   function paint() {

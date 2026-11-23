@@ -1,0 +1,103 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/* Fields take the skins' own field looks; this only lays them out. */
+@layer uiset.base {
+  .address-fields,
+  .address-fields-body {
+    display: grid;
+    gap: 0.875rem;
+    min-inline-size: 0;
+  }
+
+  .address-field {
+    min-inline-size: 0;
+  }
+
+  /* A row the country writes on one line (city, state and ZIP code) sits side by side where
+     there's room, and stacks on a phone. */
+  .address-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+    gap: 0.75rem;
+    align-items: start;
+  }
+
+  /* A list to choose from by typing: the toggle sits inside the input's edge. The parts are
+     placed themselves: on the web, their wrappers are display: contents. */
+  .address-choice {
+    position: relative;
+    display: grid;
+    align-items: center;
+
+    & :is(.address-choice-input, .address-choice-toggle, .address-flag) {
+      grid-area: 1 / 1;
+    }
+  }
+
+  .address-choice-input {
+    inline-size: 100%;
+    padding-inline-end: 2.25rem;
+  }
+
+  .address-choice:has(.address-flag:not([hidden])) .address-choice-input {
+    padding-inline-start: 2.25rem;
+  }
+
+  .address-choice > .address-flag {
+    z-index: 1;
+    justify-self: start;
+    margin-inline-start: 0.625rem;
+    pointer-events: none;
+  }
+
+  .address-choice-toggle {
+    z-index: 1;
+    display: inline-flex;
+    justify-self: end;
+    align-items: center;
+    justify-content: center;
+    inline-size: 2rem;
+    block-size: calc(100% - 4px);
+    margin-inline-end: 2px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--ui-radius);
+    background: transparent;
+    color: var(--ui-muted-foreground);
+    cursor: pointer;
+
+    &:hover:not([data-disabled]) {
+      color: var(--ui-foreground);
+    }
+
+    &:focus-visible {
+      outline-offset: -2px;
+    }
+
+    & .uiset-icon {
+      inline-size: 0.875rem;
+      block-size: 0.875rem;
+    }
+  }
+
+  .address-flag {
+    font-size: 1.125em;
+    line-height: 1;
+  }
+
+  .address-choices {
+    inline-size: max(var(--anchor-width, 0px), min(18rem, calc(100vw - 2rem)));
+
+    & [data-slot="combobox-item"] {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    & .address-choice-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}

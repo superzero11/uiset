@@ -216,7 +216,7 @@ const components = [
     "phone-input",
     "Phone input",
     "A phone number with a country picker: formatted as it's typed with the caret kept in place, a typed calling code chooses the country, any script's digits, left to right on any page, and the value in E.164. Agents set the number in any format and the country by name.",
-    ["phone-input/phone.ts", "phone-input/phone-input.ts", "phone-input/phone-input.css", "shell/format-as-you-type.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
+    ["phone-input/phone.ts", "phone-input/phone-input.ts", "phone-input/phone-input.css", "shell/format-as-you-type.ts", "shell/after-press.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
     ["combobox", "field"],
     ["libphonenumber-js"],
   ],
@@ -228,10 +228,17 @@ const components = [
     ["button", "field", "input-mask", "number-input", "radio"],
   ],
   [
+    "address",
+    "Address",
+    "An address whose fields follow its country: the order it writes them in, its names for them (ZIP code, Eircode, Prefecture), the ones it requires, a list of regions where it has one, and its postal code's shape, from Google's address data for 252 countries. Autofill fills it; an agent fills it in one step by field name.",
+    ["address/address.ts", "address/address-fields.ts", "address/formats.ts", "address/address.css", "shell/after-press.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
+    ["combobox", "field"],
+  ],
+  [
     "input-mask",
     "Input mask",
     "Fields formatted as they're typed with the caret kept in place: card numbers grouped by brand with the brand named, expiry dates and security codes, IBANs checked by country and checksum, amounts grouped in the locale, and patterns of your own. Each checks itself and reports its value without separators; agents set them in any format.",
-    ["input-mask/masks.ts", "input-mask/input-mask.ts", "input-mask/input-mask.css", "shell/format-as-you-type.ts", "shell/shell.css"],
+    ["input-mask/masks.ts", "input-mask/input-mask.ts", "input-mask/input-mask.css", "shell/format-as-you-type.ts", "shell/after-press.ts", "shell/shell.css"],
     ["field"],
   ],
   [
@@ -280,8 +287,8 @@ const components = [
     "schema-form",
     "Schema form",
     "A form from one definition: its fields with UISet's controls, steps with a review, checks as people type and on submit, and an agent that fills it by field name while a person approves the submit. The same definition is JSON Schema for an agent tool.",
-    ["schema-form/schema.ts", "schema-form/form.ts", "schema-form/tool.ts", "schema-form/labels.ts", "schema-form/schema-form.css", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
-    ["button", "checkbox", "date-input", "field", "number-input", "phone-input", "radio", "select", "stepper", "switch", "tag-input", "textarea"],
+    ["schema-form/schema.ts", "schema-form/form.ts", "schema-form/tool.ts", "schema-form/labels.ts", "schema-form/schema-form.css", "shell/after-press.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
+    ["button", "checkbox", "date-input", "field", "input-mask", "number-input", "phone-input", "radio", "select", "stepper", "switch", "tag-input", "textarea"],
   ],
   [
     "upload",

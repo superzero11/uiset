@@ -33,3 +33,13 @@ test("at a phone's width the order sits under the payment, and nothing runs past
   expect((await summary.boundingBox())!.y).toBeGreaterThan((await pay.boundingBox())!.y)
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
 })
+
+test("a press on Pay from a short card number checks the payment: the field's own problem waits for the press to end", { tag: "@engine" }, async ({ page }) => {
+  await page.goto("/docs/kits/payments")
+  await expect(page.getByRole("region", { name: "Order summary" })).toBeVisible({ timeout: 20_000 })
+  await page.getByRole("textbox", { name: "Card number" }).fill("4242")
+  // Shown as focus left, the problem pushed Pay down mid-press and the click never came.
+  await page.getByRole("button", { name: /^Pay / }).click()
+  await expect(page.getByText("Expiry is required.")).toBeVisible()
+  await expect(page.getByText("Not a whole card number yet.")).toBeVisible()
+})

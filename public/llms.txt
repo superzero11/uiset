@@ -35,6 +35,7 @@ Rules for agents building with UISet:
 - [Forms](https://uiset.dev/docs/forms.md): `schema-form`, `inline-edit`, `tag-input`, `phone-input`, `input-mask`, `upload`
 - [Lists and trees](https://uiset.dev/docs/lists.md): `sortable-list`, `sortable-tree`
 - [Payments](https://uiset.dev/docs/payments.md): `payments`
+- [Address](https://uiset.dev/docs/address.md): `address`
 - [Motion](https://uiset.dev/docs/motion.md): `number-ticker`, `text-reveal`, `thinking`, `crossfade`
 - [Rich text](https://uiset.dev/docs/rich-text.md): `rich-text`
 - [Chat](https://uiset.dev/docs/chat.md): `chat`, `chat-response`, `chat-parts`, `chat-message-parts`, `chat-composer`, `chat-sidebar`

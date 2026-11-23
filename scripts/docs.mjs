@@ -23,6 +23,7 @@ const groups = [
   { title: "Forms", names: ["schema-form", "inline-edit", "tag-input", "phone-input", "input-mask", "upload"], doc: "forms.md" },
   { title: "Lists and trees", names: ["sortable-list", "sortable-tree"], doc: "lists.md" },
   { title: "Payments", names: ["payments"], doc: "payments.md" },
+  { title: "Address", names: ["address"], doc: "address.md" },
   { title: "Motion", names: ["number-ticker", "text-reveal", "thinking", "crossfade"], doc: "motion.md" },
   { title: "Rich text", names: ["rich-text"], doc: "rich-text.md" },
   { title: "Chat", names: ["chat", "chat-response", "chat-parts", "chat-message-parts", "chat-composer", "chat-sidebar"], doc: "chat.md" },

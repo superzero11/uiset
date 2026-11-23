@@ -152,6 +152,7 @@ plain elements. UI SDK's own `<ui-*>` elements are typed by `@ui-sdk/web`.
 | `<uiset-code-block>`, `<uiset-code-tabs>`, `<uiset-package-command>` | Code in its language's colors with a caption, line numbers, marked lines and copy; tabs of versions; one command for npm, pnpm, yarn and bun |
 | `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-phone-input>`, `<uiset-masked-input>`, `<uiset-upload>` | A value that turns into a field when pressed, tags typed, pasted or picked, a phone number with its country, a field formatted as typed (cards, IBANs, amounts, patterns), and a drop zone with a queue of uploads |
 | `<uiset-payment-fields>`, `<uiset-order-summary>`, `<uiset-pay-button>` | How to pay, an order's lines and sums with a discount code, and a Pay button a person confirms when an agent presses it |
+| `<uiset-address-fields>` | An address whose fields follow its country, for 252 countries, that an agent fills in one step |
 | `<uiset-sortable-list>`, `<uiset-sortable-tree>`                      | A list people put in order by drag or by keys, with a selection that moves together; a tree they reorder and nest |
 
 ## Studio
@@ -968,6 +969,32 @@ pay.addEventListener("pay", (event) => {
 - `<uiset-pay-button>`: `amount` (a property or an attribute), `currency`, `locale`,
   `method` ("the card ending 4242") and `disabled`. It fires `pay`; `event.detail.wait()`
   keeps it busy until your promise settles. An agent's press waits for a person.
+
+## Address
+
+`<uiset-address-fields>` is the Address kit's element, on the same rules as React's
+`AddressFields`. `web/address.html` checks one on Save.
+
+```html
+<uiset-address-fields id="address" label="Delivery address" section="shipping" default-country="US"></uiset-address-fields>
+```
+
+```ts
+address.preferredCountries = ["US", "CA", "GB"]
+form.addEventListener("submit", (event) => {
+  event.preventDefault()
+  if (address.check()) save(address.value)
+})
+```
+
+- `value` is the address, `{ country, name, line1, line2, district, city, region, postalCode }`;
+  setting it fires nothing. `countries`, `preferredCountries`, `regions` and `messages` are
+  properties; `label`, `section` (`shipping` or `billing`, for autofill), `default-country`
+  and `locale` attributes.
+- `check()` shows what's missing or wrong under each field, focuses the first, and returns
+  whether the address is whole. Fires `valuechange`.
+- An agent sees one component named by its `label` and fills it with `fill`, by field name
+  or label.
 
 ## Page templates
 

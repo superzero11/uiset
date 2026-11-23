@@ -6,12 +6,12 @@ const facts = {
   sdkComponents: 55,
   /** UISet's own parts: the app frame, data display, forms, lists and motion pieces (app shell, badge, inline edit, sortable list and tree, number ticker…). */
   appParts: 31,
-  kits: ["Chat", "Rich text", "Data grid", "Charts", "Board", "Scheduler", "Canvas", "IDE", "Mobile", "Terminal", "Studio", "Agent Console", "Payments"],
+  kits: ["Chat", "Rich text", "Data grid", "Charts", "Board", "Scheduler", "Canvas", "IDE", "Mobile", "Terminal", "Studio", "Agent Console", "Payments", "Address"],
   templates: 10,
   skins: 5,
-  registryItems: 126,
+  registryItems: 127,
   /** Kit pages in the docs and cards in the library: the kits above, the app frame, forms, lists and trees, and motion. */
-  kitPages: 17,
+  kitPages: 18,
 } as const
 
 export { facts }

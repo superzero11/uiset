@@ -580,3 +580,17 @@ body {
   }
 }
 
+
+/* The Address page: the fields, and Save under them. */
+@layer uiset.base {
+  .address-demo {
+    display: grid;
+    gap: 1.25rem;
+    max-inline-size: 36rem;
+    min-inline-size: 0;
+  }
+
+  .address-demo .address-demo-save {
+    justify-self: start;
+  }
+}

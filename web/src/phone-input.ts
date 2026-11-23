@@ -7,6 +7,7 @@ import "@ui-sdk/web/combobox"
 import "@ui-sdk/web/field"
 import "@ui-sdk/web/input"
 import { createParts, type UiChangeEvent, type UiElement } from "@ui-sdk/web"
+import { afterPress } from "@/registry/uiset/ui/shell/after-press"
 import { iconElement } from "@/registry/uiset/ui/shell/icon-paths"
 import { phoneInput, type PhoneInputReason } from "@/registry/uiset/ui/phone-input/phone-input"
 import type { CountryCode, PhoneMessages } from "@/registry/uiset/ui/phone-input/phone"
@@ -150,7 +151,7 @@ function draw(el: PhoneInputElement, instance: PhoneInputInstance, rules: Rules)
     if (error) error = null
     commit(edit.value, edit.country, inputType === "insertFromPaste" ? "paste" : "type")
   })
-  number.addEventListener("blur", () => refuse(check()))
+  number.addEventListener("blur", () => afterPress(() => refuse(check())))
 
   combobox.addEventListener("valuechange", ((event: UiChangeEvent<string | null>) => {
     if (event.detail.value) chooseCountry(event.detail.value as CountryCode, "country")

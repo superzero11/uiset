@@ -1612,6 +1612,11 @@
           "target": "@ui/shell/format-as-you-type.ts"
         },
         {
+          "path": "registry/uiset/ui/shell/after-press.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/after-press.ts"
+        },
+        {
           "path": "registry/uiset/ui/shell/shell.css",
           "type": "registry:file",
           "target": "@ui/shell/shell.css"
@@ -1681,6 +1686,69 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "address",
+      "type": "registry:ui",
+      "title": "Address",
+      "description": "An address whose fields follow its country: the order it writes them in, its names for them (ZIP code, Eircode, Prefecture), the ones it requires, a list of regions where it has one, and its postal code's shape, from Google's address data for 252 countries. Autofill fills it; an agent fills it in one step by field name.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.14",
+        "@ui-sdk/react@0.1.0-beta.14"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/combobox",
+        "superzero11/uiset/field"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/address.tsx",
+          "type": "registry:ui",
+          "target": "@ui/address.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/address/address.ts",
+          "type": "registry:file",
+          "target": "@ui/address/address.ts"
+        },
+        {
+          "path": "registry/uiset/ui/address/address-fields.ts",
+          "type": "registry:file",
+          "target": "@ui/address/address-fields.ts"
+        },
+        {
+          "path": "registry/uiset/ui/address/formats.ts",
+          "type": "registry:file",
+          "target": "@ui/address/formats.ts"
+        },
+        {
+          "path": "registry/uiset/ui/address/address.css",
+          "type": "registry:file",
+          "target": "@ui/address/address.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/after-press.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/after-press.ts"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icons.tsx",
+          "type": "registry:file",
+          "target": "@ui/shell/icons.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icon-paths.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/icon-paths.ts"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "input-mask",
       "type": "registry:ui",
       "title": "Input mask",
@@ -1718,6 +1786,11 @@
           "path": "registry/uiset/ui/shell/format-as-you-type.ts",
           "type": "registry:file",
           "target": "@ui/shell/format-as-you-type.ts"
+        },
+        {
+          "path": "registry/uiset/ui/shell/after-press.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/after-press.ts"
         },
         {
           "path": "registry/uiset/ui/shell/shell.css",
@@ -1978,6 +2051,7 @@
         "superzero11/uiset/checkbox",
         "superzero11/uiset/date-input",
         "superzero11/uiset/field",
+        "superzero11/uiset/input-mask",
         "superzero11/uiset/number-input",
         "superzero11/uiset/phone-input",
         "superzero11/uiset/radio",
@@ -2017,6 +2091,11 @@
           "path": "registry/uiset/ui/schema-form/schema-form.css",
           "type": "registry:file",
           "target": "@ui/schema-form/schema-form.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/after-press.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/after-press.ts"
         },
         {
           "path": "registry/uiset/ui/shell/shell.css",

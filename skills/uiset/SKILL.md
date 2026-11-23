@@ -1,6 +1,6 @@
 ---
 name: uiset
-description: Builds interfaces with UISet, the themes, components, kits and templates for Vercel's UI SDK installed with the shadcn CLI. Covers installing items, wrapping an app in <UISet> and choosing a skin (base, blueprint, studio, phosphor, ink) or key color, picking the right kit (chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal, agent console) or page template, styling your own parts so they follow every skin, keeping controls named for agents, and the Web Components build for Vue, Svelte, Solid and plain HTML. Use whenever a project has components/ui/uiset.tsx or @uiset/web, or the user mentions UISet.
+description: Builds interfaces with UISet, the themes, components, kits and templates for Vercel's UI SDK installed with the shadcn CLI. Covers installing items, wrapping an app in <UISet> and choosing a skin (base, blueprint, studio, phosphor, ink) or key color, picking the right kit (chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal, agent console, payments, address) or page template, styling your own parts so they follow every skin, keeping controls named for agents, and the Web Components build for Vue, Svelte, Solid and plain HTML. Use whenever a project has components/ui/uiset.tsx or @uiset/web, or the user mentions UISet.
 ---
 
 # Build with UISet
@@ -16,7 +16,7 @@ haptics, and the larger parts UI SDK doesn't ship. Items install with the shadcn
 - Each kit has its own skill with its docs (`uiset-chat`, `uiset-data-grid`, `uiset-rich-text`,
   `uiset-charts`, `uiset-scheduler`, `uiset-board`, `uiset-canvas`, `uiset-ide`, `uiset-mobile`,
   `uiset-terminal`, `uiset-studio`, `uiset-agent-console`, `uiset-app-shell`, `uiset-forms`,
-  `uiset-lists`). Load the one for the kit you're using.
+  `uiset-lists`, `uiset-payments`, `uiset-address`). Load the one for the kit you're using.
 - The docs are in the UISet repo's `docs/` folder and at https://uiset.dev/docs/README.md.
   Read only the page for the item you're using.
 - For a base component's API and keys (select, dialog, menu…), read UI SDK's installed docs:
@@ -76,6 +76,8 @@ import { UISet } from "@/components/ui/uiset"
 | A form                                 | `field` (Field, FieldLabel, Input, FieldError), `select`, `checkbox`, `switch`, `button`; native `<form>` |
 | A card number, expiry, IBAN, amount or a pattern | `input-mask` (`MaskedInput` with `cardNumber()`, `cardExpiry()`, `cardCode()`, `iban()`, `currency()`, `pattern()`: formatted as typed, checked when left; agents `setValue` in any format). Not a regex on `onChange` |
 | A phone number                         | `phone-input` (`PhoneInput`: a country picker, formatted as typed, E.164 `value`; agents `setValue` in any format and `setCountry`). Not a plain `type="tel"` input with a regex |
+| A payment: card or bank fields, an order's sums, a Pay button | `payments` (`PaymentFields`, `OrderSummary`, `PayButton`: sums in whole cents, `checkPayment`; an agent's press on Pay waits for a person). Not your own card regexes or float sums |
+| A postal address                       | `address` (`AddressFields`: the fields follow the country, for 252 countries; regions as lists, postal codes checked; `checkAddress`; an agent fills it in one step with `fill`). Not a fixed street/city/state/ZIP form |
 | Tags, keywords or email recipients in a field | `tag-input` (`TagInput`: a comma or Enter adds, a paste splits, Enter or F2 edits a tag; `max`, `validate`; agents `add` and `remove`). A form's `tags` kind in `schema-form` |
 | An app frame                           | `app-shell` (sidebar that collapses, drawer on phones), `page-header`, `breadcrumbs` |
 | Status and data display                | `badge`, `stat`, `alert`, `empty-state`, `skeleton`, `description-list`, `item-list` |

@@ -80,6 +80,7 @@ const kits: DocPage[] = [
   { slug: "forms", title: "Forms: schema form, inline edit, tag, phone and masked inputs, upload", file: "forms.md", item: "schema-form" },
   { slug: "lists", title: "Sortable lists and trees", file: "lists.md", item: "sortable-list" },
   { slug: "payments", title: "Payments", file: "payments.md", item: "payments" },
+  { slug: "address", title: "Address", file: "address.md", item: "address" },
   { slug: "motion", title: "Motion", file: "motion.md", item: "number-ticker" },
   { slug: "chat", title: "Chat", file: "chat.md", item: "chat" },
   { slug: "rich-text", title: "Rich text", file: "rich-text.md", item: "rich-text" },

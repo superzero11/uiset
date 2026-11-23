@@ -50,6 +50,12 @@ const kitText: Record<string, { headline: string; items: string[]; tag: string; 
     tag: "Commerce",
     description: "Payment methods to choose from, a card whose security code follows its brand, a bank account by IBAN, an order's lines, discount code and totals in the shop's currency, and Pay, which waits for a person when an agent presses it.",
   },
+  address: {
+    headline: "Address fields that follow the country, for 252 countries",
+    items: ["address"],
+    tag: "Commerce",
+    description: "The fields a country uses, in its order and by its names (ZIP code, Eircode, Prefecture), with its regions to choose from and its postal code's shape checked. Autofill fills it; an agent fills it in one step.",
+  },
   motion: {
     headline: "Numbers, text and content that move, each skin its own way",
     items: ["number-ticker", "text-reveal", "thinking", "crossfade"],

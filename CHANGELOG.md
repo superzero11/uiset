@@ -38,6 +38,12 @@ On UI SDK `0.1.0-beta.14`.
   pays, and confirmed by a person when an agent presses it). `checkPayment` says what's
   missing, field by field. React and Web Components (`<uiset-payment-fields>`,
   `<uiset-order-summary>`, `<uiset-pay-button>`).
+- **Address kit.** `AddressFields` and `<uiset-address-fields>`: an address whose fields
+  follow its country (its order, its names for them, the ones it requires) for 252
+  countries, from Google's address data. Region lists for eight countries, a postal code
+  checked against the country's shape and the region it's in, autofill sections, and one
+  component per address for agents, filled in one step by field name. `checkAddress` says
+  what's missing or wrong, field by field.
 - **Input masks.** `MaskedInput` (`input-mask`) and `<uiset-masked-input>`: fields formatted
   as they're typed with the caret kept in place. Card numbers grouped by brand with the
   brand named (and the Luhn check), expiry dates as MM / YY, security codes by brand, IBANs in
@@ -57,6 +63,10 @@ On UI SDK `0.1.0-beta.14`.
 
 ### Fixed
 
+- **A press just below a field that checks itself as focus leaves no longer misses.** A
+  schema form's field, a masked field or a phone number showed its problem the moment focus
+  left it, pushing the button under it (Next, Save, Pay) down while the pointer was still
+  pressed, so the release missed it. The problem now shows once the press is over.
 - **Errors read in Blueprint and Studio.** Both took Base's red, made for Base's surface, and
   on Blueprint's blue paper or Studio's panels a field's error fell to 3.4:1. Each sets its
   own now, 5.1:1 or more on every surface it has. Add `uiset` again to take it.

@@ -26,6 +26,7 @@ import { defineTagInput } from "./tag-input"
 import { definePhoneInput } from "./phone-input"
 import { defineMaskedInput } from "./input-mask"
 import { definePayments } from "./payments"
+import { defineAddressFields } from "./address"
 import { defineSortableList } from "./sortable-list"
 import { defineSortableTree } from "./sortable-tree"
 import { defineMotion, type UISetCrossfade, type UISetNumberTicker, type UISetTextReveal, type UISetThinking } from "./motion"
@@ -53,6 +54,7 @@ import type { TagInputElement } from "./tag-input"
 import type { PhoneInputElement } from "./phone-input"
 import type { MaskedInputElement } from "./input-mask"
 import type { UISetOrderSummary, UISetPayButton, UISetPaymentFields } from "./payments"
+import type { AddressFieldsElement } from "./address"
 import type { SortableListElement } from "./sortable-list"
 import type { SortableTreeElement } from "./sortable-tree"
 import type { UISetUpload } from "./upload"
@@ -121,6 +123,7 @@ function define() {
   definePhoneInput()
   defineMaskedInput()
   definePayments()
+  defineAddressFields()
   defineSortableList()
   defineSortableTree()
   defineMotion()
@@ -172,6 +175,7 @@ declare global {
     "uiset-order-summary": UISetOrderSummary
     "uiset-payment-fields": UISetPaymentFields
     "uiset-pay-button": UISetPayButton
+    "uiset-address-fields": UISetAddressFields
     "uiset-knob": UISetKnob
     "uiset-line-chart": UISetLineChart
     "uiset-package-command": UISetPackageCommand
@@ -218,6 +222,8 @@ export type { UISetTagInputEvents } from "./tag-input"
 export type { UISetPhoneInputEvents } from "./phone-input"
 export type { UISetMaskedInputEvents } from "./input-mask"
 export type { UISetOrderSummaryEvents, UISetPayButtonEvents, UISetPaymentFieldsEvents, PaymentValue } from "./payments"
+export type { UISetAddressFieldsEvents } from "./address"
+export type { AddressValue, AddressMessages, Region as AddressRegion } from "@/registry/uiset/ui/address/address"
 export type { SortableListItemData as UISetSortableListItem, UISetSortableListEvents } from "./sortable-list"
 export type { SortableTreeItemData as UISetSortableTreeItem, UISetSortableTreeEvents } from "./sortable-tree"
 export type { UISetUploadEvents, UploadLabels as UISetUploadLabels } from "./upload"
@@ -245,6 +251,7 @@ type UISetInlineEdit = InlineEditElement
 type UISetTagInput = TagInputElement
 type UISetPhoneInput = PhoneInputElement
 type UISetMaskedInput = MaskedInputElement
+type UISetAddressFields = AddressFieldsElement
 type UISetSortableList = SortableListElement
 type UISetSortableTree = SortableTreeElement
 
@@ -318,6 +325,7 @@ export type {
   UISetOrderSummary,
   UISetPaymentFields,
   UISetPayButton,
+  UISetAddressFields,
 }
 export { iconElement, iconPaths } from "@/registry/uiset/ui/shell/icon-paths"
 // The schema form's definition, its checks, and the same definition as an agent tool.
