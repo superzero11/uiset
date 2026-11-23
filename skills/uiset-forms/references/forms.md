@@ -79,12 +79,16 @@ type Invite = FormValues<typeof invite.fields> // { email: string; role: "viewer
 
 - **Kinds:** `text`, `email`, `url`, `tel`, `textarea`, `number`, `choice` (a select, or
   radios with `display: "radio"`), `boolean` (a checkbox, or a switch), `date` (an ISO
-  date) and `tags` (a [tag input](#tag-input): a list of strings, with `suggestions` and
-  `maxLength` per tag). Each takes `label`, `description`, `required`, `placeholder` and
+  date), `tags` (a [tag input](#tag-input): a list of strings, with `suggestions` and
+  `maxLength` per tag) and `phone` (a [phone input](#phone-input): E.164, with
+  `defaultCountry` and `countries`). Each takes `label`, `description`, `required`, `placeholder` and
   `default`, and the checks its kind has: `min` and `max` (length, value, date or how many
   tags), `step` (1 for whole numbers), `pattern` with `patternMessage`, and
   `validate(value, values)` for a rule of your own. An agent fills `tags` with a list, or
-  with text like "design, research".
+  with text like "design, research", and `phone` with a number in international form ("+44
+  20 7946 0958"). The phone input and its rules (libphonenumber-js) load only when a form
+  has a `phone` field: a plain field takes the number until they're in, and submit checks
+  the number for its country. `messages` has the phone checks' words too.
 - **Rules across fields:** pass any Standard Schema as `schema` (zod, valibot, arktype and
   others implement it). It runs on submit once every field passes; an issue goes under the
   field its path names, or above the actions.

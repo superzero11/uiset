@@ -20,6 +20,7 @@ import type { FieldSpec, FormDefinition, FormErrors } from "@/registry/uiset/ui/
 import "@/registry/uiset/ui/schema-form/schema-form.css"
 import { attr, h, holdRender, keepInputInside, place, reportPartInput, showIn, uid } from "./dom"
 import type { UISetStepper } from "./shell-parts"
+import type { PhoneInputElement } from "./phone-input"
 import type { TagInputElement } from "./tag-input"
 
 type Values = Record<string, unknown>
@@ -86,7 +87,7 @@ const button = (text: string, attrs: Record<string, unknown>) => {
  * One field: its label, its control, its description and its problem, connected by <ui-field>.
  * `api` is read when a control changes: an element moved on the page gets a new instance.
  */
-function buildField(name: string, spec: FieldSpec, apiOf: () => Api, labels: SchemaFormLabels): FieldView {
+function buildField(name: string, spec: FieldSpec, apiOf: () => Api, labels: SchemaFormLabels, words: FormDefinition["words"]): FieldView {
   const required = spec.required ? "true" : null
   const set = (next: unknown, event?: Event) => apiOf().setField(name, next, event)
   const leaveOn = (control: HTMLElement) =>
@@ -202,6 +203,27 @@ function buildField(name: string, spec: FieldSpec, apiOf: () => Api, labels: Sch
       write = (value) => {
         const next = Array.isArray(value) ? (value as string[]) : []
         if ((live.value ?? []).join("\u0000") !== next.join("\u0000")) live.value = [...next]
+      }
+      disable = (on) => attr(live, "disabled", on)
+      const wrap = h("div", { class: "schema-form-field", "data-schema-field": name }, live)
+      return { spec, root: wrap, error, write, disable, showProblem: (problem) => attr(live, "error", problem) }
+    }
+    case "phone": {
+      // A field of its own, whose phone rules load as a chunk of their own.
+      const live = h("uiset-phone-input", {
+        label: spec.label,
+        placeholder: spec.placeholder,
+        description: spec.description,
+        "default-country": spec.defaultCountry,
+        required,
+      }) as PhoneInputElement
+      if (spec.countries) live.countries = spec.countries
+      live.messages = { tooShort: () => words.phoneTooShort(spec.label), tooLong: () => words.phoneTooLong(spec.label), invalid: () => words.phoneInvalid(spec.label) }
+      live.addEventListener("valuechange", (event) => set((event as CustomEvent<{ value: string }>).detail.value, event))
+      leaveOn(live)
+      write = (value) => {
+        const next = String(value ?? "")
+        if (live.value !== next) live.value = next
       }
       disable = (on) => attr(live, "disabled", on)
       const wrap = h("div", { class: "schema-form-field", "data-schema-field": name }, live)
@@ -361,7 +383,7 @@ function update(el: UISetSchemaForm, view: View) {
   const shown = names.map((name) => {
     const spec = definition.fields[name]!
     let field = view.cache.get(name)
-    if (!field || field.spec !== spec) view.cache.set(name, (field = buildField(name, spec, () => view.instance.api, labels)))
+    if (!field || field.spec !== spec) view.cache.set(name, (field = buildField(name, spec, () => view.instance.api, labels, definition.words)))
     field.write(value[name])
     field.disable(disabled)
     const problem = errors[name]

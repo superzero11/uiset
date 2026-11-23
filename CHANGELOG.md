@@ -31,6 +31,10 @@ On UI SDK `0.1.0-beta.14`.
   or calling code. Agents set the number in any format and the country by name. Phone data
   is libphonenumber-js's small build (a dependency of the item; a lazy chunk in
   `@uiset/web`).
+- **A schema form's `phone` field.** `kind: "phone"` draws a phone input, loaded only when a
+  form has one (a plain field takes the number until then). Its value is E.164; submit checks
+  it for its country, an agent fills it in international form, and its JSON Schema is an
+  E.164 pattern. React and Web Components; the demo's invite form has Mobile.
 - **A schema form's `tags` field.** `kind: "tags"` draws a tag input: a list of strings, with
   `min` and `max` tags, `maxLength` for each, and `suggestions`. An agent fills it with a
   list, or with text like "design, research", and its JSON Schema is an array. React and Web

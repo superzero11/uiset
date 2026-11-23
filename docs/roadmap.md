@@ -17,7 +17,7 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 **The inputs asked for most.** Built for Wednesday's release: the tag input (React, Web
 Components and a schema form's `tags` field) and the phone input (a country picker, formatted
-as typed, E.164, right to left), each with agents. Next, input masks for cards, IBANs and
+as typed, E.164, right to left; a schema form's `phone` field), each with agents. Next, input masks for cards, IBANs and
 currency, on the phone input's caret-keeping formatter. M
 
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent

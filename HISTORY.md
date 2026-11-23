@@ -2402,4 +2402,14 @@ vercel-labs/ui#905 (2026-11-19).
   (React now writes `""`), Backspace after "051 " takes the 1 ("052 345 678"), and "+44"
   finds Guernsey, the Isle of Man and Jersey with the United Kingdom. A fresh web sheet of the
   tag input shows the email field's error line. Nothing owed to Wednesday from these.
+- 2026-11-23 — A schema form `phone` kind, loaded on demand (the owner: "Yes, on demand").
+  The phone input is a dependency of the schema form, but React draws it with `lazy` (a
+  plain field takes the number until it's in) and the web form uses `<uiset-phone-input>`,
+  whose rules load as a chunk; a form without a phone field downloads none of it. The form's
+  sync checks take the E.164 shape, an agent fills it in international form, and submit
+  (`validateForm`, already async) imports the phone rules to check the country, in the
+  form's own words. The invite demo has Mobile. Found: the web element took a country it
+  had just moved to, then read its old one from a stale state snapshot after a redraw in
+  between, and formatted a UK number as American; it reads the country fresh now. Tests: a
+  phone-field test each for the schema, React (two) and the web; each rule mutation-checked.
 

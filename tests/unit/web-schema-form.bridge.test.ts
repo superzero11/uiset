@@ -57,6 +57,7 @@ test("each control sets its field: a radio, the number's buttons, a date, a text
   expect(invite().value).toEqual({
     email: "grace@example.com",
     name: "",
+    mobile: "",
     role: "admin",
     teams: [],
     seats: 3,
@@ -162,4 +163,17 @@ test("a tags field is <uiset-tag-input>: typed tags set the field, and an agent 
   expect(tooMany.ok).toBe(false)
   expect(tooMany.error?.message).toContain("Teams takes at most 4 tags.")
   expect(teams.getAttribute("aria-invalid")).toBe("true")
+})
+
+test("a phone field is <uiset-phone-input>: an agent fills it with an international number, shown nationally", async () => {
+  const bridge = await openWebPage("content.html", "content-demo.ts")
+  const filled = await bridge.run("Invite a teammate", "fill", { Mobile: "+44 20 7946 0958" })
+  expect(filled.ok, filled.error?.message).toBe(true)
+  expect(invite().value.mobile).toBe("+442079460958")
+  const phone = form().querySelector("uiset-phone-input") as HTMLElement & { value: string; country: string }
+  await waitFor(() => expect(phone.querySelector<HTMLInputElement>(".phone-input-number")?.value).toBe("020 7946 0958"))
+  expect(phone.country).toBe("GB")
+  const bad = await bridge.run("Invite a teammate", "fill", { mobile: "020 7946 0958" })
+  expect(bad.ok).toBe(false)
+  expect(bad.error?.message).toContain("Give the number with its country code")
 })

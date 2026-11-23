@@ -62,13 +62,15 @@ the input inside are the person's.
 - The forms kit: its page (a live example under its section), the gallery, `web/content.html`,
   `docs/forms.md`, `docs/web-components.md`, looking-for, the skills, the llms files, the
   0.7.0 changelog.
-- The schema form: a question for the owner (below).
+- The schema form: a `phone` kind, loaded on demand (below).
 
-## Open question
+## The schema form
 
-A schema form `phone` kind would make libphonenumber-js a dependency of every schema form,
-used or not (about 36 KB gzipped), unless the form takes the phone rules as an option. The
-`tel` kind stays a plain field either way.
+A `phone` kind, loaded on demand (the owner's choice, 2026-11-23): the phone input is a
+dependency of the schema form, but React loads it lazily and the web element loads its rules
+as a chunk, so a form without a phone field never downloads libphonenumber-js. The form's
+own checks take the E.164 shape (and an agent's number in international form); submit loads
+the rules to check the number for its country. The `tel` kind stays a plain field.
 
 ## Looks
 

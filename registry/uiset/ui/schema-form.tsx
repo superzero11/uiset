@@ -2,7 +2,7 @@
 
 import type { StateOf } from "@ui-sdk/core"
 import { usePart, usePrimitive, type PartProps } from "@ui-sdk/react/primitive"
-import { useEffect, useId, useLayoutEffect, useRef, type ReactNode } from "react"
+import { lazy, Suspense, useEffect, useId, useLayoutEffect, useRef, type ReactNode } from "react"
 import { Button } from "./button"
 import { Checkbox } from "./checkbox"
 import { DateInput } from "./date-input"
@@ -50,8 +50,29 @@ type SchemaFormProps<F extends Fields> = Omit<PartProps<"form", RootState>, "chi
   locale?: string
 }
 
+// The phone field (and libphonenumber-js) loads only when a form has one.
+const PhoneInput = lazy(() => import("./phone-input").then((module) => ({ default: module.PhoneInput })))
+
 /** One field: its label, its control, its description and its problem, connected by Field. */
-function FormField({ name, field, value, error, api, disabled, labels }: { name: string; field: FieldSpec; value: unknown; error?: string; api: Api; disabled: boolean; labels: SchemaFormLabels }) {
+function FormField({
+  name,
+  field,
+  value,
+  error,
+  api,
+  disabled,
+  labels,
+  words,
+}: {
+  name: string
+  field: FieldSpec
+  value: unknown
+  error?: string
+  api: Api
+  disabled: boolean
+  labels: SchemaFormLabels
+  words: FormDefinition["words"]
+}) {
   const set = (next: unknown) => api.setField(name, next)
   const leave = () => api.leaveField(name)
   const required = field.required || undefined
@@ -101,6 +122,37 @@ function FormField({ name, field, value, error, api, disabled, labels }: { name:
           </Select>
         )
       break
+    case "phone": {
+      // A field of its own too. Until its code is in, a plain field takes the number.
+      const plain = (
+        <Field name={name} invalid={error ? true : undefined} className="schema-form-field">
+          <FieldLabel>{field.label}</FieldLabel>
+          <Input {...common} type="tel" autoComplete="tel" value={value as string} placeholder={field.placeholder} onValueChange={(next) => set(next)} />
+          {description}
+          {problem}
+        </Field>
+      )
+      return (
+        <div className="schema-form-field" data-schema-field={name}>
+          <Suspense fallback={plain}>
+            <PhoneInput
+              label={field.label}
+              value={value as string}
+              onValueChange={(next) => set(next)}
+              defaultCountry={field.defaultCountry}
+              countries={field.countries}
+              description={field.description}
+              placeholder={field.placeholder}
+              required={field.required}
+              disabled={disabled}
+              error={error}
+              onBlur={leave}
+              messages={{ tooShort: () => words.phoneTooShort(field.label), tooLong: () => words.phoneTooLong(field.label), invalid: () => words.phoneInvalid(field.label) }}
+            />
+          </Suspense>
+        </div>
+      )
+    }
     case "tags":
       // The tag input is a field of its own: label, description and problem included.
       return (
@@ -251,7 +303,7 @@ function FormBody({
       ) : (
         <div className="schema-form-fields">
           {names.map((name) => (
-            <FormField key={name} name={name} field={form.fields[name]!} value={value[name]} error={errors[name]} api={api} disabled={disabled} labels={labels} />
+            <FormField key={name} name={name} field={form.fields[name]!} value={value[name]} error={errors[name]} api={api} disabled={disabled} labels={labels} words={form.words} />
           ))}
         </div>
       )}

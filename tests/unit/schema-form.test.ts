@@ -222,3 +222,24 @@ test("a tags field holds a list: counted, each tag's length checked, coerced fro
     topics: { title: "Topics", type: "array", items: { type: "string", maxLength: 10 }, minItems: 2, maxItems: 3, uniqueItems: true, description: "Suggested: css, html." },
   })
 })
+
+test("a phone field: E.164 by shape, an agent's international number tidied, and its country checked on submit", async () => {
+  const contact = defineForm({
+    name: "contact",
+    title: "Contact",
+    fields: { mobile: { kind: "phone", label: "Mobile", defaultCountry: "US" } },
+  })
+  expect(initialValues(contact)).toEqual({ mobile: "" })
+  expect(checkField(contact, "mobile", "", {})).toBeNull()
+  expect(checkField(contact, "mobile", "4155550123", {})).toBe("Give the number with its country code, like +14155550123.")
+  expect(checkField(contact, "mobile", "+14155550123", {})).toBeNull()
+  expect(coerceValue(contact, "mobile", "+44 (20) 7946-0958")).toEqual({ value: "+442079460958" })
+  expect(coerceValue(contact, "mobile", "020 7946 0958")).toEqual({ error: "Give the number with its country code, like +14155550123." })
+  expect(toJSONSchema(contact).properties).toEqual({
+    mobile: { title: "Mobile", type: "string", pattern: "^\\+[1-9]\\d{6,14}$", description: "In E.164, with the country code, like +14155550123." },
+  })
+  // The country's own rules, loaded on submit.
+  expect(await validateForm(contact, { mobile: "+14155550123" })).toEqual({})
+  expect(await validateForm(contact, { mobile: "+1415555" })).toEqual({ mobile: "Mobile is too short for a phone number in its country." })
+  expect(await validateForm(contact, { mobile: "+11115550123" })).toEqual({ mobile: "Mobile isn't a valid phone number in its country." })
+})

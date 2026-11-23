@@ -8,6 +8,7 @@ const invite = defineForm({
   fields: {
     email: { kind: "email", label: "Email", required: true, placeholder: "ada@example.com" },
     name: { kind: "text", label: "Full name", max: 80 },
+    mobile: { kind: "phone", label: "Mobile", defaultCountry: "US", description: "For a text when they're added. Optional." },
     role: {
       kind: "choice",
       label: "Role",
@@ -33,7 +34,7 @@ const invite = defineForm({
     notify: { kind: "boolean", label: "Email me when they join", display: "switch", default: true },
   },
   steps: [
-    { title: "Who", fields: ["email", "name"] },
+    { title: "Who", fields: ["email", "name", "mobile"] },
     { title: "Access", fields: ["role", "teams", "seats", "start"] },
     { title: "Message", fields: ["message", "notify"] },
   ],

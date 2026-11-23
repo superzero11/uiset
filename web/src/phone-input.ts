@@ -62,6 +62,7 @@ function draw(el: PhoneInputElement, instance: PhoneInputInstance, rules: Rules)
   // holds the old one until the page takes the change, which isn't a value from outside.
   let seen = instance.get().value
   let reported = seen
+  let seenCountry = instance.get().country
   let error: string | null = null
 
   const label = h("ui-field-label")
@@ -170,13 +171,23 @@ function draw(el: PhoneInputElement, instance: PhoneInputInstance, rules: Rules)
       if (state.value !== reported) {
         reported = state.value
         const shown = showPhone(state.value, country)
-        country = shown.country
         show(shown.text)
+        if (shown.country !== country) {
+          // The number's own country: the element says so too.
+          country = shown.country
+          ;(el as unknown as { country: string }).country = country
+        }
       }
     }
-    if (state.country && state.country !== country) {
-      country = startCountry(state.country)
-      show(typePhone(keepPhone(number.value), country).text)
+    // A country set from outside, not one this field chose, formats the digits for it. Read
+    // now, not from \`state\`: setting the element's country above redraws in between.
+    const outsideCountry = instance.get().country
+    if (outsideCountry !== seenCountry) {
+      seenCountry = outsideCountry
+      if (outsideCountry && outsideCountry !== country) {
+        country = startCountry(outsideCountry)
+        show(typePhone(keepPhone(number.value), country).text)
+      }
     }
     const text = words()
     const current = countryOf(country, locale())

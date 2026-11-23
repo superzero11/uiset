@@ -77,7 +77,18 @@ type TagsField = FieldBase & {
   validate?: FieldCheck<string[]>
 }
 
-type FieldSpec = TextField | NumberField | ChoiceField | BooleanField | DateField | TagsField
+type PhoneField = FieldBase & {
+  kind: "phone"
+  /** The country the field starts in, an ISO code like "GB". By default, the page language's region. */
+  defaultCountry?: string
+  /** Only these countries, by code. */
+  countries?: readonly string[]
+  /** A number in E.164, like "+14155550123". */
+  default?: string
+  validate?: FieldCheck<string>
+}
+
+type FieldSpec = TextField | NumberField | ChoiceField | BooleanField | DateField | TagsField | PhoneField
 type Fields = Record<string, FieldSpec>
 
 type ValueOf<F> = F extends { kind: "number" }
@@ -129,6 +140,11 @@ type FormMessages = {
   tooFewTags: (label: string, min: number) => string
   tooManyTags: (label: string, max: number) => string
   tagTooLong: (label: string, max: number) => string
+  /** A phone number not in international form, for an agent or a script. */
+  phone: string
+  phoneTooShort: (label: string) => string
+  phoneTooLong: (label: string) => string
+  phoneInvalid: (label: string) => string
   unknownField: (key: string, fields: string[]) => string
 }
 
@@ -152,6 +168,10 @@ const defaultMessages: FormMessages = {
   tooFewTags: (label, min) => `${label} needs at least ${min} ${min === 1 ? "tag" : "tags"}.`,
   tooManyTags: (label, max) => `${label} takes at most ${max} ${max === 1 ? "tag" : "tags"}.`,
   tagTooLong: (label, max) => `Each of ${label} takes at most ${max} characters.`,
+  phone: "Give the number with its country code, like +14155550123.",
+  phoneTooShort: (label) => `${label} is too short for a phone number in its country.`,
+  phoneTooLong: (label) => `${label} is too long for a phone number in its country.`,
+  phoneInvalid: (label) => `${label} isn't a valid phone number in its country.`,
   unknownField: (key, fields) => `No field "${key}". Its fields: ${fields.join(", ")}.`,
 }
 
@@ -225,6 +245,9 @@ function initialValues<F extends Fields>(form: FormDefinition<F>): FormValues<F>
   return values as FormValues<F>
 }
 
+/** E.164: a plus, a country code and up to 15 digits in all. */
+const e164 = /^\+[1-9]\d{6,14}$/
+
 const isEmpty = (value: unknown) => value === null || value === undefined || value === "" || value === false || (Array.isArray(value) && value.length === 0)
 const isoDate = /^\d{4}-\d{2}-\d{2}$/
 const realDate = (text: string) => isoDate.test(text) && !Number.isNaN(Date.parse(`${text}T00:00:00Z`)) && new Date(`${text}T00:00:00Z`).toISOString().startsWith(text)
@@ -269,6 +292,11 @@ function checkField(form: FormDefinition, name: string, value: unknown, values: 
       if (field.maxLength !== undefined && value.some((tag: string) => tag.length > field.maxLength!)) return words.tagTooLong(field.label, field.maxLength)
       return own()
     }
+    case "phone":
+      // The number's shape here; whether it's one in its country is checked on submit, with
+      // the phone rules loaded then (validateForm), and by the field as it's left.
+      if (!e164.test(String(value))) return words.phone
+      return own()
     case "date": {
       const text = String(value)
       if (!realDate(text)) return words.date
@@ -292,6 +320,22 @@ function checkFields(form: FormDefinition, values: Record<string, unknown>, name
 /** Every problem: the fields' own rules, then the form's `schema` once those pass. */
 async function validateForm(form: FormDefinition, values: Record<string, unknown>): Promise<FormErrors> {
   const errors = checkFields(form, values)
+  const phones = form.names.filter((name) => form.fields[name]!.kind === "phone" && !errors[name] && values[name])
+  if (phones.length) {
+    // The phone rules (and libphonenumber-js) load only for a form with a number to check.
+    const { checkPhone, phoneMessages, startCountry } = await import("../phone-input/phone")
+    for (const name of phones) {
+      const field = form.fields[name] as PhoneField
+      const words = form.words
+      const problem = checkPhone(String(values[name]), startCountry(field.defaultCountry), {
+        ...phoneMessages,
+        tooShort: () => words.phoneTooShort(field.label),
+        tooLong: () => words.phoneTooLong(field.label),
+        invalid: () => words.phoneInvalid(field.label),
+      })
+      if (problem) errors[name] = problem
+    }
+  }
   if (Object.keys(errors).length || !form.schema) return errors
   const result = await form.schema["~standard"].validate(values)
   for (const issue of result.issues ?? []) {
@@ -340,6 +384,11 @@ function coerceValue(form: FormDefinition, name: string, input: unknown): { valu
         field.options.find((o) => o.label.toLowerCase() === text.toLowerCase())
       return option ? { value: option.value } : { error: words.choice(field.options.map((o) => o.label)) }
     }
+    case "phone": {
+      // International form, with its spaces, dashes and brackets taken out: "+44 20 7946 0958".
+      const text = String(input).trim().replace(/[\s().-]/g, "")
+      return e164.test(text) ? { value: text } : { error: words.phone }
+    }
     case "tags": {
       // A list, or text like "design, research": each tag trimmed, duplicates dropped.
       const list = Array.isArray(input) ? input.map(String) : splitTags(String(input))
@@ -378,6 +427,10 @@ function toJSONSchema(form: FormDefinition): JSONSchema {
         break
       case "date":
         property = { type: "string", format: "date", formatMinimum: field.min, formatMaximum: field.max }
+        break
+      case "phone":
+        property = { type: "string", pattern: e164.source }
+        notes.push("In E.164, with the country code, like +14155550123.")
         break
       case "tags":
         property = {
@@ -421,6 +474,7 @@ export type {
   FormValues,
   JSONSchema,
   NumberField,
+  PhoneField,
   StandardSchemaV1,
   TagsField,
   TextField,

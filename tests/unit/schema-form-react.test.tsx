@@ -220,3 +220,39 @@ test("a tags field is a tag input; an agent fills it with a list or with text, a
   expect(screen.getByRole("combobox", { name: "Topics" }).getAttribute("aria-invalid")).toBe("true")
   expect(screen.getByText("Topics takes at most 3 tags.")).toBeTruthy()
 })
+
+const callback = defineForm({
+  name: "callback",
+  title: "Call me back",
+  fields: { mobile: { kind: "phone", label: "Mobile", defaultCountry: "US", required: true } },
+})
+
+test("a phone field is a phone input, loaded when the form has one; an agent fills it with an international number", async () => {
+  const onValueChange = vi.fn()
+  const onSubmit = vi.fn()
+  render(<SchemaForm form={callback} onValueChange={onValueChange} onSubmit={onSubmit} confirm={false} />)
+  // The phone input comes in on its own; until then a plain field takes the number.
+  const country = await screen.findByRole("button", { name: /^Country: United States/ })
+  expect(country).toBeTruthy()
+  await userEvent.type(screen.getByRole("textbox", { name: "Mobile" }), "4155550123")
+  expect(onValueChange.mock.calls.at(-1)![0]).toEqual({ mobile: "+14155550123" })
+  const bad = await agent.act({ steps: [{ ref: "Call me back", action: "fill", args: [{ mobile: "020 7946 0958" }] }] })
+  expect(bad.ok).toBe(false)
+  expect(bad.error?.message).toContain("Mobile: Give the number with its country code")
+  const good = await agent.act({ steps: [{ ref: "Call me back", action: "fill", args: [{ Mobile: "+44 20 7946 0958" }] }] })
+  expect(good.ok, good.error?.message).toBe(true)
+  await tick()
+  expect(onValueChange.mock.calls.at(-1)![0]).toEqual({ mobile: "+442079460958" })
+  expect(screen.getByRole<HTMLInputElement>("textbox", { name: "Mobile" }).value).toBe("020 7946 0958")
+  expect(screen.getByRole("button", { name: /^Country: / }).getAttribute("aria-label")).toBe("Country: United Kingdom, +44")
+})
+
+test("a phone number too short for its country stops the submit, with the form's words", async () => {
+  const onSubmit = vi.fn()
+  render(<SchemaForm form={callback} defaultValue={{ mobile: "+1415555" }} onSubmit={onSubmit} confirm={false} />)
+  await screen.findByRole("button", { name: /^Country: / })
+  await userEvent.click(screen.getByRole("button", { name: "Submit" }))
+  await tick()
+  expect(onSubmit).not.toHaveBeenCalled()
+  expect(await screen.findByText("Mobile is too short for a phone number in its country.")).toBeTruthy()
+})
