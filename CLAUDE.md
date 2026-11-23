@@ -90,6 +90,9 @@ Project skills live in `.claude/skills/` (installed with `npx skills add`, pinne
 `pnpm dev` · `pnpm lint` (the project lint, React's rules of hooks included; `--rules` lists why each rule exists) · `pnpm check`
 (lint + typecheck + unit + e2e) · `pnpm registry:build` ·
 `scripts/install-test.sh` (fresh-app install, typecheck and build).
+`tests/e2e/controls.spec.ts` presses every control on every page of the site and fails on any
+error; `SWEEP_PATHS=/,/kits` runs it on those pages only. Press the controls of any page you
+change before calling it done: screenshots and axe never press anything.
 Where a test goes (`design/bridge-testing-plan.md`): behavior (state and names) in Vitest
 through the agent bridge (`tests/unit/bridge.ts`, and `tests/unit/web-page.ts` for web
 pages); what needs a real page in Playwright, which runs in Chrome; and `{ tag: "@engine" }`
