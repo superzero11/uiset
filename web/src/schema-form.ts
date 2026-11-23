@@ -20,6 +20,7 @@ import type { FieldSpec, FormDefinition, FormErrors } from "@/registry/uiset/ui/
 import "@/registry/uiset/ui/schema-form/schema-form.css"
 import { attr, h, holdRender, keepInputInside, place, reportPartInput, showIn, uid } from "./dom"
 import type { UISetStepper } from "./shell-parts"
+import type { TagInputElement } from "./tag-input"
 
 type Values = Record<string, unknown>
 type SendResult = void | FormErrors | Promise<void | FormErrors>
@@ -65,7 +66,15 @@ type Api = {
 type State = { form: FormDefinition; value: Values; errors: FormErrors; step: number; status: "idle" | "submitting" | "done"; focus: string | null; disabled: boolean }
 type Instance = { get(): State; subscribe(run: () => void): () => void; api: Api }
 
-type FieldView = { spec: FieldSpec; root: HTMLElement; error: HTMLElement; write(value: unknown): void; disable(on: boolean): void }
+type FieldView = {
+  spec: FieldSpec
+  root: HTMLElement
+  error: HTMLElement
+  write(value: unknown): void
+  disable(on: boolean): void
+  /** A control that shows its own problem, like the tag input: given it instead of `error`. */
+  showProblem?(problem: string | null): void
+}
 
 /** A button inside UI SDK's <ui-button>, so it's a real button and agents can press it. */
 const button = (text: string, attrs: Record<string, unknown>) => {
@@ -176,6 +185,27 @@ function buildField(name: string, spec: FieldSpec, apiOf: () => Api, labels: Sch
       root.append(h("div", { class: "schema-form-toggle" }, live, label))
       if (description) root.append(description)
       return { spec, root, error, write, disable }
+    }
+    case "tags": {
+      // The tag input is a field of its own: label, description and problem included.
+      const live = h("uiset-tag-input", {
+        label: spec.label,
+        placeholder: spec.placeholder,
+        description: spec.description,
+        max: spec.max,
+        "max-length": spec.maxLength,
+        required,
+      }) as TagInputElement
+      if (spec.suggestions) live.suggestions = spec.suggestions
+      live.addEventListener("valuechange", (event) => set([...(event as CustomEvent<{ value: string[] }>).detail.value], event))
+      leaveOn(live)
+      write = (value) => {
+        const next = Array.isArray(value) ? (value as string[]) : []
+        if ((live.value ?? []).join("\u0000") !== next.join("\u0000")) live.value = [...next]
+      }
+      disable = (on) => attr(live, "disabled", on)
+      const wrap = h("div", { class: "schema-form-field", "data-schema-field": name }, live)
+      return { spec, root: wrap, error, write, disable, showProblem: (problem) => attr(live, "error", problem) }
     }
     case "textarea": {
       const input = h("textarea", { "aria-required": required, placeholder: spec.placeholder }) as HTMLTextAreaElement
@@ -335,9 +365,12 @@ function update(el: UISetSchemaForm, view: View) {
     field.write(value[name])
     field.disable(disabled)
     const problem = errors[name]
-    ;(field.root as HTMLElement & { invalid?: boolean }).invalid = !!problem
-    if (problem && field.error.textContent !== problem) field.error.textContent = problem
-    showIn(field.root, field.error, !!problem)
+    if (field.showProblem) field.showProblem(problem ?? null)
+    else {
+      ;(field.root as HTMLElement & { invalid?: boolean }).invalid = !!problem
+      if (problem && field.error.textContent !== problem) field.error.textContent = problem
+      showIn(field.root, field.error, !!problem)
+    }
     return field.root
   })
   if (!review) place(view.fields, shown, () => true)

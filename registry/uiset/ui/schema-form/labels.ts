@@ -48,6 +48,8 @@ function shownValue(field: FieldSpec, value: unknown, labels: SchemaFormLabels, 
       return new Intl.NumberFormat(locale).format(value as number)
     case "date":
       return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeZone: "UTC" }).format(new Date(`${value}T00:00:00Z`))
+    case "tags":
+      return Array.isArray(value) && value.length ? value.join(", ") : labels.empty
     default:
       return String(value)
   }

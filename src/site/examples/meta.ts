@@ -47,6 +47,12 @@ const groups: [string, ExampleMeta[]][] = [
         items: ["inline-edit"],
       },
       {
+        slug: "tag-input",
+        title: "Tag input",
+        parts: "TagInput (Combobox with multiple, Field)",
+        items: ["tag-input"],
+      },
+      {
         slug: "schema-form",
         title: "Schema form",
         parts: "SchemaForm, defineForm (Field, Stepper, agent fill)",

@@ -1,6 +1,8 @@
 // A form described once. Its fields render the form, check what's entered, and become the
 // JSON Schema of an agent tool that fills it. No framework here, so every renderer shares it.
 
+import { addTags, splitTags } from "../tag-input/tags"
+
 type FieldOption = { value: string; label: string }
 
 /** What's wrong with a value, or nothing when it can be saved. Gets every value, for rules across fields. */
@@ -62,16 +64,31 @@ type DateField = FieldBase & {
   validate?: FieldCheck<string>
 }
 
-type FieldSpec = TextField | NumberField | ChoiceField | BooleanField | DateField
+type TagsField = FieldBase & {
+  kind: "tags"
+  /** Tags to pick from as you type; others can be typed too. */
+  suggestions?: readonly string[]
+  /** The fewest and most tags. */
+  min?: number
+  max?: number
+  /** The most characters one tag can have. */
+  maxLength?: number
+  default?: readonly string[]
+  validate?: FieldCheck<string[]>
+}
+
+type FieldSpec = TextField | NumberField | ChoiceField | BooleanField | DateField | TagsField
 type Fields = Record<string, FieldSpec>
 
 type ValueOf<F> = F extends { kind: "number" }
   ? number | null
-  : F extends { kind: "boolean" }
-    ? boolean
-    : F extends { kind: "choice"; options: readonly { value: infer V extends string }[] }
-      ? V | null
-      : string
+  : F extends { kind: "tags" }
+    ? string[]
+    : F extends { kind: "boolean" }
+      ? boolean
+      : F extends { kind: "choice"; options: readonly { value: infer V extends string }[] }
+        ? V | null
+        : string
 
 /** The values a form holds, by field name, typed from its fields. */
 type FormValues<F extends Fields> = { -readonly [K in keyof F]: ValueOf<F[K]> }
@@ -108,6 +125,10 @@ type FormMessages = {
   tooEarly: (label: string, min: string) => string
   tooLate: (label: string, max: string) => string
   boolean: string
+  tags: string
+  tooFewTags: (label: string, min: number) => string
+  tooManyTags: (label: string, max: number) => string
+  tagTooLong: (label: string, max: number) => string
   unknownField: (key: string, fields: string[]) => string
 }
 
@@ -127,6 +148,10 @@ const defaultMessages: FormMessages = {
   tooEarly: (label, min) => `${label} is on or after ${min}.`,
   tooLate: (label, max) => `${label} is on or before ${max}.`,
   boolean: "Use true or false.",
+  tags: "Give a list of tags.",
+  tooFewTags: (label, min) => `${label} needs at least ${min} ${min === 1 ? "tag" : "tags"}.`,
+  tooManyTags: (label, max) => `${label} takes at most ${max} ${max === 1 ? "tag" : "tags"}.`,
+  tagTooLong: (label, max) => `Each of ${label} takes at most ${max} characters.`,
   unknownField: (key, fields) => `No field "${key}". Its fields: ${fields.join(", ")}.`,
 }
 
@@ -187,12 +212,20 @@ function initialValues<F extends Fields>(form: FormDefinition<F>): FormValues<F>
   for (const name of form.names) {
     const field = form.fields[name]!
     values[name] =
-      field.kind === "number" ? (field.default ?? null) : field.kind === "boolean" ? (field.default ?? false) : field.kind === "choice" ? (field.default ?? null) : (field.default ?? "")
+      field.kind === "number"
+        ? (field.default ?? null)
+        : field.kind === "boolean"
+          ? (field.default ?? false)
+          : field.kind === "choice"
+            ? (field.default ?? null)
+            : field.kind === "tags"
+              ? [...(field.default ?? [])]
+              : (field.default ?? "")
   }
   return values as FormValues<F>
 }
 
-const isEmpty = (value: unknown) => value === null || value === undefined || value === "" || value === false
+const isEmpty = (value: unknown) => value === null || value === undefined || value === "" || value === false || (Array.isArray(value) && value.length === 0)
 const isoDate = /^\d{4}-\d{2}-\d{2}$/
 const realDate = (text: string) => isoDate.test(text) && !Number.isNaN(Date.parse(`${text}T00:00:00Z`)) && new Date(`${text}T00:00:00Z`).toISOString().startsWith(text)
 
@@ -229,6 +262,13 @@ function checkField(form: FormDefinition, name: string, value: unknown, values: 
       return own()
     case "boolean":
       return own()
+    case "tags": {
+      if (!Array.isArray(value) || value.some((tag) => typeof tag !== "string")) return words.tags
+      if (field.min !== undefined && value.length < field.min) return words.tooFewTags(field.label, field.min)
+      if (field.max !== undefined && value.length > field.max) return words.tooManyTags(field.label, field.max)
+      if (field.maxLength !== undefined && value.some((tag: string) => tag.length > field.maxLength!)) return words.tagTooLong(field.label, field.maxLength)
+      return own()
+    }
     case "date": {
       const text = String(value)
       if (!realDate(text)) return words.date
@@ -278,7 +318,7 @@ function coerceValue(form: FormDefinition, name: string, input: unknown): { valu
   const field = form.fields[name]!
   const words = form.words
   if (input === null || input === undefined || input === "") {
-    return { value: field.kind === "number" || field.kind === "choice" ? null : field.kind === "boolean" ? false : "" }
+    return { value: field.kind === "number" || field.kind === "choice" ? null : field.kind === "boolean" ? false : field.kind === "tags" ? [] : "" }
   }
   switch (field.kind) {
     case "number": {
@@ -299,6 +339,11 @@ function coerceValue(form: FormDefinition, name: string, input: unknown): { valu
         field.options.find((o) => o.value.toLowerCase() === text.toLowerCase()) ??
         field.options.find((o) => o.label.toLowerCase() === text.toLowerCase())
       return option ? { value: option.value } : { error: words.choice(field.options.map((o) => o.label)) }
+    }
+    case "tags": {
+      // A list, or text like "design, research": each tag trimmed, duplicates dropped.
+      const list = Array.isArray(input) ? input.map(String) : splitTags(String(input))
+      return { value: addTags([], list).tags }
     }
     case "date": {
       const text = input instanceof Date ? input.toISOString().slice(0, 10) : String(input).trim().slice(0, 10)
@@ -334,6 +379,16 @@ function toJSONSchema(form: FormDefinition): JSONSchema {
       case "date":
         property = { type: "string", format: "date", formatMinimum: field.min, formatMaximum: field.max }
         break
+      case "tags":
+        property = {
+          type: "array",
+          items: field.maxLength === undefined ? { type: "string" } : { type: "string", maxLength: field.maxLength },
+          minItems: field.min,
+          maxItems: field.max,
+          uniqueItems: true,
+        }
+        if (field.suggestions?.length) notes.push(`Suggested: ${field.suggestions.join(", ")}.`)
+        break
       default:
         property = {
           type: "string",
@@ -367,5 +422,6 @@ export type {
   JSONSchema,
   NumberField,
   StandardSchemaV1,
+  TagsField,
   TextField,
 }

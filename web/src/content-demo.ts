@@ -3,6 +3,7 @@ import { createAgent } from "@ui-sdk/web/agent"
 import type { Uploader } from "@/registry/uiset/ui/upload/queue"
 import type { UISetCodeBlock, UISetCodeTabs } from "./content"
 import type { InlineEditElement } from "./inline-edit"
+import type { TagInputElement } from "./tag-input"
 import type { SortableListElement } from "./sortable-list"
 import type { SortableTreeElement } from "./sortable-tree"
 import type { UISetSchemaForm } from "./schema-form"
@@ -45,6 +46,12 @@ frameworks.items = [
 const project = document.getElementById("project") as InlineEditElement
 project.validate = (text) => (text.trim() ? null : "Give the project a name.")
 
+const topics = document.getElementById("topics") as TagInputElement
+topics.suggestions = ["Accessibility", "CSS", "Design systems", "Performance", "React", "Testing", "TypeScript", "Web Components"]
+const emails = document.getElementById("emails") as TagInputElement
+emails.transform = (tag) => tag.toLowerCase()
+emails.validate = (tag) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(tag) ? null : `Not an email address: ${tag}`)
+
 // Goes up in a second or two; a file with "fail" in its name fails, so Retry has something to do.
 const upload: Uploader = (file, { signal, onProgress }) =>
   new Promise((resolve, reject) => {
@@ -85,6 +92,13 @@ const invite = defineForm({
         { value: "admin", label: "Admin" },
       ],
     },
+    teams: {
+      kind: "tags",
+      label: "Teams",
+      suggestions: ["Design", "Engineering", "Marketing", "Research", "Support"],
+      max: 4,
+      description: "Which teams they join. Pick or type one.",
+    },
     seats: { kind: "number", label: "Seats", min: 1, max: 50, step: 1, default: 1, description: "How many people this invite admits." },
     start: { kind: "date", label: "Start date" },
     message: { kind: "textarea", label: "Message", max: 280 },
@@ -92,7 +106,7 @@ const invite = defineForm({
   },
   steps: [
     { title: "Who", fields: ["email", "name"] },
-    { title: "Access", fields: ["role", "seats", "start"] },
+    { title: "Access", fields: ["role", "teams", "seats", "start"] },
     { title: "Message", fields: ["message", "notify"] },
   ],
 })

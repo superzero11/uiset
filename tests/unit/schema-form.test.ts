@@ -201,3 +201,24 @@ describe("the form primitive", () => {
     form.destroy()
   })
 })
+
+test("a tags field holds a list: counted, each tag's length checked, coerced from a list or text, an array in JSON Schema", () => {
+  const post = defineForm({
+    name: "post",
+    title: "Post",
+    fields: { topics: { kind: "tags", label: "Topics", required: true, min: 2, max: 3, maxLength: 10, suggestions: ["css", "html"] } },
+  })
+  expect(initialValues(post)).toEqual({ topics: [] })
+  expect(checkField(post, "topics", [], {})).toBe("Topics is required.")
+  expect(checkField(post, "topics", ["css"], {})).toBe("Topics needs at least 2 tags.")
+  expect(checkField(post, "topics", ["a", "b", "c", "d"], {})).toBe("Topics takes at most 3 tags.")
+  expect(checkField(post, "topics", ["css", "averyverylongtag"], {})).toBe("Each of Topics takes at most 10 characters.")
+  expect(checkField(post, "topics", "css", {})).toBe("Give a list of tags.")
+  expect(checkField(post, "topics", ["css", "html"], {})).toBeNull()
+  expect(coerceValue(post, "topics", "css, html\nCSS")).toEqual({ value: ["css", "html"] })
+  expect(coerceValue(post, "topics", [" css ", 3])).toEqual({ value: ["css", "3"] })
+  expect(coerceValue(post, "topics", "")).toEqual({ value: [] })
+  expect(toJSONSchema(post).properties).toEqual({
+    topics: { title: "Topics", type: "array", items: { type: "string", maxLength: 10 }, minItems: 2, maxItems: 3, uniqueItems: true, description: "Suggested: css, html." },
+  })
+})

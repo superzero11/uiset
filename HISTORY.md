@@ -179,6 +179,13 @@ vercel-labs/ui#905 (2026-11-19).
     components. The message says to use a ref, and the step works once the list is gone.
     The bridge could skip parts with `data-ending-style`. Filed as vercel-labs/ui#929
     (2026-11-20).
+36. **An agent's `setValue` on a Combobox with no options waits about four seconds.** A
+    `multiple` Combobox with `allowCustomValue` and an empty list (a tag input without
+    suggestions): the bridge opens the list to look, waits for options that never come, and
+    only then sets the value (4,233 ms against 121 ms with any item, in jsdom on beta.14;
+    `status` changes nothing). Refusing the open in `onOpenChange` makes the step wait for
+    good. UISet's tag input gives agents its own component and hides the Combobox. Not filed
+    yet (2026-11-23).
 
 ## What shipped
 
@@ -2337,3 +2344,34 @@ vercel-labs/ui#905 (2026-11-19).
   The registry and the site shipped with the push after the owner's check; uiset.dev deployed.
   The roadmap's Now drops 0.6.1. The next release is set for Wednesday 2026-11-25, end of day
   (the owner): building until then, with the full suite once, for that batch.
+- 2026-11-23 — **The tag input, for Wednesday's release** (the owner: "Start the tag input",
+  roadmap Next 1; the next release is Wednesday 2026-11-25, end of day, with the full suite
+  once, then). On UI SDK's Combobox with `multiple` and `allowCustomValue`, in a Field, after
+  a jsdom check of what Combobox does alone: Enter adds, arrows and Backspace move through
+  and remove chips, but "c, d" is one chip (vercel-labs/ui#551), text is lost on Tab (#570)
+  and a chip can't be edited (#569). UISet adds delimiters, the paste split, adding on
+  blur, editing in place, and the rules (`tag-input/tags.ts`, shared by React and Web
+  Components). Combobox reports a person's Enter as `programmatic`, so the change's reason,
+  not its source, tells adds, removals and edits apart. Agents get the tag input's own
+  primitive (`setValue`, `add`, `remove`; a refusal fails the step with its reason) because
+  Combobox's `setValue` waits four seconds with no options (UI SDK issue 36 above).
+- 2026-11-23 — Chips are styled for every Combobox with chips: UI SDK's `web.css` has no chip
+  rules, and UISet hadn't added any, so a `multiple` Combobox showed bare text and grey
+  buttons. The chip box is the field (its edge and its one ring; the text inside has
+  neither), and each skin sets `--uiset-chip-*`. A schema form's `tags` kind draws a tag
+  input, React and Web Components, and the invite demo has Teams, so it's live in the kit
+  demo too. Tests: 8 for the rules, 15 React, 8 web, 3 for `tags` fields; each new rule
+  mutation-checked (a comma ending a tag, an edit's place, case in duplicates, an agent's
+  refusal, the paste split, Backspace while editing, the most tags, an agent's text split).
+  Backspace while editing had no test until its mutation passed; one was added in React and
+  on the web.
+- 2026-11-23 — The tag input's affected Chrome specs: 42 passed (the gallery's axe in every
+  skin and theme, the schema form's 11, the forms kit's sections, the new parts at phone
+  width), and they found three things, fixed: the web error line emptied when focus left (an
+  empty `<ui-field-error>` on the page fills itself with the browser's message, so it's added
+  only with its text, as UI SDK's docs show), a very long tag widened the field past its card
+  (the field's column is `minmax(0, 1fr)` now), and the layout test's long tag fit the field.
+  Each fix was replayed in one Chrome against the dev servers. The memory guard stopped three
+  runs as swap jumped (6.4, 9.6 and 17.5 GB) while Playwright started its servers; the owner
+  chose to commit and leave the 12 not run (the tag input's layout and phone-width checks,
+  the web content page's axe in each skin, the web schema form spec) to Wednesday's full run.

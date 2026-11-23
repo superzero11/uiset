@@ -58,6 +58,7 @@ test("each control sets its field: a radio, the number's buttons, a date, a text
     email: "grace@example.com",
     name: "",
     role: "admin",
+    teams: [],
     seats: 3,
     start: "2026-12-01",
     message: "Welcome aboard.",
@@ -141,4 +142,24 @@ test("taken off the page and put back, as a framework may, it keeps its values a
   await waitFor(() => expect(invite().value.email).toBe("ada@example.com"))
   await next(bridge)
   within(form()).getByRole("radio", { name: "Editor" })
+})
+
+test("a tags field is <uiset-tag-input>: typed tags set the field, and an agent fills it with text", async () => {
+  const bridge = await openWebPage("content.html", "content-demo.ts")
+  // Access is the second step; the first needs its email before the form moves on.
+  await bridge.run("Invite a teammate", "fill", { Email: "grace@example.com" })
+  const moved = await bridge.run("Invite a teammate", "goTo", 1)
+  expect(moved.ok, moved.error?.message).toBe(true)
+  const teams = within(form()).getByRole("combobox", { name: "Teams" })
+  const { default: userEvent } = await import("@testing-library/user-event")
+  await userEvent.type(teams, "Design,")
+  await settle()
+  expect(invite().value.teams).toEqual(["Design"])
+  const filled = await bridge.run("Invite a teammate", "fill", { Teams: "research, support" })
+  expect(filled.ok, filled.error?.message).toBe(true)
+  expect(invite().value.teams).toEqual(["research", "support"])
+  const tooMany = await bridge.run("Invite a teammate", "fill", { teams: ["a", "b", "c", "d", "e"] })
+  expect(tooMany.ok).toBe(false)
+  expect(tooMany.error?.message).toContain("Teams takes at most 4 tags.")
+  expect(teams.getAttribute("aria-invalid")).toBe("true")
 })

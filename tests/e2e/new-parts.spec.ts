@@ -628,7 +628,7 @@ test("a row carried inside a file is marked, goes back when dropped, and says wh
 
 /* ------------------------------------------------------------------ narrow screens */
 
-const narrow = ["Table", "Avatar group", "Badge", "Code block", "Inline edit", "Upload", "Sortable list", "Sortable tree"]
+const narrow = ["Table", "Avatar group", "Badge", "Code block", "Inline edit", "Tag input", "Upload", "Sortable list", "Sortable tree"]
 
 test("the new parts fit a phone's width", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 })
@@ -670,3 +670,54 @@ for (const theme of ["light", "dark"] as const) {
     })
   }
 }
+
+/* ------------------------------------------------------------------ tag input */
+
+test("tag input: chips wrap inside the field, a long tag ends in an ellipsis, and an edited tag keeps its place", { tag: "@engine" }, async ({ page }) => {
+  await open(page, "?group=Inputs")
+  const topics = example(page, "Tag input").locator(".tag-input").first()
+  const field = topics.locator('[data-slot="combobox-chips"]')
+  const input = topics.getByRole("combobox", { name: "Topics" })
+  const before = (await field.boundingBox())!
+  await input.fill("an unusually long topic name that runs past the field")
+  await input.press("Enter")
+  // maxLength is 24 in the example: refused, with the reason, and the text stays to fix.
+  await expect(topics.getByText(/Longer than 24 characters/)).toBeVisible()
+  await input.fill("Performance, Testing, Accessibility,")
+  const after = (await field.boundingBox())!
+  const chips = topics.locator('[data-slot="combobox-chip"]')
+  await expect(chips).toHaveCount(5)
+  // Five chips don't fit on one line here: the field grows, and every chip stays inside it.
+  expect(after.height).toBeGreaterThan(before.height)
+  for (const box of await chips.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().toJSON()))) {
+    expect(box.left).toBeGreaterThanOrEqual(after.x - 0.5)
+    expect(box.right).toBeLessThanOrEqual(after.x + after.width + 0.5)
+  }
+  const inputBox = (await input.boundingBox())!
+  expect(inputBox.width).toBeGreaterThanOrEqual(6 * 16 - 1)
+
+  // A tag longer than the field's width (no maxLength on the second field) ends in an ellipsis.
+  const emails = example(page, "Tag input").locator(".tag-input").nth(1)
+  const email = emails.getByRole("combobox", { name: "Invite by email" })
+  await email.fill(`${"a".repeat(200)}@example.com`)
+  await email.press("Enter")
+  const long = emails.locator(".tag-input-text").last()
+  expect(await long.evaluate((el) => el.scrollWidth > el.clientWidth && getComputedStyle(el).textOverflow === "ellipsis")).toBe(true)
+  const emailField = (await emails.locator('[data-slot="combobox-chips"]').boundingBox())!
+  const chip = (await emails.locator('[data-slot="combobox-chip"]').last().boundingBox())!
+  expect(chip.x + chip.width).toBeLessThanOrEqual(emailField.x + emailField.width + 0.5)
+  // The field itself stays the tag input's width: the long tag doesn't widen it.
+  const whole = (await emails.boundingBox())!
+  expect(emailField.width).toBeLessThanOrEqual(whole.width + 0.5)
+
+  // Editing a tag keeps it where it was, outlined, with its text in the field.
+  const second = chips.nth(1)
+  const at = (await second.boundingBox())!
+  await second.dblclick()
+  await expect(second).toHaveAttribute("data-editing", "")
+  await expect(input).toHaveValue("Design systems")
+  await expect(input).toBeFocused()
+  const still = (await second.boundingBox())!
+  expect(Math.abs(still.x - at.x)).toBeLessThan(1)
+  expect(await second.evaluate((el) => getComputedStyle(el).borderStyle)).toBe("dashed")
+})

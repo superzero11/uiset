@@ -12,6 +12,7 @@ import { Radio, RadioGroup } from "./radio"
 import { Select, SelectContent, SelectItem, SelectTrigger } from "./select"
 import { Stepper } from "./stepper"
 import { Switch } from "./switch"
+import { TagInput } from "./tag-input"
 import { Textarea } from "./textarea"
 import { schemaForm, type SchemaFormStepReason, type SchemaFormValueReason, type SubmitDetails } from "./schema-form/form"
 import type { Fields, FieldSpec, FormDefinition, FormErrors, FormValues } from "./schema-form/schema"
@@ -100,6 +101,26 @@ function FormField({ name, field, value, error, api, disabled, labels }: { name:
           </Select>
         )
       break
+    case "tags":
+      // The tag input is a field of its own: label, description and problem included.
+      return (
+        <div className="schema-form-field" data-schema-field={name}>
+          <TagInput
+            label={field.label}
+            value={value as string[]}
+            onValueChange={(next) => set(next)}
+            suggestions={field.suggestions}
+            max={field.max}
+            maxLength={field.maxLength}
+            description={field.description}
+            placeholder={field.placeholder}
+            required={field.required}
+            disabled={disabled}
+            error={error}
+            onBlur={leave}
+          />
+        </div>
+      )
     case "boolean": {
       const Toggle = field.display === "switch" ? Switch : Checkbox
       return (

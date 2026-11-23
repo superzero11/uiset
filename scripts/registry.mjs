@@ -206,6 +206,13 @@ const components = [
     [],
   ],
   [
+    "tag-input",
+    "Tag input",
+    "Tags people type, paste or pick: a comma or Enter adds one, a pasted list becomes one tag each, and Enter or F2 edits a tag in place. No duplicates, a limit, your own rules with the reason shown, and agents add and remove tags by name.",
+    ["tag-input/tags.ts", "tag-input/tag-input.ts", "tag-input/tag-input.css", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
+    ["combobox", "field"],
+  ],
+  [
     "sortable-list",
     "Sortable list",
     "A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name.",
@@ -252,7 +259,7 @@ const components = [
     "Schema form",
     "A form from one definition: its fields with UISet's controls, steps with a review, checks as people type and on submit, and an agent that fills it by field name while a person approves the submit. The same definition is JSON Schema for an agent tool.",
     ["schema-form/schema.ts", "schema-form/form.ts", "schema-form/tool.ts", "schema-form/labels.ts", "schema-form/schema-form.css", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
-    ["button", "checkbox", "date-input", "field", "number-input", "radio", "select", "stepper", "switch", "textarea"],
+    ["button", "checkbox", "date-input", "field", "number-input", "radio", "select", "stepper", "switch", "tag-input", "textarea"],
   ],
   [
     "upload",

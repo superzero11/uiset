@@ -22,6 +22,7 @@ import { defineStat } from "./stat"
 import { defineStudio } from "./studio"
 import { defineContent } from "./content"
 import { defineInlineEdit } from "./inline-edit"
+import { defineTagInput } from "./tag-input"
 import { defineSortableList } from "./sortable-list"
 import { defineSortableTree } from "./sortable-tree"
 import { defineMotion, type UISetCrossfade, type UISetNumberTicker, type UISetTextReveal, type UISetThinking } from "./motion"
@@ -45,6 +46,7 @@ import type { UISetSparkline, UISetStat } from "./stat"
 import type { KnobElement, PatchBayElement } from "./studio"
 import type { UISetAvatarGroup, UISetCodeBlock, UISetCodeTabs, UISetCountBadge, UISetPackageCommand, UISetTable } from "./content"
 import type { InlineEditElement } from "./inline-edit"
+import type { TagInputElement } from "./tag-input"
 import type { SortableListElement } from "./sortable-list"
 import type { SortableTreeElement } from "./sortable-tree"
 import type { UISetUpload } from "./upload"
@@ -109,6 +111,7 @@ function define() {
   defineRichText()
   defineContent()
   defineInlineEdit()
+  defineTagInput()
   defineSortableList()
   defineSortableTree()
   defineMotion()
@@ -154,6 +157,7 @@ declare global {
     "uiset-file-tree": UISetFileTree
     "uiset-heatmap": UISetHeatmap
     "uiset-inline-edit": UISetInlineEdit
+    "uiset-tag-input": UISetTagInput
     "uiset-knob": UISetKnob
     "uiset-line-chart": UISetLineChart
     "uiset-package-command": UISetPackageCommand
@@ -196,6 +200,7 @@ export type { WebColumn as UISetDataGridColumn } from "./data-grid"
 export type { UISetBoardEvents } from "./board"
 export type { UISetCodeTabsEvents } from "./content"
 export type { UISetInlineEditEvents } from "./inline-edit"
+export type { UISetTagInputEvents } from "./tag-input"
 export type { SortableListItemData as UISetSortableListItem, UISetSortableListEvents } from "./sortable-list"
 export type { SortableTreeItemData as UISetSortableTreeItem, UISetSortableTreeEvents } from "./sortable-tree"
 export type { UISetUploadEvents, UploadLabels as UISetUploadLabels } from "./upload"
@@ -220,6 +225,7 @@ type UISetSchedule = ScheduleElement
 type UISetSwipeList = SwipeListElement
 type UISetTerminal = TerminalElement
 type UISetInlineEdit = InlineEditElement
+type UISetTagInput = TagInputElement
 type UISetSortableList = SortableListElement
 type UISetSortableTree = SortableTreeElement
 
@@ -233,6 +239,7 @@ export type {
   UISetCodeTabs,
   UISetCountBadge,
   UISetInlineEdit,
+  UISetTagInput,
   UISetSortableList,
   UISetSortableTree,
   UISetPackageCommand,

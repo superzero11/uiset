@@ -1518,6 +1518,59 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "tag-input",
+      "type": "registry:ui",
+      "title": "Tag input",
+      "description": "Tags people type, paste or pick: a comma or Enter adds one, a pasted list becomes one tag each, and Enter or F2 edits a tag in place. No duplicates, a limit, your own rules with the reason shown, and agents add and remove tags by name.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.14",
+        "@ui-sdk/react@0.1.0-beta.14"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/combobox",
+        "superzero11/uiset/field"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/tag-input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/tag-input.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/tag-input/tags.ts",
+          "type": "registry:file",
+          "target": "@ui/tag-input/tags.ts"
+        },
+        {
+          "path": "registry/uiset/ui/tag-input/tag-input.ts",
+          "type": "registry:file",
+          "target": "@ui/tag-input/tag-input.ts"
+        },
+        {
+          "path": "registry/uiset/ui/tag-input/tag-input.css",
+          "type": "registry:file",
+          "target": "@ui/tag-input/tag-input.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icons.tsx",
+          "type": "registry:file",
+          "target": "@ui/shell/icons.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icon-paths.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/icon-paths.ts"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "sortable-list",
       "type": "registry:ui",
       "title": "Sortable list",
@@ -1773,6 +1826,7 @@
         "superzero11/uiset/select",
         "superzero11/uiset/stepper",
         "superzero11/uiset/switch",
+        "superzero11/uiset/tag-input",
         "superzero11/uiset/textarea"
       ],
       "files": [

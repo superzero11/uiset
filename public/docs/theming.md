@@ -113,6 +113,7 @@ Style your own markup with the variables, and it follows every skin:
 | `--ui-radius`, `--ui-font-sans`, `--ui-font-mono` | Corners and faces                         |
 | `--tone-info`, `--tone-success`, `--tone-warning`, `--tone-danger` | Status colors, readable as text |
 | `--chart-1` … `--chart-8`, `--chart-seq-1` … `--chart-seq-7` | Data colors, in a fixed order     |
+| `--uiset-chip-bg`, `--uiset-chip-fg`, `--uiset-chip-border`, `--uiset-chip-radius`, `--uiset-chip-weight`, `--uiset-chip-remove` | A chip in a field (a tag input's tags, a combobox's choices): its fill, text, edge, corners, weight and remove icon |
 
 ## Writing a skin
 

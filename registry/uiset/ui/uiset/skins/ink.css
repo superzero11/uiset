@@ -52,6 +52,11 @@
     --uiset-solid-hover: var(--ink-hover);
     --uiset-solid-weight: 700;
     --uiset-popup-radius: 6px;
+    /* Chips in a field: a combobox's choices, a tag input's tags. */
+    --uiset-chip-bg: transparent;
+    --uiset-chip-border: var(--ui-foreground);
+    --uiset-chip-radius: 999px;
+    --uiset-chip-weight: 700;
     --uiset-switch-border: 2px;
 
     /* No color for status: an icon and a word say it, a fill pattern backs it up. */
@@ -151,7 +156,8 @@
         [data-slot="date-input"],
         [data-slot="time-input"],
         [data-slot="date-picker-input"],
-        [data-slot="combobox-input"],
+        [data-slot="combobox-input"]:not([data-slot="combobox-chips"] *),
+        [data-slot="combobox-chips"],
         [data-slot="autocomplete-input"],
         [data-slot="token-input-editor"],
         [data-slot="color-picker-input"],
@@ -189,7 +195,8 @@
         [data-slot="date-input"],
         [data-slot="time-input"],
         [data-slot="date-picker-input"],
-        [data-slot="combobox-input"],
+        [data-slot="combobox-input"]:not([data-slot="combobox-chips"] *),
+        [data-slot="combobox-chips"],
         [data-slot="autocomplete-input"],
         [data-slot="token-input-editor"],
         [data-slot="number-input-group"],

@@ -20,6 +20,13 @@ const invite = defineForm({
         { value: "admin", label: "Admin" },
       ],
     },
+    teams: {
+      kind: "tags",
+      label: "Teams",
+      suggestions: ["Design", "Engineering", "Marketing", "Research", "Support"],
+      max: 4,
+      description: "Which teams they join. Pick or type one.",
+    },
     seats: { kind: "number", label: "Seats", min: 1, max: 50, step: 1, default: 1, description: "How many people this invite admits." },
     start: { kind: "date", label: "Start date" },
     message: { kind: "textarea", label: "Message", max: 280 },
@@ -27,7 +34,7 @@ const invite = defineForm({
   },
   steps: [
     { title: "Who", fields: ["email", "name"] },
-    { title: "Access", fields: ["role", "seats", "start"] },
+    { title: "Access", fields: ["role", "teams", "seats", "start"] },
     { title: "Message", fields: ["message", "notify"] },
   ],
 })

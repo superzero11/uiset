@@ -15,6 +15,11 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
+**The inputs asked for most.** The tag input is built, for Wednesday's release: tags typed,
+pasted or picked, edited in place, with agents adding and removing them by name, in React,
+Web Components and a schema form's `tags` field. Next, a phone number field with a country
+picker, and input masks for cards, IBANs and currency. M
+
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
 bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox
 715 each, from 1,030. 0.6.1's full run took about 1 h 50 min, from about 3 hours: not yet
@@ -22,26 +27,24 @@ under half. Left: WebKit's big pages at one worker, 39 of its 52 minutes. M
 
 ## Next, in order
 
-1. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
-   number field with a country picker, and input masks for cards, IBANs and currency. M
-2. **Solid 2.0, natively.** UI SDK already supports Solid 2.0, out November 17: UISet's
+1. **Solid 2.0, natively.** UI SDK already supports Solid 2.0, out November 17: UISet's
    components, then kits, on `@ui-sdk/solid`. Solid uses the Web Components build today. L
-3. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
+2. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
    and agents setting a filter by name. M
-4. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
+3. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
    reorder, and a player whose scrubber snaps to chapters, beside Studio. M each
-5. **Locale packs.** Every component's and kit's built-in words translated, with
+4. **Locale packs.** Every component's and kit's built-in words translated, with
    right-to-left tested packs for the main languages. UI SDK ships none. M
-6. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
+5. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
    repair; export to Tailwind `@theme`, Figma variables and DESIGN.md. S
-7. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
+6. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
    paging. M–L
-8. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
+7. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
-9. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
+8. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
    and an invoice. S each
-10. **Print skin.** Swiss and letterpress type, from a written design plan first. M
-11. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
+9. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+10. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
     CSV import. M
 
 Between these, small ones: dialogs and popovers that open in place (UI SDK's `inline`), tree

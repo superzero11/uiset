@@ -21,7 +21,7 @@ npx shadcn@latest add @uiset/<item>
 | A dropzone and file upload             | Drop, paste or choose files; then a queue with progress, cancel and retry | `file-input`, [`upload`](./forms.md#upload) |
 | A data table                           | Sorting, filters, grouping, pinned columns, editing, virtual rows   | [`data-grid`](./data-grid.md) |
 | A plain table with a fixed header      | Sticky headings and first column; rows stack on phones              | [`table`](./app-shell.md#table) |
-| A tag input                            | Text mixed with tokens; or a combobox with chips                    | `token-input`, `combobox`  |
+| A tag input                            | Tags typed, pasted or picked, edited in place; text with tokens     | `tag-input`, `token-input` |
 | A rich text editor                     | Headings, lists, links, images, mentions, Markdown in and out       | [`rich-text`](./rich-text.md) |
 | Charts                                 | Line, bar, scatter, heatmap and more, explored by keyboard, with a table view | [charts](./charts.md) |
 | A stepper or wizard                    | Steps with the current one marked and later ones locked             | `stepper`                  |

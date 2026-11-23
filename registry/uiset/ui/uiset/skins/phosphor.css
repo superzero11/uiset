@@ -98,6 +98,12 @@
     --uiset-solid-hover: var(--phosphor-glow-high);
     --uiset-solid-weight: 600;
     --uiset-popup-radius: 0;
+    /* Chips in a field: a combobox's choices, a tag input's tags. */
+    --uiset-chip-bg: var(--phosphor-glow);
+    --uiset-chip-fg: var(--phosphor-tube);
+    --uiset-chip-border: var(--phosphor-glow);
+    --uiset-chip-remove: var(--phosphor-tube);
+    --uiset-chip-radius: 0;
     --uiset-switch-thumb-radius: 0;
 
     /* Status in the other phosphors, each 4.5:1 on the tube and on raised surfaces. */
@@ -292,7 +298,8 @@
         [data-slot="date-input"],
         [data-slot="time-input"],
         [data-slot="date-picker-input"],
-        [data-slot="combobox-input"],
+        [data-slot="combobox-input"]:not([data-slot="combobox-chips"] *),
+        [data-slot="combobox-chips"],
         [data-slot="autocomplete-input"],
         [data-slot="token-input-editor"],
         [data-slot="color-picker-input"],

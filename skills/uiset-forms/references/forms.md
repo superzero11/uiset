@@ -1,14 +1,15 @@
-# Forms: schema form, inline edit and upload
+# Forms: schema form, inline edit, tag input and upload
 
-Three things forms need that UI SDK leaves to you. `SchemaForm` draws a whole form from one
+Four things forms need that UI SDK leaves to you. `SchemaForm` draws a whole form from one
 definition, steps and review included, and the same definition lets an agent fill it.
-`InlineEdit` is text you edit where it shows, on UI SDK's `createInlineEdit`. `Upload` is a
-drop zone and a queue of uploads on UI SDK's File input: each file shows its progress and can
-be canceled, retried or removed. Fields, selects, checkboxes, date and number inputs are UI
-SDK's own components; see [the list](./README.md#ui-sdk-components).
+`InlineEdit` is text you edit where it shows, on UI SDK's `createInlineEdit`. `TagInput` is
+tags people type, paste or pick, on UI SDK's Combobox. `Upload` is a drop zone and a queue of
+uploads on UI SDK's File input: each file shows its progress and can be canceled, retried or
+removed. Fields, selects, checkboxes, date and number inputs are UI SDK's own components; see
+[the list](./README.md#ui-sdk-components).
 
 ```bash
-npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/upload
+npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/tag-input @uiset/upload
 ```
 
 ## Parts
@@ -20,6 +21,8 @@ npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/upload
 | `formTool`, `registerFormTool`                          | `schema-form` | The form as an agent tool, for a model SDK or the browser's agent |
 | `InlineEdit`                                            | `inline-edit` | A value that turns into a field when you press it                 |
 | `InlineEditRoot`, `InlineEditPreview`, `InlineEditInput`, `InlineEditSave`, `InlineEditCancel`, `InlineEditError` | `inline-edit` | Its parts, for a layout of your own |
+| `TagInput`                                              | `tag-input`   | Tags in a field: typed, pasted or picked, edited in place         |
+| `addTags`, `splitTags`, `normalizeTag`                  | `tag-input`   | Its rules with no React in them, for your own checks              |
 | `Upload`                                                | `upload`      | A drop zone, a Choose files button and the list of uploads        |
 | `useUploadQueue`, `UploadRow`, `UploadPreview`          | `upload`      | The queue as a hook and one file's row, for a layout of your own  |
 | `createUploadQueue`                                     | `upload`      | The queue with no React in it                                     |
@@ -72,10 +75,13 @@ type Invite = FormValues<typeof invite.fields> // { email: string; role: "viewer
 ```
 
 - **Kinds:** `text`, `email`, `url`, `tel`, `textarea`, `number`, `choice` (a select, or
-  radios with `display: "radio"`), `boolean` (a checkbox, or a switch) and `date` (an ISO
-  date). Each takes `label`, `description`, `required`, `placeholder` and `default`, and the
-  checks its kind has: `min` and `max` (length, value or date), `step` (1 for whole numbers),
-  `pattern` with `patternMessage`, and `validate(value, values)` for a rule of your own.
+  radios with `display: "radio"`), `boolean` (a checkbox, or a switch), `date` (an ISO
+  date) and `tags` (a [tag input](#tag-input): a list of strings, with `suggestions` and
+  `maxLength` per tag). Each takes `label`, `description`, `required`, `placeholder` and
+  `default`, and the checks its kind has: `min` and `max` (length, value, date or how many
+  tags), `step` (1 for whole numbers), `pattern` with `patternMessage`, and
+  `validate(value, values)` for a rule of your own. An agent fills `tags` with a list, or
+  with text like "design, research".
 - **Rules across fields:** pass any Standard Schema as `schema` (zod, valibot, arktype and
   others implement it). It runs on submit once every field passes; an issue goes under the
   field its path names, or above the actions.
@@ -173,6 +179,48 @@ const [name, setName] = useState("Atlas")
 
 The root has `data-editing`, `data-empty`, `data-invalid` and `data-disabled` to style from.
 
+## Tag input
+
+```tsx
+import { TagInput } from "@/components/ui/tag-input"
+
+const [topics, setTopics] = useState(["React"])
+
+<TagInput
+  label="Topics"
+  value={topics}
+  onValueChange={setTopics}
+  suggestions={["Accessibility", "CSS", "Design systems", "TypeScript"]}
+  max={5}
+  maxLength={24}
+  description="Pick or type one, and separate them with commas."
+/>
+```
+
+- **Adding:** Enter adds what's typed, and so does a comma (`delimiters` changes which
+  characters end a tag: `[",", ";", " "]` for email addresses). A pasted list becomes one
+  tag each, split on the delimiters and on line breaks. Leaving the field adds what's
+  typed; `addOnBlur={false}` keeps it typed instead.
+- **Editing:** Enter or F2 on a tag, or a double-click, puts its text back in the field
+  and marks the tag (dashed) in its place. Enter saves it there, Escape keeps the old one,
+  and saving it empty removes it.
+- **Rules:** tags are trimmed and their inner spaces collapse. No duplicates, ignoring
+  case (`unique`: `true` to match case, `false` to allow them). `max` tags, with "2 of 5"
+  under the field, and `maxLength` characters each. `validate(tag, tags)` returns what's
+  wrong, and `transform(tag)` changes a tag first (like lowercase). A refused tag stays
+  typed, or listed, with the reason under the field, read out: "Already added: react".
+- **Suggestions:** `suggestions` fills a list as you type, without the tags already in.
+  Without them there's no list. Anything can be typed either way.
+- `value` with `onValueChange(tags, details)` controls it, or `defaultValue` starts it.
+  `details.reason` is `add`, `paste`, `edit`, `remove` or `set`, and `details.source` is
+  `"agent"` when an agent did it.
+- `name` submits one form entry per tag. `disabled`, `readOnly`, `required`, `placeholder`,
+  `error` (a problem from outside, like a form's) and `onBlur` are there too, and `messages`
+  translates what it says.
+- Chips are Combobox's (`data-slot="combobox-chip"`), so a Combobox with `multiple` wears
+  the same chips. Skins set `--uiset-chip-bg`, `--uiset-chip-fg`, `--uiset-chip-border`,
+  `--uiset-chip-radius` and `--uiset-chip-weight`.
+
 ## Upload
 
 `Upload` doesn't know where files go. You give it `upload`, a function that sends one file,
@@ -246,6 +294,12 @@ Outside React, `createUploadQueue(() => options)` is the same queue: call `start
 | Enter                      | a schema form's field | Next on a step; Submit on the review or a form with no steps |
 | Enter, Space, F2           | an inline edit's value | Start editing, with the text selected                     |
 | Enter                      | its field             | Save. Focus goes back to the value                        |
+| Enter, comma               | a tag input's field   | Add what's typed                                          |
+| Left, Right                | a tag input           | Move between the tags and the field (Combobox's)          |
+| Backspace                  | an empty tag input's field | Remove the last tag (Combobox's)                     |
+| Enter, F2                  | a tag                 | Edit it in place: its text goes back in the field         |
+| Delete, Backspace          | a tag                 | Remove it (Combobox's)                                    |
+| Escape                     | a tag being edited    | Keep the old tag                                          |
 | Escape                     | its field             | Put the text back. Focus goes back to the value           |
 | Tab                        | its field             | Save and move on. With text that can't be saved, stay     |
 | Up, Down, Home, End        | the list of uploads   | Move between files. The list is one tab stop              |
@@ -261,6 +315,12 @@ order, because the keys above do the same from the field or the row.
 - **InlineEdit** is listed by its `label`, with `setValue` (saves the text, through
   `validate`: text that fails changes nothing), `startEditing` and `cancel`. A disabled one
   has no actions.
+- **TagInput** is one component listed by its `label`, whose value is the tags, with
+  `setValue(tags)`, `add(...tags)` and `remove(...tags)` (by name, ignoring case). They go
+  through the same rules as typing; a refusal fails the step with the reason ("Already
+  added: react", "Up to 5 tags"). The Combobox inside is the person's and is hidden from
+  agents: its `setValue` waits about four seconds for a list of options a tag input
+  doesn't have.
 - **Upload** is a file input listed by its `label`, with each row's text as its items
   ("report.pdf 248 kB Uploaded") and `clear`. An agent can't add files: it has none to
   give. Each row's Cancel and Retry are buttons named for the file ("Retry report.pdf"),
@@ -274,8 +334,18 @@ order, because the keys above do the same from the field or the row.
 
 ## Web Components
 
-`<uiset-schema-form>`, `<uiset-inline-edit>` and `<uiset-upload>` are in
+`<uiset-schema-form>`, `<uiset-inline-edit>`, `<uiset-tag-input>` and `<uiset-upload>` are in
 [Web Components](./web-components.md#content-and-forms), on the same primitives and queue.
+
+```html
+<uiset-tag-input label="Topics" value="React, CSS" max="5" max-length="24"
+  description="Pick or type one, and separate them with commas."></uiset-tag-input>
+```
+
+The tag input's attributes are React's props: `delimiters` is a string, each character one
+delimiter (`delimiters=",; "`), and `add-on-blur="false"` turns that off. `suggestions`,
+`validate`, `transform` and `messages` are properties. It fires `valuechange`
+(`preventDefault()` refuses), and its `value` is live.
 The schema form's element takes the same definition, from `@uiset/web`:
 
 ```html

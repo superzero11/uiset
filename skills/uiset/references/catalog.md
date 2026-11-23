@@ -34,6 +34,7 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 
 - `schema-form`: A form from one definition: its fields with UISet's controls, steps with a review, checks as people type and on submit, and an agent that fills it by field name while a person approves the submit. The same definition is JSON Schema for an agent tool.
 - `inline-edit`: Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons.
+- `tag-input`: Tags people type, paste or pick: a comma or Enter adds one, a pasted list becomes one tag each, and Enter or F2 edits a tag in place. No duplicates, a limit, your own rules with the reason shown, and agents add and remove tags by name.
 - `upload`: A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use.
 
 ## Lists and trees (docs/lists.md)

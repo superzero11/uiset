@@ -195,3 +195,28 @@ test("a partial default fills the rest from each field's own; reset goes back to
   await agent.act({ steps: [{ ref: "Contact sales", action: "reset" }] })
   expect(onValueChange.mock.calls.at(-1)![0]).toEqual({ email: "", seats: null, plan: "team", terms: false })
 })
+
+const post = defineForm({
+  name: "new_post",
+  title: "New post",
+  fields: { title: { kind: "text", label: "Title" }, topics: { kind: "tags", label: "Topics", max: 3, suggestions: ["CSS", "HTML"] } },
+})
+
+test("a tags field is a tag input; an agent fills it with a list or with text, and hears what's wrong", async () => {
+  const onValueChange = vi.fn()
+  render(<SchemaForm form={post} onValueChange={onValueChange} />)
+  await tick()
+  await userEvent.type(screen.getByRole("combobox", { name: "Topics" }), "css, html,")
+  expect(onValueChange.mock.calls.at(-1)![0]).toEqual({ title: "", topics: ["css", "html"] })
+  const filled = await agent.act({ steps: [{ ref: "New post", action: "fill", args: [{ topics: "design, research" }] }] })
+  expect(filled.ok, filled.error?.message).toBe(true)
+  await tick()
+  expect(onValueChange.mock.calls.at(-1)![0]).toEqual({ title: "", topics: ["design", "research"] })
+  expect([...document.querySelectorAll(".tag-input-text")].map((tag) => tag.textContent)).toEqual(["design", "research"])
+  const tooMany = await agent.act({ steps: [{ ref: "New post", action: "fill", args: [{ Topics: ["a", "b", "c", "d"] }] }] })
+  expect(tooMany.ok).toBe(false)
+  expect(tooMany.error?.message).toContain("Topics takes at most 3 tags.")
+  await tick()
+  expect(screen.getByRole("combobox", { name: "Topics" }).getAttribute("aria-invalid")).toBe("true")
+  expect(screen.getByText("Topics takes at most 3 tags.")).toBeTruthy()
+})

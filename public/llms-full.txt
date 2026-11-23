@@ -61,6 +61,7 @@ npx shadcn@latest add @uiset/uiset
 | `code-block` | Code in its language's colors with a file name, line numbers, marked lines and a copy button; tabs for versions of the same code; and one command for npm, pnpm, yarn and bun that remembers the choice. | [App frame and data display](./app-shell.md) |
 | `schema-form` | A form from one definition: its fields with UISet's controls, steps with a review, checks as people type and on submit, and an agent that fills it by field name while a person approves the submit. The same definition is JSON Schema for an agent tool. | [Forms](./forms.md) |
 | `inline-edit` | Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons. | [Forms](./forms.md) |
+| `tag-input` | Tags people type, paste or pick: a comma or Enter adds one, a pasted list becomes one tag each, and Enter or F2 edits a tag in place. No duplicates, a limit, your own rules with the reason shown, and agents add and remove tags by name. | [Forms](./forms.md) |
 | `upload` | A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use. | [Forms](./forms.md) |
 | `sortable-list` | A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name. | [Lists and trees](./lists.md) |
 | `sortable-tree` | A tree people reorder and nest: drag a row up or down and sideways to change its level, or pick it up with Space and use the arrows. Only branches hold items, a drop elsewhere goes back and says why, and agents move items into branches by name. | [Lists and trees](./lists.md) |
@@ -209,7 +210,7 @@ the same parts, the same names, the same keyboard and agent support.
 
 | What | How many | What it gives you |
 | ---- | -------- | ----------------- |
-| [Components](/components) | 55, plus 28 app parts | Every UI SDK component, styled; and the app frame, data display, form, list and motion parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, uploads, a sortable list and tree, a number ticker, a text reveal, Thinking, a crossfade) |
+| [Components](/components) | 55, plus 29 app parts | Every UI SDK component, styled; and the app frame, data display, form, list and motion parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, a tag input, uploads, a sortable list and tree, a number ticker, a text reveal, Thinking, a crossfade) |
 | [Kits](/kits) | 12 | Chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal, Studio and the Agent Console |
 | [Templates](/templates) | 10 | Whole pages: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, IDE |
 | [Themes](/themes) | 5 skins | Base, Blueprint, Studio, Phosphor and Ink, plus a [generator](/themes/generator) for your own |
@@ -628,7 +629,7 @@ npx shadcn@latest add @uiset/<item>
 | A dropzone and file upload             | Drop, paste or choose files; then a queue with progress, cancel and retry | `file-input`, [`upload`](./forms.md#upload) |
 | A data table                           | Sorting, filters, grouping, pinned columns, editing, virtual rows   | [`data-grid`](./data-grid.md) |
 | A plain table with a fixed header      | Sticky headings and first column; rows stack on phones              | [`table`](./app-shell.md#table) |
-| A tag input                            | Text mixed with tokens; or a combobox with chips                    | `token-input`, `combobox`  |
+| A tag input                            | Tags typed, pasted or picked, edited in place; text with tokens     | `tag-input`, `token-input` |
 | A rich text editor                     | Headings, lists, links, images, mentions, Markdown in and out       | [`rich-text`](./rich-text.md) |
 | Charts                                 | Line, bar, scatter, heatmap and more, explored by keyboard, with a table view | [charts](./charts.md) |
 | A stepper or wizard                    | Steps with the current one marked and later ones locked             | `stepper`                  |
@@ -841,7 +842,7 @@ plain elements. UI SDK's own `<ui-*>` elements are typed by `@ui-sdk/web`.
 | `<uiset-search-field>`, `<uiset-copy-button>`, `<uiset-stepper>`      | A search box with Clear and a "/" key, a copy button that says Copied, and the steps of a flow |
 | `<uiset-table>`, `<uiset-avatar-group>`, `<uiset-count-badge>`       | A scroll area around your table (sticky headings and first column, rows that stack), overlapping avatars with a count, and a count on a button's corner |
 | `<uiset-code-block>`, `<uiset-code-tabs>`, `<uiset-package-command>` | Code in its language's colors with a caption, line numbers, marked lines and copy; tabs of versions; one command for npm, pnpm, yarn and bun |
-| `<uiset-inline-edit>`, `<uiset-upload>`                               | A value that turns into a field when pressed, and a drop zone with a queue of uploads |
+| `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-upload>`         | A value that turns into a field when pressed, tags typed, pasted or picked, and a drop zone with a queue of uploads |
 | `<uiset-sortable-list>`, `<uiset-sortable-tree>`                      | A list people put in order by drag or by keys, with a selection that moves together; a tree they reorder and nest |
 
 ## Studio
@@ -1413,7 +1414,7 @@ notes.addEventListener("valuechange", (e) => {
 ## Content and forms
 
 The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
-`inline-edit`, `upload`, `schema-form`, `sortable-list` and `sortable-tree`. `web/content.html` has each
+`inline-edit`, `tag-input`, `upload`, `schema-form`, `sortable-list` and `sortable-tree`. `web/content.html` has each
 of them.
 
 ```html
@@ -1438,6 +1439,7 @@ of them.
 <uiset-code-tabs label="Framework"></uiset-code-tabs>
 
 <uiset-inline-edit label="Project name" value="Atlas" actions></uiset-inline-edit>
+<uiset-tag-input label="Topics" value="React, CSS" max="5" description="Separate them with commas."></uiset-tag-input>
 <uiset-upload label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
 <uiset-schema-form confirm="Sends an invite email to the address given" done-message="Invite sent."></uiset-schema-form>
 <uiset-sortable-list label="Playlist" multiple></uiset-sortable-list>
@@ -1479,6 +1481,14 @@ pages.addEventListener("itemschange", (e) => save(e.detail.value)) // the items,
   edits, Enter or leaving saves, Escape cancels, and text `validate` refuses stays in the
   field with the problem. `actions` adds Save and Cancel for touch. Agents call `setValue`,
   `startEditing` and `cancel` by its label.
+- `<uiset-tag-input>` is React's `TagInput` on the same primitive and rules, drawn with UI
+  SDK's combobox and field: a comma (each character of `delimiters`) or Enter adds a tag, a
+  pasted list splits, leaving adds what's typed (`add-on-blur="false"` keeps it), and Enter,
+  F2 or a double-click edits a tag in place. `value` is a list (`value="React, CSS"` in
+  HTML), `max`, `max-length`, `unique`, `placeholder`, `description`, `name`, `required`,
+  `readonly`, `disabled` and `error` are attributes; `suggestions`, `validate`, `transform`
+  and `messages` are properties. It fires `valuechange` (`preventDefault()` refuses). Agents
+  call `setValue`, `add` and `remove` by its label, and hear why a tag is refused.
 - `<uiset-upload>` is UI SDK's file input with the upload queue: files go up `concurrency`
   at a time (3), each row shows a preview, its size, status and progress, with Cancel, Retry
   and Remove, and files that fail `accept`, `max-size` or `max-files` are listed with why.
@@ -3248,6 +3258,7 @@ Style your own markup with the variables, and it follows every skin:
 | `--ui-radius`, `--ui-font-sans`, `--ui-font-mono` | Corners and faces                         |
 | `--tone-info`, `--tone-success`, `--tone-warning`, `--tone-danger` | Status colors, readable as text |
 | `--chart-1` … `--chart-8`, `--chart-seq-1` … `--chart-seq-7` | Data colors, in a fixed order     |
+| `--uiset-chip-bg`, `--uiset-chip-fg`, `--uiset-chip-border`, `--uiset-chip-radius`, `--uiset-chip-weight`, `--uiset-chip-remove` | A chip in a field (a tag input's tags, a combobox's choices): its fill, text, edge, corners, weight and remove icon |
 
 ## Writing a skin
 
@@ -3789,6 +3800,11 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
+**The inputs asked for most.** The tag input is built, for Wednesday's release: tags typed,
+pasted or picked, edited in place, with agents adding and removing them by name, in React,
+Web Components and a schema form's `tags` field. Next, a phone number field with a country
+picker, and input masks for cards, IBANs and currency. M
+
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
 bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox
 715 each, from 1,030. 0.6.1's full run took about 1 h 50 min, from about 3 hours: not yet
@@ -3796,26 +3812,24 @@ under half. Left: WebKit's big pages at one worker, 39 of its 52 minutes. M
 
 ## Next, in order
 
-1. **The inputs asked for most.** A tag input that creates and edits its chips, a phone
-   number field with a country picker, and input masks for cards, IBANs and currency. M
-2. **Solid 2.0, natively.** UI SDK already supports Solid 2.0, out November 17: UISet's
+1. **Solid 2.0, natively.** UI SDK already supports Solid 2.0, out November 17: UISet's
    components, then kits, on `@ui-sdk/solid`. Solid uses the Web Components build today. L
-3. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
+2. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
    and agents setting a filter by name. M
-4. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
+3. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
    reorder, and a player whose scrubber snaps to chapters, beside Studio. M each
-5. **Locale packs.** Every component's and kit's built-in words translated, with
+4. **Locale packs.** Every component's and kit's built-in words translated, with
    right-to-left tested packs for the main languages. UI SDK ships none. M
-6. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
+5. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
    repair; export to Tailwind `@theme`, Figma variables and DESIGN.md. S
-7. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
+6. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
    paging. M–L
-8. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
+7. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
-9. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
+8. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
    and an invoice. S each
-10. **Print skin.** Swiss and letterpress type, from a written design plan first. M
-11. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
+9. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+10. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
     CSV import. M
 
 Between these, small ones: dialogs and popovers that open in place (UI SDK's `inline`), tree
@@ -4412,17 +4426,18 @@ count badge and code block don't have web versions yet.
 
 <!-- docs/forms.md -->
 
-# Forms: schema form, inline edit and upload
+# Forms: schema form, inline edit, tag input and upload
 
-Three things forms need that UI SDK leaves to you. `SchemaForm` draws a whole form from one
+Four things forms need that UI SDK leaves to you. `SchemaForm` draws a whole form from one
 definition, steps and review included, and the same definition lets an agent fill it.
-`InlineEdit` is text you edit where it shows, on UI SDK's `createInlineEdit`. `Upload` is a
-drop zone and a queue of uploads on UI SDK's File input: each file shows its progress and can
-be canceled, retried or removed. Fields, selects, checkboxes, date and number inputs are UI
-SDK's own components; see [the list](./README.md#ui-sdk-components).
+`InlineEdit` is text you edit where it shows, on UI SDK's `createInlineEdit`. `TagInput` is
+tags people type, paste or pick, on UI SDK's Combobox. `Upload` is a drop zone and a queue of
+uploads on UI SDK's File input: each file shows its progress and can be canceled, retried or
+removed. Fields, selects, checkboxes, date and number inputs are UI SDK's own components; see
+[the list](./README.md#ui-sdk-components).
 
 ```bash
-npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/upload
+npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/tag-input @uiset/upload
 ```
 
 ## Parts
@@ -4434,6 +4449,8 @@ npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/upload
 | `formTool`, `registerFormTool`                          | `schema-form` | The form as an agent tool, for a model SDK or the browser's agent |
 | `InlineEdit`                                            | `inline-edit` | A value that turns into a field when you press it                 |
 | `InlineEditRoot`, `InlineEditPreview`, `InlineEditInput`, `InlineEditSave`, `InlineEditCancel`, `InlineEditError` | `inline-edit` | Its parts, for a layout of your own |
+| `TagInput`                                              | `tag-input`   | Tags in a field: typed, pasted or picked, edited in place         |
+| `addTags`, `splitTags`, `normalizeTag`                  | `tag-input`   | Its rules with no React in them, for your own checks              |
 | `Upload`                                                | `upload`      | A drop zone, a Choose files button and the list of uploads        |
 | `useUploadQueue`, `UploadRow`, `UploadPreview`          | `upload`      | The queue as a hook and one file's row, for a layout of your own  |
 | `createUploadQueue`                                     | `upload`      | The queue with no React in it                                     |
@@ -4486,10 +4503,13 @@ type Invite = FormValues<typeof invite.fields> // { email: string; role: "viewer
 ```
 
 - **Kinds:** `text`, `email`, `url`, `tel`, `textarea`, `number`, `choice` (a select, or
-  radios with `display: "radio"`), `boolean` (a checkbox, or a switch) and `date` (an ISO
-  date). Each takes `label`, `description`, `required`, `placeholder` and `default`, and the
-  checks its kind has: `min` and `max` (length, value or date), `step` (1 for whole numbers),
-  `pattern` with `patternMessage`, and `validate(value, values)` for a rule of your own.
+  radios with `display: "radio"`), `boolean` (a checkbox, or a switch), `date` (an ISO
+  date) and `tags` (a [tag input](#tag-input): a list of strings, with `suggestions` and
+  `maxLength` per tag). Each takes `label`, `description`, `required`, `placeholder` and
+  `default`, and the checks its kind has: `min` and `max` (length, value, date or how many
+  tags), `step` (1 for whole numbers), `pattern` with `patternMessage`, and
+  `validate(value, values)` for a rule of your own. An agent fills `tags` with a list, or
+  with text like "design, research".
 - **Rules across fields:** pass any Standard Schema as `schema` (zod, valibot, arktype and
   others implement it). It runs on submit once every field passes; an issue goes under the
   field its path names, or above the actions.
@@ -4587,6 +4607,48 @@ const [name, setName] = useState("Atlas")
 
 The root has `data-editing`, `data-empty`, `data-invalid` and `data-disabled` to style from.
 
+## Tag input
+
+```tsx
+import { TagInput } from "@/components/ui/tag-input"
+
+const [topics, setTopics] = useState(["React"])
+
+<TagInput
+  label="Topics"
+  value={topics}
+  onValueChange={setTopics}
+  suggestions={["Accessibility", "CSS", "Design systems", "TypeScript"]}
+  max={5}
+  maxLength={24}
+  description="Pick or type one, and separate them with commas."
+/>
+```
+
+- **Adding:** Enter adds what's typed, and so does a comma (`delimiters` changes which
+  characters end a tag: `[",", ";", " "]` for email addresses). A pasted list becomes one
+  tag each, split on the delimiters and on line breaks. Leaving the field adds what's
+  typed; `addOnBlur={false}` keeps it typed instead.
+- **Editing:** Enter or F2 on a tag, or a double-click, puts its text back in the field
+  and marks the tag (dashed) in its place. Enter saves it there, Escape keeps the old one,
+  and saving it empty removes it.
+- **Rules:** tags are trimmed and their inner spaces collapse. No duplicates, ignoring
+  case (`unique`: `true` to match case, `false` to allow them). `max` tags, with "2 of 5"
+  under the field, and `maxLength` characters each. `validate(tag, tags)` returns what's
+  wrong, and `transform(tag)` changes a tag first (like lowercase). A refused tag stays
+  typed, or listed, with the reason under the field, read out: "Already added: react".
+- **Suggestions:** `suggestions` fills a list as you type, without the tags already in.
+  Without them there's no list. Anything can be typed either way.
+- `value` with `onValueChange(tags, details)` controls it, or `defaultValue` starts it.
+  `details.reason` is `add`, `paste`, `edit`, `remove` or `set`, and `details.source` is
+  `"agent"` when an agent did it.
+- `name` submits one form entry per tag. `disabled`, `readOnly`, `required`, `placeholder`,
+  `error` (a problem from outside, like a form's) and `onBlur` are there too, and `messages`
+  translates what it says.
+- Chips are Combobox's (`data-slot="combobox-chip"`), so a Combobox with `multiple` wears
+  the same chips. Skins set `--uiset-chip-bg`, `--uiset-chip-fg`, `--uiset-chip-border`,
+  `--uiset-chip-radius` and `--uiset-chip-weight`.
+
 ## Upload
 
 `Upload` doesn't know where files go. You give it `upload`, a function that sends one file,
@@ -4660,6 +4722,12 @@ Outside React, `createUploadQueue(() => options)` is the same queue: call `start
 | Enter                      | a schema form's field | Next on a step; Submit on the review or a form with no steps |
 | Enter, Space, F2           | an inline edit's value | Start editing, with the text selected                     |
 | Enter                      | its field             | Save. Focus goes back to the value                        |
+| Enter, comma               | a tag input's field   | Add what's typed                                          |
+| Left, Right                | a tag input           | Move between the tags and the field (Combobox's)          |
+| Backspace                  | an empty tag input's field | Remove the last tag (Combobox's)                     |
+| Enter, F2                  | a tag                 | Edit it in place: its text goes back in the field         |
+| Delete, Backspace          | a tag                 | Remove it (Combobox's)                                    |
+| Escape                     | a tag being edited    | Keep the old tag                                          |
 | Escape                     | its field             | Put the text back. Focus goes back to the value           |
 | Tab                        | its field             | Save and move on. With text that can't be saved, stay     |
 | Up, Down, Home, End        | the list of uploads   | Move between files. The list is one tab stop              |
@@ -4675,6 +4743,12 @@ order, because the keys above do the same from the field or the row.
 - **InlineEdit** is listed by its `label`, with `setValue` (saves the text, through
   `validate`: text that fails changes nothing), `startEditing` and `cancel`. A disabled one
   has no actions.
+- **TagInput** is one component listed by its `label`, whose value is the tags, with
+  `setValue(tags)`, `add(...tags)` and `remove(...tags)` (by name, ignoring case). They go
+  through the same rules as typing; a refusal fails the step with the reason ("Already
+  added: react", "Up to 5 tags"). The Combobox inside is the person's and is hidden from
+  agents: its `setValue` waits about four seconds for a list of options a tag input
+  doesn't have.
 - **Upload** is a file input listed by its `label`, with each row's text as its items
   ("report.pdf 248 kB Uploaded") and `clear`. An agent can't add files: it has none to
   give. Each row's Cancel and Retry are buttons named for the file ("Retry report.pdf"),
@@ -4688,8 +4762,18 @@ order, because the keys above do the same from the field or the row.
 
 ## Web Components
 
-`<uiset-schema-form>`, `<uiset-inline-edit>` and `<uiset-upload>` are in
+`<uiset-schema-form>`, `<uiset-inline-edit>`, `<uiset-tag-input>` and `<uiset-upload>` are in
 [Web Components](./web-components.md#content-and-forms), on the same primitives and queue.
+
+```html
+<uiset-tag-input label="Topics" value="React, CSS" max="5" max-length="24"
+  description="Pick or type one, and separate them with commas."></uiset-tag-input>
+```
+
+The tag input's attributes are React's props: `delimiters` is a string, each character one
+delimiter (`delimiters=",; "`), and `add-on-blur="false"` turns that off. `suggestions`,
+`validate`, `transform` and `messages` are properties. It fires `valuechange`
+(`preventDefault()` refuses), and its `value` is live.
 The schema form's element takes the same definition, from `@uiset/web`:
 
 ```html

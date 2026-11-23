@@ -28,8 +28,16 @@ for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
       await page.locator("#project uiset-inline-edit-input input").fill("")
       await page.locator("#project uiset-inline-edit-input input").press("Enter")
       await page.locator("#files input[type=file]").setInputFiles({ name: "notes.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4") })
+      // A tag refused, with its reason showing, and another being edited.
+      await page.locator("#emails input").fill("nope")
+      await page.locator("#emails input").press("Enter")
+      await page.locator("#topics ui-combobox-chip").first().dblclick()
       await page.waitForFunction(
-        () => !!document.querySelector("uiset-inline-edit-error") && !!document.querySelector('#files .upload-row[data-status="done"]'),
+        () =>
+          !!document.querySelector("uiset-inline-edit-error") &&
+          !!document.querySelector('#files .upload-row[data-status="done"]') &&
+          !!document.querySelector("#emails ui-field-error")?.textContent &&
+          !!document.querySelector("#topics ui-combobox-chip[data-editing]"),
         undefined,
         { timeout: 15_000 },
       )

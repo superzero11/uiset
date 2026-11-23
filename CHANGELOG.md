@@ -8,6 +8,32 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
+## 0.7.0 (unreleased)
+
+On UI SDK `0.1.0-beta.14`.
+
+### Added
+
+- **Tag input.** `TagInput` (`tag-input`) and `<uiset-tag-input>`: tags people type, paste or
+  pick. A comma or Enter adds one, a pasted list becomes one tag each, leaving the field adds
+  what's typed, and Enter, F2 or a double-click edits a tag in its place. No duplicates
+  (ignoring case), `max` with a count under the field, `maxLength`, `validate` and
+  `transform`; a refused tag stays typed and the reason shows under the field and is read
+  out. `suggestions` filter as you type. Agents see one component named by its label, with
+  `setValue`, `add` and `remove` through the same rules, and a refusal tells them why. Live
+  on the forms kit's page and in the gallery.
+- **A schema form's `tags` field.** `kind: "tags"` draws a tag input: a list of strings, with
+  `min` and `max` tags, `maxLength` for each, and `suggestions`. An agent fills it with a
+  list, or with text like "design, research", and its JSON Schema is an array. React and Web
+  Components; the demo's invite form has Teams.
+
+### Fixed
+
+- **A Combobox with chips looks like a field in every skin.** UI SDK's own look leaves chips
+  unstyled, and so did UISet: a `multiple` Combobox showed bare text and grey buttons. The
+  chip box is the field now, with the field's edge and one focus ring, and each skin draws
+  its chips (`--uiset-chip-*`, in Theming). Add `uiset` again to take it.
+
 ## 0.6.1 (2026-11-23)
 
 On UI SDK `0.1.0-beta.14`.

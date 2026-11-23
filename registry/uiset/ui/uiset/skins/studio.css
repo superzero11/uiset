@@ -91,6 +91,9 @@
     --uiset-solid-hover: oklch(0.86 0.14 75);
     --uiset-solid-weight: 600;
     --uiset-popup-radius: 4px;
+    /* Chips in a field: a combobox's choices, a tag input's tags. */
+    --uiset-chip-border: var(--ui-border);
+    --uiset-chip-radius: 3px;
     --uiset-switch-width: 2.25rem;
     --uiset-switch-thumb: 0.875rem;
     --uiset-switch-thumb-radius: 3px;
@@ -317,7 +320,8 @@
         [data-slot="date-input"],
         [data-slot="time-input"],
         [data-slot="date-picker-input"],
-        [data-slot="combobox-input"],
+        [data-slot="combobox-input"]:not([data-slot="combobox-chips"] *),
+        [data-slot="combobox-chips"],
         [data-slot="autocomplete-input"],
         [data-slot="token-input-editor"],
         [data-slot="color-picker-input"],
@@ -464,7 +468,7 @@
     }
 
     /* An invalid field still says so in this skin's field style (C16). */
-    & :is([data-slot="input"], [data-slot="select-trigger"], [data-slot="textarea"], [data-slot="password-input"], [data-slot="date-input"], [data-slot="time-input"], [data-slot="date-picker-input"], [data-slot="combobox-input"], [data-slot="autocomplete-input"], [data-slot="token-input-editor"], [data-slot="number-input-control"], [data-slot="otp-input-slot"]):is([data-invalid], [aria-invalid="true"], :has([aria-invalid="true"])) {
+    & :is([data-slot="input"], [data-slot="select-trigger"], [data-slot="textarea"], [data-slot="password-input"], [data-slot="date-input"], [data-slot="time-input"], [data-slot="date-picker-input"], [data-slot="combobox-input"]:not([data-slot="combobox-chips"] *), [data-slot="combobox-chips"], [data-slot="autocomplete-input"], [data-slot="token-input-editor"], [data-slot="number-input-control"], [data-slot="otp-input-slot"]):is([data-invalid], [aria-invalid="true"], :has([aria-invalid="true"])) {
       border-color: var(--ui-destructive);
     }
 

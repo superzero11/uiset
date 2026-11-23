@@ -1,0 +1,45 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/* The field and its chips are Combobox's, drawn in base.css and each skin. */
+@layer uiset.base {
+  /* One column that never grows past the tag input: a long tag ends in an ellipsis instead
+     of widening the field. */
+  .tag-input-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.375rem;
+    min-inline-size: 0;
+  }
+
+  .tag-input-body > *,
+  .tag-input [data-slot="combobox-chips"] {
+    min-inline-size: 0;
+  }
+
+  /* A long tag ends in an ellipsis at the field's width; its whole name is still its text. */
+  .tag-input-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* The tag being edited keeps its place as an outline, while its text is in the field. */
+  .tag-input-tag[data-editing] {
+    border-style: dashed;
+    border-color: var(--ui-muted-foreground);
+    background: transparent;
+    color: var(--ui-muted-foreground);
+  }
+
+  .tag-input-description {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+  }
+
+  .tag-input-count {
+    margin-inline-start: auto;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+}
