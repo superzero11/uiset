@@ -628,7 +628,7 @@ test("a row carried inside a file is marked, goes back when dropped, and says wh
 
 /* ------------------------------------------------------------------ narrow screens */
 
-const narrow = ["Table", "Avatar group", "Badge", "Code block", "Inline edit", "Tag input", "Upload", "Sortable list", "Sortable tree"]
+const narrow = ["Table", "Avatar group", "Badge", "Code block", "Inline edit", "Tag input", "Phone input", "Upload", "Sortable list", "Sortable tree"]
 
 test("the new parts fit a phone's width", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 })
@@ -721,3 +721,53 @@ test("tag input: chips wrap inside the field, a long tag ends in an ellipsis, an
   expect(Math.abs(still.x - at.x)).toBeLessThan(1)
   expect(await second.evaluate((el) => getComputedStyle(el).borderStyle)).toBe("dashed")
 })
+
+/* ------------------------------------------------------------------ phone input */
+
+test("phone input: right to left, the number and calling code still read left to right, and the caret holds", { tag: "@engine" }, async ({ page }) => {
+  await open(page, "?group=Inputs")
+  const section = example(page, "Phone input")
+  // The second example is on an Arabic page.
+  const arabic = section.locator(".phone-input").nth(1)
+  const box = arabic.locator("[data-field-box]")
+  const button = arabic.getByRole("button", { name: /^Country: / })
+  const input = arabic.locator(".phone-input-number")
+  expect(await box.evaluate((el) => getComputedStyle(el).direction)).toBe("ltr")
+  // The country button is before the number, on the left, and its code reads "+966".
+  expect((await button.boundingBox())!.x).toBeLessThan((await input.boundingBox())!.x)
+  expect(await arabic.locator(".phone-input-dial").first().evaluate((el) => (el as HTMLElement).innerText)).toBe("+966")
+  await input.click()
+  await page.keyboard.type("٠٥١٢٣٤٥٦٧٨")
+  await expect(input).toHaveValue("051 234 5678")
+  // Typing a digit in the middle keeps the caret after it, however the groups move.
+  await input.evaluate((el: HTMLInputElement) => el.setSelectionRange(5, 5))
+  await page.keyboard.type("9")
+  expect(await input.evaluate((el: HTMLInputElement) => el.value.slice(0, el.selectionStart!))).toMatch(/9$/)
+  // Backspace on a separator takes the digit before it: after "051 ", the 1 goes.
+  await input.fill("")
+  await page.keyboard.type("0512345678")
+  await input.evaluate((el: HTMLInputElement) => el.setSelectionRange(4, 4))
+  await page.keyboard.press("Backspace")
+  await expect(input).toHaveValue("052 345 678")
+})
+
+test("phone input: the country list opens from its button, searches, and gives focus back", { tag: "@engine" }, async ({ page }) => {
+  await open(page, "?group=Inputs")
+  const section = example(page, "Phone input")
+  const phone = section.locator(".phone-input").first()
+  const button = phone.getByRole("button", { name: /^Country: / })
+  await button.click()
+  const search = page.getByRole("combobox", { name: "Search countries" })
+  await expect(search).toBeFocused()
+  // A calling code finds every country that shares it; a name narrows to one.
+  await search.fill("+44")
+  await expect(page.getByRole("option", { name: /United Kingdom/ })).toBeVisible()
+  await expect(page.getByRole("option", { name: /Jersey/ })).toBeVisible()
+  await search.fill("united kingdom")
+  await expect(page.getByRole("option")).toHaveCount(1)
+  await page.keyboard.press("ArrowDown")
+  await page.keyboard.press("Enter")
+  await expect(button).toHaveAccessibleName("Country: United Kingdom, +44")
+  await expect(button).toBeFocused()
+})
+

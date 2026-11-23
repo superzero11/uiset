@@ -150,7 +150,7 @@ plain elements. UI SDK's own `<ui-*>` elements are typed by `@ui-sdk/web`.
 | `<uiset-search-field>`, `<uiset-copy-button>`, `<uiset-stepper>`      | A search box with Clear and a "/" key, a copy button that says Copied, and the steps of a flow |
 | `<uiset-table>`, `<uiset-avatar-group>`, `<uiset-count-badge>`       | A scroll area around your table (sticky headings and first column, rows that stack), overlapping avatars with a count, and a count on a button's corner |
 | `<uiset-code-block>`, `<uiset-code-tabs>`, `<uiset-package-command>` | Code in its language's colors with a caption, line numbers, marked lines and copy; tabs of versions; one command for npm, pnpm, yarn and bun |
-| `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-upload>`         | A value that turns into a field when pressed, tags typed, pasted or picked, and a drop zone with a queue of uploads |
+| `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-phone-input>`, `<uiset-upload>` | A value that turns into a field when pressed, tags typed, pasted or picked, a phone number with its country, and a drop zone with a queue of uploads |
 | `<uiset-sortable-list>`, `<uiset-sortable-tree>`                      | A list people put in order by drag or by keys, with a selection that moves together; a tree they reorder and nest |
 
 ## Studio
@@ -722,7 +722,7 @@ notes.addEventListener("valuechange", (e) => {
 ## Content and forms
 
 The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
-`inline-edit`, `tag-input`, `upload`, `schema-form`, `sortable-list` and `sortable-tree`. `web/content.html` has each
+`inline-edit`, `tag-input`, `phone-input`, `upload`, `schema-form`, `sortable-list` and `sortable-tree`. `web/content.html` has each
 of them.
 
 ```html
@@ -748,6 +748,7 @@ of them.
 
 <uiset-inline-edit label="Project name" value="Atlas" actions></uiset-inline-edit>
 <uiset-tag-input label="Topics" value="React, CSS" max="5" description="Separate them with commas."></uiset-tag-input>
+<uiset-phone-input label="Phone" default-country="US" name="phone"></uiset-phone-input>
 <uiset-upload label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
 <uiset-schema-form confirm="Sends an invite email to the address given" done-message="Invite sent."></uiset-schema-form>
 <uiset-sortable-list label="Playlist" multiple></uiset-sortable-list>
@@ -797,6 +798,14 @@ pages.addEventListener("itemschange", (e) => save(e.detail.value)) // the items,
   `readonly`, `disabled` and `error` are attributes; `suggestions`, `validate`, `transform`
   and `messages` are properties. It fires `valuechange` (`preventDefault()` refuses). Agents
   call `setValue`, `add` and `remove` by its label, and hear why a tag is refused.
+- `<uiset-phone-input>` is React's `PhoneInput` on the same primitive and rules: a country
+  button (UI SDK's combobox, searched by name, code or calling code) and the number,
+  formatted as typed with the caret kept, left to right on any page. `value` is E.164,
+  `country` an ISO code; `default-country`, `name`, `required`, `readonly`, `disabled`,
+  `placeholder`, `description`, `error` and `locale` are attributes, and `validate`,
+  `messages`, `countries` and `preferredCountries` properties. It fires `valuechange` and
+  `countrychange`. The phone rules (with libphonenumber-js) load as their own chunk the first
+  time one connects. Agents call `setValue(text, country?)` and `setCountry(query)`.
 - `<uiset-upload>` is UI SDK's file input with the upload queue: files go up `concurrency`
   at a time (3), each row shows a preview, its size, status and progress, with Cancel, Retry
   and Remove, and files that fail `accept`, `max-size` or `max-files` are listed with why.

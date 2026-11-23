@@ -74,6 +74,7 @@ import { UISet } from "@/components/ui/uiset"
 | Task                                   | Use                                                        |
 | -------------------------------------- | ---------------------------------------------------------- |
 | A form                                 | `field` (Field, FieldLabel, Input, FieldError), `select`, `checkbox`, `switch`, `button`; native `<form>` |
+| A phone number                         | `phone-input` (`PhoneInput`: a country picker, formatted as typed, E.164 `value`; agents `setValue` in any format and `setCountry`). Not a plain `type="tel"` input with a regex |
 | Tags, keywords or email recipients in a field | `tag-input` (`TagInput`: a comma or Enter adds, a paste splits, Enter or F2 edits a tag; `max`, `validate`; agents `add` and `remove`). A form's `tags` kind in `schema-form` |
 | An app frame                           | `app-shell` (sidebar that collapses, drawer on phones), `page-header`, `breadcrumbs` |
 | Status and data display                | `badge`, `stat`, `alert`, `empty-state`, `skeleton`, `description-list`, `item-list` |

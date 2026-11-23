@@ -8,6 +8,7 @@ for (const [kit, heading, control] of [
   ["chat", "agent-parts", /Deploy preview/],
   ["forms", "inline-edit", /Project name/],
   ["forms", "tag-input", /Remove React/],
+  ["forms", "phone-input", /Country: /],
   ["forms", "upload", /Choose files/],
   ["app-shell", "table", /Invoices/],
 ] as const) {

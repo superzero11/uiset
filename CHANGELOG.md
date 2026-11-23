@@ -22,6 +22,15 @@ On UI SDK `0.1.0-beta.14`.
   out. `suggestions` filter as you type. Agents see one component named by its label, with
   `setValue`, `add` and `remove` through the same rules, and a refusal tells them why. Live
   on the forms kit's page and in the gallery.
+- **Phone input.** `PhoneInput` (`phone-input`) and `<uiset-phone-input>`: a phone number
+  with a country picker. Digits format for the country as they're typed with the caret kept
+  in place, Backspace and Delete step over separators, a typed or pasted calling code
+  chooses the country, and Arabic-Indic and Persian digits are read. The value is E.164; the
+  number checks itself for its country when the field is left. It reads left to right on a
+  right-to-left page. Countries are named in the page's language and searched by name, code
+  or calling code. Agents set the number in any format and the country by name. Phone data
+  is libphonenumber-js's small build (a dependency of the item; a lazy chunk in
+  `@uiset/web`).
 - **A schema form's `tags` field.** `kind: "tags"` draws a tag input: a list of strings, with
   `min` and `max` tags, `maxLength` for each, and `suggestions`. An agent fills it with a
   list, or with text like "design, research", and its JSON Schema is an array. React and Web
@@ -32,7 +41,8 @@ On UI SDK `0.1.0-beta.14`.
 - **A Combobox with chips looks like a field in every skin.** UI SDK's own look leaves chips
   unstyled, and so did UISet: a `multiple` Combobox showed bare text and grey buttons. The
   chip box is the field now, with the field's edge and one focus ring, and each skin draws
-  its chips (`--uiset-chip-*`, in Theming). Add `uiset` again to take it.
+  its chips (`--uiset-chip-*`, in Theming). Add `uiset` again to take it. A box UISet draws
+  around a field and its parts (`data-field-box`) gets the same edge and ring.
 
 ## 0.6.1 (2026-11-23)
 

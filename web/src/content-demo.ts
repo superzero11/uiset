@@ -3,6 +3,7 @@ import { createAgent } from "@ui-sdk/web/agent"
 import type { Uploader } from "@/registry/uiset/ui/upload/queue"
 import type { UISetCodeBlock, UISetCodeTabs } from "./content"
 import type { InlineEditElement } from "./inline-edit"
+import type { PhoneInputElement } from "./phone-input"
 import type { TagInputElement } from "./tag-input"
 import type { SortableListElement } from "./sortable-list"
 import type { SortableTreeElement } from "./sortable-tree"
@@ -48,6 +49,8 @@ project.validate = (text) => (text.trim() ? null : "Give the project a name.")
 
 const topics = document.getElementById("topics") as TagInputElement
 topics.suggestions = ["Accessibility", "CSS", "Design systems", "Performance", "React", "Testing", "TypeScript", "Web Components"]
+const phone = document.getElementById("phone") as PhoneInputElement
+phone.preferredCountries = ["US", "GB", "IN", "DE"]
 const emails = document.getElementById("emails") as TagInputElement
 emails.transform = (tag) => tag.toLowerCase()
 emails.validate = (tag) => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(tag) ? null : `Not an email address: ${tag}`)

@@ -291,7 +291,7 @@
     /* Fields are boxes drawn in dim; the text box is the tube itself. */
     &
       :is(
-        [data-slot="input"],
+        [data-slot="input"]:not([data-field-box] *),
         [data-slot="select-trigger"],
         [data-slot="textarea"],
         [data-slot="password-input"],
@@ -300,6 +300,7 @@
         [data-slot="date-picker-input"],
         [data-slot="combobox-input"]:not([data-slot="combobox-chips"] *),
         [data-slot="combobox-chips"],
+        [data-field-box],
         [data-slot="autocomplete-input"],
         [data-slot="token-input-editor"],
         [data-slot="color-picker-input"],

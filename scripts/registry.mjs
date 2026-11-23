@@ -213,6 +213,14 @@ const components = [
     ["combobox", "field"],
   ],
   [
+    "phone-input",
+    "Phone input",
+    "A phone number with a country picker: formatted as it's typed with the caret kept in place, a typed calling code chooses the country, any script's digits, left to right on any page, and the value in E.164. Agents set the number in any format and the country by name.",
+    ["phone-input/phone.ts", "phone-input/phone-input.ts", "phone-input/phone-input.css", "shell/format-as-you-type.ts", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
+    ["combobox", "field"],
+    ["libphonenumber-js"],
+  ],
+  [
     "sortable-list",
     "Sortable list",
     "A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name.",

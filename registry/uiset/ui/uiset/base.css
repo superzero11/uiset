@@ -38,7 +38,7 @@
    not a colored border with a second ring outside it. Buttons keep the ring outside. */
 [data-uiset]
   :is(
-    [data-slot="input"],
+    [data-slot="input"]:not([data-field-box] *),
     [data-slot="textarea"],
     [data-slot="autocomplete-input"],
     [data-slot="combobox-input"]:not([data-slot="combobox-chips"] *),
@@ -71,7 +71,42 @@
 
 /* A combobox with chips (and the tag input on it) is a box around its chips and its text:
    the box is the field, wears its edge and its one ring, and the text inside has neither.
-   UI SDK's own look leaves chips unstyled. Skins set the chip's colors and corners. */
+   UI SDK's own look leaves chips unstyled. Skins set the chip's colors and corners.
+   `data-field-box` is the same for a box UISet draws itself, like the phone field's country
+   button and number. */
+[data-uiset] [data-field-box] {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-block-size: 2.25rem;
+  border: 1px solid var(--ui-input);
+  border-radius: var(--ui-radius);
+  background: var(--ui-background);
+}
+
+[data-uiset] [data-field-box]:has([data-slot="input"]:focus-visible) {
+  border-color: var(--ui-ring-border);
+  outline: 2px solid var(--ui-ring-border);
+  outline-offset: -1px;
+}
+
+[data-uiset] [data-field-box]:has([aria-invalid="true"]) {
+  border-color: var(--ui-destructive);
+}
+
+[data-uiset] [data-field-box] [data-slot="input"] {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
 [data-uiset] [data-slot="combobox-chips"] {
   display: flex;
   flex-wrap: wrap;

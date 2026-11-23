@@ -1571,6 +1571,65 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "phone-input",
+      "type": "registry:ui",
+      "title": "Phone input",
+      "description": "A phone number with a country picker: formatted as it's typed with the caret kept in place, a typed calling code chooses the country, any script's digits, left to right on any page, and the value in E.164. Agents set the number in any format and the country by name.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.14",
+        "@ui-sdk/react@0.1.0-beta.14",
+        "libphonenumber-js@1.13.17"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/combobox",
+        "superzero11/uiset/field"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/phone-input.tsx",
+          "type": "registry:ui",
+          "target": "@ui/phone-input.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/phone-input/phone.ts",
+          "type": "registry:file",
+          "target": "@ui/phone-input/phone.ts"
+        },
+        {
+          "path": "registry/uiset/ui/phone-input/phone-input.ts",
+          "type": "registry:file",
+          "target": "@ui/phone-input/phone-input.ts"
+        },
+        {
+          "path": "registry/uiset/ui/phone-input/phone-input.css",
+          "type": "registry:file",
+          "target": "@ui/phone-input/phone-input.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/format-as-you-type.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/format-as-you-type.ts"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icons.tsx",
+          "type": "registry:file",
+          "target": "@ui/shell/icons.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icon-paths.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/icon-paths.ts"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "sortable-list",
       "type": "registry:ui",
       "title": "Sortable list",

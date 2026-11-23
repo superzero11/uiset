@@ -2375,3 +2375,31 @@ vercel-labs/ui#905 (2026-11-19).
   runs as swap jumped (6.4, 9.6 and 17.5 GB) while Playwright started its servers; the owner
   chose to commit and leave the 12 not run (the tag input's layout and phone-width checks,
   the web content page's axe in each skin, the web schema form spec) to Wednesday's full run.
+- 2026-11-23 — **The phone input** (the owner: "Start the phone field", after the tag input).
+  UI SDK has no phone field, and nothing that formats a field as it's typed with the caret
+  kept, so that part is UISet's own, written once (`shell/format-as-you-type.ts`) for the
+  input masks next: the caret stays after the same kept character, and a deleted separator
+  takes the character beyond it. The phone rules are libphonenumber-js 1.13.17's small
+  build (MIT, about 36 KB gzipped), as vercel-labs/ui#863's prototype and shadcn/ui's phone
+  inputs use; the item depends on it, and `@uiset/web` loads it as a chunk when a phone field
+  first connects. The main country for a calling code comes from its metadata
+  (`countryCallingCodes`, not in its types; the version is pinned). Country names from
+  `Intl.DisplayNames`. #863's list of what's easy to get wrong (right to left, the caret,
+  E.164, Arabic-Indic digits) is each covered and tested. Found while building: a Field
+  labels every input inside it, so the country search (inside the field's box) read
+  "Phone" and was marked invalid with the number; a nested Field around the country picker
+  keeps them apart, in React and on the web. On the web, a `?? "message"` turned an agent's
+  successful step (null) into an error. The field box is a general `data-field-box` in
+  base.css and the skins. Tests: 11 rules, 12 React, 6 web; each rule mutation-checked
+  (two mutations found gaps first: choosing a country after a `+` number had no test, and a
+  broken mutation hid the nested field's; both fixed). A schema form `phone` kind waits on
+  the owner: it would make libphonenumber-js a dependency of every schema form.
+- 2026-11-23 — With memory free again (56% to 68%), the affected browser specs ran at 1 worker
+  under the guard: 31 passed, the tag input's 12 owed from the guard's stops among them (its
+  layout and phone-width checks, the web content page's axe in each skin, the web schema
+  form spec), with the phone input's own and the forms kit's sections. Three expectations
+  were wrong, not the parts: React wrote `data-editing="true"` where the web writes `""`
+  (React now writes `""`), Backspace after "051 " takes the 1 ("052 345 678"), and "+44"
+  finds Guernsey, the Isle of Man and Jersey with the United Kingdom. A fresh web sheet of the
+  tag input shows the email field's error line. Nothing owed to Wednesday from these.
+

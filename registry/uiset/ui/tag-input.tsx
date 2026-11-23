@@ -196,7 +196,7 @@ function TagInput({
       request={request}
       disabled={disabled}
       className={["tag-input", className].filter(Boolean).join(" ")}
-      data-editing={editing !== null || undefined}
+      data-editing={editing !== null ? "" : undefined}
     >
       <Field
         invalid={problem ? true : undefined}
@@ -265,7 +265,7 @@ function TagInput({
                     key={tag}
                     value={tag}
                     className="tag-input-tag"
-                    data-editing={editing === index || undefined}
+                    data-editing={editing === index ? "" : undefined}
                     onKeyDown={(event: KeyboardEvent) => {
                       if (event.key === "Enter" || event.key === "F2") {
                         event.preventDefault()

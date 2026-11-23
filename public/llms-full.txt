@@ -62,6 +62,7 @@ npx shadcn@latest add @uiset/uiset
 | `schema-form` | A form from one definition: its fields with UISet's controls, steps with a review, checks as people type and on submit, and an agent that fills it by field name while a person approves the submit. The same definition is JSON Schema for an agent tool. | [Forms](./forms.md) |
 | `inline-edit` | Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons. | [Forms](./forms.md) |
 | `tag-input` | Tags people type, paste or pick: a comma or Enter adds one, a pasted list becomes one tag each, and Enter or F2 edits a tag in place. No duplicates, a limit, your own rules with the reason shown, and agents add and remove tags by name. | [Forms](./forms.md) |
+| `phone-input` | A phone number with a country picker: formatted as it's typed with the caret kept in place, a typed calling code chooses the country, any script's digits, left to right on any page, and the value in E.164. Agents set the number in any format and the country by name. | [Forms](./forms.md) |
 | `upload` | A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use. | [Forms](./forms.md) |
 | `sortable-list` | A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name. | [Lists and trees](./lists.md) |
 | `sortable-tree` | A tree people reorder and nest: drag a row up or down and sideways to change its level, or pick it up with Space and use the arrows. Only branches hold items, a drop elsewhere goes back and says why, and agents move items into branches by name. | [Lists and trees](./lists.md) |
@@ -210,7 +211,7 @@ the same parts, the same names, the same keyboard and agent support.
 
 | What | How many | What it gives you |
 | ---- | -------- | ----------------- |
-| [Components](/components) | 55, plus 29 app parts | Every UI SDK component, styled; and the app frame, data display, form, list and motion parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, a tag input, uploads, a sortable list and tree, a number ticker, a text reveal, Thinking, a crossfade) |
+| [Components](/components) | 55, plus 30 app parts | Every UI SDK component, styled; and the app frame, data display, form, list and motion parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, a tag input, a phone input, uploads, a sortable list and tree, a number ticker, a text reveal, Thinking, a crossfade) |
 | [Kits](/kits) | 12 | Chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal, Studio and the Agent Console |
 | [Templates](/templates) | 10 | Whole pages: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, IDE |
 | [Themes](/themes) | 5 skins | Base, Blueprint, Studio, Phosphor and Ink, plus a [generator](/themes/generator) for your own |
@@ -630,6 +631,7 @@ npx shadcn@latest add @uiset/<item>
 | A data table                           | Sorting, filters, grouping, pinned columns, editing, virtual rows   | [`data-grid`](./data-grid.md) |
 | A plain table with a fixed header      | Sticky headings and first column; rows stack on phones              | [`table`](./app-shell.md#table) |
 | A tag input                            | Tags typed, pasted or picked, edited in place; text with tokens     | `tag-input`, `token-input` |
+| A phone number with a country picker   | Formatted as typed, any country, E.164 value, right to left         | [`phone-input`](./forms.md#phone-input) |
 | A rich text editor                     | Headings, lists, links, images, mentions, Markdown in and out       | [`rich-text`](./rich-text.md) |
 | Charts                                 | Line, bar, scatter, heatmap and more, explored by keyboard, with a table view | [charts](./charts.md) |
 | A stepper or wizard                    | Steps with the current one marked and later ones locked             | `stepper`                  |
@@ -842,7 +844,7 @@ plain elements. UI SDK's own `<ui-*>` elements are typed by `@ui-sdk/web`.
 | `<uiset-search-field>`, `<uiset-copy-button>`, `<uiset-stepper>`      | A search box with Clear and a "/" key, a copy button that says Copied, and the steps of a flow |
 | `<uiset-table>`, `<uiset-avatar-group>`, `<uiset-count-badge>`       | A scroll area around your table (sticky headings and first column, rows that stack), overlapping avatars with a count, and a count on a button's corner |
 | `<uiset-code-block>`, `<uiset-code-tabs>`, `<uiset-package-command>` | Code in its language's colors with a caption, line numbers, marked lines and copy; tabs of versions; one command for npm, pnpm, yarn and bun |
-| `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-upload>`         | A value that turns into a field when pressed, tags typed, pasted or picked, and a drop zone with a queue of uploads |
+| `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-phone-input>`, `<uiset-upload>` | A value that turns into a field when pressed, tags typed, pasted or picked, a phone number with its country, and a drop zone with a queue of uploads |
 | `<uiset-sortable-list>`, `<uiset-sortable-tree>`                      | A list people put in order by drag or by keys, with a selection that moves together; a tree they reorder and nest |
 
 ## Studio
@@ -1414,7 +1416,7 @@ notes.addEventListener("valuechange", (e) => {
 ## Content and forms
 
 The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
-`inline-edit`, `tag-input`, `upload`, `schema-form`, `sortable-list` and `sortable-tree`. `web/content.html` has each
+`inline-edit`, `tag-input`, `phone-input`, `upload`, `schema-form`, `sortable-list` and `sortable-tree`. `web/content.html` has each
 of them.
 
 ```html
@@ -1440,6 +1442,7 @@ of them.
 
 <uiset-inline-edit label="Project name" value="Atlas" actions></uiset-inline-edit>
 <uiset-tag-input label="Topics" value="React, CSS" max="5" description="Separate them with commas."></uiset-tag-input>
+<uiset-phone-input label="Phone" default-country="US" name="phone"></uiset-phone-input>
 <uiset-upload label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
 <uiset-schema-form confirm="Sends an invite email to the address given" done-message="Invite sent."></uiset-schema-form>
 <uiset-sortable-list label="Playlist" multiple></uiset-sortable-list>
@@ -1489,6 +1492,14 @@ pages.addEventListener("itemschange", (e) => save(e.detail.value)) // the items,
   `readonly`, `disabled` and `error` are attributes; `suggestions`, `validate`, `transform`
   and `messages` are properties. It fires `valuechange` (`preventDefault()` refuses). Agents
   call `setValue`, `add` and `remove` by its label, and hear why a tag is refused.
+- `<uiset-phone-input>` is React's `PhoneInput` on the same primitive and rules: a country
+  button (UI SDK's combobox, searched by name, code or calling code) and the number,
+  formatted as typed with the caret kept, left to right on any page. `value` is E.164,
+  `country` an ISO code; `default-country`, `name`, `required`, `readonly`, `disabled`,
+  `placeholder`, `description`, `error` and `locale` are attributes, and `validate`,
+  `messages`, `countries` and `preferredCountries` properties. It fires `valuechange` and
+  `countrychange`. The phone rules (with libphonenumber-js) load as their own chunk the first
+  time one connects. Agents call `setValue(text, country?)` and `setCountry(query)`.
 - `<uiset-upload>` is UI SDK's file input with the upload queue: files go up `concurrency`
   at a time (3), each row shows a preview, its size, status and progress, with Cancel, Retry
   and Remove, and files that fail `accept`, `max-size` or `max-files` are listed with why.
@@ -3800,10 +3811,10 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**The inputs asked for most.** The tag input is built, for Wednesday's release: tags typed,
-pasted or picked, edited in place, with agents adding and removing them by name, in React,
-Web Components and a schema form's `tags` field. Next, a phone number field with a country
-picker, and input masks for cards, IBANs and currency. M
+**The inputs asked for most.** Built for Wednesday's release: the tag input (React, Web
+Components and a schema form's `tags` field) and the phone input (a country picker, formatted
+as typed, E.164, right to left), each with agents. Next, input masks for cards, IBANs and
+currency, on the phone input's caret-keeping formatter. M
 
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
 bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox
@@ -4426,18 +4437,19 @@ count badge and code block don't have web versions yet.
 
 <!-- docs/forms.md -->
 
-# Forms: schema form, inline edit, tag input and upload
+# Forms: schema form, inline edit, tag and phone inputs, upload
 
-Four things forms need that UI SDK leaves to you. `SchemaForm` draws a whole form from one
+Five things forms need that UI SDK leaves to you. `SchemaForm` draws a whole form from one
 definition, steps and review included, and the same definition lets an agent fill it.
 `InlineEdit` is text you edit where it shows, on UI SDK's `createInlineEdit`. `TagInput` is
-tags people type, paste or pick, on UI SDK's Combobox. `Upload` is a drop zone and a queue of
+tags people type, paste or pick, on UI SDK's Combobox. `PhoneInput` is a phone number with a
+country picker, formatted as it's typed. `Upload` is a drop zone and a queue of
 uploads on UI SDK's File input: each file shows its progress and can be canceled, retried or
 removed. Fields, selects, checkboxes, date and number inputs are UI SDK's own components; see
 [the list](./README.md#ui-sdk-components).
 
 ```bash
-npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/tag-input @uiset/upload
+npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/tag-input @uiset/phone-input @uiset/upload
 ```
 
 ## Parts
@@ -4451,6 +4463,8 @@ npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/tag-input @ui
 | `InlineEditRoot`, `InlineEditPreview`, `InlineEditInput`, `InlineEditSave`, `InlineEditCancel`, `InlineEditError` | `inline-edit` | Its parts, for a layout of your own |
 | `TagInput`                                              | `tag-input`   | Tags in a field: typed, pasted or picked, edited in place         |
 | `addTags`, `splitTags`, `normalizeTag`                  | `tag-input`   | Its rules with no React in them, for your own checks              |
+| `PhoneInput`                                            | `phone-input` | A phone number and its country, formatted as typed, kept in E.164 |
+| `checkPhone`, `readPhone`, `findCountry`, `countryList` | `phone-input` | Its rules with no React in them, for your own checks              |
 | `Upload`                                                | `upload`      | A drop zone, a Choose files button and the list of uploads        |
 | `useUploadQueue`, `UploadRow`, `UploadPreview`          | `upload`      | The queue as a hook and one file's row, for a layout of your own  |
 | `createUploadQueue`                                     | `upload`      | The queue with no React in it                                     |
@@ -4649,6 +4663,45 @@ const [topics, setTopics] = useState(["React"])
   the same chips. Skins set `--uiset-chip-bg`, `--uiset-chip-fg`, `--uiset-chip-border`,
   `--uiset-chip-radius` and `--uiset-chip-weight`.
 
+## Phone input
+
+```tsx
+import { PhoneInput } from "@/components/ui/phone-input"
+
+const [phone, setPhone] = useState("") // E.164, like "+14155550123"
+
+<PhoneInput
+  label="Phone"
+  value={phone}
+  onValueChange={setPhone}
+  defaultCountry="US"
+  preferredCountries={["US", "GB", "IN"]}
+  description="We text a code to this number."
+/>
+```
+
+- **Typing:** digits format for the country as they're typed ("(415) 555-0123"), and the
+  caret stays after the same digit. Backspace or Delete on a separator takes the digit
+  beyond it. A typed or pasted `+` and calling code chooses the country (`+44` the United
+  Kingdom), and a pasted number in any format is read whole. Arabic-Indic and Persian digits
+  are read as 0 to 9.
+- **The country:** a button with the flag and the calling code opens every country by its
+  name in the page's language (`Intl.DisplayNames`, so no names ship), searched by name,
+  code or calling code. `countries` limits the list, `preferredCountries` puts some first,
+  and `country` / `defaultCountry` / `onCountryChange` hold it; it starts in the page
+  language's region. Choosing one keeps the digits, without a calling code typed for another.
+- **The value** is E.164 (`value`, `defaultValue`, `onValueChange(value, details)`), "" when
+  empty; `details.reason` is `type`, `paste`, `country` or `set`. `name` submits it.
+- **Checks:** leaving the field checks the number for its country ("Too short for a number
+  in United States.", "Not a valid number in …"), and `validate(value)` adds rules of your
+  own. The problem shows under the field, is read out, and stops a form's submit.
+- **Right to left:** the number and the calling code read left to right on any page
+  ("+966 51 234 5678", never "966+"), with the country button before the number.
+- `required`, `disabled`, `readOnly`, `placeholder`, `error` (a problem from outside),
+  `onBlur`, `locale` (the country names' language) and `messages` (its words).
+- Phone data is libphonenumber-js's small build, about 36 KB gzipped, installed with the
+  item. The field box is `data-field-box`, the same edge and ring as a text field in each skin.
+
 ## Upload
 
 `Upload` doesn't know where files go. You give it `upload`, a function that sends one file,
@@ -4728,6 +4781,9 @@ Outside React, `createUploadQueue(() => options)` is the same queue: call `start
 | Enter, F2                  | a tag                 | Edit it in place: its text goes back in the field         |
 | Delete, Backspace          | a tag                 | Remove it (Combobox's)                                    |
 | Escape                     | a tag being edited    | Keep the old tag                                          |
+| Enter, Space, Down         | a phone input's country | Open the countries, with the search focused (Combobox's) |
+| Up, Down, Enter            | the countries         | Move through the matches and choose one; focus goes back to the country |
+| Backspace, Delete          | a phone number        | Remove the digit before or after, across separators      |
 | Escape                     | its field             | Put the text back. Focus goes back to the value           |
 | Tab                        | its field             | Save and move on. With text that can't be saved, stay     |
 | Up, Down, Home, End        | the list of uploads   | Move between files. The list is one tab stop              |
@@ -4749,6 +4805,12 @@ order, because the keys above do the same from the field or the row.
   added: react", "Up to 5 tags"). The Combobox inside is the person's and is hidden from
   agents: its `setValue` waits about four seconds for a list of options a tag input
   doesn't have.
+- **PhoneInput** is one component listed by its `label`, whose value is the number in E.164
+  and whose `country` is its country, with `setValue(text, country?)` (any format: "020
+  7946 0958", "+44 20 7946 0958") and `setCountry(query)` (a name, "GB" or "+44"). A number
+  that isn't one for its country, or a country that isn't listed, fails the step with the
+  reason. The country list and the number's input are the person's and are hidden from
+  agents.
 - **Upload** is a file input listed by its `label`, with each row's text as its items
   ("report.pdf 248 kB Uploaded") and `clear`. An agent can't add files: it has none to
   give. Each row's Cancel and Retry are buttons named for the file ("Retry report.pdf"),
@@ -4762,7 +4824,7 @@ order, because the keys above do the same from the field or the row.
 
 ## Web Components
 
-`<uiset-schema-form>`, `<uiset-inline-edit>`, `<uiset-tag-input>` and `<uiset-upload>` are in
+`<uiset-schema-form>`, `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-phone-input>` and `<uiset-upload>` are in
 [Web Components](./web-components.md#content-and-forms), on the same primitives and queue.
 
 ```html
@@ -4774,6 +4836,17 @@ The tag input's attributes are React's props: `delimiters` is a string, each cha
 delimiter (`delimiters=",; "`), and `add-on-blur="false"` turns that off. `suggestions`,
 `validate`, `transform` and `messages` are properties. It fires `valuechange`
 (`preventDefault()` refuses), and its `value` is live.
+
+```html
+<uiset-phone-input label="Phone" default-country="US" name="phone"
+  description="We text a code to this number."></uiset-phone-input>
+```
+
+The phone input's attributes are React's props (`value`, `default-country`, `name`,
+`required`, `readonly`, `disabled`, `placeholder`, `description`, `error`, `locale`);
+`country` is live too, and `validate`, `messages`, `countries` and `preferredCountries` are
+properties. It fires `valuechange` with the number in E.164 and `countrychange` with the
+country. Its phone rules load as a chunk of their own the first time one is on the page.
 The schema form's element takes the same definition, from `@uiset/web`:
 
 ```html

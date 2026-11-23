@@ -53,6 +53,12 @@ const groups: [string, ExampleMeta[]][] = [
         items: ["tag-input"],
       },
       {
+        slug: "phone-input",
+        title: "Phone input",
+        parts: "PhoneInput (Combobox, Field, Input; libphonenumber-js)",
+        items: ["phone-input"],
+      },
+      {
         slug: "schema-form",
         title: "Schema form",
         parts: "SchemaForm, defineForm (Field, Stepper, agent fill)",

@@ -1,15 +1,16 @@
-# Forms: schema form, inline edit, tag input and upload
+# Forms: schema form, inline edit, tag and phone inputs, upload
 
-Four things forms need that UI SDK leaves to you. `SchemaForm` draws a whole form from one
+Five things forms need that UI SDK leaves to you. `SchemaForm` draws a whole form from one
 definition, steps and review included, and the same definition lets an agent fill it.
 `InlineEdit` is text you edit where it shows, on UI SDK's `createInlineEdit`. `TagInput` is
-tags people type, paste or pick, on UI SDK's Combobox. `Upload` is a drop zone and a queue of
+tags people type, paste or pick, on UI SDK's Combobox. `PhoneInput` is a phone number with a
+country picker, formatted as it's typed. `Upload` is a drop zone and a queue of
 uploads on UI SDK's File input: each file shows its progress and can be canceled, retried or
 removed. Fields, selects, checkboxes, date and number inputs are UI SDK's own components; see
 [the list](./README.md#ui-sdk-components).
 
 ```bash
-npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/tag-input @uiset/upload
+npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/tag-input @uiset/phone-input @uiset/upload
 ```
 
 ## Parts
@@ -23,6 +24,8 @@ npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/tag-input @ui
 | `InlineEditRoot`, `InlineEditPreview`, `InlineEditInput`, `InlineEditSave`, `InlineEditCancel`, `InlineEditError` | `inline-edit` | Its parts, for a layout of your own |
 | `TagInput`                                              | `tag-input`   | Tags in a field: typed, pasted or picked, edited in place         |
 | `addTags`, `splitTags`, `normalizeTag`                  | `tag-input`   | Its rules with no React in them, for your own checks              |
+| `PhoneInput`                                            | `phone-input` | A phone number and its country, formatted as typed, kept in E.164 |
+| `checkPhone`, `readPhone`, `findCountry`, `countryList` | `phone-input` | Its rules with no React in them, for your own checks              |
 | `Upload`                                                | `upload`      | A drop zone, a Choose files button and the list of uploads        |
 | `useUploadQueue`, `UploadRow`, `UploadPreview`          | `upload`      | The queue as a hook and one file's row, for a layout of your own  |
 | `createUploadQueue`                                     | `upload`      | The queue with no React in it                                     |
@@ -221,6 +224,45 @@ const [topics, setTopics] = useState(["React"])
   the same chips. Skins set `--uiset-chip-bg`, `--uiset-chip-fg`, `--uiset-chip-border`,
   `--uiset-chip-radius` and `--uiset-chip-weight`.
 
+## Phone input
+
+```tsx
+import { PhoneInput } from "@/components/ui/phone-input"
+
+const [phone, setPhone] = useState("") // E.164, like "+14155550123"
+
+<PhoneInput
+  label="Phone"
+  value={phone}
+  onValueChange={setPhone}
+  defaultCountry="US"
+  preferredCountries={["US", "GB", "IN"]}
+  description="We text a code to this number."
+/>
+```
+
+- **Typing:** digits format for the country as they're typed ("(415) 555-0123"), and the
+  caret stays after the same digit. Backspace or Delete on a separator takes the digit
+  beyond it. A typed or pasted `+` and calling code chooses the country (`+44` the United
+  Kingdom), and a pasted number in any format is read whole. Arabic-Indic and Persian digits
+  are read as 0 to 9.
+- **The country:** a button with the flag and the calling code opens every country by its
+  name in the page's language (`Intl.DisplayNames`, so no names ship), searched by name,
+  code or calling code. `countries` limits the list, `preferredCountries` puts some first,
+  and `country` / `defaultCountry` / `onCountryChange` hold it; it starts in the page
+  language's region. Choosing one keeps the digits, without a calling code typed for another.
+- **The value** is E.164 (`value`, `defaultValue`, `onValueChange(value, details)`), "" when
+  empty; `details.reason` is `type`, `paste`, `country` or `set`. `name` submits it.
+- **Checks:** leaving the field checks the number for its country ("Too short for a number
+  in United States.", "Not a valid number in …"), and `validate(value)` adds rules of your
+  own. The problem shows under the field, is read out, and stops a form's submit.
+- **Right to left:** the number and the calling code read left to right on any page
+  ("+966 51 234 5678", never "966+"), with the country button before the number.
+- `required`, `disabled`, `readOnly`, `placeholder`, `error` (a problem from outside),
+  `onBlur`, `locale` (the country names' language) and `messages` (its words).
+- Phone data is libphonenumber-js's small build, about 36 KB gzipped, installed with the
+  item. The field box is `data-field-box`, the same edge and ring as a text field in each skin.
+
 ## Upload
 
 `Upload` doesn't know where files go. You give it `upload`, a function that sends one file,
@@ -300,6 +342,9 @@ Outside React, `createUploadQueue(() => options)` is the same queue: call `start
 | Enter, F2                  | a tag                 | Edit it in place: its text goes back in the field         |
 | Delete, Backspace          | a tag                 | Remove it (Combobox's)                                    |
 | Escape                     | a tag being edited    | Keep the old tag                                          |
+| Enter, Space, Down         | a phone input's country | Open the countries, with the search focused (Combobox's) |
+| Up, Down, Enter            | the countries         | Move through the matches and choose one; focus goes back to the country |
+| Backspace, Delete          | a phone number        | Remove the digit before or after, across separators      |
 | Escape                     | its field             | Put the text back. Focus goes back to the value           |
 | Tab                        | its field             | Save and move on. With text that can't be saved, stay     |
 | Up, Down, Home, End        | the list of uploads   | Move between files. The list is one tab stop              |
@@ -321,6 +366,12 @@ order, because the keys above do the same from the field or the row.
   added: react", "Up to 5 tags"). The Combobox inside is the person's and is hidden from
   agents: its `setValue` waits about four seconds for a list of options a tag input
   doesn't have.
+- **PhoneInput** is one component listed by its `label`, whose value is the number in E.164
+  and whose `country` is its country, with `setValue(text, country?)` (any format: "020
+  7946 0958", "+44 20 7946 0958") and `setCountry(query)` (a name, "GB" or "+44"). A number
+  that isn't one for its country, or a country that isn't listed, fails the step with the
+  reason. The country list and the number's input are the person's and are hidden from
+  agents.
 - **Upload** is a file input listed by its `label`, with each row's text as its items
   ("report.pdf 248 kB Uploaded") and `clear`. An agent can't add files: it has none to
   give. Each row's Cancel and Retry are buttons named for the file ("Retry report.pdf"),
@@ -334,7 +385,7 @@ order, because the keys above do the same from the field or the row.
 
 ## Web Components
 
-`<uiset-schema-form>`, `<uiset-inline-edit>`, `<uiset-tag-input>` and `<uiset-upload>` are in
+`<uiset-schema-form>`, `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-phone-input>` and `<uiset-upload>` are in
 [Web Components](./web-components.md#content-and-forms), on the same primitives and queue.
 
 ```html
@@ -346,6 +397,17 @@ The tag input's attributes are React's props: `delimiters` is a string, each cha
 delimiter (`delimiters=",; "`), and `add-on-blur="false"` turns that off. `suggestions`,
 `validate`, `transform` and `messages` are properties. It fires `valuechange`
 (`preventDefault()` refuses), and its `value` is live.
+
+```html
+<uiset-phone-input label="Phone" default-country="US" name="phone"
+  description="We text a code to this number."></uiset-phone-input>
+```
+
+The phone input's attributes are React's props (`value`, `default-country`, `name`,
+`required`, `readonly`, `disabled`, `placeholder`, `description`, `error`, `locale`);
+`country` is live too, and `validate`, `messages`, `countries` and `preferredCountries` are
+properties. It fires `valuechange` with the number in E.164 and `countrychange` with the
+country. Its phone rules load as a chunk of their own the first time one is on the page.
 The schema form's element takes the same definition, from `@uiset/web`:
 
 ```html
