@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { lint, type FileRule, type RepoContext, type RepoRule } from "../../scripts/lint/core.ts"
-import { axeWaits, exampleFrames, internalPrimitives, noDeferredFocus, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports, toastsVisible } from "../../scripts/lint/rules/code.ts"
+import { axeWaits, exampleFrames, hooksAtTopLevel, internalPrimitives, noDeferredFocus, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports, toastsVisible } from "../../scripts/lint/rules/code.ts"
 import { rules } from "../../scripts/lint/rules/index.ts"
 import { facts } from "../../src/site/facts.ts"
 import pkg from "../../package.json"
@@ -36,6 +36,18 @@ describe("code rules", () => {
     const text = `requestAnimationFrame(() =>\n  requestAnimationFrame(() => {\n    // ")" in a comment\n    const s = ")"\n    el.focus()\n  }),\n)`
     expect(noDeferredFocus.check(text, "web/src/x.ts")).toEqual([expect.objectContaining({ line: 1 })])
     expect(noDeferredFocus.appliesTo("scripts/x.ts")).toBe(false)
+  })
+  fileRule(
+    hooksAtTopLevel,
+    "src/site/shell/code.tsx",
+    `function useInstallText(items: string[]) {\n  const manager = managers.find((m) => m.id === useManager())!\n}`,
+    `function useInstallText(items: string[]) {\n  const pm = useManager()\n  const manager = managers.find((m) => m.id === pm)!\n  return items.map((item) => <Row key={item} />)\n}\nfunction useMarkdown(load: () => string) {}`,
+  )
+  test("react/hooks-at-top-level catches a hook behind a condition, and reads past a call it can't close", () => {
+    expect(hooksAtTopLevel.check(`const theme = open && useSiteTheme()`, "src/x.tsx")).toEqual([expect.objectContaining({ line: 1 })])
+    expect(hooksAtTopLevel.check(`const x = a ? useA() : null`, "src/x.tsx")).toHaveLength(1)
+    expect(hooksAtTopLevel.check(`items.map((i) => <p>Don't {i}</p>)\nfunction useX() {}`, "src/x.tsx")).toEqual([])
+    expect(hooksAtTopLevel.appliesTo("scripts/x.ts")).toBe(false)
   })
   fileRule(noHandRolledRoles, "registry/uiset/ui/picker.tsx", `<div role="listbox" aria-label="Fruit">`, `<Listbox aria-label="Fruit">\nel.querySelector('[role="option"]')`)
   fileRule(relativeImports, "registry/uiset/ui/board.tsx", `import { Button } from "@/registry/uiset/ui/button"`, `import { Button } from "./button"`)

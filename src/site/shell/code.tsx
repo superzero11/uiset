@@ -117,7 +117,8 @@ const useManager = () =>
 
 /** The shadcn command that adds these items, for the package manager people picked. */
 function useInstallText(items: string[]) {
-  const manager = managers.find((m) => m.id === useManager())!
+  const pm = useManager()
+  const manager = managers.find((m) => m.id === pm)!
   return `${manager.run} ${items.map((item) => (item.includes("/") ? item : `@uiset/${item}`)).join(" ")}`
 }
 
