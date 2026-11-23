@@ -2478,3 +2478,14 @@ vercel-labs/ui#905 (2026-11-19).
   Chrome test does it on the home page (both fail on the old code); each page draws inside
   an error boundary, so a crash shows a message, not a blank site. Shipped alone on top of
   0.6.1's site; 0.7.0 stays unpushed until Wednesday.
+- 2026-11-23 — **Two guards after the hotfix** (the owner: "Yes, add both"). React's rules
+  of hooks now run in `pnpm lint`, so on every commit: a hook in a callback, a condition, a
+  loop or after an early return fails it. React's own plugin (`eslint-plugin-react-hooks`)
+  can't run here: it needs typescript-eslint, which refuses TypeScript 7 outright
+  (typescript-eslint#10940), and pnpm gives it the repo's TypeScript 7 as a peer whatever an
+  override says. So it's oxlint's port of the same rule (oxlint 1.92.0, no TypeScript needed,
+  603 files in 18 ms), run over staged content with `--staged`; it flags the hotfix's line in
+  both modes. Switch to React's plugin when typescript-eslint supports TypeScript 7. And a
+  control sweep (`tests/e2e/controls.spec.ts`): every page of the site, every tab, radio,
+  switch and pressed toggle through each option, failing on any page error.
+

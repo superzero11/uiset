@@ -6,6 +6,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { lint, type Baseline, type RepoContext } from "./core.ts"
+import { hooksRule, rulesOfHooks } from "./hooks.ts"
 import { rules } from "./rules/index.ts"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..")
@@ -16,7 +17,7 @@ const staged = args.has("--staged")
 const baselinePath = join(root, "scripts/lint/baseline.json")
 
 if (args.has("--rules")) {
-  for (const rule of rules) console.log(`${rule.id}\n  ${rule.why}\n`)
+  for (const rule of [...rules, hooksRule]) console.log(`${rule.id}\n  ${rule.why}\n`)
   process.exit(0)
 }
 
@@ -59,7 +60,9 @@ if (args.has("--update-baseline")) {
   process.exit(0)
 }
 
-const { problems, shrinkable } = lint(ctx, rules, baseline)
+const linted = lint(ctx, rules, baseline)
+const problems = [...linted.problems, ...rulesOfHooks(ctx.paths, ctx.read, root)]
+const { shrinkable } = linted
 for (const p of problems) console.log(`${p.path}:${p.line}  ${p.rule}  ${p.message}`)
 if (shrinkable.length)
   console.log(`\nFixed since the baseline (run pnpm lint --update-baseline to keep them fixed):\n  ${shrinkable.join("\n  ")}`)
@@ -67,4 +70,4 @@ if (problems.length) {
   console.log(`\n${problems.length} lint problem${problems.length === 1 ? "" : "s"}. pnpm lint --rules says why each rule exists.`)
   process.exit(1)
 }
-console.log(`Lint: ${ctx.paths.length} files, ${rules.length} rules, no problems.`)
+console.log(`Lint: ${ctx.paths.length} files, ${rules.length + 1} rules, no problems.`)

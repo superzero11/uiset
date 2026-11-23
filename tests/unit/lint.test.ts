@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest"
 import { lint, type FileRule, type RepoContext, type RepoRule } from "../../scripts/lint/core.ts"
 import { axeWaits, exampleFrames, hooksAtTopLevel, internalPrimitives, noDeferredFocus, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports, toastsVisible } from "../../scripts/lint/rules/code.ts"
 import { rules } from "../../scripts/lint/rules/index.ts"
+import { rulesOfHooks } from "../../scripts/lint/hooks.ts"
 import { facts } from "../../src/site/facts.ts"
 import pkg from "../../package.json"
 
@@ -43,6 +44,16 @@ describe("code rules", () => {
     `function useInstallText(items: string[]) {\n  const manager = managers.find((m) => m.id === useManager())!\n}`,
     `function useInstallText(items: string[]) {\n  const pm = useManager()\n  const manager = managers.find((m) => m.id === pm)!\n  return items.map((item) => <Row key={item} />)\n}\nfunction useMarkdown(load: () => string) {}`,
   )
+  test("react/rules-of-hooks (oxlint's port of React's rule) catches a hook in a callback, a condition or a loop, and lets a top-level one through", () => {
+    const files: Record<string, string> = {
+      "src/site/shell/code.tsx": `function useInstallText(items: string[]) {\n  const manager = managers.find((m) => m.id === useManager())!\n  return <Row<string> key={manager} />\n}`,
+      "registry/uiset/ui/card.tsx": `function Card({ open }: { open: boolean }) {\n  if (open) useEffect(() => {}, [])\n  for (const x of [1]) useMemo(() => x, [])\n  return null\n}`,
+      "registry/uiset/ui/good.tsx": `function Good() {\n  const pm = useManager()\n  return [1].map((n) => <p key={n}>{pm}</p>)\n}`,
+      "scripts/x.ts": `[1].map(() => useX())`,
+    }
+    const found = rulesOfHooks(Object.keys(files), (path) => files[path], process.cwd())
+    expect(found.map((f) => `${f.path}:${f.line}`).sort()).toEqual(["registry/uiset/ui/card.tsx:2", "registry/uiset/ui/card.tsx:3", "src/site/shell/code.tsx:2"])
+  })
   test("react/hooks-at-top-level catches a hook behind a condition, and reads past a call it can't close", () => {
     expect(hooksAtTopLevel.check(`const theme = open && useSiteTheme()`, "src/x.tsx")).toEqual([expect.objectContaining({ line: 1 })])
     expect(hooksAtTopLevel.check(`const x = a ? useA() : null`, "src/x.tsx")).toHaveLength(1)

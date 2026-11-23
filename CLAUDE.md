@@ -87,7 +87,7 @@ Project skills live in `.claude/skills/` (installed with `npx skills add`, pinne
 
 ## Commands
 
-`pnpm dev` · `pnpm lint` (the project lint; `--rules` lists why each rule exists) · `pnpm check`
+`pnpm dev` · `pnpm lint` (the project lint, React's rules of hooks included; `--rules` lists why each rule exists) · `pnpm check`
 (lint + typecheck + unit + e2e) · `pnpm registry:build` ·
 `scripts/install-test.sh` (fresh-app install, typecheck and build).
 Where a test goes (`design/bridge-testing-plan.md`): behavior (state and names) in Vitest
