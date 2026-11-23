@@ -250,13 +250,18 @@ test("agents hear that a board without onCardOpen can't open cards", async () =>
   expect(() => fireEvent.click(card("Write the spec"))).not.toThrow()
 })
 
-test("agents see each card as a readable item: where it is and whose it is", async () => {
+// Agents read what people see on a card's face: its priority badge and labels too, not only
+// where it is and whose it is (2026-11-23, from vercel-labs/ui#1030's kanban for agents).
+test("agents see each card as a readable item: where it is and what its face shows", async () => {
   const agent = createAgent()
-  const detailed = { ...cards, c: { ...cards.c!, assignee: "Grace Hopper", due: "2026-12-02" } }
+  const detailed = {
+    ...cards,
+    c: { ...cards.c!, assignee: "Grace Hopper", due: "2026-12-02", priority: "urgent" as const, labels: ["Release", "Docs"] },
+  }
   render(<Board label="Items" columns={columns} cards={detailed} defaultLanes={{ todo: ["a"], doing: ["c"], done: [] }} />)
   await act(() => new Promise((resolve) => setTimeout(resolve, 0)))
   expect(agent.snapshot().find((item) => item.label === "Items")?.items).toEqual([
     { value: "a", label: "Write the spec (To do)" },
-    { value: "c", label: "Ship the beta (Doing, Grace Hopper, due 2026-12-02)" },
+    { value: "c", label: "Ship the beta (Doing, Urgent, Grace Hopper, due 2026-12-02; labels: Release, Docs)" },
   ])
 })

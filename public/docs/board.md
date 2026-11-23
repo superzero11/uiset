@@ -91,6 +91,7 @@ selected one.
 ## For agents
 
 `moveCard(card, column, position?)`, `addCard(column, title)` and `openCard(card)`, by the
-titles people see. The snapshot's items list every card with its column, assignee and due
-date. A board without `onCardOpen` or `onAddCard` tells agents it can't open or add cards.
+titles people see. The snapshot's items list every card with its column and what its face
+shows: an urgent or high priority, the assignee, the due date and the labels, like "Ship the
+beta (Doing, Urgent, Grace Hopper, due 2026-12-02; labels: Release)". A board without `onCardOpen` or `onAddCard` tells agents it can't open or add cards.
 Deleting goes through the dialog's confirm, marked `data-agent-confirm`.

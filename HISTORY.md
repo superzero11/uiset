@@ -2301,3 +2301,11 @@ vercel-labs/ui#905 (2026-11-19).
   release can move UI SDK under **Changed**, as 0.1.1 did. Lint, typecheck and 764 unit tests
   pass on it; the browsers run with the release. The roadmap's Following UI SDK: #929 fixed
   in beta.14, #928's cause found upstream, #927's fix waiting for a pull request.
+- 2026-11-23 — 0.6.1: agents read a board card's priority and labels (the owner approved it
+  from the daily watch: vercel-labs/ui#1030 and #1014 show a team building a kanban board for
+  agents and missing card fields). Each card's item for agents held its column, assignee and
+  due date; it now holds what its face shows too, the "Urgent" or "High priority" badge and
+  the labels: "Ship the beta (Doing, Urgent, Grace Hopper, due 2026-12-02; labels:
+  Release)". React and Web Components share the wording with what screen readers hear. The
+  React and web tests read it; with the priority taken out, both fail (mutation check). No
+  visual change. Separate fields per card wait on UI SDK (ideas #13).

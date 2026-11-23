@@ -42,7 +42,9 @@ test("agents move cards by the names people see, within the limits, and read whe
   expect(full.error?.message).toContain("In review is full")
   const found = await (bridge.agent as unknown as Agent).query({ within: "Sprint board" })
   const items = found.find((c) => c.label === "Sprint board")?.items?.map((i) => i.label)
-  expect(items).toContain("Rate-limit the public API (Doing, Ada Lovelace)")
+  // What the face shows: the urgent badge, the person, the due date and the labels.
+  expect(items).toContain("Rate-limit the public API (Doing, Urgent, Ada Lovelace)")
+  expect(items?.find((label) => label.startsWith("Audit the cookie banner"))).toMatch(/, Grace Hopper, due 2026-11-12; labels: Legal\)$/)
 })
 
 test("renamed columns and a new renderCard redraw; counts include every id, in words", async () => {

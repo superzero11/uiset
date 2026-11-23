@@ -112,16 +112,26 @@ const dueFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "numer
 const dueText = (due: string) => dueFormat.format(new Date(`${due}T00:00:00Z`))
 const isOverdue = (card: BoardCardData, today?: string) => (card.due && today ? card.due < today : false)
 
+const priorityText = (card?: BoardCardData) =>
+  card?.priority === "urgent" ? "Urgent" : card?.priority === "high" ? "High priority" : undefined
+
 /** What a screen reader hears after a card's title: the details its face shows. */
 function describeCardDefault(card: BoardCardData, today?: string) {
   return [
-    card.priority === "urgent" ? "Urgent" : card.priority === "high" ? "High priority" : undefined,
+    priorityText(card),
     card.due ? `${isOverdue(card, today) ? "Overdue" : "Due"} ${dueText(card.due)}` : undefined,
     card.assignee,
     card.labels?.length ? `Labels: ${card.labels.join(", ")}` : undefined,
   ]
     .filter(Boolean)
     .join(". ")
+}
+
+/** What an agent reads for a card: its title and column, then its priority, person, due date and labels. */
+function agentCardLabel(key: string, column: string, card?: BoardCardData) {
+  const details = [column, priorityText(card), card?.assignee, card?.due && `due ${card.due}`].filter(Boolean)
+  const labels = card?.labels?.length ? `; labels: ${card.labels.join(", ")}` : ""
+  return `${card?.title ?? key} (${details.join(", ")}${labels})`
 }
 
 /** A card's face: title, labels, due date and the person on it. */
@@ -295,14 +305,10 @@ function Board({
     message: moveMessage,
     filteredMessage: messages?.filtered,
     controller,
-    // Agents read items as { value, label }: the label says where a card is and whose it is.
+    // Agents read items as { value, label }: the label holds where a card is and what its face shows.
     items: (current) =>
       columns.flatMap((column) =>
-        (current[column.id] ?? []).map((key) => {
-          const card = cards[key]
-          const details = [column.title, card?.assignee, card?.due && `due ${card.due}`].filter(Boolean)
-          return { value: key, label: `${card?.title ?? key} (${details.join(", ")})` }
-        }),
+        (current[column.id] ?? []).map((key) => ({ value: key, label: agentCardLabel(key, column.title, cards[key]) })),
       ),
   })
   const hiddenSet = new Set(hidden)

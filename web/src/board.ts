@@ -85,15 +85,25 @@ const words = (el: BoardElement): BoardMessages => ({
   ...el.messages,
 })
 
+const priorityText = (card?: BoardCardData) =>
+  card?.priority === "urgent" ? "Urgent" : card?.priority === "high" ? "High priority" : undefined
+
 function describe(card: BoardCardData, today?: string) {
   return [
-    card.priority === "urgent" ? "Urgent" : card.priority === "high" ? "High priority" : undefined,
+    priorityText(card),
     card.due ? `${overdue(card, today) ? "Overdue" : "Due"} ${dueText(card.due)}` : undefined,
     card.assignee,
     card.labels?.length ? `Labels: ${card.labels.join(", ")}` : undefined,
   ]
     .filter(Boolean)
     .join(". ")
+}
+
+/** What an agent reads for a card: its title and column, then its priority, person, due date and labels. */
+function agentCardLabel(key: string, column: string, card?: BoardCardData) {
+  const details = [column, priorityText(card), card?.assignee, card?.due && `due ${card.due}`].filter(Boolean)
+  const labels = card?.labels?.length ? `; labels: ${card.labels.join(", ")}` : ""
+  return `${card?.title ?? key} (${details.join(", ")}${labels})`
 }
 
 const badge = (tone: string, text: string) => h("span", { class: "badge", "data-tone": tone }, text)
@@ -156,11 +166,7 @@ function defineBoard() {
           cardLabel: (key: string) => board.cards?.[key]?.title ?? key,
           items: (lanes: TransferLists) =>
             (board.columns ?? []).flatMap((column) =>
-              (lanes[column.id] ?? []).map((key) => {
-                const card = board.cards?.[key]
-                const details = [column.title, card?.assignee, card?.due && `due ${card.due}`].filter(Boolean)
-                return { value: key, label: `${card?.title ?? key} (${details.join(", ")})` }
-              }),
+              (lanes[column.id] ?? []).map((key) => ({ value: key, label: agentCardLabel(key, column.title, board.cards?.[key]) })),
             ),
         }
       },

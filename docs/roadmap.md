@@ -15,11 +15,11 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**0.6.1: fixes, ready for the next release.** UI SDK beta.14, with its fixes for a Select's
-search highlight and Firefox's slow-closing popups. Toasts an agent can read
-([vercel-labs/ui#978](https://github.com/vercel-labs/ui/issues/978)), no clipped focus rings
-in the chat, month views and pricing questions agents find by name, Mod+B registered once
-when one shell sits in another, and the web IDE's palette without a duplicate. S
+**0.6.1: fixes, ready for the next release.** UI SDK beta.14; toasts an agent can read
+([vercel-labs/ui#978](https://github.com/vercel-labs/ui/issues/978)); no clipped focus rings
+in the chat; month views, pricing questions and board cards' priority and labels for agents;
+Mod+B registered once when one shell sits in another; the web IDE's palette without a
+duplicate. S
 
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
 bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox

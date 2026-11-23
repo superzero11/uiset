@@ -47,6 +47,10 @@ On UI SDK `0.1.0-beta.14`.
 - **Mod+B is registered once when an `AppShell` sits inside another** (a template shown in
   an app's own shell): the inner shell leaves it to the outer one, which toggles the same
   remembered sidebar. UI SDK had warned that the shortcut was registered twice. `app-shell`.
+- **Agents read a board card's priority and labels.** A card's item for agents held its
+  column, assignee and due date, but not the "Urgent" or "High" badge or the labels people
+  see on its face. It holds them now, like "Ship the beta (Doing, Urgent, Grace Hopper, due
+  2026-12-02; labels: Release)". `board`, React and Web Components (`<uiset-board>`).
 - **The web IDE's command palette loads without a duplicate.** Files and Recent set back to
   back made UI SDK's command register two items with one file's value for a moment; the
   palette now makes one list from changes set together. `@uiset/web` (`<uiset-command-palette>`).

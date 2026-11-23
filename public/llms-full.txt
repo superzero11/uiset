@@ -3789,11 +3789,11 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**0.6.1: fixes, ready for the next release.** UI SDK beta.14, with its fixes for a Select's
-search highlight and Firefox's slow-closing popups. Toasts an agent can read
-([vercel-labs/ui#978](https://github.com/vercel-labs/ui/issues/978)), no clipped focus rings
-in the chat, month views and pricing questions agents find by name, Mod+B registered once
-when one shell sits in another, and the web IDE's palette without a duplicate. S
+**0.6.1: fixes, ready for the next release.** UI SDK beta.14; toasts an agent can read
+([vercel-labs/ui#978](https://github.com/vercel-labs/ui/issues/978)); no clipped focus rings
+in the chat; month views, pricing questions and board cards' priority and labels for agents;
+Mod+B registered once when one shell sits in another; the web IDE's palette without a
+duplicate. S
 
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
 bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox
@@ -5957,8 +5957,9 @@ selected one.
 ## For agents
 
 `moveCard(card, column, position?)`, `addCard(column, title)` and `openCard(card)`, by the
-titles people see. The snapshot's items list every card with its column, assignee and due
-date. A board without `onCardOpen` or `onAddCard` tells agents it can't open or add cards.
+titles people see. The snapshot's items list every card with its column and what its face
+shows: an urgent or high priority, the assignee, the due date and the labels, like "Ship the
+beta (Doing, Urgent, Grace Hopper, due 2026-12-02; labels: Release)". A board without `onCardOpen` or `onAddCard` tells agents it can't open or add cards.
 Deleting goes through the dialog's confirm, marked `data-agent-confirm`.
 
 
