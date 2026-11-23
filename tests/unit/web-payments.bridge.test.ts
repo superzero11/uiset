@@ -41,6 +41,8 @@ test("the order lists its lines and adds them up; a stepper changes a line and t
 test("a discount code is refused with the reason, or applied and taken off", async () => {
   await open()
   const code = () => within(summary()).getByRole("textbox", { name: "Discount code" })
+  // Nothing to apply until there's a code, as in React.
+  expect((within(summary()).getByRole("button", { name: "Apply" }) as HTMLButtonElement).disabled).toBe(true)
   await userEvent.type(code(), "SPRING{Enter}")
   await settle()
   expect(within(summary()).getByText("That code isn't one we know. Try WELCOME10.")).toBeTruthy()

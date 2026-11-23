@@ -20,8 +20,8 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 `phone` field) and input masks (cards, expiry dates and codes, IBANs, amounts, patterns; a
 schema form's `mask` and `currency`), each in React and Web Components, with agents. M
 
-**Checkout.** The payments and address kits are built (card and bank fields, an order
-summary, Pay that waits for a person; addresses for 252 countries); next the checkout template. M
+**Checkout, for Wednesday.** Built: the payments kit, the address kit (252 countries) and
+the checkout template on both, React and Web Components, which an agent fills and a person pays. M
 
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
 bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox
@@ -101,7 +101,7 @@ frame, data display and form parts, and the small ones from UI SDK's showcase (s
 fades, radio cards, rings, a textarea's count, password rules, a confirm button); a
 sortable list and a sortable tree, and files dragged into folders in the IDE; fourteen
 kits (chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal,
-Studio, Agent Console, payments, address); ten page templates; Web Components for every kit
+Studio, Agent Console, payments, address); eleven page templates; Web Components for every kit
 and template; a schema form agents fill by field name; [agent-check](./agent-check.md),
 which scores whether agents can use a page; and the theme generator.
 

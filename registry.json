@@ -4168,6 +4168,59 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "checkout",
+      "type": "registry:block",
+      "title": "Checkout page",
+      "description": "A checkout: contact, a delivery address whose fields follow its country, delivery options, card or bank payment with a billing address when it differs, and the order with a discount code and Pay beside it. Pay checks the whole page and focuses the first problem; an agent fills it and a person pays.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.14",
+        "@ui-sdk/react@0.1.0-beta.14"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/address",
+        "superzero11/uiset/alert",
+        "superzero11/uiset/checkbox",
+        "superzero11/uiset/field",
+        "superzero11/uiset/payments",
+        "superzero11/uiset/phone-input",
+        "superzero11/uiset/radio"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/templates/checkout.tsx",
+          "type": "registry:ui",
+          "target": "@ui/templates/checkout.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/templates/checkout-sample.ts",
+          "type": "registry:file",
+          "target": "@ui/templates/checkout-sample.ts"
+        },
+        {
+          "path": "registry/uiset/ui/templates/templates.css",
+          "type": "registry:file",
+          "target": "@ui/templates/templates.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icons.tsx",
+          "type": "registry:file",
+          "target": "@ui/shell/icons.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icon-paths.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/icon-paths.ts"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "pricing",
       "type": "registry:block",
       "title": "Pricing section",

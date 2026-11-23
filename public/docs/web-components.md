@@ -965,7 +965,8 @@ pay.addEventListener("pay", (event) => {
   returns whether the payment can be sent. Fires `valuechange`.
 - `<uiset-order-summary>`: `lines`, `discount`, `applyCode` and `messages` are properties;
   `currency`, `locale`, `shipping`, `tax`, `quantities` and `heading` (`2`, `3` or `false`)
-  attributes. `total` is the sum. Fires `quantitychange` and `discountchange`.
+  attributes. `total` is the sum. Fires `quantitychange` and `discountchange`. What a page
+  puts inside it (a Pay button, a note) stays below the totals.
 - `<uiset-pay-button>`: `amount` (a property or an attribute), `currency`, `locale`,
   `method` ("the card ending 4242") and `disabled`. It fires `pay`; `event.detail.wait()`
   keeps it busy until your promise settles. An agent's press waits for a person.
@@ -1006,6 +1007,7 @@ imports as well (`registry/uiset/ui/templates/*-sample.ts`), so the two show the
 | ---- | ------------- |
 | `auth.html` | Sign in, sign up, forgot and reset password, verify a code: browser checks, server messages, a strength meter |
 | `pricing.html` | Plans with a monthly or yearly switch, a comparison table and questions |
+| `checkout.html` | Contact, an address that follows its country, delivery, payment and the order with Pay, checked as a whole |
 | `dashboard.html` | A date range that rescopes the figures, charts and recent orders, in the App Shell |
 | `admin.html` | Records with search, filters and export; create and edit in a drawer; confirmed bulk delete |
 | `settings.html` | Profile, security, notifications, billing with usage and invoices, team, and a danger zone |

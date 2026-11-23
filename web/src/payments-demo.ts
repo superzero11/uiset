@@ -1,5 +1,6 @@
 // The Payments kit's web page: how to pay beside the order it pays for.
 import { toast } from "@ui-sdk/web"
+import { createAgent } from "@ui-sdk/web/agent"
 import "./uiset"
 import type { UISetOrderSummary, UISetPayButton, UISetPaymentFields } from "./payments"
 
@@ -28,3 +29,6 @@ pay.addEventListener("pay", (event) => {
   if (!payment.check()) return
   event.detail.wait(new Promise((resolve) => setTimeout(resolve, 600)).then(() => toast("Paid. A receipt is on its way.")))
 })
+
+// The page's agent bridge, for UISet's agent-readiness check and for agents on the page.
+Object.assign(window, { agent: createAgent() })

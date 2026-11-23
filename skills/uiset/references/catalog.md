@@ -195,4 +195,5 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 - `ide-app`: A code editor in resizable panes: files with version control marks, tabs, an editor with syntax colors, a command palette (files, commands, lines), problems, an outline and a status bar.
 - `project-board`: A project's issues as a board or a list: sprint progress, search and an assignee filter, column limits, card details, a new-issue form and Undo on moves.
 - `calendar-app`: A calendar app: day, week and month views, a small month to jump to a day, calendars to show or hide, what's next, and events created, edited and deleted in a dialog.
+- `checkout`: A checkout: contact, a delivery address whose fields follow its country, delivery options, card or bank payment with a billing address when it differs, and the order with a discount code and Pay beside it. Pay checks the whole page and focuses the first problem; an agent fills it and a person pays.
 - `pricing`: Plans with a monthly or yearly switch, a recommended plan, a comparison table and questions.

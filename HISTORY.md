@@ -2488,4 +2488,19 @@ vercel-labs/ui#905 (2026-11-19).
   both modes. Switch to React's plugin when typescript-eslint supports TypeScript 7. And a
   control sweep (`tests/e2e/controls.spec.ts`): every page of the site, every tab, radio,
   switch and pressed toggle through each option, failing on any page error.
+- 2026-11-23 — **The checkout template**, the last of the checkout plan
+  (`design/checkout-plan.md`). `CheckoutTemplate` and `web/templates/checkout.html`: contact
+  (email, an optional phone), the delivery address (the address kit), delivery options as
+  radio cards, payment (the payments kit) with "billing address is the same as delivery", a
+  second address when unticked, and the order beside it (under it on a phone) with Pay
+  inside. Pay checks every part and focuses the first problem on the page, after each part
+  has focused its own; a placed order replaces the page with its confirmation, focus on its
+  heading. The sample charge declines the test card ending 0002, as a provider's test mode
+  does. On the web, `<uiset-order-summary>` now keeps what a page puts inside it below its
+  totals (it was wiped by the first draw, which an attribute's callback runs before
+  connectedCallback), keeps its own 14px text (on a 16px web page its lines read larger than
+  React's), and disables Apply until there's a code, as React's does. Also found: the web agent-readiness spec didn't list the payments and
+  address pages, which didn't publish `window.agent`; both do now and score 100. Tests: 3
+  React, 3 web (a wrong email alone stops the order), 12 axe, the sweep on the page; 10
+  rules mutation-checked.
 

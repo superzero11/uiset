@@ -11,6 +11,8 @@
     border: 1px solid var(--ui-border);
     border-radius: var(--uiset-popup-radius, var(--ui-radius));
     background: color-mix(in oklab, var(--ui-muted) 55%, var(--ui-background));
+    /* Its own size, not the page's: the same in React's gallery and on a 16px web page. */
+    font-size: 0.875rem;
   }
 
   .order-summary-title {

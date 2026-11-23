@@ -6,8 +6,8 @@ import { checkPage, waitForAgent } from "@/registry/uiset/ui/agent-check/playwri
 // kit page, an agent finds every control by name. The pages keep their bridge in `window.agent`.
 
 const pages = [
-  ...["auth", "dashboard", "settings", "admin", "inbox", "chat-app", "project-board", "calendar-app", "pricing"].map((name) => `/templates/${name}.html`),
-  ...["index", "content", "data-grid", "charts", "board", "schedule", "canvas", "ide", "chat", "mobile", "terminal", "rich-text", "agent"].map((name) => `/${name}.html`),
+  ...["auth", "dashboard", "settings", "admin", "inbox", "chat-app", "project-board", "calendar-app", "pricing", "checkout"].map((name) => `/templates/${name}.html`),
+  ...["index", "content", "data-grid", "charts", "board", "schedule", "canvas", "ide", "chat", "mobile", "terminal", "rich-text", "agent", "payments", "address"].map((name) => `/${name}.html`),
 ]
 
 for (const path of pages) {

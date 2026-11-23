@@ -38,6 +38,14 @@ On UI SDK `0.1.0-beta.14`.
   pays, and confirmed by a person when an agent presses it). `checkPayment` says what's
   missing, field by field. React and Web Components (`<uiset-payment-fields>`,
   `<uiset-order-summary>`, `<uiset-pay-button>`).
+- **Checkout template.** `CheckoutTemplate` (`checkout`) and `web/templates/checkout.html`:
+  contact (email and an optional phone), a delivery address that follows its country,
+  delivery options as radio cards, card or bank payment with a billing address when it
+  differs, and the order beside it with a discount code and Pay. Pay checks the whole page
+  and focuses the first problem; an agent fills every part (each address in one step) and a
+  person pays. `onPlaceOrder` gets the order and returns a message when it's refused.
+  `<uiset-order-summary>` now keeps what you put inside it (a Pay button) below its totals,
+  keeps its own text size on any page, and, as React's, disables Apply until there's a code.
 - **Address kit.** `AddressFields` and `<uiset-address-fields>`: an address whose fields
   follow its country (its order, its names for them, the ones it requires) for 252
   countries, from Google's address data. Region lists for eight countries, a postal code

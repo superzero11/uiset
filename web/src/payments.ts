@@ -86,6 +86,8 @@ class UISetOrderSummary extends Evented<UISetOrderSummaryEvents>() {
   #codeError: string | null = null
   #titleId = uid("order-summary")
   #applyCode?: (code: string) => OrderDiscount | string | Promise<OrderDiscount | string>
+  /** What the page put inside (a Pay button, a note): kept below the totals, as React's children are. */
+  #footer: Node[] | null = null
   messages?: Partial<PaymentMessages>
 
   /** Applies a code: the discount, or the reason it's refused. With it, the summary takes codes. */
@@ -154,6 +156,8 @@ class UISetOrderSummary extends Evented<UISetOrderSummaryEvents>() {
 
   render() {
     if (!this.isConnected) return
+    // Kept at the first draw, which an attribute's callback can run before connectedCallback.
+    this.#footer ??= [...this.childNodes].filter((node) => node.nodeType === Node.ELEMENT_NODE || node.textContent?.trim())
     const words = { ...paymentMessages, ...this.messages }
     const money = this.#money()
     const totals = this.#totals()
@@ -218,6 +222,8 @@ class UISetOrderSummary extends Evented<UISetOrderSummaryEvents>() {
         field.input.removeAttribute("required")
         field.input.value = this.#code
         const apply = nativeButton(words.apply, { "data-variant": "outline" })
+        // Nothing to apply until there's a code, as React's.
+        attr(apply.wrap, "disabled", this.#code.trim() ? null : "")
         apply.native.addEventListener("click", () => void this.#apply(field.input))
         field.input.addEventListener("keydown", (event) => {
           // Enter applies the code, without sending a form the summary sits in.
@@ -228,6 +234,7 @@ class UISetOrderSummary extends Evented<UISetOrderSummaryEvents>() {
         })
         field.input.addEventListener("input", () => {
           this.#code = field.input.value
+          attr(apply.wrap, "disabled", this.#code.trim() ? null : "")
           if (this.#codeError) {
             this.#codeError = null
             field.show(null)
@@ -254,7 +261,7 @@ class UISetOrderSummary extends Evented<UISetOrderSummaryEvents>() {
       row(words.tax, tax === null ? later(words.taxLater) : money.format(tax)),
       row(words.total, money.format(totals.total), "order-totals-total"),
     )
-    section.append(totalsList)
+    section.append(totalsList, ...(this.#footer ?? []))
     this.replaceChildren(section)
   }
 

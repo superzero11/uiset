@@ -1,7 +1,7 @@
 import AxeBuilder from "./axe"
 import { expect, test, type Page } from "@playwright/test"
 
-const templates = ["auth", "dashboard", "settings", "admin", "inbox", "chat-app", "pricing", "ide-app", "project-board", "calendar-app"]
+const templates = ["auth", "dashboard", "settings", "admin", "inbox", "chat-app", "pricing", "checkout", "ide-app", "project-board", "calendar-app"]
 const frame = (page: Page) => page.locator(".template-frame")
 
 async function open(page: Page, template: string, query = "") {

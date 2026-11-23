@@ -119,8 +119,9 @@ pay.addEventListener("pay", async () => {
 
 - `<uiset-payment-fields>`: `value` is the payment, `methods` the ways to pay; `check()` shows
   what's missing and says whether it can be sent; `valuechange` fires as it's filled.
-- `<uiset-order-summary>`: `lines`, `discount`, `applyCode` and `removeCode` are properties;
+- `<uiset-order-summary>`: `lines`, `discount`, `applyCode` and `messages` are properties;
   `currency`, `locale`, `shipping`, `tax` and `quantities` (steppers) are attributes. `total`
-  reads the sum; `quantitychange` and `discountchange` fire.
+  reads the sum; `quantitychange` and `discountchange` fire. What you put inside it (a Pay
+  button, a note) stays below the totals, as React's children do.
 - `<uiset-pay-button>`: `amount` and `method`; it fires `pay` and is busy until the promise
   you hand to `event.detail.wait()` settles.

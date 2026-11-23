@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test"
 
 // The page templates as web pages, with no React: the same screens and behavior as the
 // React templates, built from UI SDK's elements and UISet's.
-const templates = ["auth", "pricing", "dashboard", "admin", "settings", "inbox", "chat-app", "project-board", "calendar-app"]
+const templates = ["auth", "pricing", "checkout", "dashboard", "admin", "settings", "inbox", "chat-app", "project-board", "calendar-app"]
 const frame = (page: Page) => page.locator(".template-frame")
 
 async function open(page: Page, template: string, hash = "") {

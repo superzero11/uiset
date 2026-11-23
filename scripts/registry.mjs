@@ -678,6 +678,13 @@ const templates = [
     ["templates/calendar-app-sample.ts"],
   ],
   [
+    "checkout",
+    "Checkout page",
+    "A checkout: contact, a delivery address whose fields follow its country, delivery options, card or bank payment with a billing address when it differs, and the order with a discount code and Pay beside it. Pay checks the whole page and focuses the first problem; an agent fills it and a person pays.",
+    ["address", "alert", "checkbox", "field", "payments", "phone-input", "radio"],
+    ["templates/checkout-sample.ts"],
+  ],
+  [
     "pricing",
     "Pricing section",
     "Plans with a monthly or yearly switch, a recommended plan, a comparison table and questions.",

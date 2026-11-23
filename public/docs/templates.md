@@ -18,6 +18,7 @@ What a product team ships before anything domain-specific:
 | `inbox`       | Folders, a message list, a reading pane, compose                               | AppShell, Listbox, Badge, Dialog, Textarea, TokenInput, Toast  |
 | `chat-app`    | The chat kit as a full page: chats, thread, composer                           | Chat kit                                                       |
 | `pricing`     | A landing section: plans with a monthly/yearly switch, comparison, FAQ         | SegmentedControl, Card, Accordion, Badge                       |
+| `checkout`    | Contact, a delivery address, delivery options, payment, a billing address when it differs, and the order with Pay | Address kit, Payments kit, PhoneInput, RadioCard, Checkbox, Alert |
 | `project-board` | A project's issues as a board or a list: sprint progress, filters, details, new issue | AppShell, PageHeader, Meter, Board kit, DataGrid, SegmentedControl, Dialog, Toast |
 | `calendar-app` | Day, week and month views, a small month to jump, calendars to show or hide, what's next | AppShell, Scheduler kit, Calendar, Checkbox, Tooltip, Toast |
 
@@ -63,6 +64,7 @@ Render it, then replace its sample data:
 | `inbox`     | `<InboxTemplate defaultMessages={…} now={new Date()} onSend={…} onMove={…} />` | Sending and folder moves go to your mail API |
 | `chat-app`  | `<ChatAppTemplate assistant={…} commands={…} mentions={…} />` | An async generator of `text`, `reasoning`, `tool`, `sources`, `checkpoint` and `subagent` events |
 | `pricing`   | `<PricingTemplate plans={…} lede={…} />`   | Plans, comparison rows and questions are props; "save n%" comes from the plans |
+| `checkout`  | `<CheckoutTemplate lines={…} deliveryOptions={…} onApplyCode={…} tax={…} onPlaceOrder={…} />` | `onPlaceOrder` gets the whole order and returns nothing when it's placed or a message ("Your bank declined…"); `tax(address, goods)` is null until you can work it out; `countries` keeps the list to where you deliver |
 | `project-board` | `<ProjectBoardTemplate defaultCards={…} defaultLanes={…} columns={…} people={…} labels={…} onMove={…} onSave={…} />` | Both views share the cards and lanes; the last column counts as done; `onCreate` and `onDelete` too |
 | `calendar-app` | `<CalendarAppTemplate defaultEvents={…} calendars={…} today={…} now={new Date()} onSave={…} onDelete={…} />` | Each event names its calendar, and the calendar's chart slot is its color; times are minutes in `timeZone` |
 

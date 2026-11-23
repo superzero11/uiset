@@ -299,7 +299,7 @@ function AddressFields({
 }
 
 export { AddressFields }
-export { addressCountries, addressLayout, addressMessages, checkAddress, countryName, emptyAddress, fillAddress, findCountry } from "./address/address"
+export { addressCountries, addressLayout, addressMessages, checkAddress, countryName, emptyAddress, fillAddress, findCountry, startCountry } from "./address/address"
 export { addressFormats, addressRegions } from "./address/formats"
 export type { AddressCountry, AddressFieldName, AddressLayout, AddressMessages, AddressValue, Region } from "./address/address"
 export type { AddressFieldsDetails, AddressFieldsProps, AddressFieldsReason }
