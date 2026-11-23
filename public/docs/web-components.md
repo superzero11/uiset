@@ -150,7 +150,7 @@ plain elements. UI SDK's own `<ui-*>` elements are typed by `@ui-sdk/web`.
 | `<uiset-search-field>`, `<uiset-copy-button>`, `<uiset-stepper>`      | A search box with Clear and a "/" key, a copy button that says Copied, and the steps of a flow |
 | `<uiset-table>`, `<uiset-avatar-group>`, `<uiset-count-badge>`       | A scroll area around your table (sticky headings and first column, rows that stack), overlapping avatars with a count, and a count on a button's corner |
 | `<uiset-code-block>`, `<uiset-code-tabs>`, `<uiset-package-command>` | Code in its language's colors with a caption, line numbers, marked lines and copy; tabs of versions; one command for npm, pnpm, yarn and bun |
-| `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-phone-input>`, `<uiset-upload>` | A value that turns into a field when pressed, tags typed, pasted or picked, a phone number with its country, and a drop zone with a queue of uploads |
+| `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-phone-input>`, `<uiset-masked-input>`, `<uiset-upload>` | A value that turns into a field when pressed, tags typed, pasted or picked, a phone number with its country, a field formatted as typed (cards, IBANs, amounts, patterns), and a drop zone with a queue of uploads |
 | `<uiset-sortable-list>`, `<uiset-sortable-tree>`                      | A list people put in order by drag or by keys, with a selection that moves together; a tree they reorder and nest |
 
 ## Studio
@@ -722,7 +722,7 @@ notes.addEventListener("valuechange", (e) => {
 ## Content and forms
 
 The web twins of React's `table`, `avatar-group`, `CountBadge`, `code-block`,
-`inline-edit`, `tag-input`, `phone-input`, `upload`, `schema-form`, `sortable-list` and `sortable-tree`. `web/content.html` has each
+`inline-edit`, `tag-input`, `phone-input`, `input-mask`, `upload`, `schema-form`, `sortable-list` and `sortable-tree`. `web/content.html` has each
 of them.
 
 ```html
@@ -749,6 +749,7 @@ of them.
 <uiset-inline-edit label="Project name" value="Atlas" actions></uiset-inline-edit>
 <uiset-tag-input label="Topics" value="React, CSS" max="5" description="Separate them with commas."></uiset-tag-input>
 <uiset-phone-input label="Phone" default-country="US" name="phone"></uiset-phone-input>
+<uiset-masked-input label="Card number" mask="card-number" name="card"></uiset-masked-input>
 <uiset-upload label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
 <uiset-schema-form confirm="Sends an invite email to the address given" done-message="Invite sent."></uiset-schema-form>
 <uiset-sortable-list label="Playlist" multiple></uiset-sortable-list>
@@ -806,6 +807,14 @@ pages.addEventListener("itemschange", (e) => save(e.detail.value)) // the items,
   `messages`, `countries` and `preferredCountries` properties. It fires `valuechange` and
   `countrychange`. The phone rules (with libphonenumber-js) load as their own chunk the first
   time one connects. Agents call `setValue(text, country?)` and `setCountry(query)`.
+- `<uiset-masked-input>` is React's `MaskedInput` on the same primitive and masks: `mask` is
+  `card-number`, `card-expiry`, `card-code`, `iban`, `currency` (with `currency` and
+  `locale`) or `pattern` (with `pattern`). It formats as typed with the caret kept, names a
+  card's brand, an IBAN's country or a currency's symbol beside the text, and checks itself
+  when it's left. `value` is what it reports; `label`, `placeholder`, `description`, `name`,
+  `required`, `readonly`, `disabled` and `error` are attributes, `validate` and `messages`
+  properties. It fires `valuechange`. Agents call `setValue(text)` in any format; a card
+  number and code are secret to them.
 - `<uiset-upload>` is UI SDK's file input with the upload queue: files go up `concurrency`
   at a time (3), each row shows a preview, its size, status and progress, with Cancel, Retry
   and Remove, and files that fail `accept`, `max-size` or `max-files` are listed with why.

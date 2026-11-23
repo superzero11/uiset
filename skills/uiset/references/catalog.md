@@ -36,6 +36,7 @@ Install any item with `npx shadcn@latest add @uiset/<item>`. Docs: https://uiset
 - `inline-edit`: Text you edit where it shows: press it, Enter or F2 to edit, Enter to save, Escape to cancel, with validation and optional Save and Cancel buttons.
 - `tag-input`: Tags people type, paste or pick: a comma or Enter adds one, a pasted list becomes one tag each, and Enter or F2 edits a tag in place. No duplicates, a limit, your own rules with the reason shown, and agents add and remove tags by name.
 - `phone-input`: A phone number with a country picker: formatted as it's typed with the caret kept in place, a typed calling code chooses the country, any script's digits, left to right on any page, and the value in E.164. Agents set the number in any format and the country by name.
+- `input-mask`: Fields formatted as they're typed with the caret kept in place: card numbers grouped by brand with the brand named, expiry dates and security codes, IBANs checked by country and checksum, amounts grouped in the locale, and patterns of your own. Each checks itself and reports its value without separators; agents set them in any format.
 - `upload`: A drop zone and a queue of uploads on UI SDK's File input: each file's preview, progress and status, with cancel, retry and remove, a few going up at a time, to whatever storage you use.
 
 ## Lists and trees (docs/lists.md)

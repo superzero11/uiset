@@ -2412,4 +2412,18 @@ vercel-labs/ui#905 (2026-11-19).
   had just moved to, then read its old one from a stale state snapshot after a redraw in
   between, and formatted a UK number as American; it reads the country fresh now. Tests: a
   phone-field test each for the schema, React (two) and the web; each rule mutation-checked.
+- 2026-11-23 — **Input masks** (the owner: "Yes, go ahead"), the last of the inputs. UI SDK's
+  NumberInput already formats currency, reading it back in the locale, when it's left, so
+  a schema form's `currency` uses it; what the masks add is formatting as typed, on the phone
+  input's formatter: card numbers by brand (names in words, no logos) with the Luhn check,
+  MM / YY expiries, codes by brand, IBANs (lengths from Wikipedia's table, read through a
+  summary because the page fetch split; twelve countries' example IBANs pass), amounts
+  grouped as typed, and patterns. Card numbers and codes are `data-agent-secret`: UI SDK's
+  bridge then redacts their refusals too, which the docs say. Found: the shell's `$T` isn't
+  split into words in zsh, so a mutation loop ran no tests until the files were written out;
+  the web element's own-value guard couldn't be told apart (every mask reads its value back
+  as typed), so it was removed rather than kept untested; a web amount set as text read as
+  nothing. Tests: 8 rules, 8 React, 6 web, and the schema form's masks; each rule
+  mutation-checked. The schema form's `mask` and `currency` are in its docs and tests but
+  not in a demo form: the checkout template (roadmap Next) is where they'd show.
 

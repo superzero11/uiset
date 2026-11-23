@@ -221,6 +221,13 @@ const components = [
     ["libphonenumber-js"],
   ],
   [
+    "input-mask",
+    "Input mask",
+    "Fields formatted as they're typed with the caret kept in place: card numbers grouped by brand with the brand named, expiry dates and security codes, IBANs checked by country and checksum, amounts grouped in the locale, and patterns of your own. Each checks itself and reports its value without separators; agents set them in any format.",
+    ["input-mask/masks.ts", "input-mask/input-mask.ts", "input-mask/input-mask.css", "shell/format-as-you-type.ts", "shell/shell.css"],
+    ["field"],
+  ],
+  [
     "sortable-list",
     "Sortable list",
     "A list people put in order: drag an item by its grip, or pick it up with Space and move it with the arrows. Select several to move together, lock items in place, and let agents move items by name.",

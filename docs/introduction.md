@@ -28,7 +28,7 @@ the same parts, the same names, the same keyboard and agent support.
 
 | What | How many | What it gives you |
 | ---- | -------- | ----------------- |
-| [Components](/components) | 55, plus 30 app parts | Every UI SDK component, styled; and the app frame, data display, form, list and motion parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, a tag input, a phone input, uploads, a sortable list and tree, a number ticker, a text reveal, Thinking, a crossfade) |
+| [Components](/components) | 55, plus 31 app parts | Every UI SDK component, styled; and the app frame, data display, form, list and motion parts (sidebar layout, page header, cards, tables, badges, stats, alerts, a stepper, code blocks, inline edit, a tag input, a phone input, input masks, uploads, a sortable list and tree, a number ticker, a text reveal, Thinking, a crossfade) |
 | [Kits](/kits) | 12 | Chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal, Studio and the Agent Console |
 | [Templates](/templates) | 10 | Whole pages: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, IDE |
 | [Themes](/themes) | 5 skins | Base, Blueprint, Studio, Phosphor and Ink, plus a [generator](/themes/generator) for your own |

@@ -59,6 +59,12 @@ const groups: [string, ExampleMeta[]][] = [
         items: ["phone-input"],
       },
       {
+        slug: "input-mask",
+        title: "Input mask",
+        parts: "MaskedInput with cardNumber, cardExpiry, cardCode, iban, currency, pattern",
+        items: ["input-mask"],
+      },
+      {
         slug: "schema-form",
         title: "Schema form",
         parts: "SchemaForm, defineForm (Field, Stepper, agent fill)",

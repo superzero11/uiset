@@ -46,6 +46,7 @@ const appParts: Record<string, string> = {
   "inline-edit": "/docs/kits/forms#inline-edit",
   "tag-input": "/docs/kits/forms#tag-input",
   "phone-input": "/docs/kits/forms#phone-input",
+  "input-mask": "/docs/kits/forms#input-mask",
   upload: "/docs/kits/forms#upload",
   "sortable-list": "/docs/kits/lists#sortable-list",
   "sortable-tree": "/docs/kits/lists#sortable-tree",
@@ -76,7 +77,7 @@ const guides: DocPage[] = [
 
 const kits: DocPage[] = [
   { slug: "app-shell", title: "App frame and data display", file: "app-shell.md", item: "app-shell" },
-  { slug: "forms", title: "Forms: schema form, inline edit, tag and phone inputs, upload", file: "forms.md", item: "schema-form" },
+  { slug: "forms", title: "Forms: schema form, inline edit, tag, phone and masked inputs, upload", file: "forms.md", item: "schema-form" },
   { slug: "lists", title: "Sortable lists and trees", file: "lists.md", item: "sortable-list" },
   { slug: "motion", title: "Motion", file: "motion.md", item: "number-ticker" },
   { slug: "chat", title: "Chat", file: "chat.md", item: "chat" },

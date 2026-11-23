@@ -9,6 +9,7 @@ for (const [kit, heading, control] of [
   ["forms", "inline-edit", /Project name/],
   ["forms", "tag-input", /Remove React/],
   ["forms", "phone-input", /Country: /],
+  ["forms", "input-mask", /Card number/],
   ["forms", "upload", /Choose files/],
   ["app-shell", "table", /Invoices/],
 ] as const) {
@@ -17,7 +18,8 @@ for (const [kit, heading, control] of [
     await page.goto(`/docs/kits/${kit}`)
     const example = page.locator(`[id="${heading}"] + .docs-example`)
     await expect(example.locator("[data-ready]")).toBeVisible({ timeout: 20_000 })
-    await expect(example.getByRole(heading === "table" ? "table" : "button", { name: control }).first()).toBeVisible()
+    const role = heading === "table" ? "table" : heading === "input-mask" ? "textbox" : "button"
+    await expect(example.getByRole(role, { name: control }).first()).toBeVisible()
     const results = await new AxeBuilder({ page }).include(`[id="${heading}"] + .docs-example`).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()
     expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(" | ")}`)).toEqual([])
   })

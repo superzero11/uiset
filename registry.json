@@ -1630,6 +1630,53 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "input-mask",
+      "type": "registry:ui",
+      "title": "Input mask",
+      "description": "Fields formatted as they're typed with the caret kept in place: card numbers grouped by brand with the brand named, expiry dates and security codes, IBANs checked by country and checksum, amounts grouped in the locale, and patterns of your own. Each checks itself and reports its value without separators; agents set them in any format.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.14",
+        "@ui-sdk/react@0.1.0-beta.14"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/field"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/input-mask.tsx",
+          "type": "registry:ui",
+          "target": "@ui/input-mask.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/input-mask/masks.ts",
+          "type": "registry:file",
+          "target": "@ui/input-mask/masks.ts"
+        },
+        {
+          "path": "registry/uiset/ui/input-mask/input-mask.ts",
+          "type": "registry:file",
+          "target": "@ui/input-mask/input-mask.ts"
+        },
+        {
+          "path": "registry/uiset/ui/input-mask/input-mask.css",
+          "type": "registry:file",
+          "target": "@ui/input-mask/input-mask.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/format-as-you-type.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/format-as-you-type.ts"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "sortable-list",
       "type": "registry:ui",
       "title": "Sortable list",

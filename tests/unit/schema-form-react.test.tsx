@@ -256,3 +256,26 @@ test("a phone number too short for its country stops the submit, with the form's
   expect(onSubmit).not.toHaveBeenCalled()
   expect(await screen.findByText("Mobile is too short for a phone number in its country.")).toBeTruthy()
 })
+
+const refund = defineForm({
+  name: "refund",
+  title: "Refund",
+  fields: { iban: { kind: "text", label: "IBAN", mask: "iban", required: true }, amount: { kind: "number", label: "Amount", currency: "EUR" } },
+})
+
+test("a masked field is a masked input; an agent fills it in any format; a currency shows on the number", async () => {
+  const onValueChange = vi.fn()
+  render(<SchemaForm form={refund} onValueChange={onValueChange} />)
+  await tick()
+  await userEvent.type(screen.getByRole("textbox", { name: "IBAN" }), "gb82west12345698765432")
+  expect(screen.getByRole<HTMLInputElement>("textbox", { name: "IBAN" }).value).toBe("GB82 WEST 1234 5698 7654 32")
+  expect(onValueChange.mock.calls.at(-1)![0]).toMatchObject({ iban: "GB82WEST12345698765432" })
+  const filled = await agent.act({ steps: [{ ref: "Refund", action: "fill", args: [{ IBAN: "de89 3704 0044 0532 0130 00", amount: 12.5 }] }] })
+  expect(filled.ok, filled.error?.message).toBe(true)
+  await tick()
+  expect(screen.getByRole<HTMLInputElement>("textbox", { name: "IBAN" }).value).toBe("DE89 3704 0044 0532 0130 00")
+  const bad = await agent.act({ steps: [{ ref: "Refund", action: "fill", args: [{ iban: "DE89 3704 0044 0532 0130 01" }] }] })
+  expect(bad.ok).toBe(false)
+  expect(bad.error?.message).toContain("typo")
+  expect(screen.getByRole<HTMLInputElement>("textbox", { name: "Amount" }).value).toBe("€12.50")
+})

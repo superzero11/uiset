@@ -1,6 +1,7 @@
 // A form described once. Its fields render the form, check what's entered, and become the
 // JSON Schema of an agent tool that fills it. No framework here, so every renderer shares it.
 
+import { maskMessages, maskNamed, type Mask, type MaskMessages } from "../input-mask/masks"
 import { addTags, splitTags } from "../tag-input/tags"
 
 type FieldOption = { value: string; label: string }
@@ -24,6 +25,8 @@ type TextField = FieldBase & {
   /** A regular expression the whole text matches, with `patternMessage` saying what's expected. */
   pattern?: string
   patternMessage?: string
+  /** Formatted as it's typed and checked by its kind: a masked input. Its value has no separators. */
+  mask?: "card-number" | "card-expiry" | "card-code" | "iban" | { pattern: string }
   default?: string
   validate?: FieldCheck<string>
 }
@@ -34,6 +37,8 @@ type NumberField = FieldBase & {
   max?: number
   /** 1 for whole numbers. */
   step?: number
+  /** An amount in this currency, like "EUR": shown with its symbol and decimals. */
+  currency?: string
   default?: number | null
   validate?: FieldCheck<number | null>
 }
@@ -145,6 +150,8 @@ type FormMessages = {
   phoneTooShort: (label: string) => string
   phoneTooLong: (label: string) => string
   phoneInvalid: (label: string) => string
+  /** What a masked field says: card numbers, expiry dates, codes, IBANs, patterns. */
+  masks: MaskMessages
   unknownField: (key: string, fields: string[]) => string
 }
 
@@ -172,6 +179,7 @@ const defaultMessages: FormMessages = {
   phoneTooShort: (label) => `${label} is too short for a phone number in its country.`,
   phoneTooLong: (label) => `${label} is too long for a phone number in its country.`,
   phoneInvalid: (label) => `${label} isn't a valid phone number in its country.`,
+  masks: maskMessages,
   unknownField: (key, fields) => `No field "${key}". Its fields: ${fields.join(", ")}.`,
 }
 
@@ -245,6 +253,12 @@ function initialValues<F extends Fields>(form: FormDefinition<F>): FormValues<F>
   return values as FormValues<F>
 }
 
+/** A text field's mask, from its `mask`, or null. */
+function maskOf(field: FieldSpec): Mask | null {
+  if (!("mask" in field) || !field.mask) return null
+  return typeof field.mask === "string" ? maskNamed(field.mask) : maskNamed("pattern", { pattern: field.mask.pattern })
+}
+
 /** E.164: a plus, a country code and up to 15 digits in all. */
 const e164 = /^\+[1-9]\d{6,14}$/
 
@@ -266,6 +280,8 @@ function checkField(form: FormDefinition, name: string, value: unknown, values: 
     case "tel":
     case "textarea": {
       const text = String(value)
+      const mask = maskOf(field)
+      if (mask) return mask.check(mask.keep(text), words.masks) ?? own()
       if (field.min !== undefined && text.length < field.min) return words.tooShort(field.label, field.min)
       if (field.max !== undefined && text.length > field.max) return words.tooLong(field.label, field.max)
       if (field.kind === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) return words.email
@@ -398,12 +414,35 @@ function coerceValue(form: FormDefinition, name: string, input: unknown): { valu
       const text = input instanceof Date ? input.toISOString().slice(0, 10) : String(input).trim().slice(0, 10)
       return realDate(text) ? { value: text } : { error: words.date }
     }
-    default:
-      return { value: typeof input === "string" ? input : String(input) }
+    default: {
+      // A masked field reads text in any format: "4242 4242 4242 4242", "12/2027".
+      const mask = maskOf(field)
+      const text = typeof input === "string" ? input : String(input)
+      return { value: mask ? String(mask.value(mask.read ? mask.read(text) : mask.keep(text)) ?? "") : text }
+    }
   }
 }
 
 type JSONSchema = Record<string, unknown>
+
+/** What a masked field's value looks like, as JSON Schema and in words for an agent. */
+function maskPattern(mask: NonNullable<TextField["mask"]>): { pattern: string; note: string } {
+  if (typeof mask === "object") {
+    const slots = [...mask.pattern].filter((char) => "9A*".includes(char))
+    const regex = slots.map((slot) => (slot === "9" ? "\\d" : slot === "A" ? "[A-Za-z]" : "[A-Za-z0-9]")).join("")
+    return { pattern: `^${regex}$`, note: `Like ${mask.pattern.replace(/[9*]/g, "0")}, without its separators.` }
+  }
+  switch (mask) {
+    case "card-number":
+      return { pattern: "^\\d{12,19}$", note: "A card number, digits only." }
+    case "card-expiry":
+      return { pattern: "^(0[1-9]|1[0-2])/\\d{2}$", note: "The card's expiry, MM/YY." }
+    case "card-code":
+      return { pattern: "^\\d{3,4}$", note: "The card's security code, 3 or 4 digits." }
+    case "iban":
+      return { pattern: "^[A-Z]{2}\\d{2}[A-Z0-9]{11,30}$", note: "An IBAN, without spaces." }
+  }
+}
 
 /** The form's fields as JSON Schema: an agent tool's input, the shape model APIs and WebMCP take. */
 function toJSONSchema(form: FormDefinition): JSONSchema {
@@ -416,6 +455,7 @@ function toJSONSchema(form: FormDefinition): JSONSchema {
     switch (field.kind) {
       case "number":
         property = { type: field.step === 1 ? "integer" : "number", minimum: field.min, maximum: field.max, multipleOf: field.step === 1 ? undefined : field.step }
+        if (field.currency) notes.push(`An amount in ${field.currency}.`)
         break
       case "boolean":
         property = { type: "boolean" }
@@ -442,14 +482,17 @@ function toJSONSchema(form: FormDefinition): JSONSchema {
         }
         if (field.suggestions?.length) notes.push(`Suggested: ${field.suggestions.join(", ")}.`)
         break
-      default:
+      default: {
+        const masked = field.mask ? maskPattern(field.mask) : null
         property = {
           type: "string",
           format: field.kind === "email" ? "email" : field.kind === "url" ? "uri" : undefined,
-          minLength: field.min,
-          maxLength: field.max,
-          pattern: field.pattern ? `^(?:${field.pattern})$` : undefined,
+          minLength: masked ? undefined : field.min,
+          maxLength: masked ? undefined : field.max,
+          pattern: masked?.pattern ?? (field.pattern ? `^(?:${field.pattern})$` : undefined),
         }
+        if (masked) notes.push(masked.note)
+      }
     }
     property = Object.fromEntries(Object.entries({ title: field.label, ...property, description: notes.join(" ") || undefined }).filter(([, v]) => v !== undefined))
     properties[name] = property

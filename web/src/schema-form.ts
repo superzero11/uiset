@@ -20,6 +20,7 @@ import type { FieldSpec, FormDefinition, FormErrors } from "@/registry/uiset/ui/
 import "@/registry/uiset/ui/schema-form/schema-form.css"
 import { attr, h, holdRender, keepInputInside, place, reportPartInput, showIn, uid } from "./dom"
 import type { UISetStepper } from "./shell-parts"
+import type { MaskedInputElement } from "./input-mask"
 import type { PhoneInputElement } from "./phone-input"
 import type { TagInputElement } from "./tag-input"
 
@@ -117,6 +118,7 @@ function buildField(name: string, spec: FieldSpec, apiOf: () => Api, labels: Sch
           h("ui-number-input-increment", null, h("button", { type: "button", "aria-label": labels.increase })),
         ),
       ) as Live
+      if (spec.currency) (live as Live & { format?: Intl.NumberFormatOptions }).format = { style: "currency", currency: spec.currency }
       live.addEventListener("valuechange", (event) => set((event as CustomEvent<{ value: number | null }>).detail.value, event))
       leaveOn(live)
       control = live
@@ -241,6 +243,27 @@ function buildField(name: string, spec: FieldSpec, apiOf: () => Api, labels: Sch
       break
     }
     default: {
+      if (spec.mask) {
+        // A masked field is a field of its own, like the tag and phone inputs.
+        const live = h("uiset-masked-input", {
+          label: spec.label,
+          mask: typeof spec.mask === "string" ? spec.mask : "pattern",
+          pattern: typeof spec.mask === "string" ? null : spec.mask.pattern,
+          placeholder: spec.placeholder,
+          description: spec.description,
+          required,
+        }) as MaskedInputElement
+        live.messages = words.masks
+        live.addEventListener("valuechange", (event) => set(String((event as CustomEvent<{ value: string }>).detail.value ?? ""), event))
+        leaveOn(live)
+        write = (value) => {
+          const next = String(value ?? "")
+          if (live.value !== next) live.value = next
+        }
+        disable = (on) => attr(live, "disabled", on)
+        const wrap = h("div", { class: "schema-form-field", "data-schema-field": name }, live)
+        return { spec, root: wrap, error, write, disable, showProblem: (problem) => attr(live, "error", problem) }
+      }
       const input = h("input", {
         type: spec.kind === "text" ? "text" : spec.kind,
         "aria-required": required,

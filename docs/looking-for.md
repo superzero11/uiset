@@ -23,6 +23,7 @@ npx shadcn@latest add @uiset/<item>
 | A plain table with a fixed header      | Sticky headings and first column; rows stack on phones              | [`table`](./app-shell.md#table) |
 | A tag input                            | Tags typed, pasted or picked, edited in place; text with tokens     | `tag-input`, `token-input` |
 | A phone number with a country picker   | Formatted as typed, any country, E.164 value, right to left         | [`phone-input`](./forms.md#phone-input) |
+| An input mask (cards, IBAN, currency)  | Formatted as typed with the caret kept, checked, any pattern        | [`input-mask`](./forms.md#input-mask) |
 | A rich text editor                     | Headings, lists, links, images, mentions, Markdown in and out       | [`rich-text`](./rich-text.md) |
 | Charts                                 | Line, bar, scatter, heatmap and more, explored by keyboard, with a table view | [charts](./charts.md) |
 | A stepper or wizard                    | Steps with the current one marked and later ones locked             | `stepper`                  |

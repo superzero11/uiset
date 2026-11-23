@@ -177,3 +177,19 @@ test("a phone field is <uiset-phone-input>: an agent fills it with an internatio
   expect(bad.ok).toBe(false)
   expect(bad.error?.message).toContain("Give the number with its country code")
 })
+
+test("a masked field is <uiset-masked-input>: an agent fills it in any format, shown with its gaps", async () => {
+  const bridge = await openWebPage("content.html", "content-demo.ts")
+  const { defineForm } = await import("@/registry/uiset/ui/schema-form/schema")
+  ;(invite() as FormElement & { form: unknown }).form = defineForm({
+    name: "refund",
+    title: "Refund",
+    fields: { iban: { kind: "text", label: "IBAN", mask: "iban" } },
+  })
+  await settle()
+  const filled = await bridge.run("Refund", "fill", { IBAN: "gb82 west 1234 5698 7654 32" })
+  expect(filled.ok, filled.error?.message).toBe(true)
+  expect(invite().value.iban).toBe("GB82WEST12345698765432")
+  const masked = form("Refund").querySelector("uiset-masked-input")!
+  await waitFor(() => expect(masked.querySelector<HTMLInputElement>(".masked-input-text")?.value).toBe("GB82 WEST 1234 5698 7654 32"))
+})

@@ -10,7 +10,7 @@ test("the site's counts are the registry's", () => {
   expect(registry.items.length).toBe(facts.registryItems)
   expect(registry.items.filter((i) => sdk.has(i.name)).length).toBe(facts.sdkComponents)
   expect(registry.items.filter((i) => i.type === "registry:block").length).toBe(facts.templates)
-  const appParts = ["app-shell", "breadcrumbs", "page-header", "card", "badge", "stat", "empty-state", "skeleton", "description-list", "item-list", "alert", "kbd", "spinner", "stepper", "search-field", "copy-button", "table", "avatar-group", "code-block", "inline-edit", "tag-input", "phone-input", "upload", "schema-form", "sortable-list", "sortable-tree", "number-ticker", "text-reveal", "thinking", "crossfade"]
+  const appParts = ["app-shell", "breadcrumbs", "page-header", "card", "badge", "stat", "empty-state", "skeleton", "description-list", "item-list", "alert", "kbd", "spinner", "stepper", "search-field", "copy-button", "table", "avatar-group", "code-block", "inline-edit", "tag-input", "phone-input", "input-mask", "upload", "schema-form", "sortable-list", "sortable-tree", "number-ticker", "text-reveal", "thinking", "crossfade"]
   expect(appParts.every((n) => registry.items.some((i) => i.name === n))).toBe(true)
   expect(appParts.length).toBe(facts.appParts)
 })

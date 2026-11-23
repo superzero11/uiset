@@ -1,0 +1,38 @@
+@layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
+
+/* The box, its edge and its ring are base.css's `data-field-box`, in every skin. */
+@layer uiset.base {
+  .masked-input-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.375rem;
+    min-inline-size: 0;
+  }
+
+  /* Numbers and codes read left to right on any page; the words beside them stay in place. */
+  .masked-input-field {
+    direction: ltr;
+  }
+
+  .masked-input-text {
+    padding-inline: 0.625rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The card's brand, the IBAN's country or the currency's symbol, beside the text. */
+  .masked-input-addon {
+    flex: none;
+    padding-inline: 0.625rem;
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+    white-space: nowrap;
+
+    &[data-side="start"] {
+      padding-inline-end: 0;
+    }
+
+    &[data-side="end"] {
+      padding-inline-start: 0;
+    }
+  }
+}

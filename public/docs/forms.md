@@ -1,16 +1,17 @@
-# Forms: schema form, inline edit, tag and phone inputs, upload
+# Forms: schema form, inline edit, tag, phone and masked inputs, upload
 
-Five things forms need that UI SDK leaves to you. `SchemaForm` draws a whole form from one
+Six things forms need that UI SDK leaves to you. `SchemaForm` draws a whole form from one
 definition, steps and review included, and the same definition lets an agent fill it.
 `InlineEdit` is text you edit where it shows, on UI SDK's `createInlineEdit`. `TagInput` is
 tags people type, paste or pick, on UI SDK's Combobox. `PhoneInput` is a phone number with a
-country picker, formatted as it's typed. `Upload` is a drop zone and a queue of
+country picker, formatted as it's typed. `MaskedInput` formats card numbers, expiry dates,
+IBANs, amounts and patterns of your own as they're typed. `Upload` is a drop zone and a queue of
 uploads on UI SDK's File input: each file shows its progress and can be canceled, retried or
 removed. Fields, selects, checkboxes, date and number inputs are UI SDK's own components; see
 [the list](./README.md#ui-sdk-components).
 
 ```bash
-npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/tag-input @uiset/phone-input @uiset/upload
+npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/tag-input @uiset/phone-input @uiset/input-mask @uiset/upload
 ```
 
 ## Parts
@@ -26,6 +27,8 @@ npx shadcn@latest add @uiset/schema-form @uiset/inline-edit @uiset/tag-input @ui
 | `addTags`, `splitTags`, `normalizeTag`                  | `tag-input`   | Its rules with no React in them, for your own checks              |
 | `PhoneInput`                                            | `phone-input` | A phone number and its country, formatted as typed, kept in E.164 |
 | `checkPhone`, `readPhone`, `findCountry`, `countryList` | `phone-input` | Its rules with no React in them, for your own checks              |
+| `MaskedInput`                                           | `input-mask`  | A field formatted as typed by a mask, checked by it               |
+| `cardNumber`, `cardExpiry`, `cardCode`, `iban`, `currency`, `pattern`, `cardBrand` | `input-mask` | The masks, and a card's brand from its digits |
 | `Upload`                                                | `upload`      | A drop zone, a Choose files button and the list of uploads        |
 | `useUploadQueue`, `UploadRow`, `UploadPreview`          | `upload`      | The queue as a hook and one file's row, for a layout of your own  |
 | `createUploadQueue`                                     | `upload`      | The queue with no React in it                                     |
@@ -81,8 +84,11 @@ type Invite = FormValues<typeof invite.fields> // { email: string; role: "viewer
   radios with `display: "radio"`), `boolean` (a checkbox, or a switch), `date` (an ISO
   date), `tags` (a [tag input](#tag-input): a list of strings, with `suggestions` and
   `maxLength` per tag) and `phone` (a [phone input](#phone-input): E.164, with
-  `defaultCountry` and `countries`). Each takes `label`, `description`, `required`, `placeholder` and
-  `default`, and the checks its kind has: `min` and `max` (length, value, date or how many
+  `defaultCountry` and `countries`). A text field's `mask` (`"card-number"`, `"card-expiry"`,
+  `"card-code"`, `"iban"`, or `{ pattern: "99-9999999" }`) makes it a
+  [masked input](#input-mask), and a number field's `currency` ("EUR") shows it as an
+  amount. Each takes `label`, `description`, `required`, `placeholder` and `default`, and
+  the checks its kind has: `min` and `max` (length, value, date or how many
   tags), `step` (1 for whole numbers), `pattern` with `patternMessage`, and
   `validate(value, values)` for a rule of your own. An agent fills `tags` with a list, or
   with text like "design, research", and `phone` with a number in international form ("+44
@@ -267,6 +273,42 @@ const [phone, setPhone] = useState("") // E.164, like "+14155550123"
 - Phone data is libphonenumber-js's small build, about 36 KB gzipped, installed with the
   item. The field box is `data-field-box`, the same edge and ring as a text field in each skin.
 
+## Input mask
+
+```tsx
+import { cardBrand, cardCode, cardExpiry, cardNumber, currency, iban, MaskedInput } from "@/components/ui/input-mask"
+
+const [card, setCard] = useState<string | number | null>("")
+
+<MaskedInput label="Card number" mask={cardNumber()} value={card} onValueChange={setCard} />
+<MaskedInput label="Expiry" mask={cardExpiry()} />
+<MaskedInput label="Security code" mask={cardCode({ brand: () => cardBrand(String(card)) })} />
+<MaskedInput label="IBAN" mask={iban()} />
+<MaskedInput label="Amount" mask={currency({ currency: "EUR", locale: "de-DE" })} />
+```
+
+- **As it's typed:** the text formats and the caret stays after the same character, and
+  Backspace or Delete on a gap takes the character beyond it. Other scripts' digits are read
+  as 0 to 9. A pasted value in any format is read whole ("12/2027" pastes as 12 / 27).
+- **The masks:** `cardNumber()` groups by the card's brand (4-4-4-4; American Express
+  4-6-5) and names it beside the number, in words (Visa, Mastercard, American Express,
+  Discover, Diners Club, JCB, UnionPay). `cardExpiry()` is MM / YY, a month typed as 4
+  becoming 04. `cardCode({ brand })` is three digits, four for American Express. `iban()` is
+  upper case in groups of four, its country named beside it. `currency({ currency, locale })`
+  groups in the locale ("1.234,5"), keeps the currency's decimals, and shows its symbol.
+  `pattern("99-9999999")` takes `9` for a digit, `A` for a letter and `*` for either.
+- **The value** has no separators (`"4242424242424242"`, `"04/27"`, `"DE89…"`), and an
+  amount's is a number. `onValueChange(value, details)` says why (`type`, `paste`, `set`).
+- **Checks** when the field is left: a card number's length and Luhn check, a past or
+  impossible expiry, a code's length, an IBAN's country, length and mod-97 check, a pattern
+  not yet complete. The reason shows under the field, is read out, and stops a form's
+  submit. `validate(value)` adds rules of your own.
+- The keyboard is the one each mask needs (`inputMode`), and autofill knows card fields
+  (`cc-number`, `cc-exp`, `cc-csc`). `name` submits the value. IBAN lengths come from
+  Wikipedia's table; SWIFT's IBAN registry is the source of truth.
+- `required`, `disabled`, `readOnly`, `placeholder` (the mask's example by default),
+  `description`, `error`, `onBlur` and `messages` (every mask's words).
+
 ## Upload
 
 `Upload` doesn't know where files go. You give it `upload`, a function that sends one file,
@@ -349,6 +391,7 @@ Outside React, `createUploadQueue(() => options)` is the same queue: call `start
 | Enter, Space, Down         | a phone input's country | Open the countries, with the search focused (Combobox's) |
 | Up, Down, Enter            | the countries         | Move through the matches and choose one; focus goes back to the country |
 | Backspace, Delete          | a phone number        | Remove the digit before or after, across separators      |
+| Backspace, Delete          | a masked input        | Remove the character before or after, across gaps        |
 | Escape                     | its field             | Put the text back. Focus goes back to the value           |
 | Tab                        | its field             | Save and move on. With text that can't be saved, stay     |
 | Up, Down, Home, End        | the list of uploads   | Move between files. The list is one tab stop              |
@@ -376,6 +419,11 @@ order, because the keys above do the same from the field or the row.
   that isn't one for its country, or a country that isn't listed, fails the step with the
   reason. The country list and the number's input are the person's and are hidden from
   agents.
+- **MaskedInput** is one component listed by its `label`, whose value is what the field
+  reports, with `setValue(text)` in any format ("4242 4242 4242 4242", "12/2027", "de89
+  3704…", "€1,234.50"). A value the mask refuses fails the step with the reason. A card
+  number and its security code are secret: an agent fills them but reads "[redacted]", its
+  refusals too.
 - **Upload** is a file input listed by its `label`, with each row's text as its items
   ("report.pdf 248 kB Uploaded") and `clear`. An agent can't add files: it has none to
   give. Each row's Cancel and Retry are buttons named for the file ("Retry report.pdf"),
@@ -389,7 +437,7 @@ order, because the keys above do the same from the field or the row.
 
 ## Web Components
 
-`<uiset-schema-form>`, `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-phone-input>` and `<uiset-upload>` are in
+`<uiset-schema-form>`, `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-phone-input>`, `<uiset-masked-input>` and `<uiset-upload>` are in
 [Web Components](./web-components.md#content-and-forms), on the same primitives and queue.
 
 ```html
@@ -412,6 +460,17 @@ The phone input's attributes are React's props (`value`, `default-country`, `nam
 `country` is live too, and `validate`, `messages`, `countries` and `preferredCountries` are
 properties. It fires `valuechange` with the number in E.164 and `countrychange` with the
 country. Its phone rules load as a chunk of their own the first time one is on the page.
+
+```html
+<uiset-masked-input label="Card number" mask="card-number" name="card"></uiset-masked-input>
+<uiset-masked-input label="Amount" mask="currency" currency="EUR" locale="de-DE"></uiset-masked-input>
+<uiset-masked-input label="Tax ID" mask="pattern" pattern="99-9999999"></uiset-masked-input>
+```
+
+The masked input's `mask` is `card-number`, `card-expiry`, `card-code`, `iban`, `currency`
+(with `currency` and `locale`) or `pattern` (with `pattern`). Its `value` is text, an
+amount's as a number written out ("1234.5"); `validate` and `messages` are properties, and it
+fires `valuechange`.
 The schema form's element takes the same definition, from `@uiset/web`:
 
 ```html

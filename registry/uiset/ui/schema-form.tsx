@@ -12,10 +12,12 @@ import { Radio, RadioGroup } from "./radio"
 import { Select, SelectContent, SelectItem, SelectTrigger } from "./select"
 import { Stepper } from "./stepper"
 import { Switch } from "./switch"
+import { MaskedInput } from "./input-mask"
 import { TagInput } from "./tag-input"
 import { Textarea } from "./textarea"
 import { schemaForm, type SchemaFormStepReason, type SchemaFormValueReason, type SubmitDetails } from "./schema-form/form"
 import type { Fields, FieldSpec, FormDefinition, FormErrors, FormValues } from "./schema-form/schema"
+import { maskNamed } from "./input-mask/masks"
 import { autocompleteFor, controlIn, defaultLabels, shownValue, type SchemaFormLabels } from "./schema-form/labels"
 import type { ChangeDetails } from "@ui-sdk/core"
 import "./shell/shell.css"
@@ -86,7 +88,15 @@ function FormField({
       break
     case "number":
       control = (
-        <NumberInput {...common} value={value as number | null} min={field.min} max={field.max} step={field.step} onValueChange={(next) => set(next)}>
+        <NumberInput
+          {...common}
+          value={value as number | null}
+          min={field.min}
+          max={field.max}
+          step={field.step}
+          format={field.currency ? { style: "currency", currency: field.currency } : undefined}
+          onValueChange={(next) => set(next)}
+        >
           <NumberInputGroup>
             <NumberInputDecrement aria-label={labels.decrease} />
             <NumberInputControl />
@@ -187,6 +197,28 @@ function FormField({
       )
     }
     default:
+      if (field.mask) {
+        // A masked field is a field of its own, like the tag and phone inputs.
+        const mask = typeof field.mask === "string" ? maskNamed(field.mask) : maskNamed("pattern", { pattern: field.mask.pattern })
+        if (mask)
+          return (
+            <div className="schema-form-field" data-schema-field={name}>
+              <MaskedInput
+                label={field.label}
+                mask={mask}
+                value={value as string}
+                onValueChange={(next) => set(next === null ? "" : String(next))}
+                description={field.description}
+                placeholder={field.placeholder}
+                required={field.required}
+                disabled={disabled}
+                error={error}
+                onBlur={leave}
+                messages={words.masks}
+              />
+            </div>
+          )
+      }
       control = (
         <Input
           {...common}

@@ -31,6 +31,14 @@ On UI SDK `0.1.0-beta.14`.
   or calling code. Agents set the number in any format and the country by name. Phone data
   is libphonenumber-js's small build (a dependency of the item; a lazy chunk in
   `@uiset/web`).
+- **Input masks.** `MaskedInput` (`input-mask`) and `<uiset-masked-input>`: fields formatted
+  as they're typed with the caret kept in place. Card numbers grouped by brand with the
+  brand named (and the Luhn check), expiry dates as MM / YY, security codes by brand, IBANs in
+  groups of four checked by country and mod 97, amounts grouped in their locale with their
+  currency's symbol and decimals, and patterns of your own (`99-9999999`). Each reports its
+  value without separators and checks itself when it's left. Agents set them in any format;
+  card numbers and codes are secret to them. A schema form's text field takes a `mask`, and
+  a number field a `currency`.
 - **A schema form's `phone` field.** `kind: "phone"` draws a phone input, loaded only when a
   form has one (a plain field takes the number until then). Its value is E.164; submit checks
   it for its country, an agent fills it in international form, and its JSON Schema is an

@@ -628,7 +628,7 @@ test("a row carried inside a file is marked, goes back when dropped, and says wh
 
 /* ------------------------------------------------------------------ narrow screens */
 
-const narrow = ["Table", "Avatar group", "Badge", "Code block", "Inline edit", "Tag input", "Phone input", "Upload", "Sortable list", "Sortable tree"]
+const narrow = ["Table", "Avatar group", "Badge", "Code block", "Inline edit", "Tag input", "Phone input", "Input mask", "Upload", "Sortable list", "Sortable tree"]
 
 test("the new parts fit a phone's width", { tag: "@engine" }, async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 })

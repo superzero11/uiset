@@ -65,10 +65,18 @@
         </section>
 
         <section aria-labelledby="forms-heading">
-          <h2 id="forms-heading">Inline edit, tags, phone and upload</h2>
+          <h2 id="forms-heading">Inline edit, tags, phone, masks and upload</h2>
           <uiset-inline-edit id="project" label="Project name" value="Atlas" actions></uiset-inline-edit>
           <uiset-tag-input id="topics" label="Topics" value="React, Design systems" max="5" max-length="24" placeholder="Add a topic" description="Pick or type one, and separate them with commas."></uiset-tag-input>
           <uiset-phone-input id="phone" label="Phone" default-country="US" value="+14155550123" description="We text a code to this number."></uiset-phone-input>
+          <fieldset class="masked-demo">
+            <legend>Pay</legend>
+            <uiset-masked-input id="card" label="Card number" mask="card-number" name="card"></uiset-masked-input>
+            <uiset-masked-input id="expiry" label="Expiry" mask="card-expiry" name="expiry"></uiset-masked-input>
+            <uiset-masked-input id="code" label="Security code" mask="card-code" name="code"></uiset-masked-input>
+            <uiset-masked-input id="iban" label="IBAN" mask="iban" name="iban" description="For refunds."></uiset-masked-input>
+            <uiset-masked-input id="amount" label="Amount" mask="currency" currency="EUR" locale="de-DE" value="1234.5"></uiset-masked-input>
+          </fieldset>
           <uiset-tag-input id="emails" label="Invite by email" value="ada@example.com" delimiters=",; " description="Paste a list: commas, spaces or one per line."></uiset-tag-input>
           <uiset-upload id="files" label="Attachments" hint="PNG, JPG or PDF, up to 5 MB each" accept="image/*,.pdf" max-size="5000000"></uiset-upload>
         </section>

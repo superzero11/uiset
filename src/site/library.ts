@@ -39,10 +39,10 @@ type Kit = Card & {
 const kitText: Record<string, { headline: string; items: string[]; tag: string; stage?: string; description?: string; sections?: Record<string, string> }> = {
   "app-shell": { headline: "The frame of an app, and the parts that show data", items: ["app-shell", "page-header", "stat", "table"], tag: "Structure", sections: { table: "table" } },
   forms: {
-    headline: "Forms from a schema, inline edits, tags, phone numbers and uploads",
-    items: ["schema-form", "inline-edit", "tag-input", "phone-input", "upload"],
+    headline: "Forms from a schema, inline edits, tags, phone numbers, masks and uploads",
+    items: ["schema-form", "inline-edit", "tag-input", "phone-input", "input-mask", "upload"],
     tag: "Inputs",
-    sections: { "inline-edit": "inline-edit", "tag-input": "tag-input", "phone-input": "phone-input", upload: "upload" },
+    sections: { "inline-edit": "inline-edit", "tag-input": "tag-input", "phone-input": "phone-input", "input-mask": "input-mask", upload: "upload" },
   },
   motion: {
     headline: "Numbers, text and content that move, each skin its own way",

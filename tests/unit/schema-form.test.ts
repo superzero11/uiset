@@ -243,3 +243,26 @@ test("a phone field: E.164 by shape, an agent's international number tidied, and
   expect(await validateForm(contact, { mobile: "+1415555" })).toEqual({ mobile: "Mobile is too short for a phone number in its country." })
   expect(await validateForm(contact, { mobile: "+11115550123" })).toEqual({ mobile: "Mobile isn't a valid phone number in its country." })
 })
+
+test("a masked text field checks by its mask, reads an agent's text through it, and says its shape in JSON Schema", () => {
+  const pay = defineForm({
+    name: "pay",
+    title: "Pay",
+    fields: {
+      card: { kind: "text", label: "Card number", mask: "card-number" },
+      iban: { kind: "text", label: "IBAN", mask: "iban" },
+      tax: { kind: "text", label: "Tax ID", mask: { pattern: "99-9999999" } },
+      amount: { kind: "number", label: "Amount", currency: "EUR" },
+    },
+  })
+  expect(checkField(pay, "card", "4242424242424241", {})).toBe("This card number has a typo. Check it digit by digit.")
+  expect(checkField(pay, "card", "4242424242424242", {})).toBeNull()
+  expect(checkField(pay, "iban", "DE89370400440532013000", {})).toBeNull()
+  expect(checkField(pay, "tax", "123", {})).toBe("Not complete yet: like 00-0000000.")
+  expect(coerceValue(pay, "card", "4242 4242 4242 4242")).toEqual({ value: "4242424242424242" })
+  expect(coerceValue(pay, "iban", "de89 3704 0044 0532 0130 00")).toEqual({ value: "DE89370400440532013000" })
+  const properties = toJSONSchema(pay).properties as Record<string, Record<string, unknown>>
+  expect(properties.card).toMatchObject({ type: "string", pattern: "^\\d{12,19}$", description: "A card number, digits only." })
+  expect(properties.tax).toMatchObject({ pattern: "^\\d\\d\\d\\d\\d\\d\\d\\d\\d$" })
+  expect(properties.amount).toMatchObject({ type: "number", description: "An amount in EUR." })
+})

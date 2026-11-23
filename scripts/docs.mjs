@@ -20,7 +20,7 @@ const groups = [
     names: ["app-shell", "breadcrumbs", "page-header", "card", "badge", "stat", "empty-state", "skeleton", "description-list", "item-list", "alert", "kbd", "spinner", "stepper", "search-field", "copy-button", "table", "avatar-group", "code-block"],
     doc: "app-shell.md",
   },
-  { title: "Forms", names: ["schema-form", "inline-edit", "tag-input", "phone-input", "upload"], doc: "forms.md" },
+  { title: "Forms", names: ["schema-form", "inline-edit", "tag-input", "phone-input", "input-mask", "upload"], doc: "forms.md" },
   { title: "Lists and trees", names: ["sortable-list", "sortable-tree"], doc: "lists.md" },
   { title: "Motion", names: ["number-ticker", "text-reveal", "thinking", "crossfade"], doc: "motion.md" },
   { title: "Rich text", names: ["rich-text"], doc: "rich-text.md" },

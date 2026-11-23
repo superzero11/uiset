@@ -24,6 +24,7 @@ import { defineContent } from "./content"
 import { defineInlineEdit } from "./inline-edit"
 import { defineTagInput } from "./tag-input"
 import { definePhoneInput } from "./phone-input"
+import { defineMaskedInput } from "./input-mask"
 import { defineSortableList } from "./sortable-list"
 import { defineSortableTree } from "./sortable-tree"
 import { defineMotion, type UISetCrossfade, type UISetNumberTicker, type UISetTextReveal, type UISetThinking } from "./motion"
@@ -49,6 +50,7 @@ import type { UISetAvatarGroup, UISetCodeBlock, UISetCodeTabs, UISetCountBadge, 
 import type { InlineEditElement } from "./inline-edit"
 import type { TagInputElement } from "./tag-input"
 import type { PhoneInputElement } from "./phone-input"
+import type { MaskedInputElement } from "./input-mask"
 import type { SortableListElement } from "./sortable-list"
 import type { SortableTreeElement } from "./sortable-tree"
 import type { UISetUpload } from "./upload"
@@ -115,6 +117,7 @@ function define() {
   defineInlineEdit()
   defineTagInput()
   definePhoneInput()
+  defineMaskedInput()
   defineSortableList()
   defineSortableTree()
   defineMotion()
@@ -162,6 +165,7 @@ declare global {
     "uiset-inline-edit": UISetInlineEdit
     "uiset-tag-input": UISetTagInput
     "uiset-phone-input": UISetPhoneInput
+    "uiset-masked-input": UISetMaskedInput
     "uiset-knob": UISetKnob
     "uiset-line-chart": UISetLineChart
     "uiset-package-command": UISetPackageCommand
@@ -206,6 +210,7 @@ export type { UISetCodeTabsEvents } from "./content"
 export type { UISetInlineEditEvents } from "./inline-edit"
 export type { UISetTagInputEvents } from "./tag-input"
 export type { UISetPhoneInputEvents } from "./phone-input"
+export type { UISetMaskedInputEvents } from "./input-mask"
 export type { SortableListItemData as UISetSortableListItem, UISetSortableListEvents } from "./sortable-list"
 export type { SortableTreeItemData as UISetSortableTreeItem, UISetSortableTreeEvents } from "./sortable-tree"
 export type { UISetUploadEvents, UploadLabels as UISetUploadLabels } from "./upload"
@@ -232,6 +237,7 @@ type UISetTerminal = TerminalElement
 type UISetInlineEdit = InlineEditElement
 type UISetTagInput = TagInputElement
 type UISetPhoneInput = PhoneInputElement
+type UISetMaskedInput = MaskedInputElement
 type UISetSortableList = SortableListElement
 type UISetSortableTree = SortableTreeElement
 
@@ -247,6 +253,7 @@ export type {
   UISetInlineEdit,
   UISetTagInput,
   UISetPhoneInput,
+  UISetMaskedInput,
   UISetSortableList,
   UISetSortableTree,
   UISetPackageCommand,
