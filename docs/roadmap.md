@@ -20,6 +20,9 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 `phone` field) and input masks (cards, expiry dates and codes, IBANs, amounts, patterns; a
 schema form's `mask` and `currency`), each in React and Web Components, with agents. M
 
+**Checkout.** The payments kit is built (methods, card and bank fields, an order summary,
+Pay that waits for a person); next an address kit, then the checkout template on both. M
+
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
 bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox
 715 each, from 1,030. 0.6.1's full run took about 1 h 50 min, from about 3 hours: not yet
@@ -41,8 +44,8 @@ under half. Left: WebKit's big pages at one worker, 39 of its 52 minutes. M
    paging. M–L
 7. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
-8. **More templates.** Checkout, travel booking, profile, helpdesk tickets, a file manager
-   and an invoice. S each
+8. **More templates.** Travel booking, profile, helpdesk tickets, a file manager and an
+   invoice. S each
 9. **Print skin.** Swiss and letterpress type, from a written design plan first. M
 10. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
     CSV import. M
@@ -96,9 +99,9 @@ agent bridge). Fixed in beta.12 and beta.13, with UISet's workarounds gone: UI S
 The root and five skins with sound and haptics; all 55 UI SDK components styled, plus app
 frame, data display and form parts, and the small ones from UI SDK's showcase (scroll edge
 fades, radio cards, rings, a textarea's count, password rules, a confirm button); a
-sortable list and a sortable tree, and files dragged into folders in the IDE; twelve
+sortable list and a sortable tree, and files dragged into folders in the IDE; thirteen
 kits (chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal,
-Studio, Agent Console); ten page templates; Web Components for every kit and template; a
+Studio, Agent Console, payments); ten page templates; Web Components for every kit and template; a
 schema form agents fill by field name; [agent-check](./agent-check.md), which scores whether
 agents can use a page; and the theme generator.
 

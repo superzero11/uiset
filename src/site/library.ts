@@ -44,6 +44,12 @@ const kitText: Record<string, { headline: string; items: string[]; tag: string; 
     tag: "Inputs",
     sections: { "inline-edit": "inline-edit", "tag-input": "tag-input", "phone-input": "phone-input", "input-mask": "input-mask", upload: "upload" },
   },
+  payments: {
+    headline: "Card fields, an order summary, and a Pay button agents can't press alone",
+    items: ["payments"],
+    tag: "Commerce",
+    description: "Payment methods to choose from, a card whose security code follows its brand, a bank account by IBAN, an order's lines, discount code and totals in the shop's currency, and Pay, which waits for a person when an agent presses it.",
+  },
   motion: {
     headline: "Numbers, text and content that move, each skin its own way",
     items: ["number-ticker", "text-reveal", "thinking", "crossfade"],

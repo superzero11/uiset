@@ -2426,4 +2426,18 @@ vercel-labs/ui#905 (2026-11-19).
   nothing. Tests: 8 rules, 8 React, 6 web, and the schema form's masks; each rule
   mutation-checked. The schema form's `mask` and `currency` are in its docs and tests but
   not in a demo form: the checkout template (roadmap Next) is where they'd show.
+- 2026-11-23 — **The payments kit** (the owner: "Go with checkout template next, also maybe
+  add a few more kits based on newly created components like a card kit"; the plan in
+  `design/checkout-plan.md`: a payments kit and an address kit, then the checkout template
+  on both, with a contact kit, a shop kit and an invoice template offered for later).
+  `PaymentFields` (methods as radio cards, a card whose code follows its brand, a bank
+  account by IBAN with the mandate), `OrderSummary` (lines, steppers, a discount code your
+  function applies or refuses with a reason, sums in whole cents) and `PayButton`
+  (`data-agent-confirm` with the amount and the method); React and Web Components, its own
+  kit page and web page. Found: the payments page's axe failed in Blueprint and Studio on
+  the field errors' red (3.4 to 4.2:1): neither skin set `--ui-destructive`, so both took
+  Base's, made for Base's surface; each sets its own now (5.1:1 or more, measured on each of
+  its surfaces), and the gallery's, the schema form's and the web content page's axe pass in
+  every skin. A $19.99 test catches sums that leave whole cents (0.1 × 100 is exact, so the
+  first test didn't). Tests: 6 React, 6 web, 17 browser; each rule mutation-checked.
 

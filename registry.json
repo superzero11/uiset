@@ -1630,6 +1630,57 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "payments",
+      "type": "registry:ui",
+      "title": "Payments",
+      "description": "How to pay and what it pays for: payment methods as cards to choose from, card fields whose security code follows the brand, a bank account by IBAN with its mandate, an order summary with a discount code and totals in the shop's currency, and a Pay button an agent can't press without a person.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.14",
+        "@ui-sdk/react@0.1.0-beta.14"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/button",
+        "superzero11/uiset/field",
+        "superzero11/uiset/input-mask",
+        "superzero11/uiset/number-input",
+        "superzero11/uiset/radio"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/payments.tsx",
+          "type": "registry:ui",
+          "target": "@ui/payments.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/payments/order.ts",
+          "type": "registry:file",
+          "target": "@ui/payments/order.ts"
+        },
+        {
+          "path": "registry/uiset/ui/payments/payments.css",
+          "type": "registry:file",
+          "target": "@ui/payments/payments.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icons.tsx",
+          "type": "registry:file",
+          "target": "@ui/shell/icons.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icon-paths.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/icon-paths.ts"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "input-mask",
       "type": "registry:ui",
       "title": "Input mask",

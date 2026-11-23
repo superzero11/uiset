@@ -221,6 +221,13 @@ const components = [
     ["libphonenumber-js"],
   ],
   [
+    "payments",
+    "Payments",
+    "How to pay and what it pays for: payment methods as cards to choose from, card fields whose security code follows the brand, a bank account by IBAN with its mandate, an order summary with a discount code and totals in the shop's currency, and a Pay button an agent can't press without a person.",
+    ["payments/order.ts", "payments/payments.css", "shell/shell.css", "shell/icons.tsx", "shell/icon-paths.ts"],
+    ["button", "field", "input-mask", "number-input", "radio"],
+  ],
+  [
     "input-mask",
     "Input mask",
     "Fields formatted as they're typed with the caret kept in place: card numbers grouped by brand with the brand named, expiry dates and security codes, IBANs checked by country and checksum, amounts grouped in the locale, and patterns of your own. Each checks itself and reports its value without separators; agents set them in any format.",

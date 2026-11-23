@@ -563,3 +563,20 @@ body {
     }
   }
 }
+
+/* The Payments page: how to pay beside the order, one under the other on a phone. */
+@layer uiset.base {
+  .payments-demo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .payments-demo-pay {
+    display: grid;
+    gap: 1.25rem;
+    min-inline-size: 0;
+  }
+}
+

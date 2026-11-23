@@ -356,15 +356,15 @@ function pattern(shape: string): Mask {
   }
 }
 
-/** A mask by the name Web Components and a schema form use. */
-function maskNamed(name: string, options: { currency?: string; locale?: string; pattern?: string } = {}): Mask | null {
+/** A mask by the name Web Components and a schema form use. `forCard` is the card number a security code is for. */
+function maskNamed(name: string, options: { currency?: string; locale?: string; pattern?: string; forCard?: string } = {}): Mask | null {
   switch (name) {
     case "card-number":
       return cardNumber()
     case "card-expiry":
       return cardExpiry()
     case "card-code":
-      return cardCode()
+      return cardCode({ brand: () => cardBrand(digitsOf(options.forCard ?? "")) })
     case "iban":
       return iban({ locale: options.locale })
     case "currency":

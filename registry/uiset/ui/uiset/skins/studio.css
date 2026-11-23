@@ -91,6 +91,9 @@
     --uiset-solid-hover: oklch(0.86 0.14 75);
     --uiset-solid-weight: 600;
     --uiset-popup-radius: 4px;
+    /* Errors and refusals, readable as text: 5.4:1 or more on the rack, the panels and raised surfaces. Base's red, made for its own
+       surface, fell to 3.4:1 here. */
+    --ui-destructive: oklch(0.80 0.13 25);
     /* Chips in a field: a combobox's choices, a tag input's tags. */
     --uiset-chip-border: var(--ui-border);
     --uiset-chip-radius: 3px;

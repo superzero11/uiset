@@ -1096,6 +1096,21 @@ main > section,
   min-width: 0;
 }
 
+/* The Payments kit page: how to pay beside the order, one under the other on a phone. */
+.payments-demo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 2rem;
+  align-items: start;
+  min-width: 0;
+}
+
+.payments-demo-pay {
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
 .scheduler-demo {
   display: grid;
   gap: 1rem;

@@ -43,6 +43,7 @@ function maskOf(el: HTMLElement): Mask | null {
     currency: el.getAttribute("currency") ?? undefined,
     locale: el.getAttribute("locale") ?? undefined,
     pattern: el.getAttribute("pattern") ?? undefined,
+    forCard: el.getAttribute("for-card") ?? undefined,
   })
 }
 
@@ -108,7 +109,7 @@ function draw(el: MaskedInputElement, instance: MaskedInputInstance) {
   let maskFor = ""
   function paint() {
     const state = instance.get()
-    const key = ["mask", "currency", "locale", "pattern"].map((name) => el.getAttribute(name)).join("|")
+    const key = ["mask", "currency", "locale", "pattern", "for-card"].map((name) => el.getAttribute(name)).join("|")
     if (key !== maskFor) {
       maskFor = key
       mask = maskOf(el)
@@ -160,7 +161,7 @@ function draw(el: MaskedInputElement, instance: MaskedInputInstance) {
   paint()
   const stop = instance.subscribe(paint)
   const watch = new MutationObserver(paint)
-  watch.observe(el, { attributeFilter: ["label", "mask", "currency", "locale", "pattern", "placeholder", "description", "name", "form", "required", "readonly", "error"] })
+  watch.observe(el, { attributeFilter: ["label", "mask", "currency", "locale", "pattern", "for-card", "placeholder", "description", "name", "form", "required", "readonly", "error"] })
   return () => {
     stop()
     watch.disconnect()

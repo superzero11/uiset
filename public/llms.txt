@@ -34,6 +34,7 @@ Rules for agents building with UISet:
 - [App frame and data display](https://uiset.dev/docs/app-shell.md): `app-shell`, `breadcrumbs`, `page-header`, `card`, `badge`, `stat`, `empty-state`, `skeleton`, `description-list`, `item-list`, `alert`, `kbd`, `spinner`, `stepper`, `search-field`, `copy-button`, `table`, `avatar-group`, `code-block`
 - [Forms](https://uiset.dev/docs/forms.md): `schema-form`, `inline-edit`, `tag-input`, `phone-input`, `input-mask`, `upload`
 - [Lists and trees](https://uiset.dev/docs/lists.md): `sortable-list`, `sortable-tree`
+- [Payments](https://uiset.dev/docs/payments.md): `payments`
 - [Motion](https://uiset.dev/docs/motion.md): `number-ticker`, `text-reveal`, `thinking`, `crossfade`
 - [Rich text](https://uiset.dev/docs/rich-text.md): `rich-text`
 - [Chat](https://uiset.dev/docs/chat.md): `chat`, `chat-response`, `chat-parts`, `chat-message-parts`, `chat-composer`, `chat-sidebar`

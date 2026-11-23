@@ -31,6 +31,13 @@ On UI SDK `0.1.0-beta.14`.
   or calling code. Agents set the number in any format and the country by name. Phone data
   is libphonenumber-js's small build (a dependency of the item; a lazy chunk in
   `@uiset/web`).
+- **Payments kit.** `PaymentFields` (ways to pay as radio cards; a card, its security code
+  following its brand; a bank account by IBAN with the mandate), `OrderSummary` (lines with
+  optional steppers, a discount code your function applies or refuses with a reason, and the
+  sums in whole cents in the shop's currency), and `PayButton` ("Pay $106.49", busy while it
+  pays, and confirmed by a person when an agent presses it). `checkPayment` says what's
+  missing, field by field. React and Web Components (`<uiset-payment-fields>`,
+  `<uiset-order-summary>`, `<uiset-pay-button>`).
 - **Input masks.** `MaskedInput` (`input-mask`) and `<uiset-masked-input>`: fields formatted
   as they're typed with the caret kept in place. Card numbers grouped by brand with the
   brand named (and the Luhn check), expiry dates as MM / YY, security codes by brand, IBANs in
@@ -50,6 +57,9 @@ On UI SDK `0.1.0-beta.14`.
 
 ### Fixed
 
+- **Errors read in Blueprint and Studio.** Both took Base's red, made for Base's surface, and
+  on Blueprint's blue paper or Studio's panels a field's error fell to 3.4:1. Each sets its
+  own now, 5.1:1 or more on every surface it has. Add `uiset` again to take it.
 - **A Combobox with chips looks like a field in every skin.** UI SDK's own look leaves chips
   unstyled, and so did UISet: a `multiple` Combobox showed bare text and grey buttons. The
   chip box is the field now, with the field's edge and one focus ring, and each skin draws

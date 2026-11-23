@@ -85,6 +85,9 @@
     --uiset-solid-hover: oklch(0.86 0.06 220);
     --uiset-solid-weight: 600;
     --uiset-popup-radius: 0;
+    /* Errors and refusals, readable as text: 5.1:1 or more on the paper and on raised surfaces. Base's red, made for its own
+       surface, fell to 3.4:1 here. */
+    --ui-destructive: oklch(0.82 0.11 25);
     /* Chips in a field: a combobox's choices, a tag input's tags. */
     --uiset-chip-bg: transparent;
     --uiset-chip-border: var(--blueprint-line);

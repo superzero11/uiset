@@ -151,6 +151,7 @@ plain elements. UI SDK's own `<ui-*>` elements are typed by `@ui-sdk/web`.
 | `<uiset-table>`, `<uiset-avatar-group>`, `<uiset-count-badge>`       | A scroll area around your table (sticky headings and first column, rows that stack), overlapping avatars with a count, and a count on a button's corner |
 | `<uiset-code-block>`, `<uiset-code-tabs>`, `<uiset-package-command>` | Code in its language's colors with a caption, line numbers, marked lines and copy; tabs of versions; one command for npm, pnpm, yarn and bun |
 | `<uiset-inline-edit>`, `<uiset-tag-input>`, `<uiset-phone-input>`, `<uiset-masked-input>`, `<uiset-upload>` | A value that turns into a field when pressed, tags typed, pasted or picked, a phone number with its country, a field formatted as typed (cards, IBANs, amounts, patterns), and a drop zone with a queue of uploads |
+| `<uiset-payment-fields>`, `<uiset-order-summary>`, `<uiset-pay-button>` | How to pay, an order's lines and sums with a discount code, and a Pay button a person confirms when an agent presses it |
 | `<uiset-sortable-list>`, `<uiset-sortable-tree>`                      | A list people put in order by drag or by keys, with a selection that moves together; a tree they reorder and nest |
 
 ## Studio
@@ -935,6 +936,38 @@ rich text editor and the agent snapshot. Each one's old scrolling class (like
 `chat-thread-scroller` or `data-grid-scroller`) is on the viewport, the element that scrolls.
 Two keep the browser's own scrolling, since what's inside them is your own markup:
 `<uiset-status-bar>` and `<uiset-pull-refresh>`.
+
+## Payments
+
+The Payments kit's three elements, on the same masks and sums as React's. `web/payments.html`
+has them side by side.
+
+```html
+<uiset-payment-fields id="payment"></uiset-payment-fields>
+<uiset-pay-button id="pay" currency="USD" locale="en-US"></uiset-pay-button>
+<uiset-order-summary id="order" currency="USD" locale="en-US" shipping="6" quantities></uiset-order-summary>
+```
+
+```ts
+order.lines = [{ id: "mug", name: "Stoneware mug", quantity: 2, price: 18.5 }]
+order.applyCode = (code) => (code === "WELCOME10" ? { code, amount: 10 } : "That code isn't one we know.")
+pay.amount = order.total
+order.addEventListener("quantitychange", () => (pay.amount = order.total))
+pay.addEventListener("pay", (event) => {
+  if (!payment.check()) return
+  event.detail.wait(charge(payment.value))
+})
+```
+
+- `<uiset-payment-fields>`: `value` (`{ method, card, bank }`), `methods`, `messages` and
+  `maskMessages`. `check()` shows what's missing under each field, focuses the first, and
+  returns whether the payment can be sent. Fires `valuechange`.
+- `<uiset-order-summary>`: `lines`, `discount`, `applyCode` and `messages` are properties;
+  `currency`, `locale`, `shipping`, `tax`, `quantities` and `heading` (`2`, `3` or `false`)
+  attributes. `total` is the sum. Fires `quantitychange` and `discountchange`.
+- `<uiset-pay-button>`: `amount` (a property or an attribute), `currency`, `locale`,
+  `method` ("the card ending 4242") and `disabled`. It fires `pay`; `event.detail.wait()`
+  keeps it busy until your promise settles. An agent's press waits for a person.
 
 ## Page templates
 
