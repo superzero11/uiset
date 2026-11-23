@@ -419,7 +419,7 @@ test("calendar: the small month jumps the week to the day chosen", { tag: "@engi
   await frame(page).getByRole("grid", { name: "November 2026" }).getByRole("gridcell", { name: /November 25/ }).click()
   await expect(frame(page).getByRole("heading", { name: "Nov 23 – 29, 2026" })).toBeVisible()
   await expect(week(page).getByRole("button", { name: /^Design critique, Wednesday, November 25/ })).toBeVisible()
-  await frame(page).getByRole("button", { name: "Today", exact: true }).click()
+  await frame(page).getByRole("button", { name: "Go to today" }).click()
   await expect(frame(page).getByRole("heading", { name: "Nov 16 – 22, 2026" })).toBeVisible()
 })
 

@@ -420,7 +420,9 @@ function SchedulerToolbar({
   return (
     <div className="scheduler-toolbar" role="group" aria-label="Schedule tools">
       <div className="scheduler-nav">
-        <Button variant="outline" onClick={onToday}>
+        {/* Not just "Today": events read "Today at 12:30 PM" too, and an agent's step by a name
+            that other names hold as a word is refused as ambiguous. */}
+        <Button variant="outline" onClick={onToday} aria-label="Go to today">
           Today
         </Button>
         <Button variant="ghost" onClick={onPrevious} aria-label={`Previous ${unit}`}>

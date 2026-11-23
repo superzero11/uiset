@@ -91,4 +91,7 @@ group named by `label`, which is how an agent finds it.
 Events are named by title or id; when two share a title, the error lists both with their
 ids. The snapshot lists each event as `{ value: id, label: "Standup, Monday, …" }`.
 Deleting goes through the dialog's confirm (`data-agent-confirm`), so a person approves
-it; `removeEvent` stays on the API for your own code.
+it; `removeEvent` stays on the API for your own code. The toolbar's Today button is named
+"Go to today": event names like "Lunch, Today at 12:30 PM" hold the word "Today", and an
+agent's step by a name that other names hold as a word is refused as ambiguous. Name your
+own buttons beside events the same way.

@@ -47,6 +47,12 @@ On UI SDK `0.1.0-beta.14`.
 - **Mod+B is registered once when an `AppShell` sits inside another** (a template shown in
   an app's own shell): the inner shell leaves it to the outer one, which toggles the same
   remembered sidebar. UI SDK had warned that the shortcut was registered twice. `app-shell`.
+- **An agent presses the scheduler's Today button by name.** UI SDK beta.14 reads a name
+  from content with a space between flex children, so the calendar template's upcoming
+  events now read "Lunch with Ada Today at 12:30 PM", and a step naming "Today" matched
+  three buttons. The button is named "Go to today" now, and still shows "Today".
+  `scheduler` and `calendar-app`, React and Web Components (`web/schedule.html` and the
+  calendar template's own toolbar).
 - **Agents read a board card's priority and labels.** A card's item for agents held its
   column, assignee and due date, but not the "Urgent" or "High" badge or the labels people
   see on its face. It holds them now, like "Ship the beta (Doing, Urgent, Grace Hopper, due

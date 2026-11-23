@@ -2309,3 +2309,13 @@ vercel-labs/ui#905 (2026-11-19).
   Release)". React and Web Components share the wording with what screen readers hear. The
   React and web tests read it; with the priority taken out, both fail (mutation check). No
   visual change. Separate fields per card wait on UI SDK (ideas #13).
+- 2026-11-23 — 0.6.1's Chrome and web run on beta.14: 860 passed, 2 failed, in 26.7 minutes
+  at 2 workers (the guard's lowest free memory 31%, pressure never critical). Both failures
+  were the calendar template's readiness, 95 of 100 in React and Web Components: "Today"
+  named three buttons. beta.14 reads a name from content with a space between flex
+  children (its 4be6e4a), so the upcoming events read "Lunch with Ada Today at 12:30 PM"
+  instead of "…AdaToday…", and the toolbar's Today button lost its unique name. The button
+  is named "Go to today" now (React `SchedulerToolbar`, `web/schedule.html`, the web
+  template's toolbar), visible text unchanged, and the scheduler docs say why. jsdom has no
+  layout, so only the browser specs see it; they failed before the fix and pass after (14 of
+  the calendar and schedule specs, axe included).

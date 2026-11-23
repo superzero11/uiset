@@ -194,7 +194,7 @@ test("calendar: the small month jumps the week to the day chosen", async () => {
   await bridge.run("November 2026", "setValue", "2026-11-25")
   expect(screen.getByRole("heading", { name: "Nov 23 – 29, 2026" })).toBeTruthy()
   expect(event(/^Design critique, Wednesday, November 25/)).toBeTruthy()
-  await bridge.press("Today")
+  await bridge.press("Go to today")
   expect(screen.getByRole("heading", { name: "Nov 16 – 22, 2026" })).toBeTruthy()
 })
 
