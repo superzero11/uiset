@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.13, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.14, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -227,6 +227,7 @@ Every line below is an automated test.
 **Opening**
 
 - Typing a trigger opens the list with every item.
+- A field controlled through onChange keeps the typed trigger and opens the list. React only.
 - Typing after the trigger filters the list.
 - Text an input method commits filters the list.
 - Queries match Unicode letters and ignore accents.

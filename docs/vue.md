@@ -14,12 +14,12 @@ This page describes `@uiset/web` 0.3.0 or later.
 npm install @uiset/web @ui-sdk/web
 ```
 
-With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.13`, the exact
-version UISet pins. pnpm takes UI SDK's `latest` tag, the same beta today, which moves on with
-UI SDK's next one, so name the versions:
+With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.14`, the exact
+version UISet pins. pnpm takes UI SDK's `latest` tag, which can be another beta, so name the
+versions:
 
 ```bash
-pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.13 @ui-sdk/core@0.1.0-beta.13
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.14 @ui-sdk/core@0.1.0-beta.14
 ```
 
 `shiki` is optional: with it, code in chats is colored; without it the app still builds and
@@ -453,7 +453,7 @@ they render the same parts with the same `data-slot` and state attributes, and `
 styles those attributes. Install the version UISet pins:
 
 ```bash
-npm install @ui-sdk/vue@0.1.0-beta.13
+npm install @ui-sdk/vue@0.1.0-beta.14
 ```
 
 ```vue

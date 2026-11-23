@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.13, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.14, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -135,6 +135,7 @@ Touch screens have no hover, so a tap follows the link without opening the card.
 **Keyboard**
 
 - Keyboard focus on the link opens the card after the delay.
+- Keyboard focus on a link the pointer opened keeps the card open when the pointer leaves.
 - Escape closes the card and leaves focus on the link.
 - Enter follows the link.
 

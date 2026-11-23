@@ -10,7 +10,22 @@ again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 
 ## 0.6.1 (unreleased)
 
-UI SDK 0.1.0-beta.13, as before.
+On UI SDK `0.1.0-beta.14`.
+
+### Changed
+
+- **UI SDK `0.1.0-beta.14`.** Every item now pins `@ui-sdk/core`, `@ui-sdk/react` and
+  `@ui-sdk/web` at `0.1.0-beta.14`, and `@uiset/web` 0.6.1 has the new peer versions. UISet
+  needed no code changes. To take it, add your items again and update the `@ui-sdk/*`
+  versions in your package.json. Its fixes reach UISet's items: a Select's search highlights
+  the first match again (a beta.13 regression,
+  [vercel-labs/ui#931](https://github.com/vercel-labs/ui/issues/931)), a closed popup no
+  longer stays on the page for 100 seconds in Firefox
+  ([#934](https://github.com/vercel-labs/ui/issues/934)), two copies of UI SDK on one page
+  (an app beside `@uiset/web`) keep each popup at its own trigger
+  ([#932](https://github.com/vercel-labs/ui/issues/932)), and an agent's step right after a
+  person picks from a menu no longer names two components
+  ([#929](https://github.com/vercel-labs/ui/issues/929)).
 
 ### Fixed
 

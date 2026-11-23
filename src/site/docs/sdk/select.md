@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.13, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.14, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -372,6 +372,7 @@ Searching, with a search field in the list:
 - Opening focuses the search field and highlights the selected item.
 - The search field is a combobox that controls the listbox in the list.
 - Typing filters the list and highlights the first match.
+- A field whose onChange renders the filtered list at once still highlights the first match. React only.
 - Typing never jumps by first letter: the characters go into the field.
 - Arrow keys move the highlight while focus stays in the field.
 - Home and End are the field's, so the highlight stays.

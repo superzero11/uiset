@@ -2287,3 +2287,17 @@ vercel-labs/ui#905 (2026-11-19).
   Each has a Vitest test that failed before the fix, in React and Web Components where both
   exist; the readiness and web IDE tests now allow no UI SDK warning at all. The month view
   passes axe in Chrome, light and dark; the web IDE's browser spec passes (21). Vitest: 764.
+- 2026-11-22 — The 0.6.1 release run (the owner said release today) stopped twice in Chrome,
+  both times by the memory guard: first on 30 seconds of "warn" pressure with free memory at
+  37% or more (the guard now ignores warn, as on 0.6.0), then when another session's 11 GB
+  embedding job started and swap jumped 2.8 GB in five seconds. 60 tests had passed, none
+  failed. Lint, typecheck, 764 unit tests and the web build passed. The run waited.
+- 2026-11-23 — **UI SDK 0.1.0-beta.14 joins 0.6.1** (the owner approved it from the daily
+  watch, to share one full run with the release). Pins move in package.json and
+  web/package.json (peers too); the docs, the README badge and the site's header name
+  beta.14. The Vue and Svelte guides said pnpm's `latest` was "the same beta today"; it isn't
+  (`latest` is still beta.13), so they say it can be another beta. No UISet workaround waited
+  on beta.14: #929 had none, and the toast advice behind #978 was already gone. A patch
+  release can move UI SDK under **Changed**, as 0.1.1 did. Lint, typecheck and 764 unit tests
+  pass on it; the browsers run with the release. The roadmap's Following UI SDK: #929 fixed
+  in beta.14, #928's cause found upstream, #927's fix waiting for a pull request.
