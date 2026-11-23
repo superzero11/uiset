@@ -2333,3 +2333,7 @@ vercel-labs/ui#905 (2026-11-19).
   (122 items). The owner publishes (`npm login` first). The full run, timed against before
   for the bridge testing plan: about 1 h 50 min from about 3 hours, 40% less but short of
   half; WebKit's one-worker big pages are 39 of its 52 minutes (`design/bridge-testing-plan.md`).
+- 2026-11-23 — `@uiset/web` 0.6.1 on npm (the owner published; `latest`, 89 files, 301.0 kB).
+  The registry and the site shipped with the push after the owner's check; uiset.dev deployed.
+  The roadmap's Now drops 0.6.1. The next release is set for Wednesday 2026-11-25, end of day
+  (the owner): building until then, with the full suite once, for that batch.

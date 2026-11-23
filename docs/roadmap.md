@@ -15,12 +15,6 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**0.6.1: fixes, tested and ready to publish.** UI SDK beta.14; toasts an agent can read
-([vercel-labs/ui#978](https://github.com/vercel-labs/ui/issues/978)); no clipped focus rings
-in the chat; month views, pricing questions and board cards' priority and labels for agents;
-Mod+B registered once when one shell sits in another; the web IDE's palette without a
-duplicate. S
-
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
 bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox
 715 each, from 1,030. 0.6.1's full run took about 1 h 50 min, from about 3 hours: not yet
