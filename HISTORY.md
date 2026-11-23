@@ -2319,3 +2319,17 @@ vercel-labs/ui#905 (2026-11-19).
   template's toolbar), visible text unchanged, and the scheduler docs say why. jsdom has no
   layout, so only the browser specs see it; they failed before the fix and pass after (14 of
   the calendar and schedule specs, axe included).
+- 2026-11-23 — 0.6.1's WebKit and Firefox runs. WebKit: 710 passed, 6 skipped, none failed,
+  in four guarded parts (521 at 2 workers; the 189 on the big pages at 1 worker); its biggest
+  process 1.2 GB. Firefox in Docker: 696 passed, 20 skipped (Chrome-only clipboard, CDP touch
+  and IME, and the link checker's own Chrome), none failed, in 28.8 minutes at 2 workers,
+  after the guard had stopped a first try at 67 passed when another session's 9.2 GB job
+  started (the owner paused it). Lowest free memory 46%.
+- 2026-11-23 — **Release 0.6.1, prepared.** UI SDK beta.14, and fixes: toasts an agent can
+  read, chat focus rings, month views, pricing questions and board cards for agents, the
+  scheduler's "Go to today", Mod+B in nested shells, the web IDE's palette. Tested in all
+  three browsers. Dated 2026-11-23; no What's new entry, since a patch adds nothing. The
+  tarball packs 89 files, 301.0 kB, with beta.14 peers; the fresh-app install test passed
+  (122 items). The owner publishes (`npm login` first). The full run, timed against before
+  for the bridge testing plan: about 1 h 50 min from about 3 hours, 40% less but short of
+  half; WebKit's one-worker big pages are 39 of its 52 minutes (`design/bridge-testing-plan.md`).

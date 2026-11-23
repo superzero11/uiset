@@ -70,6 +70,13 @@ snapshot listed Allow, Deny, the composer and the tool.
 - **Found while moving:** the scheduler's and calendar's month grids have no name for agents;
   the pricing questions reach agents as q0 to q3; on template pages the site's app shell and
   the template's both register Mod+B; the web IDE's palette lists one file twice as Recent.
+- **Timed (0.6.1, 2026-11-23).** The full release run, on the owner's Mac, added up from
+  its guarded parts (the memory guard stopped it four times for other jobs): Vitest 764 in
+  about 2 minutes; Chrome and web 862 in 26.7 minutes at 2 workers; WebKit 716 in about 52
+  (521 at 2 workers in 13.4, then the 189 on the big pages, the gallery's included, at 1
+  worker in about 39); Firefox in Docker 716 in 28.8 at 2 workers. About 1 h 50 min in all,
+  from about 3 hours: 40% less, short of half. The biggest browser process was WebKit's at
+  1.2 GB, under 2.5 GB. What's left is WebKit's one-worker part.
 
 ## Done when
 
