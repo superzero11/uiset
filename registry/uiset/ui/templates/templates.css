@@ -1348,4 +1348,149 @@
       line-height: 1.55;
     }
   }
+
+  /* Invoice: a document first. Its dates, the two parties side by side where there's room,
+     the lines with figures lined up on the right, how to pay, and notes. */
+  .invoice {
+    container-type: inline-size;
+    display: grid;
+    gap: 2rem;
+    padding: clamp(1.25rem, 4vw, 2.5rem) clamp(1rem, 4vw, 2.5rem);
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+    /* The skin's text size, not the page's: the same in React's gallery and on a web page. */
+    font-size: var(--ui-font-size, 0.875rem);
+  }
+
+  .invoice-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .invoice-heading {
+    display: grid;
+    gap: 0.375rem;
+    justify-items: start;
+  }
+
+  .invoice-seller {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  .invoice-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .invoice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .invoice-parties {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 1.5rem;
+  }
+
+  .invoice-party {
+    display: grid;
+    gap: 0.375rem;
+    align-content: start;
+    font-size: 0.875rem;
+
+    & address {
+      display: grid;
+      font-style: normal;
+      line-height: 1.5;
+    }
+
+    & a {
+      justify-self: start;
+      color: inherit;
+    }
+  }
+
+  .invoice-section-title {
+    margin: 0 0 0.25rem;
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .invoice-muted {
+    margin: 0;
+    color: var(--ui-muted-foreground);
+    font-size: 0.8125rem;
+  }
+
+  .invoice-item {
+    display: block;
+    font-weight: 500;
+  }
+
+  /* Figures line up; text keeps its own spacing: the table sets tabular figures on all of
+     it, and in Inter (Base) those widen a hyphen too ("Pour - over"). */
+  .invoice-lines {
+    & .table {
+      font-variant-numeric: normal;
+    }
+
+    & [data-align="end"] {
+      font-variant-numeric: tabular-nums;
+    }
+
+    & tfoot th {
+      font-weight: 400;
+      text-align: end;
+    }
+
+    & .invoice-total :is(th, td) {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+
+  .invoice-pay,
+  .invoice-notes {
+    display: grid;
+    gap: 0.5rem;
+    max-inline-size: 40rem;
+
+    & p {
+      margin: 0;
+      line-height: 1.55;
+    }
+  }
+
+  .invoice-copy {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .invoice > .description-list {
+    max-inline-size: 32rem;
+  }
+
+  /* On paper: the document only. */
+  @media print {
+    .invoice-actions,
+    .invoice .copy-button {
+      display: none;
+    }
+
+    .invoice {
+      padding: 0;
+    }
+  }
 }
+

@@ -2503,4 +2503,21 @@ vercel-labs/ui#905 (2026-11-19).
   address pages, which didn't publish `window.agent`; both do now and score 100. Tests: 3
   React, 3 web (a wrong email alone stops the order), 12 axe, the sweep on the page; 10
   rules mutation-checked.
+- 2026-11-23 — **The invoice template** (the owner: "Invoice template", then "finish the
+  invoice work properly end to end"). `InvoiceTemplate` and `web/templates/invoice.html`
+  from one `Invoice` (`templates/invoice-model.ts` holds its sums and status, the sample its
+  data): both parties' addresses as their countries write them, issued and due dates with
+  a status as of `now`, the lines in UISet's table (stacked on a phone), VAT on the lines
+  after any discount in whole cents, bank transfer details with the IBAN and reference to
+  copy, and notes; Print, and a print style without the buttons. For it, the address kit's
+  generated table keeps each country's whole format (its own text between parts: "CH-",
+  "〒", the comma in "Portland, OR 97204"), its form rows now read from it, and
+  `addressLines` writes an address out: a part that's missing takes the text that joined it.
+  The sample bank account is invented (bank code SAMP, valid check digits). Found on the
+  way: UISet's table sets tabular figures on all its text, and in Base's Inter that widens
+  a hyphen ("Pour - over"); the invoice keeps them on its figures only, and the table itself
+  is left for its own fix. Also, emptying an address's country asked the combobox for no
+  value and the handler ignored it (UI SDK warned, and the web field showed no country):
+  both now refuse it and show the country again. Tests: 5 React, 2 web, address lines in
+  four countries' formats; 10 rules mutation-checked.
 

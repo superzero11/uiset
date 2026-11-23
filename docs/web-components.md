@@ -1008,6 +1008,7 @@ imports as well (`registry/uiset/ui/templates/*-sample.ts`), so the two show the
 | `auth.html` | Sign in, sign up, forgot and reset password, verify a code: browser checks, server messages, a strength meter |
 | `pricing.html` | Plans with a monthly or yearly switch, a comparison table and questions |
 | `checkout.html` | Contact, an address that follows its country, delivery, payment and the order with Pay, checked as a whole |
+| `invoice.html` | An invoice: both addresses as their countries write them, dates and status, lines and sums, bank details to copy |
 | `dashboard.html` | A date range that rescopes the figures, charts and recent orders, in the App Shell |
 | `admin.html` | Records with search, filters and export; create and edit in a drawer; confirmed bulk delete |
 | `settings.html` | Profile, security, notifications, billing with usage and invoices, team, and a danger zone |

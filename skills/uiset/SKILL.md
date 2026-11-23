@@ -64,7 +64,7 @@ import { UISet } from "@/components/ui/uiset"
 5. **Prefer a kit to a pile of parts.** A chat UI is the chat kit, a table with sorting is
    `data-grid`, a calendar is `scheduler`, rich text is `rich-text`. A whole page may
    already be a template (`dashboard`, `settings`, `auth`, `inbox`, `chat-app`, `admin`,
-   `pricing`, `checkout`, `ide-app`, `project-board`, `calendar-app`).
+   `pricing`, `checkout`, `invoice`, `ide-app`, `project-board`, `calendar-app`).
 6. **Agents read values the same way people see them**: a data grid's rows, a rich text
    editor's Markdown, a schedule's events. When you add a control that holds data, keep
    its value in the component (controlled or not), not only in the DOM.

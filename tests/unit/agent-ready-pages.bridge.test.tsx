@@ -74,7 +74,7 @@ async function problems(name: string) {
 
 // The calendar stays in the browser test: on a wide screen its stylesheet hides the toolbar's
 // New event beside the sidebar's, and jsdom draws no styles.
-const templates = ["auth", "dashboard", "settings", "admin", "inbox", "chat-app", "project-board", "pricing", "checkout", "ide-app"]
+const templates = ["auth", "dashboard", "settings", "admin", "inbox", "chat-app", "project-board", "pricing", "checkout", "invoice", "ide-app"]
 
 for (const template of templates) {
   test(`the ${template} template scores 100`, { timeout: 60_000 }, async () => {

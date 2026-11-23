@@ -24,6 +24,7 @@ the data Chrome's autofill uses, compacted to what a form needs.
 | `checkAddress`, `emptyAddress`  | What's missing or wrong in an address, field by field; an empty one to start from |
 | `addressLayout`                 | How a country writes an address: its rows, labels, required fields, regions and postal code shape |
 | `fillAddress`                   | An agent's fill, with no React in it: values by field name or label         |
+| `addressLines`                  | An address written out as its country writes it, a line each: "Portland, OR 97204", "CH-8001 Zürich", "〒154-0023" |
 | `addressCountries`, `countryName` | The countries by name in a language, flags included                       |
 
 ## Use

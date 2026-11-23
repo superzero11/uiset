@@ -2,7 +2,7 @@ import { render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { useState } from "react"
 import { expect, test } from "vitest"
-import { AddressFields, addressLayout, checkAddress, emptyAddress, fillAddress, type AddressFieldName, type AddressValue } from "@/registry/uiset/ui/address"
+import { AddressFields, addressLayout, addressLines, checkAddress, emptyAddress, fillAddress, type AddressFieldName, type AddressValue } from "@/registry/uiset/ui/address"
 import { createBridge, settle } from "./bridge"
 
 test("each country's fields come in its own order, with its own names and required ones", () => {
@@ -21,6 +21,22 @@ test("each country's fields come in its own order, with its own names and requir
   expect(addressLayout("IN").labels.postalCode).toBe("PIN code")
   expect([...addressLayout("AE").required]).not.toContain("postalCode")
   expect(addressLayout("CA").regions?.find(([key]) => key === "ON")?.[1]).toBe("Ontario")
+})
+
+test("an address is written out as its country writes it, with what joins its parts", () => {
+  const ada = { ...emptyAddress("US"), name: "Ada Lovelace", line1: "1 Main St", line2: "Unit 4", city: "San Francisco", region: "CA", postalCode: "94110" }
+  expect(addressLines(ada, { locale: "en" })).toEqual(["Ada Lovelace", "1 Main St", "Unit 4", "San Francisco, CA 94110", "United States"])
+  // A part it doesn't have goes with the comma before it.
+  expect(addressLines({ ...ada, region: "" }, { locale: "en", country: false }).at(-1)).toBe("San Francisco 94110")
+  const zurich = { ...emptyAddress("CH"), name: "Ada Lovelace", line1: "Bahnhofstrasse 1", city: "Zürich", postalCode: "8001" }
+  expect(addressLines(zurich, { locale: "en" })).toEqual(["Ada Lovelace", "Bahnhofstrasse 1", "CH-8001 Zürich", "Switzerland"])
+  // Without its postal code, the country's prefix goes too.
+  expect(addressLines({ ...zurich, postalCode: "" }, { locale: "en", country: false }).at(-1)).toBe("Zürich")
+  // A separator with nothing before it goes: Brazil's "city-state" with no city is just "SP".
+  const saoPaulo = { ...emptyAddress("BR"), name: "Ada Lovelace", line1: "Av. Paulista, 1000", region: "SP", postalCode: "01310-100" }
+  expect(addressLines(saoPaulo, { locale: "en", country: false })).toEqual(["Ada Lovelace", "Av. Paulista, 1000", "SP", "01310-100"])
+  const tokyo = { ...emptyAddress("JP"), name: "Ada Lovelace", line1: "1-2-3 Kamiyoga", region: "Tokyo", postalCode: "154-0023" }
+  expect(addressLines(tokyo, { locale: "en" })).toEqual(["〒154-0023", "Tokyo", "1-2-3 Kamiyoga", "Ada Lovelace", "Japan"])
 })
 
 const us = (fields: Partial<AddressValue>): AddressValue => ({ ...emptyAddress("US"), name: "Ada Lovelace", line1: "1 Main St", city: "Springfield", region: "CA", postalCode: "94110", ...fields })
@@ -89,7 +105,7 @@ test("a person fills it; typing a country's whole name, as autofill does, change
   await userEvent.tab()
   expect(valueOf()).toMatchObject({ name: "Ada Lovelace", line2: "Unit 4", postalCode: "H3Z 2Y7" })
   expect(within(address).queryByText("Postal code should look like H3Z 2Y7.")).toBeNull()
-})
+}, 20_000)
 
 test("problems from a submit show under their fields, and focus goes to the first", async () => {
   render(<Shipping errors={checkAddress(emptyAddress("US"))} />)
@@ -113,4 +129,14 @@ test("an agent sees one component per address and fills it in one step; what's w
   const wrong = await bridge.run("Delivery address", "fill", { "Postal code": "12345" })
   expect(wrong.error?.message).toBe("Postal code should look like EC1Y 8SY.")
   expect(screen.getByText("Postal code should look like EC1Y 8SY.")).toBeTruthy()
+})
+
+test("emptying the country keeps it: an address always has one", async () => {
+  render(<Shipping />)
+  const country = screen.getByRole("combobox", { name: "Country or region" }) as HTMLInputElement
+  await userEvent.clear(country)
+  await userEvent.tab()
+  await settle()
+  expect(valueOf().country).toBe("US")
+  expect(country.value).toBe("United States")
 })

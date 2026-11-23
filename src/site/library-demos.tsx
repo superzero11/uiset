@@ -38,6 +38,7 @@ const templateDemos: Record<string, Demo> = {
   "calendar-app": from(() => import("@/registry/uiset/ui/templates/calendar-app"), (m) => () => <m.CalendarAppTemplate contentElement="div" />),
   pricing: from(() => import("@/registry/uiset/ui/templates/pricing"), (m) => m.PricingTemplate),
   checkout: from(() => import("@/registry/uiset/ui/templates/checkout"), (m) => () => <m.CheckoutTemplate contentElement="div" />),
+  invoice: from(() => import("@/registry/uiset/ui/templates/invoice"), (m) => () => <m.InvoiceTemplate contentElement="div" />),
   "ide-app": from(() => import("@/registry/uiset/ui/templates/ide-app"), (m) => () => <m.IdeTemplate />),
 }
 

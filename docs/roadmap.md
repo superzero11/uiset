@@ -20,8 +20,8 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 `phone` field) and input masks (cards, expiry dates and codes, IBANs, amounts, patterns; a
 schema form's `mask` and `currency`), each in React and Web Components, with agents. M
 
-**Checkout, for Wednesday.** Built: the payments kit, the address kit (252 countries) and
-the checkout template on both, React and Web Components, which an agent fills and a person pays. M
+**Checkout and invoices, for Wednesday.** Built: the payments and address kits (252
+countries), and the checkout and invoice templates on them, React and Web Components. M
 
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
 bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox
@@ -44,8 +44,7 @@ under half. Left: WebKit's big pages at one worker, 39 of its 52 minutes. M
    paging. M–L
 7. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
-8. **More templates.** Travel booking, profile, helpdesk tickets, a file manager and an
-   invoice. S each
+8. **More templates.** Travel booking, profile, helpdesk tickets and a file manager. S each
 9. **Print skin.** Swiss and letterpress type, from a written design plan first. M
 10. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
     CSV import. M
@@ -101,7 +100,7 @@ frame, data display and form parts, and the small ones from UI SDK's showcase (s
 fades, radio cards, rings, a textarea's count, password rules, a confirm button); a
 sortable list and a sortable tree, and files dragged into folders in the IDE; fourteen
 kits (chat, rich text, data grid, charts, board, scheduler, canvas, IDE, mobile, terminal,
-Studio, Agent Console, payments, address); eleven page templates; Web Components for every kit
+Studio, Agent Console, payments, address); twelve page templates; Web Components for every kit
 and template; a schema form agents fill by field name; [agent-check](./agent-check.md),
 which scores whether agents can use a page; and the theme generator.
 

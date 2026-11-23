@@ -12,6 +12,7 @@ const templates = [
   { id: "calendar-app", name: "Calendar", what: "A day, a week or a month of events, a small month to jump around, calendars to show or hide" },
   { id: "pricing", name: "Pricing", what: "Plans with a monthly or yearly switch, a comparison, questions" },
   { id: "checkout", name: "Checkout", what: "Contact, an address that follows its country, delivery, payment, and the order with Pay" },
+  { id: "invoice", name: "Invoice", what: "From and to, dates and status, lines with tax, bank transfer details to copy; prints clean" },
   { id: "ide-app", name: "IDE", what: "Files with version control marks, tabs, a code editor, a command palette, problems and a status bar" },
 ] as const
 type TemplateId = (typeof templates)[number]["id"]

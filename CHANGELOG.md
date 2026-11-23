@@ -38,6 +38,11 @@ On UI SDK `0.1.0-beta.14`.
   pays, and confirmed by a person when an agent presses it). `checkPayment` says what's
   missing, field by field. React and Web Components (`<uiset-payment-fields>`,
   `<uiset-order-summary>`, `<uiset-pay-button>`).
+- **Invoice template.** `InvoiceTemplate` (`invoice`) and `web/templates/invoice.html`: who
+  it's from and to, each address written as its country writes it, the dates and a status
+  (due in so many days, due today, overdue, paid), the lines with tax and total in the
+  invoice's currency, bank transfer details with the IBAN and reference to copy, and notes.
+  It prints without its buttons. `invoiceTotals` and `invoiceStatus` work without React.
 - **Checkout template.** `CheckoutTemplate` (`checkout`) and `web/templates/checkout.html`:
   contact (email and an optional phone), a delivery address that follows its country,
   delivery options as radio cards, card or bank payment with a billing address when it
@@ -51,7 +56,8 @@ On UI SDK `0.1.0-beta.14`.
   countries, from Google's address data. Region lists for eight countries, a postal code
   checked against the country's shape and the region it's in, autofill sections, and one
   component per address for agents, filled in one step by field name. `checkAddress` says
-  what's missing or wrong, field by field.
+  what's missing or wrong, field by field; `addressLines` writes an address out as its
+  country does ("Portland, OR 97204", "CH-8001 Zürich").
 - **Input masks.** `MaskedInput` (`input-mask`) and `<uiset-masked-input>`: fields formatted
   as they're typed with the caret kept in place. Card numbers grouped by brand with the
   brand named (and the Luhn check), expiry dates as MM / YY, security codes by brand, IBANs in

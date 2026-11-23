@@ -84,6 +84,9 @@ const addressMessages: AddressMessages = {
 }
 
 const fieldOf = { A: "line1", D: "district", C: "city", S: "region", Z: "postalCode" } as const
+/** How a country with no format of its own writes an address. */
+const plainFormat = "%N%n%O%n%A%n%C"
+const formatOf = (country: string) => addressFormats[country]?.fmt ?? plainFormat
 
 /** A flag from two regional indicator letters. Some systems draw the letters instead. */
 const flagOf = (code: string) => String.fromCodePoint(...[...code.toUpperCase()].map((letter) => 0x1f1a5 + letter.charCodeAt(0)))
@@ -147,7 +150,12 @@ type AddressLayout = {
 function addressLayout(country: string, { messages = addressMessages, regions }: { messages?: AddressMessages; regions?: Record<string, readonly Region[]> } = {}): AddressLayout {
   const format = addressFormats[country] ?? {}
   const rows: AddressPart[][] = []
-  for (const line of (format.rows ?? "A/C").split("/")) {
+  // The rows a form shows, in the country's order; the name comes first in any country.
+  const lines = formatOf(country)
+    .split("%n")
+    .map((line) => [...line.matchAll(/%([ADCSZ])/g)].map((match) => match[1]).join(""))
+    .filter(Boolean)
+  for (const line of lines) {
     // The street is two rows of its own, wherever the country writes it.
     const [before, after] = line.split("A") as [string, string | undefined]
     const row = (letters: string) => [...letters].map((letter) => fieldOf[letter as keyof typeof fieldOf])
@@ -220,6 +228,43 @@ function checkAddress(value: AddressValue, { messages = addressMessages, regions
 }
 
 /**
+ * An address written out as its country writes it, a line each: "1 Main St", "San Francisco,
+ * CA 94110", "United States". Parts it has no value for go, with the text that joins them.
+ */
+function addressLines(value: AddressValue, { locale, country = true }: { locale?: string; country?: boolean } = {}) {
+  const part = (token: string) =>
+    ({ N: value.name, A: [value.line1, value.line2].filter((line) => line.trim()).join(", "), D: value.district, C: value.city, S: value.region, Z: value.postalCode })[token]?.trim() ?? ""
+  const lines: string[] = []
+  for (const line of formatOf(value.country).split("%n")) {
+    // The street is a line each, wherever the country writes it alone.
+    if (line === "%A") {
+      lines.push(...[value.line1, value.line2].map((text) => text.trim()).filter(Boolean))
+      continue
+    }
+    const pieces = line.split(/(%[A-Za-z])/).filter(Boolean)
+    let text = ""
+    let joiner = ""
+    let any = false
+    for (const piece of pieces) {
+      if (!piece.startsWith("%")) {
+        joiner += piece
+        continue
+      }
+      const shown = part(piece[1]!)
+      if (shown) {
+        // The text before a part shows with it: a separator once there's something to separate, a prefix ("CH-") always.
+        text += any || !/^[\s,\-/]+$/.test(joiner) ? joiner + shown : shown
+        any = true
+      }
+      joiner = ""
+    }
+    if (any) lines.push((text + (/[^\s,\-/]/.test(joiner) ? joiner : "")).replace(/\s+/g, " ").trim())
+  }
+  if (country) lines.push(countryName(value.country, locale))
+  return lines
+}
+
+/**
  * An agent's fill: values by field name ("postalCode") or label ("ZIP code"), the country by
  * its name or code and a region by its name or key. The country goes first, so the other
  * fields are the ones it uses. Returns the new value, the labels filled, and what was refused.
@@ -264,6 +309,6 @@ function fillAddress(
   return { value: next, filled, problems }
 }
 
-export { addressCountries, addressLayout, addressMessages, checkAddress, countryName, emptyAddress, fillAddress, findCountry, findRegion, shownLabel, startCountry, tidyPostal }
+export { addressCountries, addressLayout, addressLines, addressMessages, checkAddress, countryName, emptyAddress, fillAddress, findCountry, findRegion, shownLabel, startCountry, tidyPostal }
 export type { AddressCountry, AddressFieldName, AddressLayout, AddressMessages, AddressPart, AddressValue }
 export type { Region } from "./formats"

@@ -120,6 +120,9 @@ function choice(
   combobox.itemToLabel = (value) => items.find((item) => item.value === value)?.label ?? value
   combobox.addEventListener("valuechange", ((event: UiChangeEvent<string | null>) => {
     if (event.detail.value) choose(event.detail.value)
+    // Emptying the text asks for no value; an address keeps its country (and a region from
+    // its list), so the change is refused and the chosen one shows again.
+    else event.preventDefault()
   }) as EventListener)
   // Autofill and a whole name typed out choose the item at once.
   combobox.addEventListener("querychange", ((event: UiChangeEvent<string>) => {

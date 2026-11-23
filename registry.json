@@ -4221,6 +4221,65 @@
     },
     {
       "author": "superzero11 <https://github.com/superzero11/uiset>",
+      "name": "invoice",
+      "type": "registry:block",
+      "title": "Invoice page",
+      "description": "An invoice: who it's from and to (each address as its country writes it), its dates and status, the lines with tax and total in its currency, how to pay by bank transfer with the IBAN and reference to copy, and notes. It prints clean.",
+      "dependencies": [
+        "@ui-sdk/core@0.1.0-beta.14",
+        "@ui-sdk/react@0.1.0-beta.14"
+      ],
+      "registryDependencies": [
+        "superzero11/uiset/uiset",
+        "superzero11/uiset/address",
+        "superzero11/uiset/badge",
+        "superzero11/uiset/button",
+        "superzero11/uiset/copy-button",
+        "superzero11/uiset/description-list",
+        "superzero11/uiset/input-mask",
+        "superzero11/uiset/payments",
+        "superzero11/uiset/table"
+      ],
+      "files": [
+        {
+          "path": "registry/uiset/ui/templates/invoice.tsx",
+          "type": "registry:ui",
+          "target": "@ui/templates/invoice.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/templates/invoice-model.ts",
+          "type": "registry:file",
+          "target": "@ui/templates/invoice-model.ts"
+        },
+        {
+          "path": "registry/uiset/ui/templates/invoice-sample.ts",
+          "type": "registry:file",
+          "target": "@ui/templates/invoice-sample.ts"
+        },
+        {
+          "path": "registry/uiset/ui/templates/templates.css",
+          "type": "registry:file",
+          "target": "@ui/templates/templates.css"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icons.tsx",
+          "type": "registry:file",
+          "target": "@ui/shell/icons.tsx"
+        },
+        {
+          "path": "registry/uiset/ui/shell/icon-paths.ts",
+          "type": "registry:file",
+          "target": "@ui/shell/icon-paths.ts"
+        },
+        {
+          "path": "registry/uiset/ui/shell/shell.css",
+          "type": "registry:file",
+          "target": "@ui/shell/shell.css"
+        }
+      ]
+    },
+    {
+      "author": "superzero11 <https://github.com/superzero11/uiset>",
       "name": "pricing",
       "type": "registry:block",
       "title": "Pricing section",

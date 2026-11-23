@@ -90,7 +90,9 @@ function Choice({ label, value, items, onChoose, find, autoComplete, required, d
   return (
     <Combobox
       value={value || null}
-      onValueChange={(next) => next && onChoose(String(next), "user")}
+      // Emptying the text asks for no value; an address keeps its country (and a region from
+      // its list), so the combobox is told no and shows the chosen one again.
+      onValueChange={(next, details) => (next ? onChoose(String(next), "user") : details.cancel())}
       // Autofill and a whole name typed out choose the item at once.
       onQueryChange={(query, details) => {
         if (details.reason !== "input-change") return
@@ -299,7 +301,7 @@ function AddressFields({
 }
 
 export { AddressFields }
-export { addressCountries, addressLayout, addressMessages, checkAddress, countryName, emptyAddress, fillAddress, findCountry, startCountry } from "./address/address"
+export { addressCountries, addressLayout, addressLines, addressMessages, checkAddress, countryName, emptyAddress, fillAddress, findCountry, startCountry } from "./address/address"
 export { addressFormats, addressRegions } from "./address/formats"
 export type { AddressCountry, AddressFieldName, AddressLayout, AddressMessages, AddressValue, Region } from "./address/address"
 export type { AddressFieldsDetails, AddressFieldsProps, AddressFieldsReason }

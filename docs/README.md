@@ -171,6 +171,7 @@ Each of UI SDK's 55 components as its own item, styled by the skin, with UISet's
 | `project-board` | A project's issues as a board or a list: sprint progress, search and an assignee filter, column limits, card details, a new-issue form and Undo on moves. |
 | `calendar-app` | A calendar app: day, week and month views, a small month to jump to a day, calendars to show or hide, what's next, and events created, edited and deleted in a dialog. |
 | `checkout` | A checkout: contact, a delivery address whose fields follow its country, delivery options, card or bank payment with a billing address when it differs, and the order with a discount code and Pay beside it. Pay checks the whole page and focuses the first problem; an agent fills it and a person pays. |
+| `invoice` | An invoice: who it's from and to (each address as its country writes it), its dates and status, the lines with tax and total in its currency, how to pay by bank transfer with the IBAN and reference to copy, and notes. It prints clean. |
 | `pricing` | Plans with a monthly or yearly switch, a recommended plan, a comparison table and questions. |
 
 See [Templates](./templates.md) for each one's props and sample data.

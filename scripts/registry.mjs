@@ -685,6 +685,13 @@ const templates = [
     ["templates/checkout-sample.ts"],
   ],
   [
+    "invoice",
+    "Invoice page",
+    "An invoice: who it's from and to (each address as its country writes it), its dates and status, the lines with tax and total in its currency, how to pay by bank transfer with the IBAN and reference to copy, and notes. It prints clean.",
+    ["address", "badge", "button", "copy-button", "description-list", "input-mask", "payments", "table"],
+    ["templates/invoice-model.ts", "templates/invoice-sample.ts"],
+  ],
+  [
     "pricing",
     "Pricing section",
     "Plans with a monthly or yearly switch, a recommended plan, a comparison table and questions.",

@@ -51,7 +51,7 @@ where UISet starts.
         <li><b>Looks:</b> five skins, a theme generator, sound and haptics</li>
         <li><b>55 styled components</b> and 31 app parts</li>
         <li><b>14 kits:</b> chat, rich text, data grid, charts, payments, addresses and more</li>
-        <li><b>11 page templates</b> to start from</li>
+        <li><b>12 page templates</b> to start from</li>
         <li><b>Web Components</b> for Vue, Svelte, Solid and HTML</li>
         <li><b>A skill and llms.txt</b> for coding agents</li>
       </ul>
@@ -113,8 +113,8 @@ mix in a second UI library.
     <td valign="top">The big pieces apps need and UI SDK leaves to you: chat, rich text, a data grid, charts, a board, a scheduler, a canvas, an IDE, a terminal, mobile patterns, Studio, the Agent Console, payments and addresses.</td>
   </tr>
   <tr>
-    <td width="24%" valign="top"><a href="https://uiset.dev/templates"><b>11 templates</b></a></td>
-    <td valign="top">Whole pages to start from: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, checkout, IDE.</td>
+    <td width="24%" valign="top"><a href="https://uiset.dev/templates"><b>12 templates</b></a></td>
+    <td valign="top">Whole pages to start from: auth, dashboard, settings, admin, inbox, chat app, project board, calendar, pricing, checkout, invoice, IDE.</td>
   </tr>
   <tr>
     <td width="24%" valign="top"><a href="https://uiset.dev/themes"><b>5 skins</b></a></td>

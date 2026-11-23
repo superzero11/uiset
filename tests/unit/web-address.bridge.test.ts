@@ -86,3 +86,13 @@ test("a page sets its value as it would a native input's: the fields follow, and
   expect(heard).toEqual([])
   expect(address().check()).toBe(true)
 })
+
+test("emptying the country keeps it: an address always has one", async () => {
+  await open()
+  const country = within(group()).getByRole("combobox", { name: "Country or region" }) as HTMLInputElement
+  await userEvent.clear(country)
+  await userEvent.tab()
+  await settle()
+  expect(address().value.country).toBe("US")
+  expect(country.value).toBe("United States")
+})
