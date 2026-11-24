@@ -6,6 +6,7 @@ import { Input } from "@ui-sdk/solid/input"
 import { SegmentedControl, SegmentedControlIndicator, SegmentedControlItem } from "@ui-sdk/solid/segmented-control"
 import { Switch, SwitchThumb } from "@ui-sdk/solid/switch"
 import { UISet, type Skin } from "../../src/uiset"
+import { Components } from "../components-page"
 import "../demo.css"
 
 // Pages the server renders and the browser hydrates (/ssr/<name>). Each item adds its own as
@@ -40,6 +41,6 @@ function Root() {
   )
 }
 
-const pages: Record<string, () => JSX.Element> = { root: Root }
+const pages: Record<string, () => JSX.Element> = { root: Root, components: Components }
 
 export { pages }

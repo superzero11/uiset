@@ -24,6 +24,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
   patterns) and inline edit, each formatting and checking as React's do, agents included.
 - The schema form, from the same `defineForm` definition as React's (steps, review, agents
   filling it by field name, `formTool`), and upload with its queue.
+- The table (stacking, sticky headings and columns), the code block with code tabs and the
+  package command that every block on a page shares, and the sortable list and tree, by
+  pointer, keyboard and agent.
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the
@@ -110,4 +113,7 @@ await agent.act({ steps: [{ ref: "Save", action: "press" }] })
 ## Server rendering
 
 `@uiset/solid` serves its source to Solid's compiler (the `solid` export condition), so
-SolidStart renders it on the server and hydrates it like your own components.
+SolidStart renders it on the server and hydrates it like your own components. Every item
+renders with `@solidjs/web`'s `renderToString` too, with no asset manifest: a part that loads
+its code later, like a schema form's phone field, draws a plain field on the server and
+while the page hydrates, then swaps in once its code is in.

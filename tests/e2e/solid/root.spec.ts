@@ -35,3 +35,21 @@ test("a server-rendered page hydrates with no errors or warnings, and works", as
   await expect(page.locator("[data-uiset]")).toHaveCount(1)
   expect(said).toEqual([])
 })
+
+test("every component's example, rendered on the server, hydrates with no errors or warnings", async ({ page }) => {
+  const said: string[] = []
+  page.on("console", (message) => {
+    if (message.type() === "error" || message.type() === "warning") said.push(`${message.type()}: ${message.text()}`)
+  })
+  page.on("pageerror", (error) => said.push(`pageerror: ${error.message}`))
+  const response = await page.goto("/ssr/components")
+  const html = await response!.text()
+  const sent = html.match(/<article class="example"/g)?.length ?? 0
+  expect(sent).toBeGreaterThan(80)
+  // Hydrated: the skin control works, and the server's articles are the ones on the page.
+  await page.getByRole("radio", { name: "Ink" }).click()
+  await expect(page.locator("[data-uiset]").first()).toHaveAttribute("data-skin", "ink")
+  await expect(page.locator("article.example")).toHaveCount(sent)
+  await page.waitForTimeout(500)
+  expect(said).toEqual([])
+})

@@ -2682,4 +2682,22 @@ vercel-labs/ui#905 (2026-11-19).
   settle after each render. React's 21 form tests, its bridge test and the upload's 5 pass;
   focus following each step, checked in React's browser spec, is now a Solid unit test too
   and a Solid browser test. 10 mutations, all caught.
+- 2026-11-24 — **Solid, phase 2d: the table, code block and sortable list and tree.** Phase
+  2's last batch. The table's stacking context holds a getter, so a table that starts or stops
+  stacking tells every part. The code block keeps colors with the code they're for, so new
+  code shows plain until its own colors come, never in the old code's; the package command
+  reads the shared choice through `@ui-sdk/solid/preferences`. Two finds on the way:
+  - **A controlled sortable tree hung in Solid**, filling memory. UI SDK core syncs Solid's
+    options on reads, and the tree's `sync` built new rows on each call, so each read changed
+    the state and woke its readers again. The shared primitive now keeps one shape per items
+    array; React and Web Components behave as before.
+  - **Server rendering was checked only for the root**, though the plan asks it of every item.
+    Now each of the 85 Solid examples renders with `renderToString`, and `/ssr/components`
+    hydrates them all (a browser test). It found the schema form's phone field: Solid's
+    server-side `lazy()` throws without an asset manifest, which SolidStart has and a plain
+    server render doesn't. The phone input now loads after mount, so server and hydration
+    both draw the plain field.
+
+  React's assertions ported (12 and 14 tests) with Solid's own besides; 46 mutations, all
+  caught.
 

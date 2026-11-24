@@ -15,7 +15,8 @@ type Theme = "system" | "light" | "dark"
 
 /** A demo page's frame: the root, its heading, and the skin and theme it shows in (from `?skin=` and `?theme=`). */
 function DemoPage(props: { title: string; description: string; children: JSX.Element }) {
-  const query = new URLSearchParams(location.search)
+  // On the server there's no address: the page renders in Base and the system theme.
+  const query = new URLSearchParams(typeof location === "undefined" ? "" : location.search)
   const [skin, setSkin] = createSignal<Skin>(query.get("skin") ?? "base")
   const [theme, setTheme] = createSignal<Theme>((query.get("theme") as Theme | null) ?? "system")
   return (

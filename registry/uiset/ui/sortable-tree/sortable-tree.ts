@@ -125,8 +125,9 @@ function parentOf(rows: readonly TreeReorderRow[], index: number) {
   return null
 }
 
-/** The options the rows draw, copied into state so the server's HTML has them too. */
-function shape(items: readonly SortableTreeItem[]) {
+const shapes = new WeakMap<readonly SortableTreeItem[], ReturnType<typeof shapeOf>>()
+
+function shapeOf(items: readonly SortableTreeItem[]) {
   const nodes = nodesOf(items)
   return {
     items: items as SortableTreeItem[],
@@ -134,6 +135,14 @@ function shape(items: readonly SortableTreeItem[]) {
     branches: [...nodes.values()].filter((item) => item.children).map((item) => item.value),
     locked: [...nodes.values()].filter((item) => item.locked).map((item) => item.value),
   }
+}
+
+/** The options the rows draw, copied into state so the server's HTML has them too. The same
+ *  rows for the same items: Solid syncs on every read, and new rows each time never settle. */
+function shape(items: readonly SortableTreeItem[]) {
+  let shaped = shapes.get(items)
+  if (!shaped) shapes.set(items, (shaped = shapeOf(items)))
+  return shaped
 }
 
 type TreeState = {

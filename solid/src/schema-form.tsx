@@ -2,7 +2,7 @@ import type { JSX } from "@solidjs/web"
 import { Dynamic } from "@solidjs/web"
 import type { ChangeDetails, StateOf } from "@ui-sdk/core"
 import { usePart, usePrimitive, type PartProps } from "@ui-sdk/solid/primitive"
-import { createEffect, createUniqueId, For, lazy, Loading, Match, omit, Show, Switch as Choose } from "solid-js"
+import { createEffect, createSignal, createUniqueId, For, Match, omit, onSettled, Show, Switch as Choose } from "solid-js"
 import { Button } from "./button"
 import { Checkbox } from "./checkbox"
 import { DateInput } from "./date-input"
@@ -52,8 +52,29 @@ type SchemaFormProps<F extends Fields> = Omit<PartProps<"form", RootState>, "chi
   locale?: string
 }
 
-// The phone field (and libphonenumber-js) loads only when a form has one.
-const PhoneInput = lazy(() => import("./phone-input").then((module) => ({ default: module.PhoneInput })))
+// The phone input (and libphonenumber-js) loads only when a form has one, once it's on the page.
+// The server and the hydrating page both draw the plain field first, so they agree, and no
+// asset manifest is needed, which Solid's lazy() asks the server for.
+type PhoneInputComponent = typeof import("./phone-input").PhoneInput
+let phoneCode: Promise<PhoneInputComponent> | undefined
+const loadPhone = () => (phoneCode ??= import("./phone-input").then((module) => module.PhoneInput))
+
+/** The phone input once its code is in, and the fallback until then. */
+function WithPhoneInput(props: { fallback: JSX.Element; children: (PhoneInput: PhoneInputComponent) => JSX.Element }) {
+  const [phoneInput, setPhoneInput] = createSignal<PhoneInputComponent | undefined>(undefined)
+  onSettled(() => {
+    let live = true
+    void loadPhone().then((component) => live && setPhoneInput(() => component))
+    return () => {
+      live = false
+    }
+  })
+  return (
+    <Show when={phoneInput()} keyed fallback={props.fallback}>
+      {(component) => props.children(component)}
+    </Show>
+  )
+}
 
 type FieldProps = {
   name: string
@@ -167,7 +188,7 @@ function FormField(props: FieldProps) {
       <Match when={props.field.kind === "phone"}>
         <div class="schema-form-field" data-schema-field={props.name}>
           {/* Until its code is in, a plain field takes the number. */}
-          <Loading
+          <WithPhoneInput
             fallback={
               <Field name={props.name} invalid={props.error ? true : undefined} class="schema-form-field">
                 <FieldLabel>{props.field.label}</FieldLabel>
@@ -177,21 +198,23 @@ function FormField(props: FieldProps) {
               </Field>
             }
           >
-            <PhoneInput
-              label={props.field.label}
-              value={props.value as string}
-              onValueChange={(next) => set(next)}
-              defaultCountry={phone().defaultCountry}
-              countries={phone().countries}
-              description={props.field.description}
-              placeholder={phone().placeholder}
-              required={props.field.required}
-              disabled={props.disabled}
-              error={props.error}
-              onBlur={leave}
-              messages={{ tooShort: () => props.words.phoneTooShort(props.field.label), tooLong: () => props.words.phoneTooLong(props.field.label), invalid: () => props.words.phoneInvalid(props.field.label) }}
-            />
-          </Loading>
+            {(PhoneInput) => (
+              <PhoneInput
+                label={props.field.label}
+                value={props.value as string}
+                onValueChange={(next) => set(next)}
+                defaultCountry={phone().defaultCountry}
+                countries={phone().countries}
+                description={props.field.description}
+                placeholder={phone().placeholder}
+                required={props.field.required}
+                disabled={props.disabled}
+                error={props.error}
+                onBlur={leave}
+                messages={{ tooShort: () => props.words.phoneTooShort(props.field.label), tooLong: () => props.words.phoneTooLong(props.field.label), invalid: () => props.words.phoneInvalid(props.field.label) }}
+              />
+            )}
+          </WithPhoneInput>
         </div>
       </Match>
       <Match when={props.field.kind === "tags"}>
