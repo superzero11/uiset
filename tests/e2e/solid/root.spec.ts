@@ -44,7 +44,7 @@ test("every component's example, rendered on the server, hydrates with no errors
   page.on("pageerror", (error) => said.push(`pageerror: ${error.message}`))
   const response = await page.goto("/ssr/components")
   const html = await response!.text()
-  const sent = html.match(/<article class="example"/g)?.length ?? 0
+  const sent = html.match(/<article [^>]*class="example"/g)?.length ?? 0
   expect(sent).toBeGreaterThan(80)
   // Hydrated: the skin control works, and the server's articles are the ones on the page.
   await page.getByRole("radio", { name: "Ink" }).click()

@@ -18,7 +18,7 @@ import { Textarea } from "./textarea"
 import { schemaForm, type SchemaFormStepReason, type SchemaFormValueReason, type SubmitDetails } from "../../registry/uiset/ui/schema-form/form"
 import type { ChoiceField, Fields, FieldSpec, FormDefinition, FormErrors, FormValues, PhoneField, TagsField, TextField } from "../../registry/uiset/ui/schema-form/schema"
 import { maskNamed } from "../../registry/uiset/ui/input-mask/masks"
-import { autocompleteFor, controlIn, defaultLabels, focusProblem, shownValue, type SchemaFormLabels } from "../../registry/uiset/ui/schema-form/labels"
+import { autocompleteFor, defaultLabels, firstControl, focusProblem, shownValue, type SchemaFormLabels } from "../../registry/uiset/ui/schema-form/labels"
 import { afterPress } from "../../registry/uiset/ui/shell/after-press"
 import "../../registry/uiset/ui/shell/shell.css"
 import "../../registry/uiset/ui/schema-form/schema-form.css"
@@ -313,7 +313,7 @@ function FormBody(props: {
       if (!root || !focusInside || now.focus || root.contains(document.activeElement)) return
       queueMicrotask(() => {
         if (root.contains(document.activeElement)) return
-        ;(root.querySelector(".schema-form-review") ? root.querySelector<HTMLElement>(".schema-form-actions [type=submit]") : controlIn(root.querySelector(".schema-form-fields")))?.focus()
+        ;(root.querySelector(".schema-form-review") ? root.querySelector<HTMLElement>(".schema-form-actions [type=submit]") : firstControl(root.querySelector(".schema-form-fields")))?.focus()
       })
     },
   )

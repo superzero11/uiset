@@ -18,7 +18,7 @@ import { Textarea } from "./textarea"
 import { schemaForm, type SchemaFormStepReason, type SchemaFormValueReason, type SubmitDetails } from "./schema-form/form"
 import type { Fields, FieldSpec, FormDefinition, FormErrors, FormValues } from "./schema-form/schema"
 import { maskNamed } from "./input-mask/masks"
-import { autocompleteFor, controlIn, defaultLabels, focusProblem, shownValue, type SchemaFormLabels } from "./schema-form/labels"
+import { autocompleteFor, defaultLabels, firstControl, focusProblem, shownValue, type SchemaFormLabels } from "./schema-form/labels"
 import type { ChangeDetails } from "@ui-sdk/core"
 import { afterPress } from "./shell/after-press"
 import "./shell/shell.css"
@@ -283,7 +283,7 @@ function FormBody({
     if (!root || !focusInside.current || state.focus || root.contains(document.activeElement)) return
     queueMicrotask(() => {
       if (root.contains(document.activeElement)) return
-      ;(review ? root.querySelector<HTMLElement>(".schema-form-actions [type=submit]") : controlIn(root.querySelector(".schema-form-fields")))?.focus()
+      ;(review ? root.querySelector<HTMLElement>(".schema-form-actions [type=submit]") : firstControl(root.querySelector(".schema-form-fields")))?.focus()
     })
     // Only a step change takes the focused element out.
     // eslint-disable-next-line react-hooks/exhaustive-deps

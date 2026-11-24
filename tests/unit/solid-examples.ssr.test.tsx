@@ -29,6 +29,8 @@ test.each(examples)("%s renders on the server", (_name, Example) => {
   expect(html).toContain("data-uiset")
   // More than the root: the example drew something.
   expect(html.replace(/<div[^>]*data-uiset[^>]*>/, "").length).toBeGreaterThan(40)
+  // Nothing only the server can open, like an address for a file in its memory.
+  expect(html).not.toContain("blob:")
   expect(said, "said on the console while rendering").toEqual([])
 })
 

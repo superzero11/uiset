@@ -421,3 +421,25 @@ test("a masked field is a masked input; an agent fills it in any format; a curre
   expect(bad.error?.message).toContain("typo")
   expect(screen.getByRole<HTMLInputElement>("textbox", { name: "Amount" }).value).toBe("€12.50")
 })
+
+const access = defineForm({
+  name: "invite",
+  title: "Invite",
+  fields: {
+    email: { kind: "email", label: "Email" },
+    role: { kind: "choice", label: "Role", display: "radio", default: "editor", options: [{ value: "viewer", label: "Viewer" }, { value: "editor", label: "Editor" }] },
+    team: { kind: "text", label: "Team" },
+  },
+  steps: [
+    { title: "Who", fields: ["email"] },
+    { title: "Access", fields: ["role", "team"] },
+  ],
+})
+
+test("a step that opens on radios gets focus on its checked radio, not the text box after it", async () => {
+  render(() => <SchemaForm form={access} />)
+  await tick()
+  await userEvent.type(screen.getByRole("textbox", { name: "Email" }), "grace@example.com{Enter}")
+  await tick()
+  await waitFor(() => expect(document.activeElement).toBe(screen.getByRole("radio", { name: "Editor" })))
+})

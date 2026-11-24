@@ -72,9 +72,12 @@ function statusText(item: Pick<UploadItem, "status" | "progress" | "error">, lab
 /** A small picture of an image file, or a file icon for anything else. */
 function UploadPreview(props: { file: File }) {
   const image = () => props.file.type.startsWith("image/")
-  // The picture's address lives as long as its file is the one shown.
+  // Made once on the page: the server has no address to give, so it and the hydrating page
+  // both draw the file's icon first. The address lives as long as its file is the one shown.
+  const [mounted, setMounted] = createSignal(false, { ownedWrite: true })
+  onSettled(() => void setMounted(true))
   const url = createMemo(() => {
-    if (!image()) return undefined
+    if (!mounted() || !image()) return undefined
     const next = URL.createObjectURL(props.file)
     onCleanup(() => URL.revokeObjectURL(next))
     return next

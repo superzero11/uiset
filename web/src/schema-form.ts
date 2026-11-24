@@ -15,7 +15,7 @@ import "@ui-sdk/web/switch"
 import "@ui-sdk/web/textarea"
 import { createParts, type UiChangeEvent, type UiElement } from "@ui-sdk/web"
 import { schemaForm, type SchemaFormStepReason, type SchemaFormValueReason, type SubmitDetails } from "@/registry/uiset/ui/schema-form/form"
-import { autocompleteFor, controlIn, defaultLabels, focusProblem, shownValue, type SchemaFormLabels } from "@/registry/uiset/ui/schema-form/labels"
+import { autocompleteFor, defaultLabels, firstControl, focusProblem, shownValue, type SchemaFormLabels } from "@/registry/uiset/ui/schema-form/labels"
 import type { FieldSpec, FormDefinition, FormErrors } from "@/registry/uiset/ui/schema-form/schema"
 import "@/registry/uiset/ui/schema-form/schema-form.css"
 import { afterPress } from "@/registry/uiset/ui/shell/after-press"
@@ -494,7 +494,7 @@ function update(el: UISetSchemaForm, view: View) {
     // the review): it goes on to the new step's first field, or to the send on the review,
     // once the new step's controls are bound (a radio group picks its tab stop then).
     queueMicrotask(() => {
-      if (!view.form.contains(document.activeElement)) (review ? view.submit.native : controlIn(view.fields))?.focus()
+      if (!view.form.contains(document.activeElement)) (review ? view.submit.native : firstControl(view.fields))?.focus()
     })
   }
 }

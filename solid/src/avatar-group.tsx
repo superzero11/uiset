@@ -16,15 +16,19 @@ function AvatarGroup(
   },
 ) {
   const avatars = resolve(() => props.children)
-  const shown = () => {
-    const all = avatars.toArray()
-    return props.max === undefined ? all : all.slice(0, Math.max(0, props.max))
-  }
+  const limit = () => (props.max === undefined ? Infinity : Math.max(0, props.max))
+  const shown = () => avatars.toArray().slice(0, limit())
+  const rest = () => avatars.toArray().slice(limit())
   const more = () => Math.max(props.total ?? avatars.toArray().length, avatars.toArray().length) - shown().length
-  const rest = omit(props, "label", "max", "total", "moreLabel", "class", "children")
+  const others = omit(props, "label", "max", "total", "moreLabel", "class", "children")
   return (
-    <div role="group" aria-label={props.label} class={["avatar-group", props.class]} {...rest}>
+    <div role="group" aria-label={props.label} class={["avatar-group", props.class]} {...others}>
       {shown()}
+      {/* Solid builds every avatar, and on the server one left out still takes a hydration key:
+          the rest wait in a hidden element, so the page hydrates with nothing missing. */}
+      <Show when={rest().length > 0}>
+        <span hidden>{rest()}</span>
+      </Show>
       {/* Named in words, like the avatars beside it: "+2" alone reads as "plus two". */}
       <Show when={more() > 0}>
         <Avatar class="avatar-group-more" role="img" aria-label={(props.moreLabel ?? ((count: number) => `${count} more`))(more())}>

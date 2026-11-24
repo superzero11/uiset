@@ -265,3 +265,14 @@ test("a send that finds a problem on an earlier step goes back to it, with focus
   expect(within(form()).getByRole("textbox", { name: "Mobile" }).getAttribute("aria-invalid")).toBe("true")
 })
 
+
+test("Enter on a step's last field opens the next one with focus on its first field, radios included", async () => {
+  await openWebPage("content.html", "content-demo.ts")
+  await settle()
+  const { default: userEvent } = await import("@testing-library/user-event")
+  await userEvent.type(within(form()).getByRole("textbox", { name: "Email" }), "grace@example.com")
+  await userEvent.type(within(form()).getByRole("textbox", { name: "Full name" }), "Grace{Enter}")
+  await settle(300)
+  // The Access step opens on its role radios, not the text box after them.
+  await waitFor(() => expect(document.activeElement).toBe(within(form()).getByRole("radio", { name: "Editor" })))
+})

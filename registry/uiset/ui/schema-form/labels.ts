@@ -73,6 +73,13 @@ const firstShown = (field: Element, selector: string) => [...field.querySelector
 const controlIn = (field: Element | null | undefined) => (field ? (firstShown(field, typing) ?? firstShown(field, any) ?? null) : null)
 
 /**
+ * What takes focus when a step opens: its first field's control, whatever kind of field it is.
+ * Not `controlIn` on the whole step, which would pass radios for a text box further down.
+ */
+const firstControl = (fields: Element | null | undefined) =>
+  controlIn(fields ? [...fields.querySelectorAll("[data-schema-field]")].find((el) => !el.closest("[hidden], [inert]")) : null)
+
+/**
  * Focus goes to the field with a problem, and moving there reads the problem out with the
  * field. When focus is there already nothing moves, so the problem is said.
  */
@@ -83,5 +90,5 @@ function focusProblem(field: Element | null | undefined, problem: string | undef
   else if (problem) announce(problem)
 }
 
-export { autocompleteFor, controlIn, defaultLabels, focusProblem, shownValue }
+export { autocompleteFor, controlIn, defaultLabels, firstControl, focusProblem, shownValue }
 export type { SchemaFormLabels }

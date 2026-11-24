@@ -110,7 +110,8 @@ On UI SDK `0.1.0-beta.16`.
   heard it two or three times; a problem for the whole form was said by its alert and again.
   Now each is said where it shows, and the form speaks only when nothing else would: focus
   already on the field with the problem, or the same problem for the whole form again. Focus
-  goes to a field's text box, so a phone field's number, not its country button. Leaving a
+  goes to a field's text box, so a phone field's number, not its country button, and a new
+  step still opens on its first field, radios or not. Leaving a
   field keeps a problem the server or a phone number's country rules found until the value
   changes. Going back to a step after Next or a send no longer hands the press to
   `onStepChange` under `imperative` (UI SDK warned in development). In Web Components, a

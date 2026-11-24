@@ -2700,4 +2700,17 @@ vercel-labs/ui#905 (2026-11-19).
 
   React's assertions ported (12 and 14 tests) with Solid's own besides; 46 mutations, all
   caught.
+- 2026-11-24 — **Solid's browser checks for phase 2, and what they found.** Chrome ran the
+  Solid specs: axe in every look, every control pressed, and the server-rendered components
+  page hydrating. Three finds, all fixed with a test that fails without the fix:
+  - **The avatar group** built every avatar and showed `max` of them. On the server the rest
+    still took hydration keys, so the page hydrated with key misses. The rest now wait in a
+    hidden element: server and client build the same nodes, and no one sees or hears them.
+  - **The upload's picture** was given a `blob:` address on the server, which a browser can't
+    open. It's made once on the page; until then, server and hydration both show the icon.
+  - **A step that opens on radios** got focus on the first text box after them, in React and
+    Web Components too: this morning's "a field's text box first" was applied to the whole
+    step instead of its first field. `firstControl` now picks the step's first field, then
+    its control (`labels.ts`, shared). Unit tests in all three and React's, web's and
+    Solid's browser specs pass.
 
