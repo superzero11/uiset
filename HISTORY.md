@@ -2629,4 +2629,20 @@ vercel-labs/ui#905 (2026-11-19).
   dated release refuses a list with anything on it. The push check also wants
   `@uiset/solid` on npm once the docs say to install it. Solid 2 is not Solid 1: its
   cheatsheet (`node_modules/solid-js/CHEATSHEET.md`) is the reference.
+- 2026-11-24 — **Solid, phase 1: every component.** 70 items in `solid/src`: 35 that only
+  re-export UI SDK (each name checked against `@ui-sdk/solid`'s entries first; all there)
+  and 35 with UISet's own parts or defaults, ported from React with Solid 2's rules: props
+  read where they're used (`omit`, getters), a JSX prop read once (`<Show>` hands it on, as
+  each read builds it anew), effects split into compute and apply, `class` arrays, a part's
+  `render` as a function, and a bound handler called as given (`shell/events.ts`). Tests
+  carry React's assertions (59 in Solid, with signals for React's re-renders), plus new ones
+  for what Solid does itself: the textarea count's and password rules' announcements, a
+  segmented control's state function, a slider's own parts; 33 mutations, all caught but
+  one the count's two guards cover twice. The 68 React docs examples in Solid make
+  `solid/components.html` (axe in every skin and scheme, every control pressed, no console
+  error or warning, every component named for agents), and each docs page has a Solid tab
+  with its source. Found on the way: a script lowercasing attributes turned a password
+  input's `autoComplete` option into a plain attribute, and the typechecker caught it; and
+  phase 0 never added `/docs/solid` to the site's navigation, so the guide was only in the
+  repo. 57 React views left.
 

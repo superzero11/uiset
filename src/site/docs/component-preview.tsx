@@ -13,10 +13,15 @@ import { docPages } from "./nav"
 
 const modules = import.meta.glob<{ default: ComponentType }>("../examples/*.tsx")
 const sources = import.meta.glob<string>("../examples/*.tsx", { query: "?raw", import: "default" })
+// The same example written in Solid, once the item is in @uiset/solid (solid/demo/examples).
+const solidSources = import.meta.glob<string>("../../../solid/demo/examples/*.tsx", { query: "?raw", import: "default" })
+
+/** A Solid example as an app writes it: UISet's items from @uiset/solid. */
+const displaySolidSource = (source: string) => source.replaceAll(/from "\.\.\/\.\.\/src\/([\w/-]+)"/g, 'from "@uiset/solid/$1"')
 
 type Example = {
   meta: ExampleMeta
-  ready: { Component: ComponentType; source: string } | null
+  ready: { Component: ComponentType; source: string; solid?: string } | null
   failed: boolean
 }
 
@@ -24,7 +29,7 @@ type Example = {
 function useExample(item: string): Example | null {
   const slug = exampleSlugByItem.get(item)
   const meta = exampleMetas.find((m) => m.slug === slug)
-  const [ready, setReady] = useState<{ slug: string; Component: ComponentType; source: string } | null>(null)
+  const [ready, setReady] = useState<{ slug: string; Component: ComponentType; source: string; solid?: string } | null>(null)
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
@@ -32,8 +37,9 @@ function useExample(item: string): Example | null {
     let live = true
     const path = `../examples/${slug}.tsx`
     setFailed(false)
-    Promise.all([modules[path]!(), sources[path]!()]).then(
-      ([module, source]) => live && setReady({ slug, Component: module.default, source }),
+    const solid = solidSources[`../../../solid/demo/examples/${slug}.tsx`]
+    Promise.all([modules[path]!(), sources[path]!(), solid?.()]).then(
+      ([module, source, solidSource]) => live && setReady({ slug, Component: module.default, source, solid: solidSource }),
       () => live && setFailed(true),
     )
     return () => {
@@ -69,7 +75,8 @@ function ExamplePreview({
       <div className="docs-example-bar">
         <TabsList aria-label={`${meta.title} example`}>
           <TabsTab value="preview">Preview</TabsTab>
-          <TabsTab value="code">Code</TabsTab>
+          <TabsTab value="code">React</TabsTab>
+          {ready?.solid && <TabsTab value="solid">Solid</TabsTab>}
         </TabsList>
         <div className="docs-example-tools">
           <AgentViewSwitch />
@@ -111,6 +118,14 @@ function ExamplePreview({
           </div>
         )}
       </TabsPanel>
+      {ready?.solid && (
+        <TabsPanel value="solid">
+          <CodeBlock code={displaySolidSource(ready.solid)} language="tsx" title={`${meta.slug}-example.tsx`} />
+          <p className="example-note">
+            Solid 2, from <code>@uiset/solid</code>: <a href="/docs/solid">set it up</a>.
+          </p>
+        </TabsPanel>
+      )}
     </Tabs>
   )
 }

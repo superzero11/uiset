@@ -94,7 +94,7 @@ import { UISet } from "@/components/ui/uiset"
 | Charts                                 | `line-chart`, `bar-chart`, `scatter-chart`, `heatmap`, `segmented-bar`, `sparkline` |
 | Let an agent act in the app            | UI SDK's `createAgent`, plus `agent-console` for approvals and undo |
 | Vue, Svelte, Solid or plain HTML       | `@uiset/web`: `<uiset-root>` and the `<uiset-*>` elements (docs/web-components.md) |
-| Solid 2, written in Solid              | `@uiset/solid`, being built for 0.7.0: only the `UISet` root so far, so use `@uiset/web` for the rest (docs/solid.md) |
+| Solid 2, written in Solid              | `@uiset/solid`, being built for 0.7.0: the `UISet` root and every component (`@uiset/solid/<item>`) so far; use `@uiset/web` for kits and templates (docs/solid.md) |
 
 ## Check your work
 

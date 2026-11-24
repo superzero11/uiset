@@ -1,0 +1,161 @@
+/* The same examples as the React docs pages, so they take the same layout: these rules are
+   src/site/site.css's for its examples, and each card is a .example as there. */
+
+.example {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) + 6px);
+
+  > header h3 {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  > header p {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--ui-muted-foreground);
+  }
+}
+
+/* One column that can shrink: a demo with its own width (Command) stays inside its card. */
+.example-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+/* An example still loading (components-page.tsx) holds a typical card's room. */
+.example:not([data-ready]) > .example-body {
+  min-block-size: 8rem;
+}
+
+:is(.example, .lib-example, .item-frame) .row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* A popup's actions sit together at its end, at their own size. */
+:is(.example, .lib-example, .item-frame) .actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+:is(.example, .lib-example, .item-frame) .stack {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.example-note {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--ui-muted-foreground);
+}
+
+.example-strong {
+  margin: 0;
+  font-weight: 600;
+}
+
+.dropzone {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1.5px dashed var(--ui-input);
+  border-radius: calc(var(--ui-radius) + 4px);
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+}
+
+.resizable-demo {
+  height: 8rem;
+  min-height: 8rem;
+  border: 1px solid var(--ui-border);
+}
+
+.scroll-demo {
+  height: 8rem;
+}
+
+.ring-demo {
+  gap: 1.5rem;
+}
+
+.radio-demo {
+  width: 38rem;
+  max-width: 100%;
+}
+
+.command-demo {
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) + 4px);
+}
+
+.color-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slide {
+  display: grid;
+  place-items: center;
+  min-height: 6rem;
+  padding: 1rem;
+  border-radius: var(--ui-radius);
+  background: var(--ui-muted);
+  text-align: center;
+}
+
+:is(.example-body, .lib-example) > :is([data-slot$="-trigger"], [data-slot="button"]) {
+  justify-self: start;
+}
+
+.example[data-wide] {
+  grid-column: 1 / -1;
+}
+
+.shell-demo {
+  --app-shell-height: 26rem;
+  height: 26rem;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) + 4px);
+}
+
+.shell-demo .app-content {
+  overflow: auto;
+}
+
+.shell-demo-search {
+  flex: 0 1 16rem;
+  margin-inline-start: auto;
+}
+
+.shell-demo-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 1rem;
+}
+
+.skeleton-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.75rem;
+}

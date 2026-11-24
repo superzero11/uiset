@@ -21,7 +21,7 @@ Rules for agents building with UISet:
 - [Web Components](https://uiset.dev/docs/web-components.md): Every kit and template as custom elements, for plain HTML, Vue, Svelte and Solid
 - [Vue](https://uiset.dev/docs/vue.md): UISet in a Vue 3 app, through the Web Components build
 - [Svelte](https://uiset.dev/docs/svelte.md): UISet in a Svelte 5 app, through the Web Components build
-- [Solid](https://uiset.dev/docs/solid.md): UISet written in Solid 2, as @uiset/solid: being built for 0.7.0, with the root in
+- [Solid](https://uiset.dev/docs/solid.md): UISet written in Solid 2, as @uiset/solid: being built for 0.7.0, with the root and every component in
 - [Templates](https://uiset.dev/docs/templates.md): Whole pages built only from UISet items
 - [Theming](https://uiset.dev/docs/theming.md): Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder
 - [Coming from shadcn/ui](https://uiset.dev/docs/migrate-from-shadcn.md): What maps to what, and how to move a shadcn/ui app over

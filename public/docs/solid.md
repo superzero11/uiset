@@ -5,11 +5,22 @@ in Solid, on UI SDK's Solid components (`@ui-sdk/solid`). It shares its styleshe
 logic with the React registry and the Web Components build, so an item looks and behaves the
 same in all three, agents included.
 
-It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now: the `UISet`
-root, with the five skins, the key color, Base's light and dark, motion, sound and haptics.
-Until an item is in, use its element from the [Web Components
-build](./web-components.md#vue-svelte-and-solid) in the same app: both read the same
-`uiset.css`.
+It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
+
+- The `UISet` root, with the five skins, the key color, Base's light and dark, motion, sound
+  and haptics.
+- UI SDK's 55 components, with UISet's defaults where React has them: a switch brings its
+  thumb, a select trigger its value, a number input its named step buttons, a slider a thumb
+  for each value.
+- UISet's own parts: alert, avatar group, badge and count badge, breadcrumbs, card, confirm
+  and copy buttons, description and item lists, empty state, keyboard keys, page header,
+  password rules, radio cards, scroll box, search field, skeleton and loading, spinner,
+  stepper, textarea count and toaster.
+
+Each component's docs page has its example in Solid under the Solid tab. Until a kit or
+template is in, use its element from the
+[Web Components build](./web-components.md#vue-svelte-and-solid) in the same app: both read
+the same `uiset.css`.
 
 ## Install
 
@@ -32,6 +43,22 @@ export default defineConfig({
   optimizeDeps: { exclude: ["@ui-sdk/core"] },
 })
 ```
+
+## Components
+
+Each item is its own entry, named as in the React registry, with the same parts:
+
+```tsx
+import { Button, ConfirmButton } from "@uiset/solid/button"
+import { Field, FieldLabel, Input } from "@uiset/solid/field"
+import { Switch } from "@uiset/solid/switch"
+```
+
+Props follow UI SDK's Solid components: `class`, not `className`, and lowercase HTML
+attributes (`maxlength`, `autocomplete`) on the element a part renders. A UI SDK option keeps
+its name, like a password input's `autoComplete`. A part's `render` takes a function,
+`render={(props) => <a href="/ada" {...props} />}`, and children may be a function of the
+part's state.
 
 ## The root
 

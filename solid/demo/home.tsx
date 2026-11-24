@@ -8,6 +8,19 @@ import { DemoPage } from "./demo-page"
 function Home() {
   return (
     <DemoPage title="UISet for Solid" description="The UISet root in Solid 2, dressing UI SDK's own Solid parts in every skin.">
+      <nav class="web-demo-pages" aria-label="Pages">
+        <div>
+          <h2>In Solid so far</h2>
+          <ul>
+            <li>
+              <a href="./components.html">Components</a>
+            </li>
+            <li>
+              <a href="./ssr/root">The root, server-rendered</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
       <div class="web-demo-grid">
         <article aria-labelledby="root-parts">
           <h2 id="root-parts">UI SDK's parts in the root</h2>
