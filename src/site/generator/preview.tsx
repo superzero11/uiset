@@ -1,6 +1,7 @@
 // A small, realistic screen in the generated skin: settings, a table, charts, alerts and a
 // dialog. Rendered the way an app would use the skin: <UISet skin="…" theme="…">, with the
 // skin's CSS on the page.
+import { useState } from "react"
 import { Alert } from "@/registry/uiset/ui/alert"
 import { Badge, type BadgeTone } from "@/registry/uiset/ui/badge"
 import { BarChart } from "@/registry/uiset/ui/bar-chart"
@@ -51,6 +52,8 @@ const whole = new Intl.NumberFormat("en-US")
 
 function Preview({ skin, scheme }: { skin: string; scheme: "light" | "dark" }) {
   const name = scheme === "light" ? "Light" : "Dark"
+  // The delete alert renders beside the settings form, not in it: forms don't nest.
+  const [body, setBody] = useState<HTMLElement | null>(null)
   return (
     <section className="generator-screen-frame" aria-label={`${name} preview`}>
       <UISet skin={skin} theme={scheme} className="generator-screen" data-agent-hidden="">
@@ -66,7 +69,7 @@ function Preview({ skin, scheme }: { skin: string; scheme: "light" | "dark" }) {
           </Popover>
         </div>
 
-        <div className="generator-screen-body">
+        <div ref={setBody} className="generator-screen-body">
           <div className="generator-screen-heading">
             <h3>Project settings</h3>
             <p>Atlas, production</p>
@@ -111,7 +114,7 @@ function Preview({ skin, scheme }: { skin: string; scheme: "light" | "dark" }) {
               <Button variant="outline" type="button">
                 Cancel
               </Button>
-              <AlertDialog>
+              <AlertDialog container={body}>
                 <AlertDialogTrigger data-variant="destructive" className="generator-screen-delete">
                   Delete project
                 </AlertDialogTrigger>

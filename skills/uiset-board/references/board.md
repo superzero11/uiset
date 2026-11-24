@@ -67,6 +67,31 @@ top corner, which shows on touch screens only. The keyboard and agents don't nee
 Cards slide to their new places, across columns too, on the skin's move timing (see
 Theming, Motion), and jump under reduced motion.
 
+## Solid
+
+`@uiset/solid/board` is the same board in Solid 2, with React's props (`class`, not
+`className`) and parts: `Board`, `BoardToolbar`, `BoardCardDialog`, `BoardCardFace` and
+`createBoardController`.
+
+```tsx
+import { createSignal } from "solid-js"
+import { Board, BoardCardDialog, createBoardController, type BoardCardData } from "@uiset/solid/board"
+
+const board = createBoardController()
+const [lanes, setLanes] = createSignal(start)
+const [open, setOpen] = createSignal<BoardCardData | null>(null)
+
+<Board label="Sprint board" controller={board} columns={columns} cards={cards()}
+  lanes={lanes()} onLanesChange={(next) => setLanes(next)} onCardOpen={setOpen}
+  filter={(card) => matches(card, query(), person())} />
+<BoardCardDialog board={board} card={open()} column={columnOf(open())} columns={columns}
+  onSave={save} onDelete={remove} onClose={() => setOpen(null)} />
+```
+
+A `filter` that reads signals filters again when they change. The keys, moves, limits and
+the tab stop are the same code as React's, and so are the browser tests: one set runs on
+React's gallery and on Solid's board page. See [Solid](./solid.md).
+
 ## Known limits
 
 Releasing a dragged card over a full column, or outside the board, drops it in the last

@@ -507,6 +507,8 @@ function EventDialog({
   const [error, setError] = useState<{ text: string; field: "start" | "end" } | null>(null)
   const startInput = useRef<HTMLInputElement>(null)
   const endInput = useRef<HTMLInputElement>(null)
+  // The delete alert renders beside the form, not in it: forms don't nest.
+  const [content, setContent] = useState<HTMLElement | null>(null)
   // Where focus goes on close: the saved event, or a deleted one's neighbor.
   const returnTo = useRef<{ id?: string; neighbor?: string } | null>(null)
   const finalFocus = () => {
@@ -529,7 +531,7 @@ function EventDialog({
   return (
     <Dialog open={event !== null} onOpenChange={(open: boolean) => !open && close()}>
       <DialogBackdrop />
-      <DialogContent className="scheduler-dialog" finalFocus={finalFocus}>
+      <DialogContent ref={setContent} className="scheduler-dialog" finalFocus={finalFocus}>
         {shown && (
           <>
             <DialogTitle>{isNew ? "New event" : shown.title}</DialogTitle>
@@ -633,7 +635,7 @@ function EventDialog({
               </Field>
               <div className="scheduler-form-actions">
                 {!isNew && onDelete && (
-                  <AlertDialog>
+                  <AlertDialog container={content}>
                     <AlertDialogTrigger data-variant="ghost">
                       <Icon name="trash" />
                       Delete event

@@ -25,6 +25,9 @@ function Home() {
               <a href="./data-grid.html">Data grid</a>
             </li>
             <li>
+              <a href="./board.html">Board</a>
+            </li>
+            <li>
               <a href="./ssr/root">The root, server-rendered</a>
             </li>
           </ul>

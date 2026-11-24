@@ -99,3 +99,17 @@
   font-variant-numeric: tabular-nums;
   color: var(--ui-muted-foreground);
 }
+
+/* Board demo */
+
+.board-stage {
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.board-demo {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}

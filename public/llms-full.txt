@@ -3154,6 +3154,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
 - The data grid: ten thousand rows virtualized, sorting, filters, grouping, pinned, resizable
   and movable columns, inline editing with lists, copy and paste, CSV, a saved layout and
   agents ([Data grid](./data-grid.md#solid)).
+- The board: columns with limits, cards moved by pointer, keyboard and agent with Undo,
+  search and a person filter, adding cards, and the card dialog that edits, moves and
+  deletes ([Board](./board.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the
@@ -6714,6 +6717,31 @@ top corner, which shows on touch screens only. The keyboard and agents don't nee
 
 Cards slide to their new places, across columns too, on the skin's move timing (see
 Theming, Motion), and jump under reduced motion.
+
+## Solid
+
+`@uiset/solid/board` is the same board in Solid 2, with React's props (`class`, not
+`className`) and parts: `Board`, `BoardToolbar`, `BoardCardDialog`, `BoardCardFace` and
+`createBoardController`.
+
+```tsx
+import { createSignal } from "solid-js"
+import { Board, BoardCardDialog, createBoardController, type BoardCardData } from "@uiset/solid/board"
+
+const board = createBoardController()
+const [lanes, setLanes] = createSignal(start)
+const [open, setOpen] = createSignal<BoardCardData | null>(null)
+
+<Board label="Sprint board" controller={board} columns={columns} cards={cards()}
+  lanes={lanes()} onLanesChange={(next) => setLanes(next)} onCardOpen={setOpen}
+  filter={(card) => matches(card, query(), person())} />
+<BoardCardDialog board={board} card={open()} column={columnOf(open())} columns={columns}
+  onSave={save} onDelete={remove} onClose={() => setOpen(null)} />
+```
+
+A `filter` that reads signals filters again when they change. The keys, moves, limits and
+the tab stop are the same code as React's, and so are the browser tests: one set runs on
+React's gallery and on Solid's board page. See [Solid](./solid.md).
 
 ## Known limits
 

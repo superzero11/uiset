@@ -100,6 +100,8 @@ const boardPrimitive = definePrimitive({
     lanes: options.lanes ?? options.defaultLanes ?? ({} as TransferLists),
     moving: null as TransferDraft | null,
     focused: null as string | null,
+    /** The cards the filter hides, as `hidden` says. */
+    hidden: options.hidden ?? ([] as string[]),
   }),
   sync: (options) => (options.lanes === undefined ? {} : { lanes: options.lanes }),
   api: (context) => {
@@ -133,6 +135,9 @@ const boardPrimitive = definePrimitive({
       const had = !!el?.contains(el.ownerDocument.activeElement)
       hiddenKey = next
       hidden = new Set(options.hidden ?? [])
+      // In state, so the cards hear it: a view that renders a card only when its own props
+      // change (Solid's) hides it here, in the same update that moves the tab stop off it.
+      context.store.set({ hidden: options.hidden ?? [] })
       const handOff = had && focused && hidden.has(focused) ? api.neighbor(focused) : undefined
       roving.check()
       if (handOff) roving.focus(handOff)
@@ -312,7 +317,8 @@ const boardPrimitive = definePrimitive({
       press: ({ api, key }) => api.open(key),
       // A focus change reaches only the two cards it touches. (During a move every card
       // may shift, so moves reach all of them.)
-      selects: selects({ focused: ({ key }) => [key, null] }),
+      // A filter reaches only the cards it hides or shows again.
+      selects: selects({ focused: ({ key }) => [key, null], hidden: ({ key }) => [key] }),
       state: (state, { api, key }) => ({
         moving: api.transfer.moving(state, key),
         dragging: api.transfer.dragging(state, key),
@@ -322,7 +328,7 @@ const boardPrimitive = definePrimitive({
         "aria-roledescription": "card",
         // Named for the server's HTML; `live` below keeps it current during a move.
         "aria-selected": "false",
-        hidden: part.props.filtered ? "" : undefined,
+        hidden: part.props.filtered || state.hidden.includes(part.key) ? "" : undefined,
       }),
       // The move is live state: written straight to the element the moment it changes.
       // (Attributes in `attrs` may not read it, or they'd wait for the next render.)

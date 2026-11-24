@@ -2786,4 +2786,29 @@ vercel-labs/ui#905 (2026-11-19).
   the same blind spot: its range gave what a single click gives). The virtualizer's
   `refresh()` after the rows change is the documented call, and stays though no test sees it
   go.
+- 2026-11-24 — **Solid, phase 3: the board.** The board, its toolbar, add form and card
+  dialog in Solid, over the shared primitive. React's 12 browser tests moved into one body
+  (`tests/e2e/board-tests.ts`) that runs on React's gallery and Solid's board page; both
+  pass. React's board unit tests ported, with Solid's own besides (the add form, the dialog
+  saving, moving, refusing a full column and deleting, a filter set later, an uncontrolled
+  board's filter state): 22, and 2 through the agent bridge. The page renders on the server
+  and hydrates, a search and a person filter say nothing on the console, and every control on
+  the page and in the card dialog is pressed.
+  - **A delete confirmation nested a form**, in React's board and scheduler and on the theme
+    generator's preview: the "Delete" alert sat inside the form, and UI SDK's popups render
+    in place, so UI SDK warned in development. Each renders beside its form now, through
+    `container`. Lint rule `jsx/no-dialog-in-form` found the other two and catches the next.
+  - **Solid's card dialog sent focus to the wrong card** after a move: the dialog closed in
+    the same flush that drew the card in its new column, before the card was bound, so focus
+    fell to its old neighbor. The board draws first now (a shared browser test failed on it).
+  - **A filter tore Solid's cards** (`EFFECT_RELAY_TEAR`): a card took "hidden" as a prop in
+    one flush and lost the tab stop in the next, when UI SDK's Solid parts applied the board's
+    options. The board primitive now keeps the hidden cards in its state, so a card hides and
+    hands off the tab stop in one update. React and Web Components still pass `filtered`,
+    with the same value. Found by the browser log; a Solid browser test now fails on it.
 
+  23 unit mutations, 20 caught (one once the dialog test checked labels). `direct` on the
+  card's `hidden` survived and was dropped: the hidden list in state is what hides a card,
+  and two mutations catch that. The `selects` entry survives; it only narrows which cards
+  hear a filter. Remembering a deleted card as the focus target survives in jsdom and in
+  Chrome, since the card has no element when the dialog closes; it stays, as in React.

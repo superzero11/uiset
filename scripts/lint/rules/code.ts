@@ -234,3 +234,33 @@ export const shellStyles: FileRule = {
     return [{ line: lineOf(text, use.index), message: "This file draws with shell.css (UISet's icons, uiset-visually-hidden) but doesn't import it: import \"./shell/shell.css\" (or the registry's from solid/src)." }]
   },
 }
+
+/** A JSX opening tag from its "<", to the ">" that ends it (not one in an arrow or a string). */
+function openingTag(text: string, start: number) {
+  let depth = 0
+  for (let i = start + 1; i < text.length; i++) {
+    const c = text[i]
+    if (c === '"' || c === "'" || c === "`") {
+      for (i++; i < text.length && text[i] !== c; i++) if (text[i] === "\\") i++
+    } else if (c === "{") depth++
+    else if (c === "}") depth--
+    else if (c === ">" && depth === 0) return text.slice(start, i + 1)
+  }
+  return text.slice(start)
+}
+
+export const noDialogInForm: FileRule = {
+  id: "jsx/no-dialog-in-form",
+  why: "2026-11-24: the board's card dialog put its \"Delete card\" alert inside the card's form. UI SDK's popups render in place, so the alert nested in the form, and UI SDK warned \"The content renders inside a form, which nests forms\" in React and Solid. Found porting the board to Solid; the alert now renders into the dialog with `container`.",
+  appliesTo: (path) => /^(registry\/uiset\/ui|solid\/(src|demo)|src\/site)\/.+\.tsx$/.test(path),
+  check(text) {
+    const out: Finding[] = []
+    for (const m of text.matchAll(/<(AlertDialog|Dialog|Drawer)[\s>]/g)) {
+      const before = text.slice(0, m.index!)
+      const inForm = (before.match(/<form[\s>]/g)?.length ?? 0) > (before.match(/<\/form>/g)?.length ?? 0)
+      if (!inForm || /\scontainer=/.test(openingTag(text, m.index!))) continue
+      out.push({ line: lineOf(text, m.index!), message: `<${m[1]}> inside a <form>: its content renders in place, nesting a form. Move it outside the form, or pass \`container\` (the surrounding dialog's content, say).` })
+    }
+    return out
+  },
+}

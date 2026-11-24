@@ -5,9 +5,11 @@ import { Field, FieldLabel } from "@ui-sdk/solid/field"
 import { Input } from "@ui-sdk/solid/input"
 import { SegmentedControl, SegmentedControlIndicator, SegmentedControlItem } from "@ui-sdk/solid/segmented-control"
 import { Switch, SwitchThumb } from "@ui-sdk/solid/switch"
+import { Toaster } from "../../src/toast"
 import { UISet, type Skin } from "../../src/uiset"
 import { Components } from "../components-page"
 import { DemoPage } from "../demo-page"
+import BoardExample from "../examples/board"
 import { ChatDemo } from "../kits/chat-demo"
 import { EditorDemo } from "../kits/editor-demo"
 import { GridDemo } from "../kits/grid-demo"
@@ -76,6 +78,17 @@ function Grid() {
   )
 }
 
-const pages: Record<string, () => JSX.Element> = { root: Root, components: Components, chat: Chat, "rich-text": RichText, "data-grid": Grid }
+function Board() {
+  return (
+    <DemoPage title="Board in Solid" description="The board kit, rendered on the server.">
+      <div class="board-stage">
+        <BoardExample />
+      </div>
+      <Toaster />
+    </DemoPage>
+  )
+}
+
+const pages: Record<string, () => JSX.Element> = { root: Root, components: Components, chat: Chat, "rich-text": RichText, "data-grid": Grid, board: Board }
 
 export { pages }

@@ -512,6 +512,8 @@ function BoardCardDialog({
     return (key && board.cardElement(key)) || (neighbor && board.cardElement(neighbor)) || undefined
   }
   const assignees = shown?.assignee && !people.includes(shown.assignee) ? [shown.assignee, ...people] : people
+  // The delete alert renders beside the form, not in it: forms don't nest.
+  const [content, setContent] = useState<HTMLElement | null>(null)
 
   return (
     <Dialog
@@ -524,7 +526,7 @@ function BoardCardDialog({
       }}
     >
       <DialogBackdrop />
-      <DialogContent className="board-dialog" finalFocus={finalFocus}>
+      <DialogContent ref={setContent} className="board-dialog" finalFocus={finalFocus}>
         {shown && (
           <>
             <DialogTitle>{shown.title}</DialogTitle>
@@ -645,7 +647,7 @@ function BoardCardDialog({
                 </p>
               )}
               <div className="board-dialog-actions">
-                <AlertDialog>
+                <AlertDialog container={content}>
                   <AlertDialogTrigger data-variant="ghost" className="board-delete">
                     <Icon name="trash" />
                     Delete card

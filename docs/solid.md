@@ -37,6 +37,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
 - The data grid: ten thousand rows virtualized, sorting, filters, grouping, pinned, resizable
   and movable columns, inline editing with lists, copy and paste, CSV, a saved layout and
   agents ([Data grid](./data-grid.md#solid)).
+- The board: columns with limits, cards moved by pointer, keyboard and agent with Undo,
+  search and a person filter, adding cards, and the card dialog that edits, moves and
+  deletes ([Board](./board.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the

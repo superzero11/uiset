@@ -73,9 +73,9 @@ On UI SDK `0.1.0-beta.16`.
   hydration; UI SDK's 55 components with UISet's defaults; and UISet's own parts, from the
   alert to the textarea count; the charts, sparkline and stat; the motion pieces; the tag,
   phone and masked inputs and inline edit; the schema form and upload; the table, code block
-  and sortable list and tree; the chat kit; the rich text editor; and the data grid. Each
-  component's docs page shows its example in Solid. The rest of the kits and the templates
-  follow before this release.
+  and sortable list and tree; the chat kit; the rich text editor; the data grid; and the
+  board. Each component's docs page shows its example in Solid. The rest of the kits and the
+  templates follow before this release.
 - **A schema form's `phone` field.** `kind: "phone"` draws a phone input, loaded only when a
   form has one (a plain field takes the number until then). Its value is E.164; Next, an
   agent's `goTo` and submit check it for its country, not just its shape, an agent fills it
@@ -105,6 +105,10 @@ On UI SDK `0.1.0-beta.16`.
 
 ### Fixed
 
+- **A delete confirmation no longer nests a form.** The board's and the scheduler's dialogs
+  put their "Delete" alert inside the dialog's form, and UI SDK's popups render in place, so
+  the alert nested a form and UI SDK warned in development. It renders beside the form now.
+  Add `board` and `scheduler` again to take it.
 - **Rich text installed on its own has its icons and hidden labels.** It used UISet's shell
   styles without loading them, so an app with only `rich-text` showed broken toolbar icons
   and a visible "Block type". Add `rich-text` again to take it.
