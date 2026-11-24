@@ -25,6 +25,7 @@ npx shadcn@latest add @uiset/uiset
 - [Web Components](./web-components.md): Every kit and template as custom elements, for plain HTML, Vue, Svelte and Solid.
 - [Vue](./vue.md): UISet in a Vue 3 app, through the Web Components build.
 - [Svelte](./svelte.md): UISet in a Svelte 5 app, through the Web Components build.
+- [Solid](./solid.md): UISet written in Solid 2, as @uiset/solid: being built for 0.7.0, with the root in.
 - [Templates](./templates.md): Whole pages built only from UISet items.
 - [Theming](./theming.md): Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder.
 - [Coming from shadcn/ui](./migrate-from-shadcn.md): What maps to what, and how to move a shadcn/ui app over.
@@ -190,7 +191,8 @@ See [Templates](./templates.md) for each one's props and sample data.
 
 UISet is the components, kits, page templates and themes for Vercel's UI SDK. It's
 open source, installs with the shadcn CLI, and works in React and, through Web Components,
-in Vue, Svelte, Solid, Angular and plain HTML.
+in Vue, Svelte, Solid, Angular and plain HTML. A Solid 2 package written in Solid is being
+built for 0.7.0 ([Solid](./solid.md)).
 
 ```bash
 npx shadcn@latest add @uiset/uiset
@@ -361,7 +363,8 @@ your own files:
 ## Web Components
 
 For Vue, Svelte, Solid, Angular or plain HTML, use the Web Components build: one module and
-one stylesheet, with UI SDK as a peer.
+one stylesheet, with UI SDK as a peer. Solid 2 is getting its own package, written in Solid
+and being built for 0.7.0: see [Solid](./solid.md).
 
 ```bash
 npm install @uiset/web @ui-sdk/web
@@ -1755,7 +1758,8 @@ Svelte components under UISet's stylesheet. Every code block in them ran in a re
 
 Solid renders custom elements as they are; listen with `on:valuechange`. UI SDK's Solid
 adapter works with `uiset.css` too, since the same `data-slot` attributes mean the same
-styles.
+styles. UISet written in Solid 2, `@uiset/solid`, is being built for 0.7.0: see
+[Solid](./solid.md).
 
 ## React and the web
 
@@ -3107,6 +3111,88 @@ On 2026-11-17, against a later local build of 0.2.0 (Svelte 5.57.3, Vite 8.3.8,
 `svelte-check` 4.7.8): the typed `onCellEdit` block and the `svelte/elements` declaration
 with `svelte-check`, and the server rendering recipe, rendered with `render` and hydrated in
 Chrome and WebKit with no warning.
+
+
+<!-- docs/solid.md -->
+
+# Solid
+
+UISet for Solid 2 is `@uiset/solid`: UISet's skins, components, kits and templates written
+in Solid, on UI SDK's Solid components (`@ui-sdk/solid`). It shares its stylesheet and its
+logic with the React registry and the Web Components build, so an item looks and behaves the
+same in all three, agents included.
+
+It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now: the `UISet`
+root, with the five skins, the key color, Base's light and dark, motion, sound and haptics.
+Until an item is in, use its element from the [Web Components
+build](./web-components.md#vue-svelte-and-solid) in the same app: both read the same
+`uiset.css`.
+
+## Install
+
+Solid 2 only: `solid-js` and `@solidjs/web` 2.0 or later. From 0.7.0:
+
+```bash
+npm install @uiset/solid @ui-sdk/solid@0.1.0-beta.16 @ui-sdk/core@0.1.0-beta.16
+```
+
+UISet pins UI SDK exactly. With Vite, leave `@ui-sdk/core` out of pre-bundling, as UI SDK's
+Solid docs say: a second copy of it makes UI SDK's components throw in development.
+
+```ts
+// vite.config.ts
+import solid from "@solidjs/vite-plugin"
+import { defineConfig } from "vite"
+
+export default defineConfig({
+  plugins: [solid()],
+  optimizeDeps: { exclude: ["@ui-sdk/core"] },
+})
+```
+
+## The root
+
+Wrap the app, or any part of it, in `UISet`. Importing it brings UISet's stylesheet; skins
+set their colors on the root, so roots nest without leaking.
+
+```tsx
+import { createSignal } from "solid-js"
+import { UISet, type Skin } from "@uiset/solid"
+
+function App() {
+  const [skin, setSkin] = createSignal<Skin>("base")
+  return (
+    <UISet skin={skin()} theme="system" sound>
+      <Settings onSkinChange={setSkin} />
+    </UISet>
+  )
+}
+```
+
+It takes the React root's props: `skin`, `keyColor` (`{ l, c, h }`, Base's accent), `theme`
+(`"light"`, `"dark"` or `"system"`, for Base and generated skins; Blueprint, Studio and
+Phosphor are dark, and Ink is light, whatever `theme` says), `motion` (`"reduce"` keeps
+fades and moves nothing), `sound` and `haptics`, and any `div` attribute. As everywhere in
+Solid 2, pass values (`skin={skin()}`), not the signal; the root follows them as they change.
+
+UI SDK's own Solid components inside the root take its look already, because UISet styles
+their `data-slot` parts. Sound and haptics follow them through UI SDK's `observe()`.
+
+## Agents
+
+UI SDK's agent bridge for Solid sees everything inside the root by the names people see:
+
+```ts
+import { createAgent } from "@ui-sdk/solid/agent"
+
+const agent = createAgent()
+await agent.act({ steps: [{ ref: "Save", action: "press" }] })
+```
+
+## Server rendering
+
+`@uiset/solid` serves its source to Solid's compiler (the `solid` export condition), so
+SolidStart renders it on the server and hydrates it like your own components.
 
 
 <!-- docs/templates.md -->

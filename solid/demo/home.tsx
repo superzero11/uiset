@@ -1,0 +1,32 @@
+import { render } from "@solidjs/web"
+import { Button } from "@ui-sdk/solid/button"
+import { Field, FieldDescription, FieldLabel } from "@ui-sdk/solid/field"
+import { Input } from "@ui-sdk/solid/input"
+import { Switch, SwitchThumb } from "@ui-sdk/solid/switch"
+import { DemoPage } from "./demo-page"
+
+function Home() {
+  return (
+    <DemoPage title="UISet for Solid" description="The UISet root in Solid 2, dressing UI SDK's own Solid parts in every skin.">
+      <div class="web-demo-grid">
+        <article aria-labelledby="root-parts">
+          <h2 id="root-parts">UI SDK's parts in the root</h2>
+          <Field>
+            <FieldLabel>Workspace name</FieldLabel>
+            <Input placeholder="Acme" />
+            <FieldDescription>Shown to everyone you invite.</FieldDescription>
+          </Field>
+          <label class="web-row">
+            <Switch defaultChecked>
+              <SwitchThumb />
+            </Switch>
+            Email me a weekly summary
+          </label>
+          <Button>Save</Button>
+        </article>
+      </div>
+    </DemoPage>
+  )
+}
+
+render(() => <Home />, document.getElementById("app")!)

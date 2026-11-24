@@ -3,7 +3,7 @@
 // `--update-baseline` records today's remaining problems so only new ones fail;
 // `--rules` lists every rule and why it exists.
 import { execFileSync } from "node:child_process"
-import { existsSync, readFileSync, writeFileSync } from "node:fs"
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { lint, type Baseline, type RepoContext } from "./core.ts"
@@ -25,21 +25,32 @@ if (args.has("--rules")) {
 
 if (args.has("--push")) {
   const pin = JSON.parse(readFileSync(join(root, "package.json"), "utf8")).dependencies["@ui-sdk/core"] as string
-  let published: { version: string; peerDependencies?: Record<string, string> }
-  try {
-    const response = await fetch("https://registry.npmjs.org/@uiset%2fweb/latest", { signal: AbortSignal.timeout(20_000) })
-    if (!response.ok) throw new Error(`npm answered ${response.status}`)
-    published = await response.json()
-  } catch (error) {
-    console.log(`${docsAheadOfNpm.id}  Couldn't read @uiset/web from npm (${(error as Error).message}), so the push isn't checked. Try again once npm answers.`)
-    process.exit(1)
+  // npm's latest of a package, or null when npm has none.
+  const latest = async (pkg: string) => {
+    const response = await fetch(`https://registry.npmjs.org/${pkg.replace("/", "%2f")}/latest`, { signal: AbortSignal.timeout(20_000) })
+    if (response.status === 404) return null
+    if (!response.ok) throw new Error(`npm answered ${response.status} for ${pkg}`)
+    return (await response.json()) as { version: string; peerDependencies?: Record<string, string> }
   }
-  const problem = docsAheadOfNpm.check(pin, published)
-  if (problem) {
-    console.log(`${docsAheadOfNpm.id}  ${problem}`)
-    process.exit(1)
+  // Solid's package counts once the docs tell people to install it.
+  const docs = readdirSync(join(root, "docs")).filter((name) => name.endsWith(".md"))
+  const namesSolid = docs.some((name) => readFileSync(join(root, "docs", name), "utf8").includes("install @uiset/solid"))
+  const checks: [string, string[]][] = [["@uiset/web", ["@ui-sdk/web", "@ui-sdk/core"]], ...(namesSolid ? [["@uiset/solid", ["@ui-sdk/solid", "@ui-sdk/core"]] as [string, string[]]] : [])]
+  let failed = false
+  for (const [pkg, peers] of checks) {
+    let problem: string | null
+    try {
+      problem = docsAheadOfNpm.check(pin, await latest(pkg), pkg, peers)
+    } catch (error) {
+      problem = `Couldn't read ${pkg} from npm (${(error as Error).message}), so the push isn't checked. Try again once npm answers.`
+    }
+    if (problem) {
+      console.log(`${docsAheadOfNpm.id}  ${problem}`)
+      failed = true
+    }
   }
-  console.log(`Push check: npm's @uiset/web ${published.version} takes UI SDK ${pin}, as the docs say.`)
+  if (failed) process.exit(1)
+  console.log(`Push check: npm has ${checks.map(([pkg]) => pkg).join(" and ")} on UI SDK ${pin}, as the docs say.`)
   process.exit(0)
 }
 
@@ -47,6 +58,7 @@ const lines = (out: string) => out.split("\n").filter(Boolean)
 const ctx: RepoContext = staged
   ? {
       paths: lines(git("diff", "--cached", "--name-only", "--diff-filter=ACMR")),
+      all: lines(git("ls-files", "--cached")),
       read: (path) => {
         try {
           return git("show", `:${path}`)

@@ -1055,7 +1055,8 @@ Svelte components under UISet's stylesheet. Every code block in them ran in a re
 
 Solid renders custom elements as they are; listen with `on:valuechange`. UI SDK's Solid
 adapter works with `uiset.css` too, since the same `data-slot` attributes mean the same
-styles.
+styles. UISet written in Solid 2, `@uiset/solid`, is being built for 0.7.0: see
+[Solid](./solid.md).
 
 ## React and the web
 

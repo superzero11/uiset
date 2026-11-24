@@ -99,7 +99,8 @@ your own files:
 ## Web Components
 
 For Vue, Svelte, Solid, Angular or plain HTML, use the Web Components build: one module and
-one stylesheet, with UI SDK as a peer.
+one stylesheet, with UI SDK as a peer. Solid 2 is getting its own package, written in Solid
+and being built for 0.7.0: see [Solid](./solid.md).
 
 ```bash
 npm install @uiset/web @ui-sdk/web

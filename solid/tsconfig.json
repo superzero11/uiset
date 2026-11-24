@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "jsxImportSource": "@solidjs/web",
+    "paths": { "@/*": ["../*"] }
+  },
+  "include": ["src", "demo", "vite.config.ts", "../tests/unit/solid-*.test.tsx", "../tests/unit/solid-*.ts"],
+  "exclude": []
+}

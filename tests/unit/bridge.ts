@@ -9,8 +9,11 @@ import { createAgent as createReactAgent, type AgentComponent } from "@ui-sdk/re
 /** Lets effects, timers under `ms` and the bridge's own bookkeeping run. */
 export const settle = (ms = 50) => act(() => new Promise((resolve) => setTimeout(resolve, ms)))
 
-/** A bridge for React (the default) or, given `@ui-sdk/web/agent`'s createAgent, the web. */
-export function createBridge(createAgent: typeof createReactAgent = createReactAgent) {
+/**
+ * A bridge for React (the default) or, given another framework's createAgent, the web's or
+ * Solid's; `wait` lets that framework's updates land (`settle` here is React's).
+ */
+export function createBridge(createAgent: typeof createReactAgent = createReactAgent, wait: (ms?: number) => Promise<unknown> = settle) {
   const asked: string[] = []
   const agent = createAgent({
     allow: (step) => {
@@ -31,7 +34,7 @@ export function createBridge(createAgent: typeof createReactAgent = createReactA
   }
   const act_ = async (label: string | RegExp, action: string, args: unknown[] = [], by = agent) => {
     const result = await by.act({ steps: [{ ref: entry(label).ref, action, args }] })
-    await settle()
+    await wait()
     return result
   }
 

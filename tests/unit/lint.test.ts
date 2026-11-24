@@ -10,6 +10,7 @@ const pinned = pkg.dependencies["@ui-sdk/react"]
 import { currentUiSdk, installVersions, kitInstall, kitLive, skinSchemes, statedCounts, whatsNewCurrent } from "../../scripts/lint/rules/facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "../../scripts/lint/rules/plan.ts"
 import { docsAheadOfNpm } from "../../scripts/lint/rules/release.ts"
+import { solidParity } from "../../scripts/lint/rules/solid.ts"
 
 // Each rule gets a sample it must catch and one it must let through, so no rule goes quiet.
 
@@ -266,7 +267,35 @@ describe("the runner", () => {
     expect(docsAheadOfNpm.check("0.1.0-beta.16", published("0.1.0-beta.16"))).toBeNull()
     expect(docsAheadOfNpm.check("0.1.0-beta.16", { version: "0.7.0", peerDependencies: { "@ui-sdk/web": "0.1.0-beta.16" } })).toContain("@ui-sdk/core (none)")
     expect(docsAheadOfNpm.check("0.1.0-beta.16", { version: "0.7.0" })).toContain("Publish @uiset/web first, then push.")
+    // Solid's package, once the docs name it: missing from npm, then on another UI SDK.
+    expect(docsAheadOfNpm.check("0.1.0-beta.16", null, "@uiset/solid", ["@ui-sdk/solid", "@ui-sdk/core"])).toContain("npm has no @uiset/solid")
+    const solid = { version: "0.7.0", peerDependencies: { "@ui-sdk/solid": "0.1.0-beta.16", "@ui-sdk/core": "0.1.0-beta.16" } }
+    expect(docsAheadOfNpm.check("0.1.0-beta.16", solid, "@uiset/solid", ["@ui-sdk/solid", "@ui-sdk/core"])).toBeNull()
+    expect(docsAheadOfNpm.check("0.1.0-beta.17", solid, "@uiset/solid", ["@ui-sdk/solid", "@ui-sdk/core"])).toContain("npm's @uiset/solid 0.7.0 takes @ui-sdk/solid 0.1.0-beta.16")
     expect(docsAheadOfNpm.why.length).toBeGreaterThan(20)
+  })
+
+  test("content/solid-parity: every React view has a Solid one or waits on the list, and a dated release waits for none", () => {
+    const views = { "registry/uiset/ui/uiset.tsx": "", "registry/uiset/ui/button.tsx": "", "registry/uiset/ui/templates/auth.tsx": "", "solid/src/uiset.tsx": "" }
+    const list = (...items: string[]) => JSON.stringify({ items })
+    const messages = (files: Record<string, string>) => solidParity.checkRepo(repo(files)).map((p) => p.message)
+    expect(messages({ ...views, "solid/to-port.json": list("button", "templates/auth") })).toEqual([])
+    // Left off the list with no Solid view.
+    expect(messages({ ...views, "solid/to-port.json": list("button") })).toEqual(['No Solid view: write solid/src/templates/auth.tsx, or name "templates/auth" in solid/to-port.json for now.'])
+    // Ported but still listed; listed with nothing to port.
+    expect(messages({ ...views, "solid/button.tsx": "", "solid/src/button.tsx": "", "solid/to-port.json": list("button", "templates/auth", "chart") })).toEqual([
+      '"button" is in Solid now (solid/src/button.tsx): take it off the list.',
+      '"chart" has no React view (registry/uiset/ui/chart.tsx) to port.',
+    ])
+    // A dated release with anything waiting.
+    const changelog = (head: string) => ({ "CHANGELOG.md": `# Changelog\n\n## ${head}\n` })
+    expect(messages({ ...views, ...changelog("0.7.0 (unreleased)"), "solid/to-port.json": list("button", "templates/auth") })).toEqual([])
+    expect(messages({ ...views, ...changelog("0.7.0 (2026-11-30)"), "solid/to-port.json": list("button", "templates/auth") })).toEqual([
+      "0.7.0 is dated, and 2 React views aren't in Solid yet (button, templates/auth). Solid ships complete: port them, or ask the owner.",
+    ])
+    // The list itself: missing once Solid has files, or not a list.
+    expect(messages(views)).toEqual(["Missing: it names the React views not yet in Solid."])
+    expect(messages({ ...views, "solid/to-port.json": "[]" })).toEqual(['Not JSON with an "items" list of names.'])
   })
 
   test("every rule says why it exists", () => {

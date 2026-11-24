@@ -66,6 +66,11 @@ On UI SDK `0.1.0-beta.16`.
   value without separators and checks itself when it's left. Agents set them in any format;
   card numbers and codes are secret to them. A schema form's text field takes a `mask`, and
   a number field a `currency`.
+- **Solid 2, natively: `@uiset/solid`.** UISet written in Solid 2 on UI SDK's
+  `@ui-sdk/solid`, sharing its stylesheet and logic with React and Web Components
+  ([Solid](./docs/solid.md)). In so far: the `UISet` root, with its skins, key color, theme,
+  motion, sound and haptics, cues for UI SDK's own Solid components, server rendering and
+  hydration. The components, kits and templates follow before this release.
 - **A schema form's `phone` field.** `kind: "phone"` draws a phone input, loaded only when a
   form has one (a plain field takes the number until then). Its value is E.164; Next, an
   agent's `goTo` and submit check it for its country, not just its shape, an agent fills it

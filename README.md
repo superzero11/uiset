@@ -313,8 +313,10 @@ A UI library is only as good as its worst state. These run before every change:
 UISet grows with UI SDK, in the open ([roadmap](https://uiset.dev/docs/roadmap)):
 
 - **More skins:** Cockpit, Paper and Print, each with its own sound.
-- **Framework guides:** step-by-step setups for Vue, Svelte, Solid and Angular with the Web
-  Components build.
+- **Solid 2, natively:** `@uiset/solid`, every component, kit and template written in Solid,
+  being built for 0.7.0.
+- **Framework guides:** an Angular setup with the Web Components build, beside Vue's and
+  Svelte's.
 - **More templates:** onboarding, a settings console wired for agents, and a docs site.
 - **Following UI SDK:** tracking its releases, and reporting what we find upstream, until 1.0.
 

@@ -1,0 +1,13 @@
+@import "../../web/src/demo.css";
+
+/* The Solid pages share the Web Components pages' layout. Their root is UISet's <div>, not
+   <uiset-root>: the same face, height and colors. */
+@layer uiset.tokens {
+  .solid-demo-root {
+    --ui-font-sans: "Instrument Sans", system-ui, sans-serif;
+    font-family: var(--ui-font-sans);
+    min-block-size: 100dvh;
+    background: var(--ui-background);
+    color: var(--ui-foreground);
+  }
+}

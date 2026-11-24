@@ -2614,4 +2614,19 @@ vercel-labs/ui#905 (2026-11-19).
   condition for SolidStart's server rendering. The shared TypeScript (about 15,700 lines) and
   CSS stay shared; each item gets a Solid view ported from React's, a demo page and tests.
   Order and checks: `design/solid-plan.md`.
+- 2026-11-24 — **Solid, phase 0: the foundation.** `solid-js`, `@solidjs/web` 2.0.3 and
+  `@ui-sdk/solid` beta.16, pinned. `solid/` is its own Vite app (`pnpm solid:dev`, 5650);
+  `solid/src` holds what `@uiset/solid` will ship, `solid/demo` the pages. The root reads its
+  props through getters and `omit`, so it follows them (a test sets each signal and
+  flushes). Vitest has three projects: React's, Solid's (jsdom, through UI SDK's Solid agent
+  bridge; `createBridge` takes the framework's createAgent and settle) and `solid-ssr`
+  (Node, `renderToString`). `/ssr/<page>` on the Solid server renders on the server and
+  hydrates in the browser; Playwright's `solid` project checks it with no errors or
+  warnings, and axe in every skin and scheme. Seen on the server: Solid writes an empty
+  attribute bare (`data-uiset`), and the root's `div` has no hydration key of its own
+  while UI SDK's parts do; hydration still claims it. Lint `content/solid-parity` holds
+  every React view to a Solid one or a name in `solid/to-port.json` (127 today), and a
+  dated release refuses a list with anything on it. The push check also wants
+  `@uiset/solid` on npm once the docs say to install it. Solid 2 is not Solid 1: its
+  cheatsheet (`node_modules/solid-js/CHEATSHEET.md`) is the reference.
 

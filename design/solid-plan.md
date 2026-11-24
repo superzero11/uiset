@@ -12,7 +12,8 @@ before the 0.7.0 release, and goes out with it, done and checked properly.
   `observe` and `history`. It takes `solid-js` and `@solidjs/web` 2.x; Solid 1 isn't supported.
 - Solid 2.0.3 is `latest` on npm. The Vite plugin is `@solidjs/vite-plugin` 3.0.1 (Vite 8, which
   UISet has); tests use `@solidjs/testing-library` 1.0.0-rc.2. Solid 2 renames props helpers
-  (`merge`, `omit`), and a part's props must stay reactive: no destructuring.
+  (`merge`, `omit`), and a part's props must stay reactive: no destructuring. Solid 2 is not
+  Solid 1: `node_modules/solid-js/CHEATSHEET.md` and its `skills/` are the reference.
 
 ## What gets written
 

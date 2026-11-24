@@ -25,6 +25,8 @@ export type Rule = FileRule | RepoRule
 export type RepoContext = {
   /** The files in scope: every file in the repo, or only the staged ones. */
   paths: string[]
+  /** Every file in the repo, as staged in a commit; `paths` when not given. */
+  all?: string[]
   /** A file's text: the staged version when linting a commit. */
   read: (path: string) => string | undefined
   /** Whether this is a commit (only staged files) rather than the whole repo. */

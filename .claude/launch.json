@@ -12,6 +12,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["web:dev"],
       "port": 5640
+    },
+    {
+      "name": "uiset-solid",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["solid:dev"],
+      "port": 5650
     }
   ]
 }
