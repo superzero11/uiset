@@ -127,6 +127,19 @@ test("agents read every value, isolate a series, pin a point and open the table"
   expect(screen.getByRole("table", { name: "Revenue and costs" })).toBeTruthy()
 })
 
+test("an agent can name a position by its whole reading, as an option reads", async () => {
+  const onSelect = vi.fn()
+  render(() => (
+    <LineChart title="Visits" data={[{ m: "Jan", v: 1 }, { m: "Feb", v: 2 }]} x={(d) => d.m} series={[{ key: "v", label: "V", value: (d) => d.v }]} onSelect={onSelect} />
+  ))
+  await settle(0)
+  const agent = createAgent()
+  const ref = agent.snapshot().find((e) => e.label === "Visits" && !e.offPage)!.ref
+  const result = await agent.act({ steps: [{ ref, action: "select", args: ["Feb: V 2"] }] })
+  expect(result.ok, result.error?.message).toBe(true)
+  expect(onSelect).toHaveBeenLastCalledWith("1", { source: "agent", reason: "command" })
+})
+
 test("bars can be ranked, and a stacked reading lists every part and the total", () => {
   render(() => (
     <BarChart
