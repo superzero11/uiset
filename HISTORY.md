@@ -2645,4 +2645,15 @@ vercel-labs/ui#905 (2026-11-19).
   input's `autoComplete` option into a plain attribute, and the typechecker caught it; and
   phase 0 never added `/docs/solid` to the site's navigation, so the guide was only in the
   repo. 57 React views left.
+- 2026-11-24 — **Solid, phase 2a: charts and motion.** The chart frame draws the shared
+  geometry (chart/plots) as Solid elements through `Dynamic`, redrawn on each change as the
+  Web Components build redraws it; its data points are keyed by their key, so an option
+  keeps its element and focus as the drawing changes under it (a test moves focus across a
+  redraw). React's 21 chart tests pass in Solid, with signals for its re-renders. The
+  crossfade first moved its live children into the leaving pane, which emptied the new one:
+  in Solid the old and new content are the same DOM. Each value now builds its content in
+  a keyed branch, so the old branch stops updating and leaves showing the old plan. A check
+  that every React docs example whose items are all in Solid has a Solid twin found the
+  charts example missing; it's in. Browser checks and the mutation run were stopped by the
+  memory guard (swap at 15 GB from other work) and wait for the machine.
 

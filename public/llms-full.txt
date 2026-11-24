@@ -3133,6 +3133,10 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
   and copy buttons, description and item lists, empty state, keyboard keys, page header,
   password rules, radio cards, scroll box, search field, skeleton and loading, spinner,
   stepper, textarea count and toaster.
+- The charts: line, bar, scatter, heatmap and segmented bar on one frame (legend, Chart and
+  Table, keyboard, agents), the sparkline and the stat.
+- The motion pieces: number ticker, text reveal, thinking and crossfade, each moving its
+  skin's way.
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the

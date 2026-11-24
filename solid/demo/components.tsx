@@ -45,4 +45,6 @@ function Components() {
   )
 }
 
+// The page's own count, for its browser test to check every example drew.
+document.body.dataset.examples = String(groups.flatMap(([, metas]) => metas).filter((meta) => exampleOf(meta.slug)).length)
 render(() => <Components />, document.getElementById("app")!)
