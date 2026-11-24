@@ -139,15 +139,9 @@ function ChartTableView(props: { title: string; table: ChartTable }) {
           <For each={props.table.rows} keyed={(row) => row.key}>
             {(row) => (
               <tr>
-                <For each={row().cells}>
-                  {(cell, i) =>
-                    i() === 0 ? (
-                      <th scope="row">{cell}</th>
-                    ) : (
-                      <td data-numeric={props.table.numeric?.[i()] ? "" : undefined}>{cell}</td>
-                    )
-                  }
-                </For>
+                {/* The first cell names the row; the rest are its values. */}
+                <th scope="row">{row().cells[0]}</th>
+                <For each={row().cells.slice(1)}>{(cell, i) => <td data-numeric={props.table.numeric?.[i() + 1] ? "" : undefined}>{cell}</td>}</For>
               </tr>
             )}
           </For>

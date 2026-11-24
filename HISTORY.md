@@ -2654,6 +2654,11 @@ vercel-labs/ui#905 (2026-11-19).
   in Solid the old and new content are the same DOM. Each value now builds its content in
   a keyed branch, so the old branch stops updating and leaves showing the old plan. A check
   that every React docs example whose items are all in Solid has a Solid twin found the
-  charts example missing; it's in. Browser checks and the mutation run were stopped by the
-  memory guard (swap at 15 GB from other work) and wait for the machine.
+  charts example missing; it's in. The browser sweep then failed the crossfade on Solid's
+  own warnings: its swap effect cleared `leaving` while reading it (a swap with nothing to
+  animate ends at once), and an effect relayed the value change into `leaving`, a frame
+  late. Now the new value's branch sets `leaving` as it's built (`ownedWrite`) and runs the
+  swap once settled. Solid's unit tests now fail on any console warning or error, as the
+  browser sweep does; that found the chart table reading a `<For>` index where Solid doesn't
+  track it. 17 mutations, all caught.
 

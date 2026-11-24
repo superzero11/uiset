@@ -1,5 +1,5 @@
 import type { ComponentProps, JSX } from "@solidjs/web"
-import { children as resolve, createEffect, createSignal, omit, Show } from "solid-js"
+import { children as resolve, createSignal, omit, onSettled, Show } from "solid-js"
 import { swap } from "../../registry/uiset/ui/motion/crossfade"
 import "../../registry/uiset/ui/motion/motion.css"
 
@@ -18,24 +18,17 @@ type Pane = { key: string; nodes: () => JSX.Element }
  */
 function Crossfade(props: CrossfadeProps) {
   let root: HTMLDivElement | undefined
+  let leavingEl: HTMLDivElement | undefined
   const key = () => String(props.value)
-  const [leaving, setLeaving] = createSignal<Pane | null>(null)
+  // Set as a new value's branch is built (a write Solid allows only when asked), so the old
+  // pane shows in the same frame as the new one; an effect relaying it would show one frame late.
+  const [leaving, setLeaving] = createSignal<Pane | null>(null, { ownedWrite: true })
   let shown: Pane | null = null
-  createEffect(
-    () => [leaving(), key()] as const,
-    ([out, current]) => {
-      if (!out || !root) return
-      const pane = (k: string) => [...root!.children].find((c) => (c as HTMLElement).dataset.pane === k) as HTMLElement | undefined
-      const incoming = pane(current)
-      if (!incoming) return
-      return swap(root, incoming, pane(out.key) ?? null, () => setLeaving(null))
-    },
-  )
   return (
     <div {...omit(props, "value", "children")} ref={(el) => (root = el)} data-slot="crossfade">
       <Show when={leaving()}>
         {(out) => (
-          <div data-pane={out().key} inert aria-hidden="true">
+          <div ref={(el) => (leavingEl = el)} data-pane={out().key} inert aria-hidden="true">
             {out().nodes()}
           </div>
         )}
@@ -47,13 +40,17 @@ function Crossfade(props: CrossfadeProps) {
           const nodes = resolve(() => props.children)
           const before = shown
           shown = { key: current, nodes }
-          createEffect(
-            () => current,
-            () => {
-              if (before && before.key !== current) setLeaving(before)
-            },
+          if (before && before.key !== current) setLeaving(before)
+          let incoming: HTMLDivElement | undefined
+          onSettled(() => {
+            if (!before || before.key === current || !root || !incoming) return
+            return swap(root, incoming, leavingEl ?? null, () => setLeaving(null))
+          })
+          return (
+            <div ref={(el) => (incoming = el)} data-pane={current}>
+              {nodes()}
+            </div>
           )
-          return <div data-pane={current}>{nodes()}</div>
         }}
       </Show>
     </div>
