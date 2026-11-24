@@ -1,5 +1,5 @@
 import { announce, createChange, definePrimitive, type ChangeDetails } from "@ui-sdk/core"
-import { checkField, checkFields, coerceValue, defineForm, fieldFor, initialValues, validateForm, type FormDefinition, type FormErrors } from "./schema"
+import { checkField, checkFields, coerceValue, defineForm, fieldFor, initialValues, phoneRulesFor, validateForm, type FormDefinition, type FormErrors, type PhoneRules } from "./schema"
 
 type Values = Record<string, unknown>
 type SchemaFormValueReason = "input" | "fill" | "reset" | "imperative"
@@ -97,10 +97,19 @@ const schemaForm = definePrimitive({
       return first
     }
 
+    // A form with a phone number loads the phone rules as it starts, so a step's check, a
+    // person's or an agent's, seldom waits for them.
+    const loadRules = (definition: FormDefinition) => {
+      const rules = phoneRulesFor(definition)
+      if (rules instanceof Promise) rules.catch(() => {})
+    }
+    loadRules(form())
+
     // A definition given later (an element's `form`, set after it's on the page), or another
     // one: the fields it adds start at their defaults, and values it keeps stay.
     context.onOptions((options) => {
       const next = options.form ?? noForm
+      loadRules(next)
       const state = store.get()
       if (next === state.form || options.value !== undefined) return
       const kept = Object.fromEntries(Object.entries(state.value).filter(([name]) => name in next.fields))
@@ -109,12 +118,15 @@ const schemaForm = definePrimitive({
 
     const setStep = (step: number, reason: SchemaFormStepReason, event?: Event) => change("step", Math.max(0, Math.min(lastStep(), step)), { reason, event })
 
+    /** The phone rules the steps before `target` need, if any: in, or loading the first time. */
+    const rulesTo = (target: number) => phoneRulesFor(form(), (form().steps ?? []).slice(0, target).flatMap((step) => step.fields))
+
     /** Whether every step before `target` passes; if not, shows the first that doesn't. */
-    const reach = (target: number, event?: Event) => {
+    const reach = (target: number, rules: PhoneRules | undefined) => {
       const steps = form().steps ?? []
       for (let index = 0; index < Math.min(target, steps.length); index++) {
         const names = steps[index]!.fields
-        const found = checkFields(form(), values(), names)
+        const found = checkFields(form(), values(), names, rules)
         if (Object.keys(found).length) {
           show(names, found, true)
           // The press or submit that asked isn't one an "imperative" change takes.
@@ -123,6 +135,30 @@ const schemaForm = definePrimitive({
         }
       }
       return []
+    }
+
+    // A step with a phone number checks its country too. The first time, that waits for the
+    // phone rules and the answer is a promise; once they're in, it's at once, as without one.
+    /** Shows a step. Going forward checks the steps on the way, as Next does; the review is `steps.length`. */
+    const goTo = (step: number, event?: Event): boolean | Promise<boolean> => {
+      const target = Number(step)
+      if (!Number.isInteger(target) || target < 0 || target > lastStep()) throw new Error(`Steps go from 0 to ${lastStep()}.`)
+      if (target > store.get().step) {
+        const rules = rulesTo(target)
+        if (rules instanceof Promise) return rules.then(() => goTo(target, event))
+        const problems = reach(target, rules)
+        if (problems.length) throw new Error(problems.join(" "))
+      }
+      return setStep(target, target > store.get().step ? "next" : "back", event)
+    }
+    /** The next step, once this one's fields pass. */
+    const next = (event?: Event): boolean | Promise<boolean> => {
+      const at = store.get().step
+      const rules = rulesTo(at + 1)
+      // A second press while they load is the same press.
+      if (rules instanceof Promise) return rules.then(() => store.get().step === at && next(event))
+      if (reach(at + 1, rules).length) return false
+      return setStep(at + 1, "next", event)
     }
 
     return {
@@ -182,22 +218,8 @@ const schemaForm = definePrimitive({
         if (problems.length) throw new Error(problems.join(" "))
         return filled.map((name) => labelOf(form(), name))
       },
-      /** Shows a step. Going forward checks the steps on the way, as Next does; the review is `steps.length`. */
-      goTo(step: number, event?: Event) {
-        const target = Number(step)
-        if (!Number.isInteger(target) || target < 0 || target > lastStep()) throw new Error(`Steps go from 0 to ${lastStep()}.`)
-        if (target > store.get().step) {
-          const problems = reach(target, event)
-          if (problems.length) throw new Error(problems.join(" "))
-        }
-        return setStep(target, target > store.get().step ? "next" : "back", event)
-      },
-      /** The next step, once this one's fields pass. */
-      next(event?: Event) {
-        const at = store.get().step
-        if (reach(at + 1, event).length) return false
-        return setStep(at + 1, "next", event)
-      },
+      goTo,
+      next,
       back(event?: Event) {
         return setStep(store.get().step - 1, "back", event)
       },

@@ -266,8 +266,21 @@ const isEmpty = (value: unknown) => value === null || value === undefined || val
 const isoDate = /^\d{4}-\d{2}-\d{2}$/
 const realDate = (text: string) => isoDate.test(text) && !Number.isNaN(Date.parse(`${text}T00:00:00Z`)) && new Date(`${text}T00:00:00Z`).toISOString().startsWith(text)
 
-/** What's wrong with one field's value, from its own rules, or null. */
-function checkField(form: FormDefinition, name: string, value: unknown, values: Record<string, unknown>): string | null {
+type PhoneRules = typeof import("../phone-input/phone")
+let phoneRules: PhoneRules | undefined
+
+/**
+ * The rules a phone number's country check needs, when `names` include a phone field: the
+ * rules once they're in, or a promise the first time, while they load with libphonenumber-js.
+ * Only a form with a number loads them.
+ */
+function phoneRulesFor(form: FormDefinition, names: readonly string[] = form.names): PhoneRules | Promise<PhoneRules> | undefined {
+  if (!names.some((name) => form.fields[name]?.kind === "phone")) return undefined
+  return phoneRules ?? import("../phone-input/phone").then((rules) => (phoneRules = rules))
+}
+
+/** What's wrong with one field's value, from its own rules, or null. A phone number's country needs `rules`. */
+function checkField(form: FormDefinition, name: string, value: unknown, values: Record<string, unknown>, rules?: PhoneRules): string | null {
   const field = form.fields[name]
   if (!field) return null
   const words = form.words
@@ -308,11 +321,19 @@ function checkField(form: FormDefinition, name: string, value: unknown, values: 
       if (field.maxLength !== undefined && value.some((tag: string) => tag.length > field.maxLength!)) return words.tagTooLong(field.label, field.maxLength)
       return own()
     }
-    case "phone":
-      // The number's shape here; whether it's one in its country is checked on submit, with
-      // the phone rules loaded then (validateForm), and by the field as it's left.
+    case "phone": {
+      // The shape always; whether it's a number in its country once the rules are in. Next and
+      // the submit wait for them, and the field checks the country itself as it's left.
       if (!e164.test(String(value))) return words.phone
-      return own()
+      const country =
+        rules?.checkPhone(String(value), rules.startCountry(field.defaultCountry), {
+          ...rules.phoneMessages,
+          tooShort: () => words.phoneTooShort(field.label),
+          tooLong: () => words.phoneTooLong(field.label),
+          invalid: () => words.phoneInvalid(field.label),
+        }) ?? null
+      return country ?? own()
+    }
     case "date": {
       const text = String(value)
       if (!realDate(text)) return words.date
@@ -324,10 +345,10 @@ function checkField(form: FormDefinition, name: string, value: unknown, values: 
 }
 
 /** Each named field's problems (every field without `names`), from the fields' own rules. */
-function checkFields(form: FormDefinition, values: Record<string, unknown>, names: readonly string[] = form.names): FormErrors {
+function checkFields(form: FormDefinition, values: Record<string, unknown>, names: readonly string[] = form.names, rules?: PhoneRules): FormErrors {
   const errors: FormErrors = {}
   for (const name of names) {
-    const problem = checkField(form, name, values[name], values)
+    const problem = checkField(form, name, values[name], values, rules)
     if (problem) errors[name] = problem
   }
   return errors
@@ -335,23 +356,7 @@ function checkFields(form: FormDefinition, values: Record<string, unknown>, name
 
 /** Every problem: the fields' own rules, then the form's `schema` once those pass. */
 async function validateForm(form: FormDefinition, values: Record<string, unknown>): Promise<FormErrors> {
-  const errors = checkFields(form, values)
-  const phones = form.names.filter((name) => form.fields[name]!.kind === "phone" && !errors[name] && values[name])
-  if (phones.length) {
-    // The phone rules (and libphonenumber-js) load only for a form with a number to check.
-    const { checkPhone, phoneMessages, startCountry } = await import("../phone-input/phone")
-    for (const name of phones) {
-      const field = form.fields[name] as PhoneField
-      const words = form.words
-      const problem = checkPhone(String(values[name]), startCountry(field.defaultCountry), {
-        ...phoneMessages,
-        tooShort: () => words.phoneTooShort(field.label),
-        tooLong: () => words.phoneTooLong(field.label),
-        invalid: () => words.phoneInvalid(field.label),
-      })
-      if (problem) errors[name] = problem
-    }
-  }
+  const errors = checkFields(form, values, form.names, await phoneRulesFor(form))
   if (Object.keys(errors).length || !form.schema) return errors
   const result = await form.schema["~standard"].validate(values)
   for (const issue of result.issues ?? []) {
@@ -501,7 +506,7 @@ function toJSONSchema(form: FormDefinition): JSONSchema {
   return { type: "object", properties, required, additionalProperties: false }
 }
 
-export { checkField, checkFields, coerceValue, defaultMessages, defineForm, fieldFor, initialValues, toJSONSchema, validateForm }
+export { checkField, checkFields, coerceValue, defaultMessages, defineForm, fieldFor, initialValues, phoneRulesFor, toJSONSchema, validateForm }
 export type {
   BooleanField,
   ChoiceField,
@@ -518,6 +523,7 @@ export type {
   JSONSchema,
   NumberField,
   PhoneField,
+  PhoneRules,
   StandardSchemaV1,
   TagsField,
   TextField,

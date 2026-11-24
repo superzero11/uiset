@@ -327,6 +327,40 @@ test("a phone number too short for its country stops the submit, with the form's
   expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "Mobile" }))
 })
 
+const booking = defineForm({
+  name: "book_call",
+  title: "Book a call",
+  fields: { mobile: { kind: "phone", label: "Mobile", defaultCountry: "US", required: true }, time: { kind: "text", label: "Best time" } },
+  steps: [
+    { title: "Number", fields: ["mobile"] },
+    { title: "Time", fields: ["time"] },
+  ],
+})
+
+test("Next checks a phone number's country, not just its shape: one too short stays on the step, with focus on it", async () => {
+  render(<SchemaForm form={booking} defaultValue={{ mobile: "+1415555" }} />)
+  await screen.findByRole("button", { name: /^Country: / })
+  await userEvent.click(screen.getByRole("button", { name: "Next" }))
+  await waitFor(() => expect(problemOf("mobile")).toBe("Mobile is too short for a phone number in its country."))
+  expect(screen.queryByRole("textbox", { name: "Best time" })).toBeNull()
+  expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "Mobile" }))
+  await userEvent.type(screen.getByRole("textbox", { name: "Mobile" }), "0123")
+  await userEvent.click(screen.getByRole("button", { name: "Next" }))
+  expect(await screen.findByRole("textbox", { name: "Best time" })).toBeTruthy()
+})
+
+test("an agent's goTo past a phone number too short for its country fails, and tells it why", async () => {
+  render(<SchemaForm form={booking} />)
+  await screen.findByRole("button", { name: /^Country: / })
+  const filled = await agent.act({ steps: [{ ref: "Book a call", action: "fill", args: [{ Mobile: "+1 415 555" }] }] })
+  expect(filled.ok, filled.error?.message).toBe(true)
+  const moved = await agent.act({ steps: [{ ref: "Book a call", action: "goTo", args: [1] }] })
+  expect(moved.ok).toBe(false)
+  expect(moved.error?.message).toContain("Mobile is too short for a phone number in its country.")
+  await tick()
+  expect(problemOf("mobile")).toBe("Mobile is too short for a phone number in its country.")
+})
+
 const refund = defineForm({
   name: "refund",
   title: "Refund",

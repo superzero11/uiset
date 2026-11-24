@@ -2581,4 +2581,17 @@ vercel-labs/ui#905 (2026-11-19).
   the focus over. Next still checks only a phone number's shape (its country waits for the
   send), so a too-short number passes Next; noted for the owner, not changed. 9 tests, each
   mutation-checked; React and Web Components checked by eye in all five skins.
+- 2026-11-24 — **Next checks a phone number's country.** The owner's call, after the entry
+  above: Next and an agent's `goTo` ran only the quick shape check, so a number too short for
+  its country passed every step and the send brought the person back. The country check
+  lives in `checkField` now and runs whenever the phone rules are given; Next, `goTo` and the
+  submit give them. The rules stay a lazy chunk (libphonenumber-js) and load as a form with a
+  phone field starts. Considered: always async `next` and `goTo` (UI SDK's bridge reports a
+  promise as "pending", so an agent wouldn't hear the problem), and checking the country
+  only when the rules happen to be in (Next would pass or stop by timing). Chosen: a promise
+  only while the rules are on their way, and the answer at once after; a second Next pressed
+  during the wait is the same press. Forms without a phone field are unchanged, and the
+  field is new in 0.7.0, so nothing released changes. Leaving the field and typing in it
+  stay with the shape check (the phone field checks its own country as it's left).
+  8 tests, each mutation-checked.
 

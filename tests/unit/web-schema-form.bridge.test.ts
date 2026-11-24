@@ -231,16 +231,35 @@ test("a submit from the field with the problem, showing nothing new, says the pr
   expect(said("polite")).toBe("Enter an email address, like name@example.com.")
 })
 
-test("a send that finds a problem on an earlier step goes back to it, with focus on the phone's number", async () => {
-  await openWebPage("content.html", "content-demo.ts")
+test("Next checks a phone number's country, not just its shape: one too short stays on the step, with focus on it", async () => {
+  const bridge = await openWebPage("content.html", "content-demo.ts")
   invite().value = { ...invite().value, email: "grace@example.com", mobile: "+1415555" }
   await settle()
   const { default: userEvent } = await import("@testing-library/user-event")
-  // Next checks a number's shape; whether it's one in its country is checked on the send.
+  const number = () => within(form()).getByRole("textbox", { name: "Mobile" })
+  await userEvent.click(within(form()).getByRole("button", { name: "Next" }))
+  await waitFor(() => expect(document.activeElement).toBe(number()))
+  expect(number().getAttribute("aria-invalid")).toBe("true")
+  expect(within(form()).getByText("Mobile is too short for a phone number in its country.")).toBeTruthy()
+  expect(within(form()).getByRole("textbox", { name: "Email" })).toBeTruthy()
+  // An agent hears the same from goTo.
+  const moved = await bridge.run("Invite a teammate", "goTo", 1)
+  expect(moved.ok).toBe(false)
+  expect(moved.error?.message).toContain("Mobile is too short for a phone number in its country.")
+})
+
+test("a send that finds a problem on an earlier step goes back to it, with focus on the phone's number", async () => {
+  await openWebPage("content.html", "content-demo.ts")
+  invite().value = { ...invite().value, email: "grace@example.com", mobile: "+14155550123" }
+  await settle()
+  const { default: userEvent } = await import("@testing-library/user-event")
   for (let step = 0; step < 3; step++) {
     await userEvent.click(within(form()).getByRole("button", { name: "Next" }))
     await settle()
   }
+  // Changed from code on the review: the send checks every step again.
+  invite().value = { ...invite().value, mobile: "+1415555" }
+  await settle()
   await userEvent.click(within(form()).getByRole("button", { name: "Send invite" }))
   await waitFor(() => expect(document.activeElement).toBe(within(form()).getByRole("textbox", { name: "Mobile" })))
   expect(within(form()).getByRole("textbox", { name: "Mobile" }).getAttribute("aria-invalid")).toBe("true")

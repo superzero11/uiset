@@ -4630,8 +4630,9 @@ type Invite = FormValues<typeof invite.fields> // { email: string; role: "viewer
   `validate(value, values)` for a rule of your own. An agent fills `tags` with a list, or
   with text like "design, research", and `phone` with a number in international form ("+44
   20 7946 0958"). The phone input and its rules (libphonenumber-js) load only when a form
-  has a `phone` field: a plain field takes the number until they're in, and submit checks
-  the number for its country. `messages` has the phone checks' words too.
+  has a `phone` field, as it starts: a plain field takes the number until they're in. Next,
+  submit and the field as it's left check the number for its country, not just its shape.
+  `messages` has the phone checks' words too.
 - **Rules across fields:** pass any Standard Schema as `schema` (zod, valibot, arktype and
   others implement it). It runs on submit once every field passes; an issue goes under the
   field its path names, or above the actions.
@@ -4673,8 +4674,8 @@ await agent.act({
   what it fills but is wrong, shows under the fields and comes back as the step's error, so
   the agent can correct it: `Seats is at most 50. No field "phone". Its fields: Email, Role,
   Seats, …`.
-- **`goTo(step)`** shows a step, checking the steps on the way as Next does; the review is
-  the step after the last. **`reset`** starts over.
+- **`goTo(step)`** shows a step, checking the steps on the way as Next does, a phone
+  number's country included; the review is the step after the last. **`reset`** starts over.
 - **The submit needs a person.** The submit button carries `data-agent-confirm` with
   `confirm` (the form's title by default), so an agent's press waits for your bridge's
   `allow` to ask, or fails with "Needs a person". `confirm={false}` lets an agent send it.
@@ -5040,8 +5041,10 @@ invite.addEventListener("valuechange", (e) => save(e.detail.value)) // preventDe
   `locale` are React's props. `heading` is the title's level (2, 3 or 4, or `false`); with `false`, name it with
   `label`. `confirm="false"` lets an agent send it.
 - It fires `valuechange` and `stepchange`. `api` has `fill`, `goTo`, `next`, `back`,
-  `submit` and `reset`, and agents see the same form React's does. `formTool` and
-  `registerFormTool` take the element's `form` and your bridge.
+  `submit` and `reset`, and agents see the same form React's does. `goTo` and `next` say
+  whether the form moved, or, while a step's phone number waits for the phone rules, a
+  promise of that: `await` them. `formTool` and `registerFormTool` take the element's
+  `form` and your bridge.
 
 
 <!-- docs/lists.md -->

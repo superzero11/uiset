@@ -50,8 +50,9 @@ type UISetSchemaForm = UiElement<UISetSchemaFormEvents> & {
   /** Fill, move and send from code. `fill` takes values by field name or label, as an agent does. */
   api?: {
     fill(entries: Values): string[]
-    goTo(step: number): boolean
-    next(): boolean
+    /** Whether it moved; a promise of that the first time a step with a phone number waits for the phone rules. */
+    goTo(step: number): boolean | Promise<boolean>
+    next(): boolean | Promise<boolean>
     back(): boolean
     submit(): Promise<boolean>
     reset(): void
@@ -61,8 +62,8 @@ type UISetSchemaForm = UiElement<UISetSchemaFormEvents> & {
 type Api = {
   setField(name: string, value: unknown, event?: Event): boolean
   leaveField(name: string): void
-  goTo(step: number, event?: Event): boolean
-  next(event?: Event): boolean
+  goTo(step: number, event?: Event): boolean | Promise<boolean>
+  next(event?: Event): boolean | Promise<boolean>
   back(event?: Event): boolean
   focused(): void
 }
@@ -347,12 +348,13 @@ function viewOf(el: HTMLElement, instance: Instance): View {
     cache: new Map(),
   }
   stepper.addEventListener("valuechange", (event) => {
-    const api = view.instance.api
+    // A step on the way has problems: they show, and the steps show where the form is.
+    const stay = () => (stepper.value = String(view.instance.get().step))
     try {
-      api.goTo(Number((event as CustomEvent<{ value: string }>).detail.value), event)
+      const moved = view.instance.api.goTo(Number((event as CustomEvent<{ value: string }>).detail.value), event)
+      if (moved instanceof Promise) moved.catch(stay)
     } catch {
-      // A step on the way has problems: they show, and the steps show where the form is.
-      stepper.value = String(view.instance.get().step)
+      stay()
     }
   })
   view.back.native.addEventListener("click", (event) => view.instance.api.back(event))

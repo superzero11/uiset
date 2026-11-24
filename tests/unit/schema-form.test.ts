@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest"
+import { describe, expect, test, vi } from "vitest"
 import {
   checkField,
   checkFields,
@@ -265,4 +265,74 @@ test("a masked text field checks by its mask, reads an agent's text through it, 
   expect(properties.card).toMatchObject({ type: "string", pattern: "^\\d{12,19}$", description: "A card number, digits only." })
   expect(properties.tax).toMatchObject({ pattern: "^\\d\\d\\d\\d\\d\\d\\d\\d\\d$" })
   expect(properties.amount).toMatchObject({ type: "number", description: "An amount in EUR." })
+})
+
+describe("a phone number on a step", () => {
+  type Instance = { get: () => { step: number; errors: Record<string, string> }; api: Record<string, (...args: unknown[]) => unknown>; setOptions: (o: object) => void; destroy: () => void }
+  /** The form's modules afresh, so the phone rules aren't in yet. */
+  const fresh = async () => {
+    vi.resetModules()
+    const { defineForm } = await import("@/registry/uiset/ui/schema-form/schema")
+    const { schemaForm } = await import("@/registry/uiset/ui/schema-form/form")
+    const book = defineForm({
+      name: "book_call",
+      title: "Book a call",
+      fields: { mobile: { kind: "phone", label: "Mobile", defaultCountry: "US", required: true }, time: { kind: "text", label: "Best time" } },
+      steps: [
+        { title: "Number", fields: ["mobile"] },
+        { title: "Time", fields: ["time"] },
+      ],
+    })
+    return Object.assign((options: object) => schemaForm({ form: book, ...options } as unknown as Parameters<typeof schemaForm>[0]) as unknown as Instance, { book })
+  }
+  /** Until the module a form loads as it starts is in, and a turn more for the form to take it. */
+  const rulesIn = async () => {
+    await import("@/registry/uiset/ui/phone-input/phone")
+    await new Promise((resolve) => setTimeout(resolve, 0))
+  }
+  const tooShort = "Mobile is too short for a phone number in its country."
+
+  test("Next checks its country, not just its shape: the first time it waits for the phone rules, then never again", async () => {
+    const form = (await fresh())({ defaultValue: { mobile: "+1415555" } })
+    const first = form.api.next!()
+    expect(first).toBeInstanceOf(Promise)
+    expect(await first).toBe(false)
+    expect(form.get().step).toBe(0)
+    expect(form.get().errors.mobile).toBe(tooShort)
+    form.api.setField!("mobile", "+14155550123")
+    expect(form.api.next!()).toBe(true)
+    expect(form.get().step).toBe(1)
+    form.destroy()
+  })
+
+  test("a form with a phone number loads the phone rules as it starts, so Next soon after needn't wait", async () => {
+    const form = (await fresh())({ defaultValue: { mobile: "+14155550123" } })
+    await rulesIn()
+    expect(form.api.next!()).toBe(true)
+    form.destroy()
+  })
+
+  test("so does one given its definition later, as an element is", async () => {
+    const start = await fresh()
+    const form = start({ form: undefined })
+    form.setOptions({ form: start.book, defaultValue: { mobile: "+14155550123" } })
+    await rulesIn()
+    expect(form.api.next!()).toBe(true)
+    form.destroy()
+  })
+
+  test("a second Next while the phone rules load is the same press, not a second step", async () => {
+    const form = (await fresh())({ defaultValue: { mobile: "+14155550123" } })
+    expect(await Promise.all([form.api.next!(), form.api.next!()])).toEqual([true, false])
+    expect(form.get().step).toBe(1)
+    form.destroy()
+  })
+
+  test("goTo past a number too short for its country fails with the problem, at once once the rules are in", async () => {
+    const form = (await fresh())({ defaultValue: { mobile: "+1415555" } })
+    await expect(form.api.goTo!(2) as Promise<boolean>).rejects.toThrow(tooShort)
+    expect(() => form.api.goTo!(2)).toThrow(tooShort)
+    expect(form.get().step).toBe(0)
+    form.destroy()
+  })
 })
