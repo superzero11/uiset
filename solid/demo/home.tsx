@@ -19,6 +19,9 @@ function Home() {
               <a href="./chat.html">Chat</a>
             </li>
             <li>
+              <a href="./rich-text.html">Rich text</a>
+            </li>
+            <li>
               <a href="./ssr/root">The root, server-rendered</a>
             </li>
           </ul>

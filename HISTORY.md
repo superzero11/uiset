@@ -2743,4 +2743,25 @@ vercel-labs/ui#905 (2026-11-19).
   41 mutations, then 5 on the gaps they showed and 3 against the browser spec: all caught but
   one, which showed a focus call doing nothing (UI SDK's menu already hands focus to the
   rename field), now removed.
+- 2026-11-24 — **Solid, phase 3: rich text.** The editor's wrapper in Solid; the editing is
+  the shared view and model. React's 31 browser tests moved into one body
+  (`tests/e2e/rich-text-tests.ts`) that runs on React's kit page and on Solid's page, and
+  both pass it, axe in ten looks included. Solid's own: 11 unit tests (agents, a document set
+  from outside, read-only and disabled, form values, the count, the read-only view made
+  safe), the page server-rendered and hydrated, and 19 controls pressed.
+  - **The toolbar's toggles warned in React too.** Bold, the lists and Link are pressed by
+    the text's state, so a press that left the text as it was (a list the line can't become,
+    Link opening its popover) logged UI SDK's "asked for `pressed`" warning. React's site
+    sweep fails on errors, not warnings, so it went unseen. Both now refuse the toggle's own
+    change and let the editor's state show, as the web element always did.
+  - **Rich text never imported shell.css**, in React either, though it draws UISet's icons
+    and hides "Block type" with its class. The site loads it through other parts; Solid's
+    own page showed broken toolbar icons and the label, as a React app installing only rich
+    text would. Both import it now, and lint rule `css/shell-styles-imported` catches a file
+    that uses shell.css's icons or hidden text without importing it.
+
+  16 unit mutations, all caught once two tests were added (a hand-built unsafe document; a
+  caret move that isn't a change). 4 against the browser spec: 2 caught; the other 2 remove
+  React's guards for keeping the text's selection while the toolbar or link popover has
+  focus, which the view already keeps in Chrome. They stay, as in React.
 

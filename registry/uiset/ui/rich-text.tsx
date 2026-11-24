@@ -42,6 +42,7 @@ import { blockOptions, blockOptionType, blockOptionValue, defaultCommands, listB
 import { richTextPrimitive } from "./rich-text/primitive"
 import { applyMarkdown, fromMarkdown, toHTML, toMarkdown } from "./rich-text/serialize"
 import { blockLabel, createRichTextView, type RichTextMessages, type RichTextView } from "./rich-text/view"
+import "./shell/shell.css"
 import "./rich-text/rich-text.css"
 
 // A rich text editor on UI SDK: a toolbar (UI SDK's Toolbar, Toggles, Select and Popover),
@@ -343,7 +344,9 @@ function RichTextToolbar({
           aria-label={b.label}
           aria-keyshortcuts={ariaKeyshortcuts(b.keys)}
           pressed={markActive(state, b.mark)}
-          onPressedChange={() => {
+          onPressedChange={(_, details) => {
+            // The toggle shows the text's state, not its own: the change is the editor's to make.
+            details.cancel()
             view.toggleMark(b.mark)
             back()
           }}
@@ -359,7 +362,8 @@ function RichTextToolbar({
           key={b.type}
           aria-label={b.label}
           pressed={current?.type === b.type}
-          onPressedChange={() => {
+          onPressedChange={(_, details) => {
+            details.cancel()
             view.setBlock(b.type)
             back()
           }}
@@ -453,7 +457,8 @@ function LinkButton({ view, state, open, onOpenChange }: { view: RichTextView; s
         if (!next) requestAnimationFrame(() => view.focus())
       }}
     >
-      <PopoverTrigger render={<Toggle aria-label="Link" aria-keyshortcuts={ariaKeyshortcuts("mod+k")} pressed={!!current} {...keepSelection} />}>
+      {/* Pressed while the caret is in a link; pressing it opens the popover, and the link is the editor's to change. */}
+      <PopoverTrigger render={<Toggle aria-label="Link" aria-keyshortcuts={ariaKeyshortcuts("mod+k")} pressed={!!current} onPressedChange={(_, details) => details.cancel()} {...keepSelection} />}>
         <Icon name="link" />
       </PopoverTrigger>
       <PopoverContent className="rich-text-link" initialFocus="input">

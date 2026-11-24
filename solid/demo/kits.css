@@ -44,3 +44,45 @@
   align-items: center;
   gap: 0.5rem;
 }
+
+/* Rich text editor demo */
+
+.editor-demo {
+  display: grid;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  .editor-demo {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  }
+}
+
+.editor-demo-editor {
+  --rich-text-min-height: 22rem;
+  --rich-text-max-height: 34rem;
+}
+
+.editor-demo-output {
+  min-width: 0;
+
+  & [data-slot="tabs-panel"] {
+    max-block-size: 34rem;
+    overflow: auto;
+    padding-block-start: 0.75rem;
+  }
+}
+
+.editor-demo-source {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: var(--ui-radius);
+  background: var(--ui-muted);
+  font-family: var(--ui-font-mono, ui-monospace, monospace);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+

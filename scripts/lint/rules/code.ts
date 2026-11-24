@@ -220,3 +220,17 @@ export const hooksAtTopLevel: FileRule = {
   },
 }
 
+
+/** What UISet's shell stylesheet styles: its icons and its visually hidden text. */
+const SHELL_USES = /["'](?:\.{1,2}\/)+shell\/icons["']|\buiset-visually-hidden\b|["']uiset-icon["']/
+
+export const shellStyles: FileRule = {
+  id: "css/shell-styles-imported",
+  why: "2026-11-24: React's and Solid's rich text drew UISet's icons and hid the toolbar's \"Block type\" label with shell.css's classes, but neither imported shell.css, nor did any part they use. On the site other parts load it; on Solid's own rich text page the icons came out broken and the label showed, and a React app installing only rich text would show the same.",
+  appliesTo: (path) => /^(registry\/uiset\/ui|solid\/src)\/[^/]+\.tsx$/.test(path),
+  check: (text) => {
+    const use = SHELL_USES.exec(text)
+    if (!use || /shell\/shell\.css["']/.test(text)) return []
+    return [{ line: lineOf(text, use.index), message: "This file draws with shell.css (UISet's icons, uiset-visually-hidden) but doesn't import it: import \"./shell/shell.css\" (or the registry's from solid/src)." }]
+  },
+}

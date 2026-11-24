@@ -31,6 +31,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
   that wait for approval, sources and citations, an agent's turn from AI SDK message parts,
   the composer with commands, mentions, attachments and a queue, the model picker and usage,
   the chat list and the launcher ([Chat](./chat.md#solid)).
+- The rich text editor: Markdown as you type, the toolbar, "/" for blocks and "@" for
+  people, paste, links, undo, agents writing Markdown, and the read-only view
+  ([Rich text](./rich-text.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the

@@ -3148,6 +3148,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
   that wait for approval, sources and citations, an agent's turn from AI SDK message parts,
   the composer with commands, mentions, attachments and a queue, the model picker and usage,
   the chat list and the launcher ([Chat](./chat.md#solid)).
+- The rich text editor: Markdown as you type, the toolbar, "/" for blocks and "@" for
+  people, paste, links, undo, agents writing Markdown, and the read-only view
+  ([Rich text](./rich-text.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the
@@ -5887,6 +5890,24 @@ person's selection); agents format through Markdown instead.
 
 `<uiset-rich-text>` is the same editor, built from UI SDK's own elements. See
 [Web Components](./web-components.md#rich-text).
+
+## Solid
+
+`@uiset/solid/rich-text` is the same editor in Solid 2, with React's props (`class`, not
+`className`) and the same exports: `RichTextEditor`, `RichTextContent` and the Markdown and
+HTML converters.
+
+```tsx
+import { createSignal } from "solid-js"
+import { fromMarkdown, RichTextEditor, type RichTextDocument } from "@uiset/solid/rich-text"
+
+const [doc, setDoc] = createSignal<RichTextDocument>(fromMarkdown("## Notes"))
+
+<RichTextEditor label="Release notes" value={doc()} onValueChange={setDoc} mentions={team} />
+```
+
+The editing is the same code as React's and Web Components', and so are its browser tests:
+one set runs on React's kit page and on Solid's. See [Solid](./solid.md).
 
 
 <!-- docs/chat.md -->

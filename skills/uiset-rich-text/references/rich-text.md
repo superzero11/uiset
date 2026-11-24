@@ -133,3 +133,21 @@ person's selection); agents format through Markdown instead.
 
 `<uiset-rich-text>` is the same editor, built from UI SDK's own elements. See
 [Web Components](./web-components.md#rich-text).
+
+## Solid
+
+`@uiset/solid/rich-text` is the same editor in Solid 2, with React's props (`class`, not
+`className`) and the same exports: `RichTextEditor`, `RichTextContent` and the Markdown and
+HTML converters.
+
+```tsx
+import { createSignal } from "solid-js"
+import { fromMarkdown, RichTextEditor, type RichTextDocument } from "@uiset/solid/rich-text"
+
+const [doc, setDoc] = createSignal<RichTextDocument>(fromMarkdown("## Notes"))
+
+<RichTextEditor label="Release notes" value={doc()} onValueChange={setDoc} mentions={team} />
+```
+
+The editing is the same code as React's and Web Components', and so are its browser tests:
+one set runs on React's kit page and on Solid's. See [Solid](./solid.md).

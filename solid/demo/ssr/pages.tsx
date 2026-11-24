@@ -9,6 +9,7 @@ import { UISet, type Skin } from "../../src/uiset"
 import { Components } from "../components-page"
 import { DemoPage } from "../demo-page"
 import { ChatDemo } from "../kits/chat-demo"
+import { EditorDemo } from "../kits/editor-demo"
 import "../kits.css"
 import "../demo.css"
 
@@ -54,6 +55,16 @@ function Chat() {
   )
 }
 
-const pages: Record<string, () => JSX.Element> = { root: Root, components: Components, chat: Chat }
+function RichText() {
+  return (
+    <DemoPage title="Rich text in Solid" description="The rich text kit, rendered on the server.">
+      <div class="rich-text-stage">
+        <EditorDemo />
+      </div>
+    </DemoPage>
+  )
+}
+
+const pages: Record<string, () => JSX.Element> = { root: Root, components: Components, chat: Chat, "rich-text": RichText }
 
 export { pages }

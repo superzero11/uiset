@@ -41,10 +41,13 @@ test("the whole components page renders on the server, every example in it", () 
   expect(said).toEqual([])
 })
 
-test.each(["chat"])("the %s kit's demo renders on the server", (name) => {
+test.each([
+  ["chat", 'role="log"'],
+  ["rich-text", 'role="textbox"'],
+])("the %s kit's demo renders on the server", (name, mark) => {
   const Page = pages[name]!
   const html = renderToString(() => <Page />)
-  expect(html).toContain('role="log"')
+  expect(html).toContain(mark)
   expect(html).not.toContain("blob:")
   expect(said).toEqual([])
 })
