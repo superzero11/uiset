@@ -536,7 +536,7 @@ const components = [
     "chat-response",
     "Chat response",
     "Streaming markdown that repairs itself mid-stream and never renders raw HTML, with code blocks highlighted by skin colors.",
-    ["chat/chat.css", "code/highlight.ts", "code/code.css"],
+    ["chat/chat.css", "chat/hast.ts", "code/highlight.ts", "code/code.css"],
     ["button", "chat", "scroll-area"],
     ["react-markdown", "remark-gfm", "remend", "shiki"],
   ],

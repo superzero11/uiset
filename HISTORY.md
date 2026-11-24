@@ -2812,3 +2812,17 @@ vercel-labs/ui#905 (2026-11-19).
   and two mutations catch that. The `selects` entry survives; it only narrows which cards
   hear a filter. Remembering a deleted card as the focus target survives in jsdom and in
   Chrome, since the card has no element when the dialog closes; it stays, as in React.
+- 2026-11-24 — **React's two chat gaps, found porting chat to Solid, fixed.**
+  - **Footnotes:** React's answers all named their footnotes `user-content-fn-1` and their
+    heading `footnote-label`, so with two answers a footnote link jumped to the first. Looking
+    closer: React's link component kept only `href`, so the reference lost its id (the "↩"
+    went nowhere) and "↩" lost its name; and the heading's `sr-only` showed, since UISet
+    doesn't load Tailwind. Web Components prefixed by message number, so two chats on a page,
+    or two text parts in one message, still shared ids, and the heading's id was shared. One
+    rule now, `messageId` in `chat/hast.ts`, for all three; React applies it with a rehype
+    plugin, which also swaps `sr-only` for `chat-visually-hidden`.
+  - **Rename:** React lost focus after Enter or Escape; it returns to the chat now, as in
+    Solid, and a rename finishes once even when a blur comes in the same update.
+
+  10 unit mutations, all caught once the rename test also clicked away from the field and sent
+  Enter and a blur together. Chrome checked by hand on the kit page: one rename, focus back.

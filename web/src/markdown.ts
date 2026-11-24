@@ -9,7 +9,7 @@ import remarkRehype from "remark-rehype"
 import remend from "remend"
 import { unified } from "unified"
 import { scrollArea } from "./scroll"
-import { attributeName } from "@/registry/uiset/ui/chat/hast"
+import { attributeName, messageId } from "@/registry/uiset/ui/chat/hast"
 import { safeUrl, sameOriginImages } from "@/registry/uiset/ui/chat/urls"
 
 type HastNode =
@@ -95,8 +95,8 @@ function toDom(nodes: HastNode[], options: Options, counter: { code: number }): 
         if (safe === null) continue
         text = safe
       }
-      // Footnotes: ids and their links made unique to the message.
-      if (options.idPrefix && (attribute === "id" || attribute === "href")) text = text.replace(/^(#?)user-content-/, `$1${options.idPrefix}-`)
+      // Footnotes: ids, their links and their heading made unique to the message.
+      if (options.idPrefix) text = messageId(attribute, text, options.idPrefix)
       if (attribute === "class") text = text.replace(/\bsr-only\b/, "chat-visually-hidden")
       element.setAttribute(attribute, text)
     }

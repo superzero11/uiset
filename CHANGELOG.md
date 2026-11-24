@@ -105,6 +105,15 @@ On UI SDK `0.1.0-beta.16`.
 
 ### Fixed
 
+- **A chat answer's footnotes stay in their answer.** In React, every answer's footnotes had
+  the same ids, so a footnote link could jump to another answer's note; the "↩" back to the
+  reference went nowhere and had no name (the answer's link dropped its id and label); and
+  the "Footnotes" heading meant for screen readers showed. In Web Components the heading's
+  id was shared, and so were the footnote ids of two chats on one page. Add `chat-response`
+  again to take it.
+- **Renaming a chat with Enter or Escape gives focus back to the chat** in React, where it
+  fell to the page, and a blur as the field goes no longer renames twice. Add
+  `chat-sidebar` again to take it.
 - **A delete confirmation no longer nests a form.** The board's and the scheduler's dialogs
   put their "Delete" alert inside the dialog's form, and UI SDK's popups render in place, so
   the alert nested a form and UI SDK warned in development. It renders beside the form now.

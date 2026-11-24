@@ -258,10 +258,14 @@ type UISetChatEvents = {
   edit: CustomEvent<{ value: string }>
 }
 
+let chats = 0
+
 class UISetChat extends Evented<UISetChatEvents>() {
   static observedAttributes = ["label", "empty-title", "editable"]
   #messages: ChatMessage[] = []
   #status = "ready"
+  // Its messages' footnote ids, apart from another chat's on the same page.
+  #idBase = `chat${++chats}`
   #suggestions: string[] = []
   #feedback: Record<string, Feedback> = {}
   #allowImage: (url: URL) => boolean = sameOriginImages
@@ -543,7 +547,7 @@ class UISetChat extends Evented<UISetChatEvents>() {
       const figures: CodeFigure[] = []
       const nodes = markdown!.renderMarkdown(text, streaming, {
         allowImage: this.#allowImage,
-        idPrefix: `m${ordinal}`,
+        idPrefix: `${this.#idBase}-m${ordinal}-${index}`,
         code: (code, language, n) => {
           const previous = old[n]
           const view = previous && previous.language === language ? previous : codeFigure(code, language, `${language ?? "Code"}, block ${n + 1} of message ${ordinal}`)

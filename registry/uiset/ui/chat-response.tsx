@@ -6,6 +6,7 @@ import {
   Children,
   isValidElement,
   useEffect,
+  useId,
   useMemo,
   useState,
   type ReactElement,
@@ -16,6 +17,7 @@ import remarkGfm from "remark-gfm"
 import remend from "remend"
 import { Button } from "./button"
 import { ChatIcon, chatIcons } from "./chat"
+import { rehypeMessageIds } from "./chat/hast"
 import { tokenize, type Token } from "./code/highlight"
 import { ScrollBox } from "./scroll-area"
 import "./chat/chat.css"
@@ -115,10 +117,12 @@ const components: Components = {
       <ChatCodeBlock code={String(text ?? "").replace(/\n$/, "")} language={language} />
     )
   },
-  a: ({ href, children }) => {
+  // A footnote's links keep their ids, names and data: "↩" goes back to its reference.
+  a: ({ node: _node, href, children, ...rest }) => {
     const external = href ? /^https?:\/\//.test(href) : false
     return (
       <a
+        {...rest}
         href={href}
         {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       >
@@ -172,13 +176,16 @@ function ChatResponse({
   /** Which images in answers load. Same-origin, data: and blob: by default; others are links. */
   allowImage?: (url: URL) => boolean
 }) {
+  // Footnote ids and links of this answer's own, not shared with every other answer's.
+  const prefix = useId()
+  const rehypePlugins = useMemo(() => [[rehypeMessageIds, { prefix }] as const], [prefix])
   const withImages = useMemo<Components>(
     () => ({ ...components, img: ({ src, alt }) => <ResponseImage src={typeof src === "string" ? src : undefined} alt={alt} allowImage={allowImage} /> }),
     [allowImage],
   )
   return (
     <div className="chat-response">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={withImages} skipHtml>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={rehypePlugins as never} components={withImages} skipHtml>
         {streaming ? remend(children) : children}
       </ReactMarkdown>
     </div>

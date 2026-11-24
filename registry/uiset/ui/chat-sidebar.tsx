@@ -18,7 +18,7 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@ui-sdk/react/popover"
-import { useState, type ReactNode } from "react"
+import { useRef, useState, type ReactNode } from "react"
 import { Button } from "./button"
 import { ChatIcon } from "./chat"
 import "./chat/chat.css"
@@ -59,10 +59,22 @@ function ChatThreadList({
   onDelete?: (id: string) => void
   label?: string
 }) {
-  const [editing, setEditing] = useState<string | null>(null)
+  const [editing, setEditingState] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<Thread | null>(null)
+  // The chat being renamed now, ahead of the render: Enter, then the blur a browser may send as
+  // the field goes, both finish, and only the first counts.
+  const editingNow = useRef<string | null>(null)
+  const setEditing = (id: string | null) => {
+    editingNow.current = id
+    setEditingState(id)
+  }
+  // A rename finished with Enter or Escape gives focus back to its chat; one finished by going
+  // elsewhere leaves focus where it went.
+  const refocus = useRef<string | null>(null)
 
-  const finish = (thread: Thread, title: string | null) => {
+  const finish = (thread: Thread, title: string | null, keys: boolean) => {
+    if (editingNow.current !== thread.id) return
+    if (keys) refocus.current = thread.id
     setEditing(null)
     const next = title?.trim()
     if (next && next !== thread.title) onRename?.(thread.id, next)
@@ -90,10 +102,10 @@ function ChatThreadList({
                     autoFocus
                     defaultValue={thread.title}
                     onKeyDown={(event) => {
-                      if (event.key === "Enter") finish(thread, event.currentTarget.value)
-                      if (event.key === "Escape") finish(thread, null)
+                      if (event.key === "Enter") finish(thread, event.currentTarget.value, true)
+                      if (event.key === "Escape") finish(thread, null, true)
                     }}
-                    onBlur={(event) => finish(thread, event.currentTarget.value)}
+                    onBlur={(event) => finish(thread, event.currentTarget.value, false)}
                   />
                 </Field>
               ) : (
@@ -107,6 +119,11 @@ function ChatThreadList({
                     thread.updatedAt ? `Updated ${ago(thread.updatedAt)}` : undefined
                   }
                   aria-current={thread.id === value ? "page" : undefined}
+                  ref={(el: HTMLButtonElement | null) => {
+                    if (!el || refocus.current !== thread.id) return
+                    refocus.current = null
+                    el.focus()
+                  }}
                   onClick={() => onValueChange(thread.id)}
                 >
                   <span className="chat-thread-title">{thread.title}</span>

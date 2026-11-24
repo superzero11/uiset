@@ -11,7 +11,7 @@ import { Button } from "./button"
 import { ChatIcon, chatIcons } from "./chat"
 import { ScrollBox } from "./scroll-area"
 import { tokenize, type Token } from "../../registry/uiset/ui/code/highlight"
-import { attributeName } from "../../registry/uiset/ui/chat/hast"
+import { attributeName, messageId } from "../../registry/uiset/ui/chat/hast"
 import { safeUrl, sameOriginImages } from "../../registry/uiset/ui/chat/urls"
 import "../../registry/uiset/ui/chat/chat.css"
 import "../../registry/uiset/ui/code/code.css"
@@ -118,9 +118,7 @@ function attributes(element: HastElement, context: Context) {
       if (safe === null) continue
       text = safe
     }
-    if (attribute === "id" || attribute === "href") text = text.replace(/^(#?)user-content-/, `$1${context.idPrefix}-`)
-    // The footnotes' heading, and the references that point at it.
-    if ((attribute === "id" || attribute === "aria-describedby") && text === "footnote-label") text = `${context.idPrefix}-footnote-label`
+    text = messageId(attribute, text, context.idPrefix)
     if (attribute === "class") text = text.replace(/\bsr-only\b/, "chat-visually-hidden")
     out[attribute] = text
   }

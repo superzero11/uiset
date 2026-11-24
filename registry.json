@@ -3394,6 +3394,11 @@
           "target": "@ui/chat/chat.css"
         },
         {
+          "path": "registry/uiset/ui/chat/hast.ts",
+          "type": "registry:file",
+          "target": "@ui/chat/hast.ts"
+        },
+        {
           "path": "registry/uiset/ui/code/highlight.ts",
           "type": "registry:file",
           "target": "@ui/code/highlight.ts"

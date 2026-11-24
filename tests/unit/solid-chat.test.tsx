@@ -92,6 +92,13 @@ test("footnotes link within their own answer", async () => {
     // Heard, not seen: the page's own hidden-text class, not one UISet doesn't style.
     expect(heading?.className).toBe("chat-visually-hidden")
   }
+  // Each note's "↩" goes back to its own reference, and says so.
+  const backs = container.querySelectorAll<HTMLAnchorElement>("a[data-footnote-backref]")
+  expect(backs).toHaveLength(2)
+  for (const back of backs) {
+    expect(back.closest(".chat-response")!.querySelector(`[id="${back.getAttribute("href")!.slice(1)}"]`)?.hasAttribute("data-footnote-ref")).toBe(true)
+    expect(back.getAttribute("aria-label")).toBe("Back to reference 1")
+  }
 })
 
 test("a task list's boxes show what's done, and can't be ticked in an answer", async () => {

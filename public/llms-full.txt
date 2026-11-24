@@ -6040,9 +6040,12 @@ one-pixel rounding), and its controller brings you back from Jump to latest; the
 
 ## Answers
 
-- `ChatResponse` takes the Markdown as its child, with GitHub tables, task lists and
-  strikethrough. With `streaming`, half-written Markdown is completed (remend), so
-  `**bold` shows as bold, not stars.
+- `ChatResponse` takes the Markdown as its child, with GitHub tables, task lists,
+  footnotes and strikethrough. With `streaming`, half-written Markdown is completed
+  (remend), so `**bold` shows as bold, not stars.
+- Each answer's footnotes are its own: their ids, their links and the "Footnotes" heading
+  (heard, not seen) never clash with another answer's or another chat's, so a footnote
+  link and its "↩" stay in their answer.
 - Raw HTML in the Markdown is dropped, never rendered: model output is untrusted. `http`
   and `https` links open in a new tab and say so to screen readers. Wide tables scroll in
   a focusable region.
@@ -6141,7 +6144,8 @@ import { ChatQueue } from "@/components/ui/chat-composer"
   marked `aria-current="page"`) and `onValueChange(id)`. `label` names the list ("Chats").
 - `onNew` adds New chat. `onRename(id, title)` and `onDelete(id)` add a "More for
   title" menu to each chat. Rename edits in place: Enter or leaving the field saves,
-  Escape cancels, and an empty or unchanged title isn't sent. Delete asks in an alert
+  Escape cancels, and an empty or unchanged title isn't sent. After Enter or Escape, focus
+  is back on the chat; leaving the field leaves it where it went. Delete asks in an alert
   dialog ("Delete “Launch plan”?") before calling `onDelete`.
 - `updatedAt` shows as "4 min ago" and is the chat button's description. It's worked out
   when the list renders, not kept current.
@@ -6269,8 +6273,7 @@ import { ChatMessageParts } from "@uiset/solid/chat-message-parts"
 
 An answer parses with the same Markdown parser as React's and Web Components', and streams in
 place: each part of it keeps its place as words arrive, so a code block keeps its Wrap and a
-selection holds. A chat renamed with Enter gives focus back to the chat. See
-[Solid](./solid.md).
+selection holds. See [Solid](./solid.md).
 
 
 <!-- docs/data-grid.md -->

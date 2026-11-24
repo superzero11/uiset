@@ -59,6 +59,36 @@ test("fenced code becomes a code block with its language and a copy button", asy
   expect(document.querySelector(".chat-code")?.hasAttribute("data-wrap")).toBe(true)
 })
 
+// Two answers each with a "[^1]" footnote shared its ids, so the second's link jumped to the
+// first's note, and the footnotes' heading showed: nothing in UISet styles `sr-only`.
+test("footnotes link within their own answer, under a heading only screen readers hear", () => {
+  const note = "A claim.[^1]\n\n[^1]: The source."
+  const { container } = render(
+    <>
+      <ChatResponse>{note}</ChatResponse>
+      <ChatResponse>{note}</ChatResponse>
+    </>,
+  )
+  const ids = [...container.querySelectorAll("[id]")].map((el) => el.id)
+  expect(new Set(ids).size).toBe(ids.length)
+  const refs = container.querySelectorAll<HTMLAnchorElement>("a[data-footnote-ref]")
+  expect(refs).toHaveLength(2)
+  for (const ref of refs) {
+    const target = ref.getAttribute("href")!.slice(1)
+    expect(ref.closest(".chat-response")!.querySelector(`[id="${target}"]`)).toBeTruthy()
+    const heading = ref.closest(".chat-response")!.querySelector(`[id="${ref.getAttribute("aria-describedby")}"]`)
+    expect(heading?.textContent).toBe("Footnotes")
+    expect(heading?.className).toBe("chat-visually-hidden")
+  }
+  // Each note's "↩" goes back to its own reference, and says so.
+  const backs = container.querySelectorAll<HTMLAnchorElement>("a[data-footnote-backref]")
+  expect(backs).toHaveLength(2)
+  for (const back of backs) {
+    expect(back.closest(".chat-response")!.querySelector(`[id="${back.getAttribute("href")!.slice(1)}"]`)?.hasAttribute("data-footnote-ref")).toBe(true)
+    expect(back.getAttribute("aria-label")).toBe("Back to reference 1")
+  }
+})
+
 test("a code block without a language still shows the code", () => {
   render(<ChatCodeBlock code="plain text" />)
   expect(screen.getByRole("region", { name: "Code" }).textContent).toBe("plain text")
@@ -315,13 +345,16 @@ test("chats can be renamed from their menu, and deleting asks first", async () =
   const onRename = vi.fn()
   const onDelete = vi.fn()
   render(
-    <ChatThreadList
-      threads={[{ id: "a", title: "Launch plan" }]}
-      value="a"
-      onValueChange={() => {}}
-      onRename={onRename}
-      onDelete={onDelete}
-    />,
+    <>
+      <ChatThreadList
+        threads={[{ id: "a", title: "Launch plan" }]}
+        value="a"
+        onValueChange={() => {}}
+        onRename={onRename}
+        onDelete={onDelete}
+      />
+      <button>Elsewhere</button>
+    </>,
   )
   await tick()
   await userEvent.click(screen.getByRole("button", { name: "More for Launch plan" }))
@@ -329,7 +362,35 @@ test("chats can be renamed from their menu, and deleting asks first", async () =
   const field = await screen.findByRole("textbox", { name: "Rename Launch plan" })
   await userEvent.clear(field)
   await userEvent.type(field, "Launch v2{Enter}")
+  // A browser that blurs a field as it goes doesn't rename a second time.
+  fireEvent.blur(field)
+  expect(onRename).toHaveBeenCalledTimes(1)
   expect(onRename).toHaveBeenCalledWith("a", "Launch v2")
+  // Finished with Enter, focus is back on the chat (2026-11-24: it fell to the page).
+  await waitFor(() => expect(document.activeElement).toBe(screen.getByRole("button", { name: "Open Launch plan" })))
+  // Escape leaves the title as it was, and focus comes back too; leaving the field doesn't
+  // take focus back.
+  await userEvent.click(screen.getByRole("button", { name: "More for Launch plan" }))
+  await userEvent.click(await screen.findByRole("menuitem", { name: "Rename" }))
+  await userEvent.keyboard("{Escape}")
+  await waitFor(() => expect(document.activeElement).toBe(screen.getByRole("button", { name: "Open Launch plan" })))
+  expect(onRename).toHaveBeenCalledTimes(1)
+  await userEvent.click(screen.getByRole("button", { name: "More for Launch plan" }))
+  await userEvent.click(await screen.findByRole("menuitem", { name: "Rename" }))
+  await userEvent.click(screen.getByRole("button", { name: "Elsewhere" }))
+  await tick()
+  expect(document.activeElement).toBe(screen.getByRole("button", { name: "Elsewhere" }))
+  // Enter, and a browser's blur as the field goes, in one update: one rename.
+  await userEvent.click(screen.getByRole("button", { name: "More for Launch plan" }))
+  await userEvent.click(await screen.findByRole("menuitem", { name: "Rename" }))
+  const again = await screen.findByRole("textbox", { name: "Rename Launch plan" }) as HTMLInputElement
+  again.value = "Launch v3"
+  act(() => {
+    fireEvent.keyDown(again, { key: "Enter" })
+    fireEvent.blur(again)
+  })
+  expect(onRename).toHaveBeenCalledTimes(2)
+  expect(onRename).toHaveBeenLastCalledWith("a", "Launch v3")
 
   await userEvent.click(screen.getByRole("button", { name: "More for Launch plan" }))
   await userEvent.click(await screen.findByRole("menuitem", { name: "Delete" }))
