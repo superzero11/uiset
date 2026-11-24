@@ -34,14 +34,17 @@
   ),
 /* Number inputs and token inputs are boxes around their own parts too. */
 [data-uiset] [data-slot="number-input-group"]:has([data-slot="number-input-control"]:focus-visible),
+/* The :not()s that keep a field box's and a chip row's inner input out are wrapped in :where()
+   here and in every skin: a bare :not() adds to a rule's weight, and a skin's field look then
+   beat parts that undo it for themselves (the IDE editor's textarea, 2026-11-23). */
 /* Text fields (and the select beside them in a form) wear one ring, on their own edge,
    not a colored border with a second ring outside it. Buttons keep the ring outside. */
 [data-uiset]
   :is(
-    [data-slot="input"]:not([data-field-box] *),
+    [data-slot="input"]:where(:not([data-field-box] *)),
     [data-slot="textarea"],
     [data-slot="autocomplete-input"],
-    [data-slot="combobox-input"]:not([data-slot="combobox-chips"] *),
+    [data-slot="combobox-input"]:where(:not([data-slot="combobox-chips"] *)),
     [data-slot="date-picker-input"],
     [data-slot="color-picker-input"],
     [data-slot="color-picker-channel-input"],

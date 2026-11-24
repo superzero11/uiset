@@ -2521,3 +2521,12 @@ vercel-labs/ui#905 (2026-11-19).
   both now refuse it and show the country again. Tests: 5 React, 2 web, address lines in
   four countries' formats; 10 rules mutation-checked.
 
+- 2026-11-24 — The IDE editor wore a form field's look in two skins: in Studio its syntax
+  colors were gone (plain text in a dark box, the field's fill over the highlighted code) and
+  in Blueprint a field's underline ran across it. Found by the IDE test ("in every skin the
+  editor's text is drawn by its colors"). bae57b7 kept a field's own ring off inside a field
+  box with `:is(…):not([data-field-box] *)`, and a `:not()` inside `:is()` counts toward
+  specificity, so base.css's field rule outweighed the IDE's own "not a field" rule. The 16
+  such selectors in base.css and the Blueprint, Studio, Phosphor and Ink skins now wrap the
+  exclusion in `:where()`, which counts for nothing, so each weighs what it did before 0.7.0.
+  First fixed on the season branch, brought back to main on its own when Season was paused.

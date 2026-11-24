@@ -3878,7 +3878,7 @@ Then hand it back to the person to review the branch.
 
 # Roadmap
 
-Updated 2026-11-23. What we're building, what comes next, and what we won't do. What
+Updated 2026-11-24. What we're building, what comes next, and what we won't do. What
 shipped is in the [changelog](https://github.com/superzero11/uiset/blob/main/CHANGELOG.md),
 and the decisions behind it in
 [HISTORY.md](https://github.com/superzero11/uiset/blob/main/HISTORY.md). Sizes: S small,
@@ -3893,12 +3893,12 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**The inputs asked for most, for Wednesday's release.** The tag input (and a schema form's
+**The inputs asked for most, for 0.7.0.** The tag input (and a schema form's
 `tags` field), the phone input (a country picker, E.164, right to left; a schema form's
 `phone` field) and input masks (cards, expiry dates and codes, IBANs, amounts, patterns; a
 schema form's `mask` and `currency`), each in React and Web Components, with agents. M
 
-**Checkout and invoices, for Wednesday.** Built: the payments and address kits (252
+**Checkout and invoices, for 0.7.0.** Built: the payments and address kits (252
 countries), and the checkout and invoice templates on them, React and Web Components. M
 
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
@@ -3947,8 +3947,8 @@ still lists.
 A map kit, a seat map, a Gantt chart, dragging onto dates and cards, a swipe deck and a
 radial menu for the mobile kit, a window manager and resizable panels, sticky notes on the
 canvas, a dashboard grid, a document viewer, voice in chat, the Cockpit and Paper skins,
-more templates (onboarding, an agent-wired settings console, a docs site), and generative UI
-adapters.
+more templates (onboarding, an agent-wired settings console, a docs site), generative UI
+adapters, and a skin that follows the season where the person is (started, then paused).
 
 ## Following UI SDK
 

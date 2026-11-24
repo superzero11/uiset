@@ -149,14 +149,14 @@
     &
       :is(
         [data-slot="button"][data-variant="outline"],
-        [data-slot="input"]:not([data-field-box] *),
+        [data-slot="input"]:where(:not([data-field-box] *)),
         [data-slot="select-trigger"],
         [data-slot="textarea"],
         [data-slot="password-input"],
         [data-slot="date-input"],
         [data-slot="time-input"],
         [data-slot="date-picker-input"],
-        [data-slot="combobox-input"]:not([data-slot="combobox-chips"] *),
+        [data-slot="combobox-input"]:where(:not([data-slot="combobox-chips"] *)),
         [data-slot="combobox-chips"],
         [data-field-box],
         [data-slot="autocomplete-input"],
@@ -189,14 +189,14 @@
     /* An invalid field says so with a broken edge as well as its message. */
     &
       :is(
-        [data-slot="input"]:not([data-field-box] *),
+        [data-slot="input"]:where(:not([data-field-box] *)),
         [data-slot="select-trigger"],
         [data-slot="textarea"],
         [data-slot="password-input"],
         [data-slot="date-input"],
         [data-slot="time-input"],
         [data-slot="date-picker-input"],
-        [data-slot="combobox-input"]:not([data-slot="combobox-chips"] *),
+        [data-slot="combobox-input"]:where(:not([data-slot="combobox-chips"] *)),
         [data-slot="combobox-chips"],
         [data-field-box],
         [data-slot="autocomplete-input"],
