@@ -3139,6 +3139,8 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
   skin's way.
 - The inputs: tag input, phone input, masked input (cards, expiry, codes, IBANs, amounts,
   patterns) and inline edit, each formatting and checking as React's do, agents included.
+- The schema form, from the same `defineForm` definition as React's (steps, review, agents
+  filling it by field name, `formTool`), and upload with its queue.
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the

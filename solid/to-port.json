@@ -23,7 +23,6 @@
     "payments",
     "rich-text",
     "scheduler",
-    "schema-form",
     "sortable-list",
     "sortable-tree",
     "step-sequencer",
@@ -40,7 +39,6 @@
     "templates/pricing",
     "templates/project-board",
     "templates/settings",
-    "terminal",
-    "upload"
+    "terminal"
   ]
 }

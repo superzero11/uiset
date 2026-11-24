@@ -2672,4 +2672,14 @@ vercel-labs/ui#905 (2026-11-19).
   holds it). The tag edit's Backspace guard was caught only when its test ran first (the
   combobox's state from earlier tests decides), so the test checks the cancel itself. 19
   mutations, all caught.
+- 2026-11-24 — **Solid, phase 2c: the schema form and upload.** The same `defineForm`
+  definition and primitive as React's; each field's control picked with `Switch`/`Match`,
+  the phone field lazy behind `Loading`. The root's state goes to the body untouched and is
+  read where it shows, so the body isn't rebuilt as fields change (a mutation that reads it
+  up front loses the typing field). Its focus effects read in their compute step; clearing
+  the focus marker waits for the next task, so the effect doesn't rerun off its own write.
+  UI SDK's Solid field links a label to its control once the form has settled, so the tests
+  settle after each render. React's 21 form tests, its bridge test and the upload's 5 pass;
+  focus following each step, checked in React's browser spec, is now a Solid unit test too
+  and a Solid browser test. 10 mutations, all caught.
 

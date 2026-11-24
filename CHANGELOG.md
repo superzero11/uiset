@@ -72,7 +72,7 @@ On UI SDK `0.1.0-beta.16`.
   motion, sound and haptics, cues for UI SDK's own Solid components, server rendering and
   hydration; UI SDK's 55 components with UISet's defaults; and UISet's own parts, from the
   alert to the textarea count; the charts, sparkline and stat; the motion pieces; and the
-  tag, phone and masked inputs and inline edit. Each
+  tag, phone and masked inputs and inline edit; and the schema form and upload. Each
   component's docs page shows its example in Solid. The rest of the kits and the templates
   follow before this release.
 - **A schema form's `phone` field.** `kind: "phone"` draws a phone input, loaded only when a
