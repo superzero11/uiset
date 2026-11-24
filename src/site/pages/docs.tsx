@@ -251,7 +251,7 @@ function ComponentPage({ page }: { page: DocPage }) {
               keyboard, focus, screen readers and agents from them, and every skin styles it.
             </p>
             <ul>
-              <li>Styles in five skins, each in light and dark, from CSS variables you can override.</li>
+              <li>Styles in five skins, from CSS variables you can override: Base in light and dark, the others in their one scheme.</li>
               <li>Text at 4.5:1 contrast and control edges and focus rings at 3:1, in every skin and theme, checked with axe in tests.</li>
               <li>Named for agents, so an agent can find it (see Agents below).</li>
             </ul>
@@ -352,7 +352,7 @@ function SdkReference({ item, title }: { item: string; title: string }) {
         The component is UI SDK&rsquo;s own, with its parts, props and names, so everything below works as UI SDK documents it. UISet adds the look and checks it:
       </p>
       <ul>
-        <li>Styles in five skins, each in light and dark, from CSS variables you can override.</li>
+        <li>Styles in five skins, from CSS variables you can override: Base in light and dark, the others in their one scheme.</li>
         <li>Text at 4.5:1 contrast and control edges and focus rings at 3:1, in every skin and theme, checked with axe in tests.</li>
         <li>Haptic cues on phones, and sound cues when you set <code>sound</code> on <code>&lt;UISet&gt;</code>.</li>
         <li>Examples that name every control, so agents can find it (see Agents below).</li>

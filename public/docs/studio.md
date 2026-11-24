@@ -34,6 +34,8 @@ name at the top. Controls on a grid, jacks along the bottom, cables drape over a
    replaces all of it with borders.
 4. Sound is mechanical: thocks for pads, detent clicks for knobs, latches for switches.
 
+**Scheme.** Dark only: `theme` doesn't change it.
+
 **Review against generic defaults.** Dark UI with one accent is a common default; here
 the panel is mid-dark gunmetal, the lamp color comes from real indicator lamps, and the
 five cable colors carry meaning. Uppercase is limited to printed legends.

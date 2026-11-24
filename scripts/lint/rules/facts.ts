@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 import { posix } from "node:path"
-import { lineOf, type FileRule, type RepoRule } from "../core.ts"
+import { lineOf, type FileRule, type Problem, type RepoContext, type RepoRule } from "../core.ts"
 import { facts } from "../../../src/site/facts.ts"
 
 // Counts written into prose, checked against the numbers the site and its tests use.
@@ -194,4 +194,67 @@ export const installVersions: FileRule = {
             .map((m) => ({ line: lineOf(text, m.index!), message: `"${m[0]}": UISet pins 0.1.0-beta.${pin} (package.json).` })),
         )
       : [],
+}
+
+// A skin with one scheme sets `color-scheme` in its own stylesheet; one without follows `theme`.
+const oneScheme = (ctx: RepoContext) => {
+  const skins = /type Skin = ([^\n]+)/.exec(ctx.read("registry/uiset/ui/uiset.tsx") ?? "")?.[1] ?? ""
+  return [...skins.matchAll(/"(\w+)"/g)].flatMap(([, skin]) => {
+    const m = /color-scheme:\s*(light|dark)\b/.exec(ctx.read(`registry/uiset/ui/uiset/skins/${skin}.css`) ?? "")
+    return m ? [{ skin: skin!, scheme: m[1]! }] : []
+  })
+}
+
+// "five skins, each in light and dark", "every skin in light and dark", "five skins (base, …, light and dark)".
+const EVERY_SKIN_BOTH = [
+  /\b(?:each|every|all)\b[^.\n]{0,20}?\bskins?\b[^.\n]{0,40}?\blight and dark\b/gi,
+  /\bskins?\b[^.\n]{0,60}?\beach\b[^.\n]{0,10}?\blight and dark\b/gi,
+  /\bskins? \([^)]*, light and dark\)/gi,
+]
+// A page that documents `theme` as a prop or attribute: a table row, a bullet, a list.
+const DOCUMENTS_THEME = /`theme`\s*(?:\||:|\()/
+const PROSE = (path: string) =>
+  path === "README.md" ||
+  path === "web/README.md" ||
+  (path.startsWith("docs/") && path.endsWith(".md") && path !== "docs/roadmap.md") ||
+  (path.startsWith("skills/") && path.endsWith(".md")) ||
+  (path.startsWith("src/site/") && /\.tsx?$/.test(path) && !path.startsWith("src/site/generated/"))
+
+export const skinSchemes: RepoRule = {
+  id: "content/skin-schemes",
+  why: "2026-11-24: superzero11/uiset#1, the first issue from someone using UISet: `theme` only changes Base, but the component pages said every skin came \"in light and dark\", @uiset/web's README said the same, the web-components docs presented `theme` as general, and the skill and the Vue and Svelte docs named only some of the skins with one scheme. Read from each skin's `color-scheme`: no blanket light-and-dark claim while a skin has one scheme, the theming table's Scheme column matches, and a page that documents `theme` names each one-scheme skin with its scheme.",
+  checkRepo(ctx) {
+    const fixed = oneScheme(ctx)
+    if (!fixed.length) return []
+    const problems: Problem[] = []
+    for (const path of ctx.paths.filter(PROSE)) {
+      const text = ctx.read(path) ?? ""
+      for (const pattern of EVERY_SKIN_BOTH)
+        for (const m of text.matchAll(pattern))
+          problems.push({
+            path,
+            line: lineOf(text, m.index!),
+            rule: "content/skin-schemes",
+            message: `"${m[0]}": ${fixed.map((f) => f.skin).join(", ")} have one scheme each. Say which skins have light and dark.`,
+          })
+      if (!path.endsWith(".md")) continue
+      text.split("\n").forEach((line, i) => {
+        const row = /^\|\s*`(\w+)`\s*\|.*\|\s*(both|dark|light)\s*\|/.exec(line)
+        if (!row) return
+        const want = fixed.find((f) => f.skin === row[1])?.scheme ?? "both"
+        if (row[2] !== want) problems.push({ path, line: i + 1, rule: "content/skin-schemes", message: `${row[1]}'s scheme is ${want} (its stylesheet's color-scheme), not ${row[2]}.` })
+      })
+      if (!DOCUMENTS_THEME.test(text)) continue
+      // In one clause: no period, semicolon, parenthesis or table cell between the name and the scheme.
+      const unnamed = fixed.filter(({ skin, scheme }) => !new RegExp(`\\b${skin}\\b[^.;()|]*?\\b${scheme}\\b`, "i").test(text))
+      if (unnamed.length)
+        problems.push({
+          path,
+          line: lineOf(text, text.search(DOCUMENTS_THEME)),
+          rule: "content/skin-schemes",
+          message: `This page documents \`theme\` but doesn't say ${unnamed.map((f) => `${f.skin} is ${f.scheme}`).join(", ")}. Name each one-scheme skin with its scheme, like "Blueprint, Studio and Phosphor are dark, and Ink is light".`,
+        })
+    }
+    return problems
+  },
 }

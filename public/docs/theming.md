@@ -21,7 +21,7 @@ import { UISet } from "@/components/ui/uiset"
 | ---------- | ---------- | ----------------------------------------------------------------------------- |
 | `skin`     | `"base"`   | `"base"`, `"blueprint"`, `"studio"`, `"phosphor"` or `"ink"`                  |
 | `keyColor` | none       | `{ l, c, h }` in OKLCH: the base skin's accent (black and white without one)   |
-| `theme`    | `"system"` | `"light"`, `"dark"` or `"system"` (follows the device)                        |
+| `theme`    | `"system"` | `"light"`, `"dark"` or `"system"` (follows the device), for Base: the other skins have one scheme each |
 | `motion`   | `"system"` | `"reduce"` fades and moves nothing inside, whatever the system setting says (see Motion) |
 | `sound`    | `false`    | Short synthesized sounds on interaction, voiced per skin                      |
 | `haptics`  | `true`     | A tap on Android, and the system haptic on iOS 18 Safari, for switches and the like |
@@ -41,9 +41,9 @@ motion="reduce" sound>` the same way.
 | `ink`       | E-paper: ink on grey, dotted greys, a reading serif, no motion at all   | light  | Literata, Atkinson Hyperlegible |
 
 Each skin falls back to system faces when its own aren't loaded; load them from Google
-Fonts or self-host them for the intended look. The themed skins have one scheme, so
-`theme` doesn't change them. The design notes for each are in `docs/studio.md`,
-`docs/phosphor.md` and `docs/ink.md`.
+Fonts or self-host them for the intended look. Blueprint, Studio and Phosphor are dark,
+and Ink is light, whatever `theme` says; Base is the one that follows it. The design notes
+for each are in `docs/blueprint.md`, `docs/studio.md`, `docs/phosphor.md` and `docs/ink.md`.
 
 Every skin is checked in every component and kit, in each scheme it has: text 4.5:1,
 control edges and focus 3:1 (axe in the test suite), chart colors told apart with color
@@ -85,6 +85,10 @@ and your theme switcher keeps working.
 `theme="system"` follows the device; `"light"` and `"dark"` pin it for the subtree. The
 base skin's colors use `light-dark()`, so a light section inside a dark page is just
 another `<UISet theme="light">`.
+
+`theme` changes the base skin, and a skin made with the theme generator. The other skins
+have one scheme each, whatever `theme` says: Blueprint, Studio and Phosphor are dark, and
+Ink is light. Light and dark for every skin is on the [roadmap](./roadmap.md).
 
 ## Nesting
 

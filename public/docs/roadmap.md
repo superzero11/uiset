@@ -1,10 +1,9 @@
 # Roadmap
 
 Updated 2026-11-24. What we're building, what comes next, and what we won't do. What
-shipped is in the [changelog](https://github.com/superzero11/uiset/blob/main/CHANGELOG.md),
-and the decisions behind it in
-[HISTORY.md](https://github.com/superzero11/uiset/blob/main/HISTORY.md). Sizes: S small,
-M medium, L large.
+shipped is in the [changelog](https://github.com/superzero11/uiset/blob/main/CHANGELOG.md), and
+the decisions behind it in [HISTORY.md](https://github.com/superzero11/uiset/blob/main/HISTORY.md).
+Sizes: S small, M medium, L large.
 
 ## How we order it
 
@@ -45,15 +44,16 @@ under half. Left: WebKit's big pages at one worker, 39 of its 52 minutes. M
 7. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
 8. **More templates.** Travel booking, profile, helpdesk tickets and a file manager. S each
-9. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+9. **Light and dark in every skin, and the Print skin.** Light Blueprint and Studio first
+   ([#1](https://github.com/superzero11/uiset/issues/1)), then a dark Ink and a light Phosphor;
+   Print (Swiss and letterpress type), like Cockpit and Paper later, comes in both. M–L
 10. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
     CSV import. M
 
 Between these, small ones: dialogs and popovers that open in place (UI SDK's `inline`), tree
-select, matches marked in combobox
-results, an autocomplete that loads from a server, swiping a toast away, a context menu on
-any area, an Angular guide, and focus that moves in the same task in the 24 places the lint
-still lists.
+select, matches marked in combobox results, an autocomplete that loads from a server,
+swiping a toast away, a context menu on any area, an Angular guide, and focus that moves in
+the same task in the 24 places the lint still lists.
 
 ## Then: motion and developer tools
 

@@ -7,7 +7,7 @@ import { facts } from "../../src/site/facts.ts"
 import pkg from "../../package.json"
 
 const pinned = pkg.dependencies["@ui-sdk/react"]
-import { currentUiSdk, installVersions, kitInstall, kitLive, statedCounts, whatsNewCurrent } from "../../scripts/lint/rules/facts.ts"
+import { currentUiSdk, installVersions, kitInstall, kitLive, skinSchemes, statedCounts, whatsNewCurrent } from "../../scripts/lint/rules/facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "../../scripts/lint/rules/plan.ts"
 
 // Each rule gets a sample it must catch and one it must let through, so no rule goes quiet.
@@ -118,6 +118,33 @@ describe("code rules", () => {
     expect(currentUiSdk.checkRepo(stale)).toEqual([expect.objectContaining({ path: "src/site/pages/home.tsx", line: 1 })])
     const fresh = repo({ "package.json": pkg, "src/site/pages/home.tsx": `title: "On UI SDK beta.10"`, "docs/installation.md": "@ui-sdk/web@0.1.0-beta.5" })
     expect(currentUiSdk.checkRepo(fresh)).toEqual([])
+  })
+  test("content/skin-schemes catches a blanket light-and-dark claim, a wrong Scheme cell and a theme doc that leaves a skin out", () => {
+    const skins = {
+      "registry/uiset/ui/uiset.tsx": `type Skin = "base" | "blueprint" | "ink" | (string & {})`,
+      "registry/uiset/ui/uiset/skins/base.css": "[data-skin=base] { --x: 1; }",
+      "registry/uiset/ui/uiset/skins/blueprint.css": "[data-skin=blueprint] { color-scheme: dark; }",
+      "registry/uiset/ui/uiset/skins/ink.css": "[data-skin=ink] { color-scheme: light; }",
+    }
+    const bad = repo({
+      ...skins,
+      "src/site/pages/docs.tsx": "<li>Styles in five skins, each in light and dark, from CSS variables.</li>",
+      "web/README.md": "them in five skins (base, blueprint and ink, light and dark), and adds",
+      "docs/theming.md": "| `blueprint` | A technical drawing | both | Barlow |",
+      "docs/vue.md": "| `theme` | `\"light\"` or `\"dark\"` |\n\nThe themed skins have one scheme each (Ink is light).",
+      "skills/uiset/SKILL.md": "- `skin`: `blueprint` (dark only) or `ink` (light only).\n- `theme`: `light` or `dark`.",
+    })
+    expect(skinSchemes.checkRepo(bad).map((p) => p.path).sort()).toEqual(["docs/theming.md", "docs/vue.md", "skills/uiset/SKILL.md", "src/site/pages/docs.tsx", "web/README.md"])
+    const good = repo({
+      ...skins,
+      "src/site/pages/docs.tsx": "<li>Styles in five skins, from CSS variables: Base in light and dark, the others in their one scheme.</li>",
+      "web/README.md": "them in five skins (base has light and dark; blueprint is dark, and ink is light), and adds",
+      "docs/theming.md": "| `base` | Yours | both | none |\n| `blueprint` | A technical drawing | dark | Barlow |",
+      "docs/vue.md": "| `theme` | `\"light\"` or `\"dark\"` |\n\nWhatever `theme` says, Blueprint is dark, and Ink is light.",
+      "skills/uiset/SKILL.md": "- `theme`: `light` or `dark`. Only Base follows it: Blueprint is dark, and Ink is light.",
+      "docs/roadmap.md": "Light and dark in every skin, each in light and dark.",
+    })
+    expect(skinSchemes.checkRepo(good)).toEqual([])
   })
 })
 

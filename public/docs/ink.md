@@ -38,6 +38,8 @@ no shadows. Popups are Screen with a 2px Ink border, so they read as a sheet lai
 5. Sound is the `paper` voice, quiet; haptics stay on where the device has them.
 6. Forced colors maps straight across, since the skin already avoids color.
 
+**Scheme.** Light only: `theme` doesn't change it.
+
 **Contrast** (computed). Ink on Screen 15.6:1, Grey on Screen 7.3:1 and on Tint 5.9:1,
 Screen on Ink (inverse) 15.6:1; Ink borders clear 3:1 easily.
 

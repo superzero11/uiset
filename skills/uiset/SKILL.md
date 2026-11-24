@@ -36,9 +36,11 @@ import { UISet } from "@/components/ui/uiset"
 ```
 
 - `skin`: `base` (adopts the page's shadcn theme, or `keyColor={{ l, c, h }}`),
-  `blueprint`, `studio`, `phosphor` (dark only) or `ink` (light only). Themed skins name
-  fonts to load (see docs/theming.md).
-- `theme`: `system`, `light` or `dark`. `sound` turns on interaction sounds.
+  `blueprint`, `studio`, `phosphor` or `ink`. Themed skins name fonts to load (see
+  docs/theming.md).
+- `theme`: `system`, `light` or `dark`. Only Base follows it: Blueprint, Studio and
+  Phosphor are dark, and Ink is light, whatever `theme` says. `sound` turns on interaction
+  sounds.
 - Each skin animates openings, closings, on and off, and moves its own way, and follows
   the system's reduced motion. `motion="reduce"` quiets a root whatever the system says (an app's own switch);
   `--uiset-motion-speed` scales every duration. Don't add your own transitions to popups.

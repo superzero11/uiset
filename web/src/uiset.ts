@@ -68,6 +68,7 @@ const skins = ["base", "blueprint", "studio", "phosphor", "ink"] as const
  * The root every UISet page wraps itself in, like React's <UISet>:
  * <uiset-root skin="studio" theme="dark" sound> … </uiset-root>
  * motion="reduce" keeps fades and moves nothing, whatever the system setting says.
+ * theme changes Base and generated skins; Blueprint, Studio and Phosphor stay dark, Ink light.
  */
 class UISetRoot extends ElementBase {
   static observedAttributes = ["skin", "theme", "motion", "sound", "haptics"]

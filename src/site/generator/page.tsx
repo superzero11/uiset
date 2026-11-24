@@ -343,7 +343,8 @@ function Export({ theme, skin, skinDraft, setSkinDraft, link }: { theme: Theme; 
         </TabsList>
         <TabsPanel value="skin" className="generator-panel">
           <p className="generator-lede">
-            A skin file: every variable as <code>light-dark()</code>, in UISet&rsquo;s skin layer. Import it after UISet&rsquo;s CSS and name it on the root.
+            A skin file: every variable as <code>light-dark()</code>, in UISet&rsquo;s skin layer. Import it after UISet&rsquo;s CSS and name it on the root. Like
+            Base, it follows <code>theme</code> or the device; UISet&rsquo;s other skins have one scheme each.
           </p>
           <Field className="generator-skin-name" invalid={problem !== null ? true : undefined}>
             <FieldLabel>Skin name</FieldLabel>

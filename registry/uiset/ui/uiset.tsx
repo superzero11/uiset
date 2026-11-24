@@ -15,6 +15,7 @@ type Skin = "base" | "blueprint" | "studio" | "phosphor" | "ink" | (string & {})
 type UISetProps = React.ComponentProps<"div"> & {
   skin?: Skin
   keyColor?: KeyColor
+  /** Light or dark for Base and generated skins; Blueprint, Studio and Phosphor stay dark, Ink light. */
   theme?: "light" | "dark" | "system"
   /** "reduce" keeps fades and moves nothing, whatever the system setting says. */
   motion?: "system" | "reduce"

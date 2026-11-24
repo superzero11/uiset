@@ -41,6 +41,8 @@ raster area with a Glow border, no shadow.
 5. Sound is the `beep` voice: short square-wave chirps.
 6. Forced colors drops bloom and scan lines; reduced transparency drops scan lines.
 
+**Scheme.** Dark only: `theme` doesn't change it.
+
 **Contrast** (computed). Glow on Tube 11.4:1, Dim on Tube 7.2:1, Tube on Glow (inverse)
 11.4:1. Dim started at L 0.68 (5.6:1 on the tube); axe found it under 4.5:1 on tinted
 surfaces (badges, avatar chips, event blocks), so it went up to L 0.75, which clears 4.5:1

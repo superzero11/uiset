@@ -393,8 +393,9 @@ inside at once. See [Theming](./theming.md) for the skins and their variables.
 | `theme`   | `"light"` or `"dark"`; `undefined` removes it and the page follows the system |
 | `sound`   | `true` for interaction sounds, `false` for none (0.3.0 or later)              |
 
-The themed skins have one scheme each (Studio is dark, Ink is light), so, as
-[Theming](./theming.md#skins) says, `theme` is for the base skin.
+The other skins have one scheme each, whatever `theme` says: Blueprint, Studio and
+Phosphor are dark, and Ink is light. As [Theming](./theming.md#skins) says, `theme` is for
+the base skin.
 
 ### The key color
 

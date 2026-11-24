@@ -754,6 +754,8 @@ server-rendered app doesn't need to guard the import.
   (`light`, `dark`, or leave it out to follow the system), `motion="reduce"` (fades and
   moves nothing, whatever the system setting says), `sound` (present to turn the feedback
   sounds on) and `haptics="off"`. Change the attributes to switch live.
+- `theme` changes the base skin. The other skins have one scheme each, whatever it says:
+  Blueprint, Studio and Phosphor are dark, and Ink is light.
 - A key color is `data-key` on the root with the color's OKLCH lightness, chroma and hue as
   three variables: `<uiset-root data-key style="--uiset-key-l: 0.55; --uiset-key-c: 0.2;
   --uiset-key-h: 150">`. It's what React's `keyColor` writes.
@@ -2192,8 +2194,9 @@ at once. See [Theming](./theming.md) for the skins and their variables.
 | `theme`   | `"light"` or `"dark"`; `null` removes it and the page follows the system    |
 | `sound`   | `true` for interaction sounds, `false` for none (0.3.0 or later)            |
 
-The themed skins have one scheme each (Studio is dark, Ink is light), so, as
-[Theming](./theming.md#skins) says, `theme` is for the base skin.
+The other skins have one scheme each, whatever `theme` says: Blueprint, Studio and
+Phosphor are dark, and Ink is light. As [Theming](./theming.md#skins) says, `theme` is for
+the base skin.
 
 ### The key color
 
@@ -2851,8 +2854,9 @@ inside at once. See [Theming](./theming.md) for the skins and their variables.
 | `theme`   | `"light"` or `"dark"`; `undefined` removes it and the page follows the system |
 | `sound`   | `true` for interaction sounds, `false` for none (0.3.0 or later)              |
 
-The themed skins have one scheme each (Studio is dark, Ink is light), so, as
-[Theming](./theming.md#skins) says, `theme` is for the base skin.
+The other skins have one scheme each, whatever `theme` says: Blueprint, Studio and
+Phosphor are dark, and Ink is light. As [Theming](./theming.md#skins) says, `theme` is for
+the base skin.
 
 ### The key color
 
@@ -3259,7 +3263,7 @@ import { UISet } from "@/components/ui/uiset"
 | ---------- | ---------- | ----------------------------------------------------------------------------- |
 | `skin`     | `"base"`   | `"base"`, `"blueprint"`, `"studio"`, `"phosphor"` or `"ink"`                  |
 | `keyColor` | none       | `{ l, c, h }` in OKLCH: the base skin's accent (black and white without one)   |
-| `theme`    | `"system"` | `"light"`, `"dark"` or `"system"` (follows the device)                        |
+| `theme`    | `"system"` | `"light"`, `"dark"` or `"system"` (follows the device), for Base: the other skins have one scheme each |
 | `motion`   | `"system"` | `"reduce"` fades and moves nothing inside, whatever the system setting says (see Motion) |
 | `sound`    | `false`    | Short synthesized sounds on interaction, voiced per skin                      |
 | `haptics`  | `true`     | A tap on Android, and the system haptic on iOS 18 Safari, for switches and the like |
@@ -3279,9 +3283,9 @@ motion="reduce" sound>` the same way.
 | `ink`       | E-paper: ink on grey, dotted greys, a reading serif, no motion at all   | light  | Literata, Atkinson Hyperlegible |
 
 Each skin falls back to system faces when its own aren't loaded; load them from Google
-Fonts or self-host them for the intended look. The themed skins have one scheme, so
-`theme` doesn't change them. The design notes for each are in `docs/studio.md`,
-`docs/phosphor.md` and `docs/ink.md`.
+Fonts or self-host them for the intended look. Blueprint, Studio and Phosphor are dark,
+and Ink is light, whatever `theme` says; Base is the one that follows it. The design notes
+for each are in `docs/blueprint.md`, `docs/studio.md`, `docs/phosphor.md` and `docs/ink.md`.
 
 Every skin is checked in every component and kit, in each scheme it has: text 4.5:1,
 control edges and focus 3:1 (axe in the test suite), chart colors told apart with color
@@ -3323,6 +3327,10 @@ and your theme switcher keeps working.
 `theme="system"` follows the device; `"light"` and `"dark"` pin it for the subtree. The
 base skin's colors use `light-dark()`, so a light section inside a dark page is just
 another `<UISet theme="light">`.
+
+`theme` changes the base skin, and a skin made with the theme generator. The other skins
+have one scheme each, whatever `theme` says: Blueprint, Studio and Phosphor are dark, and
+Ink is light. Light and dark for every skin is on the [roadmap](./roadmap.md).
 
 ## Nesting
 
@@ -3879,10 +3887,9 @@ Then hand it back to the person to review the branch.
 # Roadmap
 
 Updated 2026-11-24. What we're building, what comes next, and what we won't do. What
-shipped is in the [changelog](https://github.com/superzero11/uiset/blob/main/CHANGELOG.md),
-and the decisions behind it in
-[HISTORY.md](https://github.com/superzero11/uiset/blob/main/HISTORY.md). Sizes: S small,
-M medium, L large.
+shipped is in the [changelog](https://github.com/superzero11/uiset/blob/main/CHANGELOG.md), and
+the decisions behind it in [HISTORY.md](https://github.com/superzero11/uiset/blob/main/HISTORY.md).
+Sizes: S small, M medium, L large.
 
 ## How we order it
 
@@ -3923,15 +3930,16 @@ under half. Left: WebKit's big pages at one worker, 39 of its 52 minutes. M
 7. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
 8. **More templates.** Travel booking, profile, helpdesk tickets and a file manager. S each
-9. **Print skin.** Swiss and letterpress type, from a written design plan first. M
+9. **Light and dark in every skin, and the Print skin.** Light Blueprint and Studio first
+   ([#1](https://github.com/superzero11/uiset/issues/1)), then a dark Ink and a light Phosphor;
+   Print (Swiss and letterpress type), like Cockpit and Paper later, comes in both. M–L
 10. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
     CSV import. M
 
 Between these, small ones: dialogs and popovers that open in place (UI SDK's `inline`), tree
-select, matches marked in combobox
-results, an autocomplete that loads from a server, swiping a toast away, a context menu on
-any area, an Angular guide, and focus that moves in the same task in the 24 places the lint
-still lists.
+select, matches marked in combobox results, an autocomplete that loads from a server,
+swiping a toast away, a context menu on any area, an Angular guide, and focus that moves in
+the same task in the 24 places the lint still lists.
 
 ## Then: motion and developer tools
 
@@ -4076,6 +4084,8 @@ name at the top. Controls on a grid, jacks along the bottom, cables drape over a
    replaces all of it with borders.
 4. Sound is mechanical: thocks for pads, detent clicks for knobs, latches for switches.
 
+**Scheme.** Dark only: `theme` doesn't change it.
+
 **Review against generic defaults.** Dark UI with one accent is a common default; here
 the panel is mid-dark gunmetal, the lamp color comes from real indicator lamps, and the
 five cable colors carry meaning. Uppercase is limited to printed legends.
@@ -4125,6 +4135,8 @@ raster area with a Glow border, no shadow.
 4. Focus is a 2px Glow outline offset by 2px, unmissable on the dark tube.
 5. Sound is the `beep` voice: short square-wave chirps.
 6. Forced colors drops bloom and scan lines; reduced transparency drops scan lines.
+
+**Scheme.** Dark only: `theme` doesn't change it.
 
 **Contrast** (computed). Glow on Tube 11.4:1, Dim on Tube 7.2:1, Tube on Glow (inverse)
 11.4:1. Dim started at L 0.68 (5.6:1 on the tube); axe found it under 4.5:1 on tinted
@@ -4188,6 +4200,8 @@ no shadows. Popups are Screen with a 2px Ink border, so they read as a sheet lai
 4. Focus is a 3px Ink outline offset by 2px.
 5. Sound is the `paper` voice, quiet; haptics stay on where the device has them.
 6. Forced colors maps straight across, since the skin already avoids color.
+
+**Scheme.** Light only: `theme` doesn't change it.
 
 **Contrast** (computed). Ink on Screen 15.6:1, Grey on Screen 7.3:1 and on Tint 5.9:1,
 Screen on Ink (inverse) 15.6:1; Ink borders clear 3:1 easily.

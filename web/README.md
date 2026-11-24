@@ -4,7 +4,8 @@ UISet's skins, kits and page parts for [UI SDK](https://ui-sdk.dev)'s custom ele
 plain HTML, Vue, Svelte, Solid, Angular, or any framework that renders HTML.
 
 UI SDK's elements handle behavior: keyboard, focus, ARIA and an agent bridge. UISet dresses
-them in five skins (base, blueprint, studio, phosphor and ink, light and dark), and adds
+them in five skins (base has light and dark; blueprint, studio and phosphor are dark, and
+ink is light), and adds
 the larger pieces apps need as `<uiset-*>` elements: chat, rich text, data grid, charts,
 board, scheduler, node canvas, IDE, terminal, mobile patterns and the Studio synth rack.
 

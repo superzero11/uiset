@@ -54,6 +54,8 @@ server-rendered app doesn't need to guard the import.
   (`light`, `dark`, or leave it out to follow the system), `motion="reduce"` (fades and
   moves nothing, whatever the system setting says), `sound` (present to turn the feedback
   sounds on) and `haptics="off"`. Change the attributes to switch live.
+- `theme` changes the base skin. The other skins have one scheme each, whatever it says:
+  Blueprint, Studio and Phosphor are dark, and Ink is light.
 - A key color is `data-key` on the root with the color's OKLCH lightness, chroma and hue as
   three variables: `<uiset-root data-key style="--uiset-key-l: 0.55; --uiset-key-c: 0.2;
   --uiset-key-h: 150">`. It's what React's `keyColor` writes.

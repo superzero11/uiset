@@ -2530,3 +2530,17 @@ vercel-labs/ui#905 (2026-11-19).
   such selectors in base.css and the Blueprint, Studio, Phosphor and Ink skins now wrap the
   exclusion in `:where()`, which counts for nothing, so each weighs what it did before 0.7.0.
   First fixed on the season branch, brought back to main on its own when Season was paused.
+
+- 2026-11-24 — The first issue from someone using UISet,
+  [superzero11/uiset#1](https://github.com/superzero11/uiset/issues/1) (smalibary, on
+  `@uiset/web` 0.6.1): `theme` only changes Base. That's by design today, but the docs said
+  otherwise: each component page said every skin came "in light and dark", so did
+  @uiset/web's README, the web-components docs presented `theme` as general, and the skill
+  and the Vue and Svelte docs named only some of the one-scheme skins. Every page that
+  documents `theme` now says Blueprint, Studio and Phosphor are dark and Ink is light, each
+  skin's design notes say its scheme, and the root's types say it too. New lint rule
+  `content/skin-schemes` reads each skin's `color-scheme` and checks the docs against it
+  (mutation-checked; it finds all eight at the commit before). The owner's call: light and
+  dark in every skin goes on the roadmap with the new skins, as Next #9: light Blueprint and
+  Studio first, then a dark Ink and a light Phosphor; Print, Cockpit and Paper have both
+  from the start.
