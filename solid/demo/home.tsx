@@ -28,6 +28,9 @@ function Home() {
               <a href="./board.html">Board</a>
             </li>
             <li>
+              <a href="./scheduler.html">Scheduler</a>
+            </li>
+            <li>
               <a href="./ssr/root">The root, server-rendered</a>
             </li>
           </ul>

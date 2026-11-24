@@ -40,6 +40,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
 - The board: columns with limits, cards moved by pointer, keyboard and agent with Undo,
   search and a person filter, adding cards, and the card dialog that edits, moves and
   deletes ([Board](./board.md#solid)).
+- The scheduler: a week, a day and a month, events drawn, moved and resized by pointer,
+  keyboard and agent, the event dialog that keeps the schedule's rules, and room bookings on
+  a timeline ([Scheduler](./scheduler.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the

@@ -32,8 +32,16 @@ export function createBridge(createAgent: typeof createReactAgent = createReactA
     if (!found) throw new Error(`Nothing named ${label} for an agent. It sees: ${agent.snapshot().map((e) => e.label ?? e.component).join(" | ")}`)
     return found
   }
+  // As UI SDK's own agent does with a name: when it fits several components and exactly one
+  // takes the action, that one. (A field that's invalid is listed by its label beside its input,
+  // React's after the input and Solid's before it.)
+  const target = (label: string | RegExp, action: string) => {
+    const all = agent.snapshot().filter((e) => matches(e, label))
+    const taking = all.filter((e) => e.actions?.includes(action))
+    return all.length > 1 && taking.length === 1 ? taking[0]! : entry(label)
+  }
   const act_ = async (label: string | RegExp, action: string, args: unknown[] = [], by = agent) => {
-    const result = await by.act({ steps: [{ ref: entry(label).ref, action, args }] })
+    const result = await by.act({ steps: [{ ref: target(label, action).ref, action, args }] })
     await wait()
     return result
   }

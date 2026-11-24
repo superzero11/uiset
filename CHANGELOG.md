@@ -73,9 +73,9 @@ On UI SDK `0.1.0-beta.16`.
   hydration; UI SDK's 55 components with UISet's defaults; and UISet's own parts, from the
   alert to the textarea count; the charts, sparkline and stat; the motion pieces; the tag,
   phone and masked inputs and inline edit; the schema form and upload; the table, code block
-  and sortable list and tree; the chat kit; the rich text editor; the data grid; and the
-  board. Each component's docs page shows its example in Solid. The rest of the kits and the
-  templates follow before this release.
+  and sortable list and tree; the chat kit; the rich text editor; the data grid; the board;
+  and the scheduler. Each component's docs page shows its example in Solid. The rest of the
+  kits and the templates follow before this release.
 - **A schema form's `phone` field.** `kind: "phone"` draws a phone input, loaded only when a
   form has one (a plain field takes the number until then). Its value is E.164; Next, an
   agent's `goTo` and submit check it for its country, not just its shape, an agent fills it

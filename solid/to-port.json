@@ -12,7 +12,6 @@
     "mobile",
     "patch-bay",
     "payments",
-    "scheduler",
     "step-sequencer",
     "templates/admin",
     "templates/auth",

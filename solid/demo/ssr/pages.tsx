@@ -10,9 +10,11 @@ import { UISet, type Skin } from "../../src/uiset"
 import { Components } from "../components-page"
 import { DemoPage } from "../demo-page"
 import BoardExample from "../examples/board"
+import SchedulerTimelineExample from "../examples/scheduler-timeline"
 import { ChatDemo } from "../kits/chat-demo"
 import { EditorDemo } from "../kits/editor-demo"
 import { GridDemo } from "../kits/grid-demo"
+import { SchedulerDemo } from "../kits/scheduler-demo"
 import "../kits.css"
 import "../demo.css"
 
@@ -89,6 +91,30 @@ function Board() {
   )
 }
 
-const pages: Record<string, () => JSX.Element> = { root: Root, components: Components, chat: Chat, "rich-text": RichText, "data-grid": Grid, board: Board }
+function Scheduler() {
+  return (
+    <DemoPage title="Scheduler in Solid" description="The scheduler kit, rendered on the server.">
+      <section class="scheduler-stage" aria-labelledby="scheduler-week">
+        <h2 id="scheduler-week">Team calendar</h2>
+        <SchedulerDemo />
+      </section>
+      <section class="scheduler-stage" aria-labelledby="scheduler-rooms">
+        <h2 id="scheduler-rooms">Room bookings</h2>
+        <SchedulerTimelineExample />
+      </section>
+      <Toaster />
+    </DemoPage>
+  )
+}
+
+const pages: Record<string, () => JSX.Element> = {
+  root: Root,
+  components: Components,
+  chat: Chat,
+  "rich-text": RichText,
+  "data-grid": Grid,
+  board: Board,
+  scheduler: Scheduler,
+}
 
 export { pages }

@@ -66,6 +66,30 @@ const [schedule] = useState(createScheduleController)
   hydrating (`useLayoutEffect(() => { if (isNarrowScreen()) setView("day") }, [])`); the
   server can't know the width.
 
+## Solid
+
+`@uiset/solid/scheduler` is the same scheduler in Solid 2, with React's props (`class`, not
+`className`) and parts: `Schedule`, `MonthView`, `SchedulerToolbar`, `EventDialog` and
+`createScheduleController`.
+
+```tsx
+import { createSignal } from "solid-js"
+import { createScheduleController, EventDialog, Schedule, type EventDraft } from "@uiset/solid/scheduler"
+
+const schedule = createScheduleController()
+const [events, setEvents] = createSignal(start)
+const [open, setOpen] = createSignal<EventDraft | null>(null)
+
+<Schedule label="Team calendar" controller={schedule} tracks={tracks()} events={events()}
+  onEventsChange={(next) => setEvents(next)} onEventOpen={setOpen} startHour={8} endHour={19} />
+<EventDialog schedule={schedule} tracks={tracks()} event={open()} startHour={8} endHour={19}
+  onSave={save} onDelete={remove} onClose={() => setOpen(null)} />
+```
+
+Drawing, moving, resizing, keys, overlaps and agents are the same code as React's, and so are
+the browser tests: one set runs on React's gallery and on Solid's scheduler page. See
+[Solid](./solid.md).
+
 ## Keys
 
 | Keys                       | Does                                      |

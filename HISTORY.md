@@ -2826,3 +2826,26 @@ vercel-labs/ui#905 (2026-11-19).
 
   10 unit mutations, all caught once the rename test also clicked away from the field and sent
   Enter and a blur together. Chrome checked by hand on the kit page: one rename, focus back.
+- 2026-11-24 — **Solid, phase 3: the scheduler.** The week, day and timeline, the month,
+  the toolbar and the event dialog in Solid, over the shared primitive. React's 11 browser
+  tests moved into one body (`tests/e2e/scheduler-tests.ts`) that runs on React's gallery and
+  Solid's scheduler page, which shows the Team calendar and Room bookings as the gallery does.
+  React's scheduler unit tests ported, with Solid's own besides (the now line, the dialog's
+  checks and focus, deleting, the month, the toolbar, event order and placement): 16, and 4
+  through the agent bridge. The page renders on the server and hydrates, paging, layouts and
+  moves say nothing on the console, and 29 controls are pressed, the event dialog's included.
+  - Solid's event dialog flushes the schedule's redraw before it closes, as the board's does,
+    so focus follows an event saved onto another day.
+  - The kit page starts a phone on one day, as React's does, so the shared swipe test switches
+    to Week first; on React's gallery that's the week it already shows.
+  - **The test bridge's `run` took the first entry by a name.** After a failed submit a field
+    is listed by its label beside its input: React's after the input, Solid's before it, so
+    Solid's step landed on the field, which takes no `setValue`. The helper now does what UI
+    SDK's agent does with a name: when exactly one of the matches takes the action, that one.
+    All 60 bridge test files pass with it.
+
+  22 unit mutations, all caught once four tests were sharpened: deleting the middle of three
+  events (the neighbor had been the first event too), the month's per-day limit, events'
+  placement, and their time order, which is their Tab order. React's contrast test, six
+  gallery loads, was stopped by the memory guard each try; its body is unchanged but for how
+  it opens the page, and it passes on Solid's.
