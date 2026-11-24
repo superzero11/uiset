@@ -3137,6 +3137,8 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
   Table, keyboard, agents), the sparkline and the stat.
 - The motion pieces: number ticker, text reveal, thinking and crossfade, each moving its
   skin's way.
+- The inputs: tag input, phone input, masked input (cards, expiry, codes, IBANs, amounts,
+  patterns) and inline edit, each formatting and checking as React's do, agents included.
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the

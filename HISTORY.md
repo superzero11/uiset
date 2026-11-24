@@ -2661,4 +2661,15 @@ vercel-labs/ui#905 (2026-11-19).
   swap once settled. Solid's unit tests now fail on any console warning or error, as the
   browser sweep does; that found the chart table reading a `<For>` index where Solid doesn't
   track it. 17 mutations, all caught.
+- 2026-11-24 — **Solid, phase 2b: the inputs.** Tag, phone and masked inputs and inline edit.
+  A field that formats as it's typed writes its text and caret in the input handler, and
+  what it shows is derived, not relayed: what was typed while it's still the reported value,
+  else the value read anew. React's 47 tests pass in Solid, plus new ones: typed text kept
+  ("12,"), refused text never shown, the input not rebuilt as a problem comes and goes. A
+  mutation that passed found a real bug: the phone input seeded its own country from
+  `value` in Solid's derived form, so in a controlled field a chosen country snapped back to
+  the default while a partial number was typed; it now seeds from the defaults (a test
+  holds it). The tag edit's Backspace guard was caught only when its test ran first (the
+  combobox's state from earlier tests decides), so the test checks the cancel itself. 19
+  mutations, all caught.
 
