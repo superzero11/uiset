@@ -3144,6 +3144,10 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
 - The table (stacking, sticky headings and columns), the code block with code tabs and the
   package command that every block on a page shares, and the sortable list and tree, by
   pointer, keyboard and agent.
+- The chat kit: messages and Markdown answers that stream in place, reasoning, tool calls
+  that wait for approval, sources and citations, an agent's turn from AI SDK message parts,
+  the composer with commands, mentions, attachments and a queue, the model picker and usage,
+  the chat list and the launcher ([Chat](./chat.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the
@@ -6212,6 +6216,34 @@ with Allow and Deny on tool calls that wait for approval (an `approve` event), a
 `<uiset-chat-composer>` fires `queue` instead of refusing what's written while `running`.
 A message whose tool call waits for approval shows no caret. The launcher has no element.
 See [Web Components](./web-components.md#chat).
+
+## Solid
+
+`@uiset/solid` has the kit in Solid 2, part for part and named as React's:
+`@uiset/solid/chat`, `chat-parts`, `chat-response`, `chat-message-parts`, `chat-composer` and
+`chat-sidebar`. Props are React's, with Solid's `class` and lowercase HTML attributes.
+
+```tsx
+import { ChatMessage, ChatThread } from "@uiset/solid/chat"
+import { ChatComposer } from "@uiset/solid/chat-composer"
+import { ChatMessageParts } from "@uiset/solid/chat-message-parts"
+
+<ChatThread label="Conversation">
+  <For each={messages()}>
+    {(message) => (
+      <ChatMessage from={message.role}>
+        <ChatMessageParts parts={message.parts} onApprove={(part, approved) => respond(part, approved)} />
+      </ChatMessage>
+    )}
+  </For>
+</ChatThread>
+<ChatComposer running={status() === "streaming"} onSubmit={({ text }) => send(text)} />
+```
+
+An answer parses with the same Markdown parser as React's and Web Components', and streams in
+place: each part of it keeps its place as words arrive, so a code block keeps its Wrap and a
+selection holds. A chat renamed with Enter gives focus back to the chat. See
+[Solid](./solid.md).
 
 
 <!-- docs/data-grid.md -->

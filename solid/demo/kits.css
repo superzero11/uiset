@@ -1,0 +1,46 @@
+/* The kits' demos as the site shows them: these rules are src/site/site.css's for its kit
+   demos, so a Solid kit page lays out as React's does. */
+
+.console-note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--ui-muted-foreground);
+}
+
+/* Chat demo */
+
+.chat-stage {
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.chat-app {
+  display: grid;
+  gap: 1rem;
+  --chat-thread-height: 34rem;
+}
+
+@media (min-width: 56rem) {
+  .chat-app {
+    grid-template-columns: 15rem minmax(0, 1fr);
+  }
+}
+
+.chat-main {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.chat-cite-line {
+  font-size: 0.8125rem;
+  color: var(--ui-muted-foreground);
+}
+
+.chat-message-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}

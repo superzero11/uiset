@@ -72,8 +72,8 @@ On UI SDK `0.1.0-beta.16`.
   motion, sound and haptics, cues for UI SDK's own Solid components, server rendering and
   hydration; UI SDK's 55 components with UISet's defaults; and UISet's own parts, from the
   alert to the textarea count; the charts, sparkline and stat; the motion pieces; the tag,
-  phone and masked inputs and inline edit; the schema form and upload; and the table, code
-  block and sortable list and tree. Each
+  phone and masked inputs and inline edit; the schema form and upload; the table, code block
+  and sortable list and tree; and the chat kit. Each
   component's docs page shows its example in Solid. The rest of the kits and the templates
   follow before this release.
 - **A schema form's `phone` field.** `kind: "phone"` draws a phone input, loaded only when a
@@ -105,6 +105,8 @@ On UI SDK `0.1.0-beta.16`.
 
 ### Fixed
 
+- **A chat answer's footnotes carry GitHub's attribute names** in Web Components:
+  `data-footnote-ref` and `data-footnotes`, where they came out as `data--footnote-ref`.
 - **A schema form says each problem once.** A submit that found problems also announced the
   first one urgently while the field read it out and focus moved to it, so a screen reader
   heard it two or three times; a problem for the whole form was said by its alert and again.

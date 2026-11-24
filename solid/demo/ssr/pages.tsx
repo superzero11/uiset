@@ -7,6 +7,9 @@ import { SegmentedControl, SegmentedControlIndicator, SegmentedControlItem } fro
 import { Switch, SwitchThumb } from "@ui-sdk/solid/switch"
 import { UISet, type Skin } from "../../src/uiset"
 import { Components } from "../components-page"
+import { DemoPage } from "../demo-page"
+import { ChatDemo } from "../kits/chat-demo"
+import "../kits.css"
 import "../demo.css"
 
 // Pages the server renders and the browser hydrates (/ssr/<name>). Each item adds its own as
@@ -41,6 +44,16 @@ function Root() {
   )
 }
 
-const pages: Record<string, () => JSX.Element> = { root: Root, components: Components }
+function Chat() {
+  return (
+    <DemoPage title="Chat in Solid" description="The chat kit, rendered on the server.">
+      <div class="chat-stage">
+        <ChatDemo />
+      </div>
+    </DemoPage>
+  )
+}
+
+const pages: Record<string, () => JSX.Element> = { root: Root, components: Components, chat: Chat }
 
 export { pages }

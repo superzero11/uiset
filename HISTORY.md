@@ -186,6 +186,13 @@ vercel-labs/ui#905 (2026-11-19).
     `status` changes nothing). Refusing the open in `onOpenChange` makes the step wait for
     good. UISet's tag input gives agents its own component and hides the Combobox. Not filed
     yet (2026-11-23).
+37. **A controlled `ToggleGroup` in Solid tears.** On beta.16 with Solid 2.0.3, a
+    `ToggleGroup` whose `value` the page holds logs `EFFECT_RELAY_TEAR` in development when
+    a press moves the value from one toggle to another: the root's attributes draw once with
+    the new value and again after the `options` effect writes its `root attrs tick`. A stable
+    value array doesn't help; an uncontrolled group doesn't tear. Chrome only (jsdom runs no
+    frames). UISet's Solid chat feedback keeps the group's own value and applies the page's
+    through `createToggleGroupController`. Not filed yet (2026-11-24).
 
 ## What shipped
 
@@ -2713,4 +2720,27 @@ vercel-labs/ui#905 (2026-11-19).
     step instead of its first field. `firstControl` now picks the step's first field, then
     its control (`labels.ts`, shared). Unit tests in all three and React's, web's and
     Solid's browser specs pass.
+- 2026-11-24 — **Solid, phase 3: the chat kit.** All six of React's chat files in Solid,
+  with React's 25 unit tests, its 7 kit bridge tests and 5 agent-parts tests, and a Solid
+  chat page mirroring the web one (axe in six looks, the thread following at its end, Jump to
+  latest, Stop, the chat list, an answer streaming past an open tool call and Wrap, the
+  composer's menu, focus rings, 35 controls pressed, and the page server-rendered and
+  hydrated). Answers parse with the same remark pipeline as React's and the web build's, into
+  JSX by position, so streaming updates in place as React's reconciler does: a code block
+  keeps its Wrap and focus. The web build's link and image checks moved to
+  `registry/uiset/ui/chat/urls.ts`, so both use one copy, and its same-origin check runs on
+  a server. Found on the way:
+  - **Two answers with footnotes shared ids** (`footnote-label`); Solid's are unique to each
+    answer. React's and the web build's still share them.
+  - **A rename finished with Enter left focus nowhere** in React; Solid's gives it back to
+    the chat, as the web element does.
+  - **UI SDK issue 37**: a controlled `ToggleGroup` tears in Solid; the feedback toggles go
+    through the group's controller instead.
+  - **Footnote attributes came out as `data--footnote-ref`** in the web build, a doubled
+    dash from the name converter. It's shared now (`registry/uiset/ui/chat/hast.ts`) and
+    writes `data-footnote-ref`, for both.
+
+  41 mutations, then 5 on the gaps they showed and 3 against the browser spec: all caught but
+  one, which showed a focus call doing nothing (UI SDK's menu already hands focus to the
+  rename field), now removed.
 

@@ -16,6 +16,9 @@ function Home() {
               <a href="./components.html">Components</a>
             </li>
             <li>
+              <a href="./chat.html">Chat</a>
+            </li>
+            <li>
               <a href="./ssr/root">The root, server-rendered</a>
             </li>
           </ul>

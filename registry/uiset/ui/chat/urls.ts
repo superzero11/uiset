@@ -1,4 +1,5 @@
 // Links and images from untrusted text (a model's answer): which URLs may be followed or loaded.
+// Shared by the Web Components and Solid chats.
 
 /**
  * The URL, if it's safe to link to: http, https, mailto, or relative. Model output can carry
@@ -13,6 +14,6 @@ function safeUrl(value: string, extra: readonly string[] = []): string | null {
 }
 
 /** Same-origin, data: and blob: images load; remote ones wait for the page to allow them. */
-const sameOriginImages = (url: URL) => url.origin === location.origin || url.protocol === "data:" || url.protocol === "blob:"
+const sameOriginImages = (url: URL) => url.origin === globalThis.location?.origin || url.protocol === "data:" || url.protocol === "blob:"
 
 export { safeUrl, sameOriginImages }

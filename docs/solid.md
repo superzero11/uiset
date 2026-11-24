@@ -27,6 +27,10 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
 - The table (stacking, sticky headings and columns), the code block with code tabs and the
   package command that every block on a page shares, and the sortable list and tree, by
   pointer, keyboard and agent.
+- The chat kit: messages and Markdown answers that stream in place, reasoning, tool calls
+  that wait for approval, sources and citations, an agent's turn from AI SDK message parts,
+  the composer with commands, mentions, attachments and a queue, the model picker and usage,
+  the chat list and the launcher ([Chat](./chat.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the

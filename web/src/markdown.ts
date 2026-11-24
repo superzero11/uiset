@@ -9,7 +9,8 @@ import remarkRehype from "remark-rehype"
 import remend from "remend"
 import { unified } from "unified"
 import { scrollArea } from "./scroll"
-import { safeUrl, sameOriginImages } from "./urls"
+import { attributeName } from "@/registry/uiset/ui/chat/hast"
+import { safeUrl, sameOriginImages } from "@/registry/uiset/ui/chat/urls"
 
 type HastNode =
   | { type: "element"; tagName: string; properties?: Record<string, unknown>; children: HastNode[] }
@@ -29,14 +30,6 @@ type Options = {
   idPrefix?: string
 }
 
-// hast's property names, as attributes.
-const attributeName = (name: string) => {
-  if (name === "className") return "class"
-  if (name === "htmlFor") return "for"
-  if (/^aria[A-Z]/.test(name)) return `aria-${name.slice(4).toLowerCase()}`
-  if (/^data[A-Z]/.test(name)) return `data-${name.slice(4).replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`
-  return name.toLowerCase()
-}
 
 function toDom(nodes: HastNode[], options: Options, counter: { code: number }): Node[] {
   const out: Node[] = []

@@ -30,7 +30,7 @@ import "@/registry/uiset/ui/code/code.css"
 import "./chat.css"
 import { attr, defineElement, ElementBase, Evented, h, isOn, keepInputInside, place, reportInput, upgradeProperties } from "./dom"
 import { nameScrollArea, scrollArea, type ScrollAreaApi } from "./scroll"
-import { safeUrl, sameOriginImages } from "./urls"
+import { safeUrl, sameOriginImages } from "@/registry/uiset/ui/chat/urls"
 
 type ToolState =
   | "input-streaming"

@@ -323,3 +323,31 @@ with Allow and Deny on tool calls that wait for approval (an `approve` event), a
 `<uiset-chat-composer>` fires `queue` instead of refusing what's written while `running`.
 A message whose tool call waits for approval shows no caret. The launcher has no element.
 See [Web Components](./web-components.md#chat).
+
+## Solid
+
+`@uiset/solid` has the kit in Solid 2, part for part and named as React's:
+`@uiset/solid/chat`, `chat-parts`, `chat-response`, `chat-message-parts`, `chat-composer` and
+`chat-sidebar`. Props are React's, with Solid's `class` and lowercase HTML attributes.
+
+```tsx
+import { ChatMessage, ChatThread } from "@uiset/solid/chat"
+import { ChatComposer } from "@uiset/solid/chat-composer"
+import { ChatMessageParts } from "@uiset/solid/chat-message-parts"
+
+<ChatThread label="Conversation">
+  <For each={messages()}>
+    {(message) => (
+      <ChatMessage from={message.role}>
+        <ChatMessageParts parts={message.parts} onApprove={(part, approved) => respond(part, approved)} />
+      </ChatMessage>
+    )}
+  </For>
+</ChatThread>
+<ChatComposer running={status() === "streaming"} onSubmit={({ text }) => send(text)} />
+```
+
+An answer parses with the same Markdown parser as React's and Web Components', and streams in
+place: each part of it keeps its place as words arrive, so a code block keeps its Wrap and a
+selection holds. A chat renamed with Enter gives focus back to the chat. See
+[Solid](./solid.md).

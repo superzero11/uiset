@@ -5,6 +5,7 @@ import { renderToString, type JSX } from "@solidjs/web"
 import { afterEach, beforeEach, expect, test, vi } from "vitest"
 import { UISet } from "@/solid/src/uiset"
 import { Components, exampleCount } from "@/solid/demo/components-page"
+import { pages } from "@/solid/demo/ssr/pages"
 
 const modules = import.meta.glob<{ default: () => JSX.Element }>("../../solid/demo/examples/*.tsx", { eager: true })
 const examples = Object.entries(modules).map(([path, module]) => [path.split("/").pop()!.replace(".tsx", ""), module.default] as const)
@@ -37,5 +38,13 @@ test.each(examples)("%s renders on the server", (_name, Example) => {
 test("the whole components page renders on the server, every example in it", () => {
   const html = renderToString(() => <Components />)
   expect(html.match(/<article class="example"/g)?.length).toBe(exampleCount)
+  expect(said).toEqual([])
+})
+
+test.each(["chat"])("the %s kit's demo renders on the server", (name) => {
+  const Page = pages[name]!
+  const html = renderToString(() => <Page />)
+  expect(html).toContain('role="log"')
+  expect(html).not.toContain("blob:")
   expect(said).toEqual([])
 })
