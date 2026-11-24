@@ -15,12 +15,12 @@ This page describes `@uiset/web` 0.3.0 or later.
 npm install @uiset/web @ui-sdk/web
 ```
 
-With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.14`, the exact
+With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.16`, the exact
 version UISet pins. pnpm takes UI SDK's `latest` tag, which can be another beta, so name the
 versions:
 
 ```bash
-pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.14 @ui-sdk/core@0.1.0-beta.14
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.16 @ui-sdk/core@0.1.0-beta.16
 ```
 
 `shiki` is optional: with it, code in chats is colored; without it the app still builds and
@@ -459,7 +459,7 @@ stylesheet: they render the same parts with the same `data-slot` and state attri
 `uiset.css` styles those attributes. Install the version UISet pins:
 
 ```bash
-npm install @ui-sdk/svelte@0.1.0-beta.14
+npm install @ui-sdk/svelte@0.1.0-beta.16
 ```
 
 ```svelte

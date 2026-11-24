@@ -245,7 +245,7 @@ included (the kits and templates). See [Coming from shadcn/ui](./migrate-from-sh
 
 ## Status
 
-UI SDK is in public beta (`0.1.0-beta.14`), and UISet pins that exact version. Every item is
+UI SDK is in public beta (`0.1.0-beta.16`), and UISet pins that exact version. Every item is
 tested for accessibility in every skin and theme, for keyboard use, for agent use, and for
 a clean install into a new app. Expect API changes until UI SDK reaches 1.0; the
 [roadmap](./roadmap.md) says what's next.
@@ -367,11 +367,11 @@ one stylesheet, with UI SDK as a peer.
 npm install @uiset/web @ui-sdk/web
 ```
 
-pnpm resolves UI SDK's `latest` tag, which is an older beta than the one UISet pins, so name
-the versions there:
+pnpm resolves UI SDK's `latest` tag, which can be another beta than the one UISet pins, so
+name the versions there:
 
 ```bash
-pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.14 @ui-sdk/core@0.1.0-beta.14
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.16 @ui-sdk/core@0.1.0-beta.16
 ```
 
 ```html
@@ -707,7 +707,7 @@ stylesheet, and UISet's own primitives register as `<uiset-*>` elements. [Vue](.
 [Svelte](./svelte.md) have guides of their own, each tested in a real app.
 
 ```bash
-npm install @uiset/web @ui-sdk/web@0.1.0-beta.14 @ui-sdk/core@0.1.0-beta.14
+npm install @uiset/web @ui-sdk/web@0.1.0-beta.16 @ui-sdk/core@0.1.0-beta.16
 ```
 
 The package is one module (`@uiset/web`), one stylesheet (`@uiset/web/uiset.css`) and
@@ -1823,12 +1823,12 @@ This page describes `@uiset/web` 0.3.0 or later.
 npm install @uiset/web @ui-sdk/web
 ```
 
-With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.14`, the exact
+With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.16`, the exact
 version UISet pins. pnpm takes UI SDK's `latest` tag, which can be another beta, so name the
 versions:
 
 ```bash
-pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.14 @ui-sdk/core@0.1.0-beta.14
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.16 @ui-sdk/core@0.1.0-beta.16
 ```
 
 `shiki` is optional: with it, code in chats is colored; without it the app still builds and
@@ -2263,7 +2263,7 @@ they render the same parts with the same `data-slot` and state attributes, and `
 styles those attributes. Install the version UISet pins:
 
 ```bash
-npm install @ui-sdk/vue@0.1.0-beta.14
+npm install @ui-sdk/vue@0.1.0-beta.16
 ```
 
 ```vue
@@ -2476,12 +2476,12 @@ This page describes `@uiset/web` 0.3.0 or later.
 npm install @uiset/web @ui-sdk/web
 ```
 
-With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.14`, the exact
+With npm this resolves `@ui-sdk/web` and `@ui-sdk/core` to `0.1.0-beta.16`, the exact
 version UISet pins. pnpm takes UI SDK's `latest` tag, which can be another beta, so name the
 versions:
 
 ```bash
-pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.14 @ui-sdk/core@0.1.0-beta.14
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.16 @ui-sdk/core@0.1.0-beta.16
 ```
 
 `shiki` is optional: with it, code in chats is colored; without it the app still builds and
@@ -2920,7 +2920,7 @@ stylesheet: they render the same parts with the same `data-slot` and state attri
 `uiset.css` styles those attributes. Install the version UISet pins:
 
 ```bash
-npm install @ui-sdk/svelte@0.1.0-beta.14
+npm install @ui-sdk/svelte@0.1.0-beta.16
 ```
 
 ```svelte
@@ -3961,7 +3961,7 @@ adapters, and a skin that follows the season where the person is (started, then 
 ## Following UI SDK
 
 UI SDK is in public beta. UISet pins its exact version and moves with each release once the
-tests for what the release changes pass. UISet is on 0.1.0-beta.14. Problems we find in UI
+tests for what the release changes pass. UISet is on 0.1.0-beta.16. Problems we find in UI
 SDK go upstream with a test that shows them. Open now:
 [#780](https://github.com/vercel-labs/ui/issues/780) (a wheel in a drawer in WebKit),
 [#905](https://github.com/vercel-labs/ui/issues/905) (a tree reorder that knows which items

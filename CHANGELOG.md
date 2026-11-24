@@ -10,7 +10,7 @@ again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 
 ## 0.7.0 (unreleased)
 
-On UI SDK `0.1.0-beta.14`.
+On UI SDK `0.1.0-beta.16`.
 
 ### Added
 
@@ -75,8 +75,30 @@ On UI SDK `0.1.0-beta.14`.
   list, or with text like "design, research", and its JSON Schema is an array. React and Web
   Components; the demo's invite form has Teams.
 
+### Changed
+
+- **UI SDK `0.1.0-beta.16`** (from beta.14; beta.15 wasn't published to npm). Every item now
+  pins `@ui-sdk/core`, `@ui-sdk/react` and `@ui-sdk/web` at `0.1.0-beta.16`, and `@uiset/web`
+  0.7.0 has the new peer versions. UISet needed no code changes. To take it, add your items
+  again and update the `@ui-sdk/*` versions in your package.json. Its fixes reach UISet's
+  items: a modal dialog or sheet keeps focus when Safari's Tab leaves its last field, Escape
+  closes an open tooltip before a page's own Escape shortcut, a quick click on a Menu or
+  Select trigger no longer counts as a held press while the page is busy, a popup opened
+  inside a sheet opens at its top, a swipe on a snap-point drawer's handle moves it, a
+  one-time code takes Arabic-Indic and Persian digits, and a toast whose title ends a
+  sentence is read without a second period. Known in beta.16: a submenu kept open by its
+  owner stops Escape from closing its menu
+  ([vercel-labs/ui#1072](https://github.com/vercel-labs/ui/issues/1072)); UISet's own pages
+  don't keep one open.
+
 ### Fixed
 
+- **The docs say which skins follow `theme`.** Only Base does: Blueprint, Studio and
+  Phosphor are dark, and Ink is light, whatever `theme` says. The component pages and
+  `@uiset/web`'s README said every skin came in light and dark, and the Web Components docs
+  presented `theme` as general
+  ([superzero11/uiset#1](https://github.com/superzero11/uiset/issues/1)). Light and dark for
+  every skin is on the roadmap.
 - **A press just below a field that checks itself as focus leaves no longer misses.** A
   schema form's field, a masked field or a phone number showed its problem the moment focus
   left it, pushing the button under it (Next, Save, Pay) down while the pointer was still

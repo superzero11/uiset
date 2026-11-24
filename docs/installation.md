@@ -105,11 +105,11 @@ one stylesheet, with UI SDK as a peer.
 npm install @uiset/web @ui-sdk/web
 ```
 
-pnpm resolves UI SDK's `latest` tag, which is an older beta than the one UISet pins, so name
-the versions there:
+pnpm resolves UI SDK's `latest` tag, which can be another beta than the one UISet pins, so
+name the versions there:
 
 ```bash
-pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.14 @ui-sdk/core@0.1.0-beta.14
+pnpm add @uiset/web @ui-sdk/web@0.1.0-beta.16 @ui-sdk/core@0.1.0-beta.16
 ```
 
 ```html

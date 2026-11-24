@@ -2544,3 +2544,18 @@ vercel-labs/ui#905 (2026-11-19).
   dark in every skin goes on the roadmap with the new skins, as Next #9: light Blueprint and
   Studio first, then a dark Ink and a light Phosphor; Print, Cockpit and Paper have both
   from the start.
+
+- 2026-11-24 — **UI SDK 0.1.0-beta.16 joins 0.7.0.** The owner's call: move now; the full
+  suite waits until enough of the roadmap is built, and runs on beta.16 before 0.7.0 ships.
+  beta.15 never reached npm; beta.15 and beta.16 are fixes only, and no UISet workaround
+  depended on them. Checked on beta.16: typecheck, lint, and the unit suite at 2 workers, 905
+  of 910 (the 5 that failed pass on their own: 4 timed out under memory pressure on cold
+  loads of web/content.html, and 1 found the same message in both live regions, below). In
+  the browser: dialog, menu, select, toast, one-time code (a pasted Arabic-Indic code goes
+  in), the mobile kit's sheet, checkout and the web content page, and the dialog in all five
+  skins. Not run: e2e, WebKit, Firefox and the builds; the control sweep was stopped by the
+  memory guard before its browser started (pressure at warn, swap near full). Found on the
+  way, the same on beta.14: a schema form's phone field that fails its check on submit is
+  announced twice, urgently by the form and politely by the phone input, and focus goes to
+  its country button rather than the number. Known in beta.16: vercel-labs/ui#1072 (a
+  submenu kept open by its owner blocks Escape); UISet doesn't keep one open.

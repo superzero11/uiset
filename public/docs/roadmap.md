@@ -75,7 +75,7 @@ adapters, and a skin that follows the season where the person is (started, then 
 ## Following UI SDK
 
 UI SDK is in public beta. UISet pins its exact version and moves with each release once the
-tests for what the release changes pass. UISet is on 0.1.0-beta.14. Problems we find in UI
+tests for what the release changes pass. UISet is on 0.1.0-beta.16. Problems we find in UI
 SDK go upstream with a test that shows them. Open now:
 [#780](https://github.com/vercel-labs/ui/issues/780) (a wheel in a drawer in WebKit),
 [#905](https://github.com/vercel-labs/ui/issues/905) (a tree reorder that knows which items

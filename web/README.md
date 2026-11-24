@@ -10,7 +10,7 @@ the larger pieces apps need as `<uiset-*>` elements: chat, rich text, data grid,
 board, scheduler, node canvas, IDE, terminal, mobile patterns and the Studio synth rack.
 
 ```bash
-npm install @uiset/web @ui-sdk/web@0.1.0-beta.14 @ui-sdk/core@0.1.0-beta.14
+npm install @uiset/web @ui-sdk/web@0.1.0-beta.16 @ui-sdk/core@0.1.0-beta.16
 ```
 
 ```html

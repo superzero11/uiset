@@ -1,4 +1,4 @@
-<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.14, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
+<!-- From UI SDK's docs (@ui-sdk/react 0.1.0-beta.16, Apache-2.0). Written by scripts/docs.mjs; don't edit. -->
 
 ## API Reference
 
@@ -180,6 +180,7 @@ The trigger is a button that opens a dialog, and the dialog follows the [WAI-ARI
 - Each time focus moves in, the dialog is named by its title and described by its description.
 - Tab moves through the dialog in order.
 - Tab from the last element wraps to the first.
+- Tab keeps focus inside where the browser's Tab skips the buttons.
 - Shift+Tab from the first element wraps to the last.
 - … from inside an iframe that is the … element wraps around the dialog.
 - Shift+Tab from the first element wraps to the checked radio of a group outside a form.

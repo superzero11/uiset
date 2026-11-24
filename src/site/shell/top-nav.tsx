@@ -78,7 +78,7 @@ function LibraryMenu() {
         </div>
       </div>
       <div className="site-libmenu-foot">
-        <span>On UI SDK 0.1.0-beta.14</span>
+        <span>On UI SDK 0.1.0-beta.16</span>
         <NavigationMenuLink href="https://github.com/superzero11/uiset/blob/main/CHANGELOG.md" className="site-libmenu-new">
           See what&rsquo;s new
         </NavigationMenuLink>
