@@ -1,4 +1,5 @@
-// pnpm lint: the whole repo. The pre-commit hook: `--staged`, the commit's files only.
+// pnpm lint: the whole repo. The pre-commit hook: `--staged`, the commit's files only. The
+// pre-push hook: `--push`, what a deploy of uiset.dev must agree with on npm.
 // `--update-baseline` records today's remaining problems so only new ones fail;
 // `--rules` lists every rule and why it exists.
 import { execFileSync } from "node:child_process"
@@ -8,6 +9,7 @@ import { fileURLToPath } from "node:url"
 import { lint, type Baseline, type RepoContext } from "./core.ts"
 import { hooksRule, rulesOfHooks } from "./hooks.ts"
 import { rules } from "./rules/index.ts"
+import { docsAheadOfNpm } from "./rules/release.ts"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..")
 // stderr piped: a rule may ask for a file that isn't there, and `read` answers undefined quietly.
@@ -17,7 +19,27 @@ const staged = args.has("--staged")
 const baselinePath = join(root, "scripts/lint/baseline.json")
 
 if (args.has("--rules")) {
-  for (const rule of [...rules, hooksRule]) console.log(`${rule.id}\n  ${rule.why}\n`)
+  for (const rule of [...rules, hooksRule, docsAheadOfNpm]) console.log(`${rule.id}\n  ${rule.why}\n`)
+  process.exit(0)
+}
+
+if (args.has("--push")) {
+  const pin = JSON.parse(readFileSync(join(root, "package.json"), "utf8")).dependencies["@ui-sdk/core"] as string
+  let published: { version: string; peerDependencies?: Record<string, string> }
+  try {
+    const response = await fetch("https://registry.npmjs.org/@uiset%2fweb/latest", { signal: AbortSignal.timeout(20_000) })
+    if (!response.ok) throw new Error(`npm answered ${response.status}`)
+    published = await response.json()
+  } catch (error) {
+    console.log(`${docsAheadOfNpm.id}  Couldn't read @uiset/web from npm (${(error as Error).message}), so the push isn't checked. Try again once npm answers.`)
+    process.exit(1)
+  }
+  const problem = docsAheadOfNpm.check(pin, published)
+  if (problem) {
+    console.log(`${docsAheadOfNpm.id}  ${problem}`)
+    process.exit(1)
+  }
+  console.log(`Push check: npm's @uiset/web ${published.version} takes UI SDK ${pin}, as the docs say.`)
   process.exit(0)
 }
 

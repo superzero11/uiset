@@ -9,6 +9,7 @@ import pkg from "../../package.json"
 const pinned = pkg.dependencies["@ui-sdk/react"]
 import { currentUiSdk, installVersions, kitInstall, kitLive, skinSchemes, statedCounts, whatsNewCurrent } from "../../scripts/lint/rules/facts.ts"
 import { landingRecorded, roadmapFresh, roadmapShape, singlePlan } from "../../scripts/lint/rules/plan.ts"
+import { docsAheadOfNpm } from "../../scripts/lint/rules/release.ts"
 
 // Each rule gets a sample it must catch and one it must let through, so no rule goes quiet.
 
@@ -256,6 +257,16 @@ describe("the runner", () => {
 
   test("generated and private folders are out of scope", () => {
     expect(lint(repo({ "public/r/a.css": ".a { color: red !important; }", "research/PLAN.md": "" }), rules).problems).toEqual([])
+  })
+
+  test("release/docs-ahead-of-npm stops a push whose docs pin a UI SDK npm's @uiset/web doesn't take", () => {
+    const published = (peer: string) => ({ version: "0.6.1", peerDependencies: { shiki: "^4.6.0", "@ui-sdk/web": peer, "@ui-sdk/core": peer } })
+    // 2026-11-24: docs on beta.16, npm's @uiset/web 0.6.1 on beta.14.
+    expect(docsAheadOfNpm.check("0.1.0-beta.16", published("0.1.0-beta.14"))).toContain("npm's @uiset/web 0.6.1 takes @ui-sdk/web 0.1.0-beta.14 and @ui-sdk/core 0.1.0-beta.14")
+    expect(docsAheadOfNpm.check("0.1.0-beta.16", published("0.1.0-beta.16"))).toBeNull()
+    expect(docsAheadOfNpm.check("0.1.0-beta.16", { version: "0.7.0", peerDependencies: { "@ui-sdk/web": "0.1.0-beta.16" } })).toContain("@ui-sdk/core (none)")
+    expect(docsAheadOfNpm.check("0.1.0-beta.16", { version: "0.7.0" })).toContain("Publish @uiset/web first, then push.")
+    expect(docsAheadOfNpm.why.length).toBeGreaterThan(20)
   })
 
   test("every rule says why it exists", () => {

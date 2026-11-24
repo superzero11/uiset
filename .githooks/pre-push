@@ -1,0 +1,4 @@
+#!/bin/sh
+# A push to main deploys uiset.dev: its docs must agree with what's on npm now (scripts/lint,
+# release/docs-ahead-of-npm). `git push --no-verify` skips it, for the owner's own call.
+exec node --no-warnings scripts/lint/index.ts --push

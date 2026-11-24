@@ -2594,4 +2594,15 @@ vercel-labs/ui#905 (2026-11-19).
   field is new in 0.7.0, so nothing released changes. Leaving the field and typing in it
   stay with the shape check (the phone field checks its own country as it's left).
   8 tests, each mutation-checked.
+- 2026-11-24 — **A push put docs ahead of npm; pushes now check first.** After the owner
+  checked the dev server and said push, 17 commits went to main, and the deploy put the
+  beta.16 install lines live while npm's `@uiset/web` was 0.6.1, which takes beta.14 only:
+  the Web Components docs' `npm install` failed with ERESOLVE. The agent knew the package
+  had to be published with the pin and didn't connect that a push deploys the docs first;
+  it found out after the push. The owner let the deploy stand and called it a grave mistake.
+  Now `pnpm lint --push` (rule `release/docs-ahead-of-npm`) reads npm's latest `@uiset/web`
+  and refuses while its peers differ from package.json's UI SDK pin. It runs from
+  `.githooks/pre-push` and from the agent's push guard, which also refuses `--no-verify`.
+  It refuses today, so the next push waits for `@uiset/web` 0.7.0 on npm. Not a file lint
+  rule: it needs npm's live state.
 

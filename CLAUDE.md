@@ -83,7 +83,9 @@ Project skills live in `.claude/skills/` (installed with `npx skills add`, pinne
    - **Docs, llms and skills**: which ones changed (What's new included), or why none needed to.
    A local Stop hook sends the turn back if a label is missing.
 5. **No push before the owner has checked the dev server** and said to push. A local hook
-   asks on every push.
+   asks on every push. A push deploys uiset.dev, so before asking, say what goes live, and
+   never push docs ahead of npm: `pnpm lint --push` (the pre-push hook) refuses while the
+   docs pin a UI SDK version npm's `@uiset/web` doesn't take. Publish first.
 
 ## Commands
 
