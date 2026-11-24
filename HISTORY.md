@@ -2605,4 +2605,13 @@ vercel-labs/ui#905 (2026-11-19).
   `.githooks/pre-push` and from the agent's push guard, which also refuses `--no-verify`.
   It refuses today, so the next push waits for `@uiset/web` 0.7.0 on npm. Not a file lint
   rule: it needs npm's live state.
+- 2026-11-24 — **Solid 2.0 comes before the 0.7.0 release, as `@uiset/solid`.** The owner's
+  call: Solid support is very important and must be done and checked properly, and the
+  release follows it. UI SDK's `@ui-sdk/solid` (beta.16) has React's 69 entries, all 55
+  components and agents included, on Solid 2 (`solid-js` and `@solidjs/web` 2.0.3). The shadcn
+  CLI copies only React files, so the registry can't carry Solid; the owner chose an npm
+  package beside `@uiset/web`, same version and release, its source served under the `solid`
+  condition for SolidStart's server rendering. The shared TypeScript (about 15,700 lines) and
+  CSS stay shared; each item gets a Solid view ported from React's, a demo page and tests.
+  Order and checks: `design/solid-plan.md`.
 

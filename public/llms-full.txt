@@ -3908,33 +3908,34 @@ schema form's `mask` and `currency`), each in React and Web Components, with age
 **Checkout and invoices, for 0.7.0.** Built: the payments and address kits (252
 countries), and the checkout and invoice templates on them, React and Web Components. M
 
+**Solid 2.0, natively, for 0.7.0.** UISet's components, kits and templates in Solid on
+`@ui-sdk/solid`, shipped as `@uiset/solid` and checked as React's are
+([plan](https://github.com/superzero11/uiset/blob/main/design/solid-plan.md)). L
+
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
-bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox
-715 each, from 1,030. 0.6.1's full run took about 1 h 50 min, from about 3 hours: not yet
-under half. Left: WebKit's big pages at one worker, 39 of its 52 minutes. M
+bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox 715
+each. 0.6.1's full run took 1 h 50 min, from 3 hours. Left: WebKit's big pages at one worker. M
 
 ## Next, in order
 
-1. **Solid 2.0, natively.** UI SDK already supports Solid 2.0, out November 17: UISet's
-   components, then kits, on `@ui-sdk/solid`. Solid uses the Web Components build today. L
-2. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
+1. **Data grid: filters and saved views.** A filter bar with typed operators, saved views,
    and agents setting a filter by name. M
-3. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
+2. **Emoji picker, draggable tabs and a media player.** Reactions in chat, IDE tabs that
    reorder, and a player whose scrubber snaps to chapters, beside Studio. M each
-4. **Locale packs.** Every component's and kit's built-in words translated, with
+3. **Locale packs.** Every component's and kit's built-in words translated, with
    right-to-left tested packs for the main languages. UI SDK ships none. M
-5. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
+4. **Theme import and exports.** Bring in a tweakcn or shadcn/ui preset, with contrast
    repair; export to Tailwind `@theme`, Figma variables and DESIGN.md. S
-6. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
+5. **Data grid: remote rows, tree rows and detail rows.** Server sort, filter and cursor
    paging. M–L
-7. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
+6. **App shell variants.** Menus that fly out when the sidebar is collapsed, drill-down, a
    double sidebar, a top bar. M
-8. **More templates.** Travel booking, profile, helpdesk tickets and a file manager. S each
-9. **Light and dark in every skin, and the Print skin.** Light Blueprint and Studio first
+7. **More templates.** Travel booking, profile, helpdesk tickets and a file manager. S each
+8. **Light and dark in every skin, and the Print skin.** Light Blueprint and Studio first
    ([#1](https://github.com/superzero11/uiset/issues/1)), then a dark Ink and a light Phosphor;
    Print (Swiss and letterpress type), like Cockpit and Paper later, comes in both. M–L
-10. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
-    CSV import. M
+9. **SaaS console screens.** Team and roles, API keys and webhooks, an audit log, usage,
+   CSV import. M
 
 Between these, small ones: dialogs and popovers that open in place (UI SDK's `inline`), tree
 select, matches marked in combobox results, an autocomplete that loads from a server,
