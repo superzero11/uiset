@@ -1,5 +1,6 @@
 // The form's own words, how the review shows each value, and what takes focus in a field:
 // shared by React's SchemaForm and the <uiset-schema-form> element, so both read the same.
+import { announce } from "@ui-sdk/core"
 import type { FieldSpec } from "./schema"
 
 type SchemaFormLabels = {
@@ -58,11 +59,29 @@ function shownValue(field: FieldSpec, value: unknown, labels: SchemaFormLabels, 
 /** The autocomplete a text field asks for, by its kind. */
 const autocompleteFor = (kind: FieldSpec["kind"]) => (kind === "email" ? "email" : kind === "tel" ? "tel" : kind === "url" ? "url" : "off")
 
-/** What takes focus in a field: its text box, its spin button, its combobox, or its checked radio (the radios' one tab stop). */
-const controlIn = (field: Element | null | undefined) =>
-  field?.querySelector<HTMLElement>(
-    "input:not([type=hidden], [tabindex='-1']), textarea, [role=combobox], [role=spinbutton], [tabindex]:not([tabindex='-1']), button:not([tabindex='-1'])",
-  ) ?? null
+const unreachable = "[tabindex='-1'], [aria-hidden=true]"
+const typing = `input:not([type=hidden], [type=checkbox], [type=radio], ${unreachable}), textarea:not(${unreachable})`
+const any = "input:not([type=hidden], [tabindex='-1']), textarea, [role=combobox], [role=spinbutton], [tabindex]:not([tabindex='-1']), button:not([tabindex='-1'])"
+/** The first match that isn't in something hidden, like a closed popup's search box. */
+const firstShown = (field: Element, selector: string) => [...field.querySelectorAll<HTMLElement>(selector)].find((el) => !el.closest("[hidden], [inert]"))
 
-export { autocompleteFor, controlIn, defaultLabels, shownValue }
+/**
+ * What takes focus in a field: a box to type in first (a phone's number, not its country
+ * button; a tag input's field, not its tags), else its combobox, its checked radio (the
+ * radios' one tab stop) or its button.
+ */
+const controlIn = (field: Element | null | undefined) => (field ? (firstShown(field, typing) ?? firstShown(field, any) ?? null) : null)
+
+/**
+ * Focus goes to the field with a problem, and moving there reads the problem out with the
+ * field. When focus is there already nothing moves, so the problem is said.
+ */
+function focusProblem(field: Element | null | undefined, problem: string | undefined) {
+  const control = controlIn(field)
+  if (!control) return
+  if (control !== control.ownerDocument.activeElement) control.focus()
+  else if (problem) announce(problem)
+}
+
+export { autocompleteFor, controlIn, defaultLabels, focusProblem, shownValue }
 export type { SchemaFormLabels }

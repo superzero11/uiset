@@ -93,6 +93,17 @@ On UI SDK `0.1.0-beta.16`.
 
 ### Fixed
 
+- **A schema form says each problem once.** A submit that found problems also announced the
+  first one urgently while the field read it out and focus moved to it, so a screen reader
+  heard it two or three times; a problem for the whole form was said by its alert and again.
+  Now each is said where it shows, and the form speaks only when nothing else would: focus
+  already on the field with the problem, or the same problem for the whole form again. Focus
+  goes to a field's text box, so a phone field's number, not its country button. Leaving a
+  field keeps a problem the server or a phone number's country rules found until the value
+  changes. Going back to a step after Next or a send no longer hands the press to
+  `onStepChange` under `imperative` (UI SDK warned in development). In Web Components, a
+  phone field shown again with its step keeps the focus it's given. Add `schema-form` again
+  to take it.
 - **The docs say which skins follow `theme`.** Only Base does: Blueprint, Studio and
   Phosphor are dark, and Ink is light, whatever `theme` says. The component pages and
   `@uiset/web`'s README said every skin came in light and dark, and the Web Components docs

@@ -2559,3 +2559,26 @@ vercel-labs/ui#905 (2026-11-19).
   announced twice, urgently by the form and politely by the phone input, and focus goes to
   its country button rather than the number. Known in beta.16: vercel-labs/ui#1072 (a
   submenu kept open by its owner blocks Escape); UISet doesn't keep one open.
+
+- 2026-11-24 — **A schema form says each problem once.** Found by the beta.16 unit run: a
+  failed submit put the same words in both live regions. UI SDK's Field reads out an error
+  part as it appears (an internal step, `field.internal.announce`, with no option), and the
+  form also announced the first problem, urgently, while focus moving to the field read it
+  through `aria-describedby`: two or three times. A problem under `form` was said by its
+  `role="alert"` and announced too. Measured before changing: the standalone tag, phone,
+  masked and discount-code inputs also announce what their Field says, but both are polite
+  and UI SDK's announcer keeps the last, so it lands once; left as they are. The form now
+  says only what nothing else does: the problem when focus is already on its field
+  (`focusProblem`), the same whole-form problem again, or one sent back for no field. The
+  form's count ("2 problems: …") went with it; UI SDK's own forms don't give one either.
+  `controlIn` takes a field's text box first, skipping anything hidden or untabbable (UI
+  SDK's hidden form textarea, a closed popup's search box), so focus lands on a phone's
+  number. On the way: leaving a field cleared a problem a fuller check had found (the
+  server's, a phone number's country), since leaving runs only the quick check; leaving now
+  only adds one. Going back a step passed the press or submit under `imperative`, which UI
+  SDK refuses in development. In Web Components the phone element draws its parts a promise
+  after it's put back, so the form focused the old number, which went; the new one takes
+  the focus over. Next still checks only a phone number's shape (its country waits for the
+  send), so a too-short number passes Next; noted for the owner, not changed. 9 tests, each
+  mutation-checked; React and Web Components checked by eye in all five skins.
+

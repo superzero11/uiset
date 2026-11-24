@@ -18,7 +18,7 @@ import { Textarea } from "./textarea"
 import { schemaForm, type SchemaFormStepReason, type SchemaFormValueReason, type SubmitDetails } from "./schema-form/form"
 import type { Fields, FieldSpec, FormDefinition, FormErrors, FormValues } from "./schema-form/schema"
 import { maskNamed } from "./input-mask/masks"
-import { autocompleteFor, controlIn, defaultLabels, shownValue, type SchemaFormLabels } from "./schema-form/labels"
+import { autocompleteFor, controlIn, defaultLabels, focusProblem, shownValue, type SchemaFormLabels } from "./schema-form/labels"
 import type { ChangeDetails } from "@ui-sdk/core"
 import { afterPress } from "./shell/after-press"
 import "./shell/shell.css"
@@ -269,7 +269,7 @@ function FormBody({
   // After a submit or Next finds problems, the first one takes focus once it's drawn.
   useEffect(() => {
     if (!state.focus) return
-    controlIn(body.current?.closest("form")?.querySelector(`[data-schema-field="${CSS.escape(state.focus)}"]`))?.focus()
+    focusProblem(body.current?.closest("form")?.querySelector(`[data-schema-field="${CSS.escape(state.focus)}"]`), state.errors[state.focus])
     api.focused()
   }, [state.focus, api])
 

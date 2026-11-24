@@ -1,8 +1,9 @@
-import { act, render, screen, within } from "@testing-library/react"
+import { act, render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { createAgent } from "@ui-sdk/react/agent"
 import { expect, test, vi } from "vitest"
 import { defineForm, formTool, registerFormTool, SchemaForm } from "@/registry/uiset/ui/schema-form"
+import { settle } from "./bridge"
 
 const agent = createAgent()
 const tick = () => act(() => new Promise((resolve) => setTimeout(resolve, 0)))
@@ -56,6 +57,57 @@ test("a submit with problems shows each under its field, and focus goes to the f
   expect(form().textContent).toContain("I agree to be contacted is required.")
 })
 
+// The page's announcer: a region per priority, made the first time something is said.
+const said = (priority: "polite" | "assertive") => document.querySelector(`[data-ui-sdk-announcer="${priority === "polite" ? "" : "assertive"}"]`)?.textContent ?? ""
+const hush = () => document.querySelectorAll("[data-ui-sdk-announcer]").forEach((region) => (region.textContent = ""))
+const problemOf = (name: string) => document.querySelector(`[data-schema-field="${name}"] [data-slot="field-error"]`)?.textContent ?? null
+
+test("a failed submit says each problem once: under its field as focus moves there, not again from the form", async () => {
+  hush()
+  render(<SchemaForm form={contact} onSubmit={vi.fn()} />)
+  await userEvent.type(email(), "nobody@")
+  await userEvent.click(screen.getByRole("button", { name: "Submit" }))
+  await settle(300)
+  expect(document.activeElement).toBe(email())
+  expect(problemOf("email")).toBe("Enter an email address, like name@example.com.")
+  expect(said("assertive")).toBe("")
+})
+
+test("a submit from the field with the problem, showing nothing new, says the problem again", async () => {
+  render(<SchemaForm form={contact} onSubmit={vi.fn()} />)
+  await userEvent.type(email(), "nobody@{Enter}")
+  await settle(300)
+  expect(document.activeElement).toBe(email())
+  // Nothing moves and nothing new shows, so only the form can say it.
+  hush()
+  await userEvent.type(email(), "{Enter}")
+  await settle(300)
+  expect(said("polite")).toBe("Enter an email address, like name@example.com.")
+})
+
+test("a problem for the whole form shows in its alert, which says it; the same one again is said from the form", async () => {
+  const onSubmit = vi.fn(async () => ({ form: "We couldn't reach the server. Try again." }))
+  hush()
+  render(<SchemaForm form={contact} onSubmit={onSubmit} defaultValue={{ email: "ada@example.com", terms: true }} />)
+  await userEvent.click(screen.getByRole("button", { name: "Submit" }))
+  await settle(300)
+  expect(screen.getByRole("alert").textContent).toBe("We couldn't reach the server. Try again.")
+  expect(said("assertive")).toBe("")
+  expect(said("polite")).toBe("")
+  await userEvent.click(screen.getByRole("button", { name: "Submit" }))
+  await settle(300)
+  expect(onSubmit).toHaveBeenCalledTimes(2)
+  expect(said("polite")).toBe("We couldn't reach the server. Try again.")
+})
+
+test("a problem sent back for no field of the form is said, since nothing shows it", async () => {
+  hush()
+  render(<SchemaForm form={contact} onSubmit={async () => ({ coupon: "That code has expired." })} defaultValue={{ email: "ada@example.com", terms: true }} />)
+  await userEvent.click(screen.getByRole("button", { name: "Submit" }))
+  await settle(300)
+  expect(said("polite")).toBe("That code has expired.")
+})
+
 test("leaving a field shows what's wrong with what was typed, and fixing it clears it", async () => {
   render(<SchemaForm form={contact} />)
   await userEvent.type(email(), "ada@")
@@ -83,6 +135,21 @@ test("a submit that passes sends the values; problems sent back show where they 
   await tick()
   expect(form().getAttribute("data-status")).toBe("done")
   expect(form().textContent).toContain("We'll be in touch.")
+})
+
+test("a problem the server sent back stays when focus leaves the field unchanged, and goes once it's fixed", async () => {
+  const onSubmit = vi.fn(async () => ({ email: "That address has an account." }))
+  render(<SchemaForm form={contact} onSubmit={onSubmit} defaultValue={{ email: "taken@example.com", terms: true }} />)
+  await userEvent.click(screen.getByRole("button", { name: "Submit" }))
+  await tick()
+  expect(document.activeElement).toBe(email())
+  await userEvent.tab()
+  await settle(100)
+  expect(problemOf("email")).toBe("That address has an account.")
+  await userEvent.clear(email())
+  await userEvent.type(email(), "new@example.com")
+  await tick()
+  expect(problemOf("email")).toBeNull()
 })
 
 test("steps: Next checks this step, the review shows every value, and reaching it sends nothing", async () => {
@@ -247,14 +314,17 @@ test("a phone field is a phone input, loaded when the form has one; an agent fil
   expect(screen.getByRole("button", { name: /^Country: / }).getAttribute("aria-label")).toBe("Country: United Kingdom, +44")
 })
 
-test("a phone number too short for its country stops the submit, with the form's words", async () => {
+test("a phone number too short for its country stops the submit, with the form's words, and focus goes to the number", async () => {
   const onSubmit = vi.fn()
   render(<SchemaForm form={callback} defaultValue={{ mobile: "+1415555" }} onSubmit={onSubmit} confirm={false} />)
   await screen.findByRole("button", { name: /^Country: / })
   await userEvent.click(screen.getByRole("button", { name: "Submit" }))
   await tick()
   expect(onSubmit).not.toHaveBeenCalled()
-  expect(await screen.findByText("Mobile is too short for a phone number in its country.")).toBeTruthy()
+  // The field's own error; the page's announcer may hold the same words for a moment.
+  await waitFor(() => expect(problemOf("mobile")).toBe("Mobile is too short for a phone number in its country."))
+  // The number, not the country button before it: the problem is the number's.
+  expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "Mobile" }))
 })
 
 const refund = defineForm({

@@ -4637,15 +4637,21 @@ type Invite = FormValues<typeof invite.fields> // { email: string; role: "viewer
   field its path names, or above the actions.
 - **When problems show:** leaving a field shows what's wrong with what was typed; an empty
   required field waits for Next or Submit. Those check the step, or everything, and move
-  focus to the first problem. A field showing a problem is checked again as it changes.
+  focus to the first problem, into its text box (a phone field's number, not its country
+  button), where a screen reader hears the problem with the field. A field showing a
+  problem is checked again as it changes, and keeps it until the value changes.
+- **Said once:** each problem is read out where it shows, by its field or, for the whole
+  form, its alert. The form speaks only when nothing else would: focus already on the field
+  with the problem, or the same problem for the whole form again.
 - **Steps:** every field is in one step. Next checks the step, and so does Enter in any
   of its fields; the steps above the form go back to any step done; the last Next shows a
   review of every value with an Edit per step, and Submit sends. When a step change takes
   away what had focus (the field you pressed Enter in, Back on the first step, an Edit),
   focus goes to the new step's first field, or to the submit on the review.
 - **`onSubmit`** gets the values. Return problems by field (`{ email: "…" }`), or under
-  `form` for the whole form, and they show where they belong, on their step, with focus on
-  the first. A thrown error shows under `form`. `doneMessage` is said and shown once it's sent.
+  `form` for the whole form (shown above the actions, as an alert), and they show where they
+  belong, on their step, with focus on the first. A thrown error shows under `form`.
+  `doneMessage` is said and shown once it's sent.
 - **Controlled or not:** `value`, `defaultValue`, `onValueChange`, and `step`,
   `defaultStep`, `onStepChange`, as every UI SDK component.
 - **Words:** `labels` (Next, Back, Submit, the review's words) and the definition's

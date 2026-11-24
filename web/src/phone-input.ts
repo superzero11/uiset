@@ -87,7 +87,11 @@ function draw(el: PhoneInputElement, instance: PhoneInputInstance, rules: Rules)
   // The field is the person's; an agent has the phone input's own actions (phone-input.ts).
   const field = h("ui-field", { class: "phone-input-body", "data-agent-hidden": "" }, label, box, description)
   const submitted = h("input", { type: "hidden" }) as HTMLInputElement
+  // Drawn again once its rules are in (put back on the page, as a form's step shown again),
+  // the new number keeps the focus the old one had.
+  const focused = el.querySelector(".phone-input-number") === el.ownerDocument.activeElement
   el.replaceChildren(field, submitted)
+  if (focused) number.focus()
 
   const refuse = (reason: string | null) => {
     error = reason

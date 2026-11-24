@@ -193,3 +193,56 @@ test("a masked field is <uiset-masked-input>: an agent fills it in any format, s
   const masked = form("Refund").querySelector("uiset-masked-input")!
   await waitFor(() => expect(masked.querySelector<HTMLInputElement>(".masked-input-text")?.value).toBe("GB82 WEST 1234 5698 7654 32"))
 })
+
+// The page's announcer: a region per priority, made the first time something is said.
+const said = (priority: "polite" | "assertive") => document.querySelector(`[data-ui-sdk-announcer="${priority === "polite" ? "" : "assertive"}"]`)?.textContent ?? ""
+const hush = () => document.querySelectorAll("[data-ui-sdk-announcer]").forEach((region) => (region.textContent = ""))
+
+test("a failed submit focuses the phone's number, and the form doesn't say the problem a second time", async () => {
+  await openWebPage("content.html", "content-demo.ts")
+  const { defineForm } = await import("@/registry/uiset/ui/schema-form/schema")
+  invite().form = defineForm({ name: "callback", title: "Call me back", fields: { mobile: { kind: "phone", label: "Mobile", defaultCountry: "US", required: true } } })
+  invite().value = { mobile: "+1415555" }
+  await waitFor(() => expect(form("Call me back").querySelector(".phone-input-number")).toBeTruthy())
+  hush()
+  const { default: userEvent } = await import("@testing-library/user-event")
+  // The demo names its send for an invite.
+  await userEvent.click(within(form("Call me back")).getByRole("button", { name: "Send invite" }))
+  await settle(300)
+  const number = within(form("Call me back")).getByRole("textbox", { name: "Mobile" })
+  expect(document.activeElement).toBe(number)
+  expect(number.getAttribute("aria-invalid")).toBe("true")
+  expect(said("assertive")).toBe("")
+})
+
+test("a submit from the field with the problem, showing nothing new, says the problem again", async () => {
+  await openWebPage("content.html", "content-demo.ts")
+  const { defineForm } = await import("@/registry/uiset/ui/schema-form/schema")
+  invite().form = defineForm({ name: "contact", title: "Contact", fields: { email: { kind: "email", label: "Email", required: true } } })
+  await settle()
+  const { default: userEvent } = await import("@testing-library/user-event")
+  const email = within(form("Contact")).getByRole("textbox", { name: "Email" })
+  await userEvent.type(email, "nobody@{Enter}")
+  await settle(300)
+  expect(document.activeElement).toBe(email)
+  hush()
+  await userEvent.type(email, "{Enter}")
+  await settle(300)
+  expect(said("polite")).toBe("Enter an email address, like name@example.com.")
+})
+
+test("a send that finds a problem on an earlier step goes back to it, with focus on the phone's number", async () => {
+  await openWebPage("content.html", "content-demo.ts")
+  invite().value = { ...invite().value, email: "grace@example.com", mobile: "+1415555" }
+  await settle()
+  const { default: userEvent } = await import("@testing-library/user-event")
+  // Next checks a number's shape; whether it's one in its country is checked on the send.
+  for (let step = 0; step < 3; step++) {
+    await userEvent.click(within(form()).getByRole("button", { name: "Next" }))
+    await settle()
+  }
+  await userEvent.click(within(form()).getByRole("button", { name: "Send invite" }))
+  await waitFor(() => expect(document.activeElement).toBe(within(form()).getByRole("textbox", { name: "Mobile" })))
+  expect(within(form()).getByRole("textbox", { name: "Mobile" }).getAttribute("aria-invalid")).toBe("true")
+})
+

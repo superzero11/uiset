@@ -36,6 +36,17 @@ const sameValues = (a: Values, b: Values) => Object.keys(a).length === Object.ke
 
 const stepOf = (form: FormDefinition, name: string) => form.steps?.findIndex((step) => step.fields.includes(name)) ?? -1
 
+/**
+ * What a submit finds speaks where it shows: a field's problem under the field, read out as
+ * focus moves there, and the form's own in its alert. Said again from here, each was heard
+ * twice. Two things nothing else says are: the same alert again, and a problem with no place.
+ */
+const sayUnsaid = (form: FormDefinition, found: FormErrors, before: string | undefined) => {
+  const nowhere = Object.entries(found).find(([name]) => name !== "form" && !(name in form.fields))?.[1]
+  const unsaid = found.form && found.form === before ? found.form : nowhere
+  if (unsaid) announce(unsaid)
+}
+
 /** @internal Left out of @uiset/web's declarations: its type names UI SDK internals. */
 const schemaForm = definePrimitive({
   name: "schema-form",
@@ -106,7 +117,8 @@ const schemaForm = definePrimitive({
         const found = checkFields(form(), values(), names)
         if (Object.keys(found).length) {
           show(names, found, true)
-          if (store.get().step !== index) setStep(index, "imperative", event)
+          // The press or submit that asked isn't one an "imperative" change takes.
+          if (store.get().step !== index) setStep(index, "imperative")
           return Object.entries(found).map(([name, problem]) => said(form(), name, problem!))
         }
       }
@@ -124,12 +136,16 @@ const schemaForm = definePrimitive({
         }
         return true
       },
-      /** Leaving a field shows what's wrong with what was typed. An empty field waits for the submit. */
+      /**
+       * Leaving a field shows what's wrong with what was typed. An empty field waits for the
+       * submit. A problem showing stays until the value changes: a fuller check than this one
+       * may have found it, like a phone number's country rules or the server's.
+       */
       leaveField(name: string) {
         const value = values()[name]
         if (value === "" || value === null || value === undefined) return
         const problem = checkField(form(), name, value, values())
-        show([name], problem ? { [name]: problem } : {}, false)
+        if (problem) show([name], { [name]: problem }, false)
       },
       /**
        * Fills fields by name or label, as an agent does: `fill({ Email: "ada@example.com", role: "Admin" })`.
@@ -188,13 +204,13 @@ const schemaForm = definePrimitive({
       /** Checks everything, then sends it through `onSubmit`. Problems show, and focus goes to the first. */
       async submit(details: SubmitDetails = {}) {
         if (store.get().status === "submitting" || store.get().disabled) return false
+        const before = store.get().errors.form
         const found = await validateForm(form(), values())
         const first = show(form().names, found, true)
         if (Object.keys(found).length) {
           const step = first ? stepOf(form(), first) : -1
-          if (step >= 0 && step !== store.get().step) setStep(step, "imperative", details.event)
-          const count = Object.keys(found).length
-          announce(count === 1 ? Object.values(found)[0]! : `${count} problems: ${Object.values(found)[0]}`, { priority: "assertive" })
+          if (step >= 0 && step !== store.get().step) setStep(step, "imperative")
+          sayUnsaid(form(), found, before)
           return false
         }
         store.set({ status: "submitting" })
@@ -209,8 +225,8 @@ const schemaForm = definePrimitive({
           const failed = show(form().names, result as FormErrors, true)
           store.set({ status: "idle" })
           const step = failed ? stepOf(form(), failed) : -1
-          if (step >= 0 && step !== store.get().step) setStep(step, "imperative", details.event)
-          announce(Object.values(result as FormErrors)[0] ?? "", { priority: "assertive" })
+          if (step >= 0 && step !== store.get().step) setStep(step, "imperative")
+          sayUnsaid(form(), result as FormErrors, before)
           return false
         }
         store.set({ status: "done" })
