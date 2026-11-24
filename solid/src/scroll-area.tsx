@@ -8,7 +8,7 @@ import {
   ScrollAreaViewport,
   createScrollAreaController,
 } from "@ui-sdk/solid/scroll-area"
-import { createEffect, omit, Show } from "solid-js"
+import { createEffect, omit, Show, untrack } from "solid-js"
 import { rearmAtEnd } from "../../registry/uiset/ui/shell/rearm-end"
 
 type ViewportProps = ComponentProps<typeof ScrollAreaViewport> & { [data: `data-${string}`]: string | undefined }
@@ -36,9 +36,13 @@ function ScrollBox(
   )
   const axis = () => props.axis ?? "y"
   const viewport = () => props.viewport ?? ({} as ViewportProps)
+  // The viewport's own ref is read once. Read as the viewport is built, it would make the build
+  // follow every viewport prop, and a changing style (a grid's sticky width) would build the
+  // scroll area, and all inside it, again: focus inside would be lost.
+  const viewportRef = untrack(() => viewport().ref) as ((el: HTMLDivElement) => void) | undefined
   return (
     <ScrollArea {...omit(props, "children", "axis", "viewport", "controller")} controller={controller()}>
-      <ScrollAreaViewport {...omit(viewport(), "ref")} ref={[(el: HTMLDivElement) => (view = el), ...(viewport().ref ? [viewport().ref as (el: HTMLDivElement) => void] : [])]}>
+      <ScrollAreaViewport {...omit(viewport(), "ref")} ref={[(el: HTMLDivElement) => (view = el), ...(viewportRef ? [viewportRef] : [])]}>
         <ScrollAreaContent>{props.children}</ScrollAreaContent>
       </ScrollAreaViewport>
       <Show when={axis() !== "x"}>

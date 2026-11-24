@@ -3151,6 +3151,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
 - The rich text editor: Markdown as you type, the toolbar, "/" for blocks and "@" for
   people, paste, links, undo, agents writing Markdown, and the read-only view
   ([Rich text](./rich-text.md#solid)).
+- The data grid: ten thousand rows virtualized, sorting, filters, grouping, pinned, resizable
+  and movable columns, inline editing with lists, copy and paste, CSV, a saved layout and
+  agents ([Data grid](./data-grid.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the
@@ -6429,6 +6432,29 @@ applies to both.
   announces it.
 - Range outlines follow the reading direction, and the focused cell's ring is an outline,
   so both hold in right-to-left and in forced colors.
+
+## Solid
+
+`@uiset/solid/data-grid` is the same grid in Solid 2, with React's props (`class`, not
+`className`) and the same parts: `DataGrid`, `DataGridToolbar` and its pieces, and
+`useDataGrid` for parts of your own.
+
+```tsx
+import { createSignal } from "solid-js"
+import { DataGrid, DataGridToolbar, type DataGridColumn } from "@uiset/solid/data-grid"
+
+const [rows, setRows] = createSignal(orders)
+
+<DataGrid label="Orders" rows={rows()} columns={columns} getRowId={(o) => o.id} selectable
+  onCellEdit={({ rowId, column, value }) => {
+    setRows((all) => all.map((o) => (o.id === rowId ? { ...o, [column]: value } : o)))
+  }}>
+  <DataGridToolbar filename="orders" />
+</DataGrid>
+```
+
+The keys, focus, ranges, editing and clipboard are the same code as React's, and so are the
+browser tests: one set runs on React's kit page and on Solid's. See [Solid](./solid.md).
 
 ## Limits, for now
 

@@ -7,6 +7,7 @@ import { Alert, type AlertTone } from "@/solid/src/alert"
 import { Breadcrumbs } from "@/solid/src/breadcrumbs"
 import { CopyButton } from "@/solid/src/copy-button"
 import { SearchField } from "@/solid/src/search-field"
+import { ScrollBox } from "@/solid/src/scroll-area"
 import { Loading } from "@/solid/src/skeleton"
 import { Stepper } from "@/solid/src/stepper"
 import { Toaster, toast } from "@/solid/src/toast"
@@ -165,4 +166,25 @@ test("an agent sees a toast while it shows, and presses its action", async () =>
   const result = await agent.act({ steps: [{ ref: seen!.ref, action: "press", args: ["Undo"] }] })
   expect(result.ok, JSON.stringify(result)).toBe(true)
   expect(undo).toHaveBeenCalledOnce()
+})
+
+// A data grid's sticky width sets its viewport's style as columns change: the scroll area keeps
+// what's inside, focus too, rather than building it again (2026-11-24).
+test("a scroll box whose viewport props change keeps what's inside, and focus with it", async () => {
+  const [pad, setPad] = createSignal(10)
+  let scroller: HTMLDivElement | undefined
+  render(() => (
+    <ScrollBox viewport={{ ref: (el: HTMLDivElement) => (scroller = el), role: "group", "aria-label": "Rows", style: { "scroll-padding-inline-start": `${pad()}px` } }}>
+      <button type="button">Inside</button>
+    </ScrollBox>
+  ))
+  await settle()
+  const button = screen.getByRole("button", { name: "Inside" })
+  button.focus()
+  setPad(40)
+  await settle()
+  expect(screen.getByRole("button", { name: "Inside" })).toBe(button)
+  expect(document.activeElement).toBe(button)
+  expect(scroller?.style.getPropertyValue("scroll-padding-inline-start")).toBe("40px")
+  expect(screen.getByRole("group", { name: "Rows" })).toBe(scroller)
 })

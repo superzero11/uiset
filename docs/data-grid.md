@@ -159,6 +159,29 @@ applies to both.
 - Range outlines follow the reading direction, and the focused cell's ring is an outline,
   so both hold in right-to-left and in forced colors.
 
+## Solid
+
+`@uiset/solid/data-grid` is the same grid in Solid 2, with React's props (`class`, not
+`className`) and the same parts: `DataGrid`, `DataGridToolbar` and its pieces, and
+`useDataGrid` for parts of your own.
+
+```tsx
+import { createSignal } from "solid-js"
+import { DataGrid, DataGridToolbar, type DataGridColumn } from "@uiset/solid/data-grid"
+
+const [rows, setRows] = createSignal(orders)
+
+<DataGrid label="Orders" rows={rows()} columns={columns} getRowId={(o) => o.id} selectable
+  onCellEdit={({ rowId, column, value }) => {
+    setRows((all) => all.map((o) => (o.id === rowId ? { ...o, [column]: value } : o)))
+  }}>
+  <DataGridToolbar filename="orders" />
+</DataGrid>
+```
+
+The keys, focus, ranges, editing and clipboard are the same code as React's, and so are the
+browser tests: one set runs on React's kit page and on Solid's. See [Solid](./solid.md).
+
 ## Limits, for now
 
 - Rows have one height per density; wrapping text is cut with an ellipsis.

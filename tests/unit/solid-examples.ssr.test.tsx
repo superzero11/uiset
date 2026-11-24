@@ -44,6 +44,7 @@ test("the whole components page renders on the server, every example in it", () 
 test.each([
   ["chat", 'role="log"'],
   ["rich-text", 'role="textbox"'],
+  ["data-grid", 'role="grid"'],
 ])("the %s kit's demo renders on the server", (name, mark) => {
   const Page = pages[name]!
   const html = renderToString(() => <Page />)

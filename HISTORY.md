@@ -2764,4 +2764,26 @@ vercel-labs/ui#905 (2026-11-19).
   caret move that isn't a change). 4 against the browser spec: 2 caught; the other 2 remove
   React's guards for keeping the text's selection while the toolbar or link popover has
   focus, which the view already keeps in Chrome. They stay, as in React.
+- 2026-11-24 — **Solid, phase 3: the data grid.** The grid's state, virtualized rows, column
+  menu and toolbar parts in Solid, over the shared primitive, view and columns. React's 22
+  browser tests (23 with the new one) moved into one body (`tests/e2e/data-grid-tests.ts`) that runs on React's kit
+  page and Solid's; both pass. React's DataGrid unit tests ported, with Solid's own besides
+  (state the page holds, a saved layout, the toolbar, editors, moving and resizing columns):
+  14. The page renders on the server and hydrates, and 35 controls are pressed.
+  - **Solid's ScrollBox rebuilt everything inside it** whenever its viewport props changed:
+    it read the viewport's ref while building, so the build followed every viewport prop. The
+    grid's sticky width changes with column widths, so a resize threw away the grid and the
+    header's focus, and the second Alt+Right went nowhere. The ref is read once now; it
+    touched every Solid page, and all their specs pass.
+  - Solid keys header cells by column, so a moved column's cell keeps its focus through the
+    move; the grid is still told, so its arrows go on from the new place (a test presses one).
+  - **Solid's grid drew 9 rows into a 30rem grid** until the first scroll, seen in its
+    screenshots: the rows listened to the virtualizer after the scroller was measured. They
+    start from the measurement now, and a shared test makes React and Solid fill the grid
+    from the first paint (it fails without the fix).
+
+  22 unit mutations, all caught once three tests were sharpened (React's Shift-click test had
+  the same blind spot: its range gave what a single click gives). The virtualizer's
+  `refresh()` after the rows change is the documented call, and stays though no test sees it
+  go.
 

@@ -10,6 +10,7 @@ import { Components } from "../components-page"
 import { DemoPage } from "../demo-page"
 import { ChatDemo } from "../kits/chat-demo"
 import { EditorDemo } from "../kits/editor-demo"
+import { GridDemo } from "../kits/grid-demo"
 import "../kits.css"
 import "../demo.css"
 
@@ -65,6 +66,16 @@ function RichText() {
   )
 }
 
-const pages: Record<string, () => JSX.Element> = { root: Root, components: Components, chat: Chat, "rich-text": RichText }
+function Grid() {
+  return (
+    <DemoPage title="Data grid in Solid" description="The data grid kit, rendered on the server.">
+      <div class="grid-stage">
+        <GridDemo />
+      </div>
+    </DemoPage>
+  )
+}
+
+const pages: Record<string, () => JSX.Element> = { root: Root, components: Components, chat: Chat, "rich-text": RichText, "data-grid": Grid }
 
 export { pages }

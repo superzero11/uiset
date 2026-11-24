@@ -86,3 +86,16 @@
   overflow-wrap: anywhere;
 }
 
+
+/* Data grid demo */
+
+.grid-stage {
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.grid-demo-total {
+  font-variant-numeric: tabular-nums;
+  color: var(--ui-muted-foreground);
+}

@@ -22,6 +22,9 @@ function Home() {
               <a href="./rich-text.html">Rich text</a>
             </li>
             <li>
+              <a href="./data-grid.html">Data grid</a>
+            </li>
+            <li>
               <a href="./ssr/root">The root, server-rendered</a>
             </li>
           </ul>

@@ -391,12 +391,13 @@ test("Space on a yes-or-no cell flips it without an editor", async () => {
 
 test("Shift-click selects the rows between, in the order they show, groups included", async () => {
   render(<People groupBy="team" />)
-  // On screen: Blue (Ada, Linus), then Red (Grace). In data order Grace sits between them.
+  // On screen: Blue (Ada, Linus), then Red (Grace). In data order Grace sits between them, so
+  // Ada to Grace takes Linus on screen and wouldn't in data order, or without a range.
   fireEvent.click(screen.getByRole("checkbox", { name: "Select Ada" }))
-  fireEvent.click(screen.getByRole("checkbox", { name: "Select Linus" }), { shiftKey: true })
+  fireEvent.click(screen.getByRole("checkbox", { name: "Select Grace" }), { shiftKey: true })
   const checked = (name: string) =>
     screen.getByRole<HTMLInputElement>("checkbox", { name: `Select ${name}` }).checked
-  expect([checked("Ada"), checked("Linus"), checked("Grace")]).toEqual([true, true, false])
+  expect([checked("Ada"), checked("Linus"), checked("Grace")]).toEqual([true, true, true])
 })
 
 test("agents get a reason for a bad direction, a bad number or a bad date", async () => {

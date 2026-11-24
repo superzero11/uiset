@@ -34,6 +34,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
 - The rich text editor: Markdown as you type, the toolbar, "/" for blocks and "@" for
   people, paste, links, undo, agents writing Markdown, and the read-only view
   ([Rich text](./rich-text.md#solid)).
+- The data grid: ten thousand rows virtualized, sorting, filters, grouping, pinned, resizable
+  and movable columns, inline editing with lists, copy and paste, CSV, a saved layout and
+  agents ([Data grid](./data-grid.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the
