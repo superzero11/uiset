@@ -9,7 +9,7 @@ const solidViews = (files: string[]) => new Set(files.flatMap((path) => /^solid\
 
 export const solidParity: RepoRule = {
   id,
-  why: "2026-11-24: Solid 2.0 support began, item by item, and the owner asked for it done and checked properly. Every React view has a Solid one (solid/src/<name>.tsx) or waits, by name, in solid/to-port.json; a dated release refuses a list with anything on it, so no item is left out without the owner hearing of it.",
+  why: "2026-11-24: Solid 2.0 support began, item by item, and the owner asked for it done and checked properly. Every React view has a Solid one (solid/src/<name>.tsx) or waits, by name, in solid/to-port.json; a dated release refuses a list with anything on it, so no item is left out without the owner hearing of it. 2026-11-25: the owner paused the port to release 0.7.0 first, with Solid as a preview in the docs; the check applies to the release that publishes @uiset/solid (solid/package.json).",
   checkRepo(ctx) {
     const text = ctx.read(LIST)
     const files = ctx.all ?? ctx.paths
@@ -33,7 +33,8 @@ export const solidParity: RepoRule = {
       else if (!react.includes(name)) problems.push({ path: LIST, line: at(name), rule: id, message: `"${name}" has no React view (registry/uiset/ui/${name}.tsx) to port.` })
     }
     const release = /^## (\d+\.\d+\.\d+) \(([^)]+)\)$/m.exec(ctx.read("CHANGELOG.md") ?? "")
-    if (release && release[2] !== "unreleased" && waiting.length)
+    // Only a release that publishes @uiset/solid (it has a package.json) must have all of it.
+    if (release && release[2] !== "unreleased" && waiting.length && ctx.read("solid/package.json") !== undefined)
       problems.push({ path: LIST, line: 1, rule: id, message: `${release[1]} is dated, and ${waiting.length} React view${waiting.length === 1 ? " isn't" : "s aren't"} in Solid yet (${waiting.slice(0, 5).join(", ")}${waiting.length > 5 ? ", …" : ""}). Solid ships complete: port them, or ask the owner.` })
     return problems
   },

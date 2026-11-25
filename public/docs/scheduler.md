@@ -68,6 +68,8 @@ const [schedule] = useState(createScheduleController)
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid/scheduler` is the same scheduler in Solid 2, with React's props (`class`, not
 `className`) and parts: `Schedule`, `MonthView`, `SchedulerToolbar`, `EventDialog` and
 `createScheduleController`.

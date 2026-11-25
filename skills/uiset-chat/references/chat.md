@@ -330,6 +330,8 @@ See [Web Components](./web-components.md#chat).
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid` has the kit in Solid 2, part for part and named as React's:
 `@uiset/solid/chat`, `chat-parts`, `chat-response`, `chat-message-parts`, `chat-composer` and
 `chat-sidebar`. Props are React's, with Solid's `class` and lowercase HTML attributes.

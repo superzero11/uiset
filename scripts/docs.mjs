@@ -61,7 +61,7 @@ const extraDocs = [
   ["web-components.md", "Web Components", "Every kit and template as custom elements, for plain HTML, Vue, Svelte and Solid"],
   ["vue.md", "Vue", "UISet in a Vue 3 app, through the Web Components build"],
   ["svelte.md", "Svelte", "UISet in a Svelte 5 app, through the Web Components build"],
-  ["solid.md", "Solid", "UISet written in Solid 2, as @uiset/solid: being built for 0.7.0, with the root and every component in"],
+  ["solid.md", "Solid", "UISet written in Solid 2, as @uiset/solid: a preview, not on npm yet, with the root, every component and nine kits in"],
   ["templates.md", "Templates", "Whole pages built only from UISet items"],
   ["theming.md", "Theming", "Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder"],
   ["migrate-from-shadcn.md", "Coming from shadcn/ui", "What maps to what, and how to move a shadcn/ui app over"],

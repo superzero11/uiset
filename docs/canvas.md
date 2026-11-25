@@ -71,6 +71,8 @@ const [selected, setSelected] = useState<string[]>([])
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid/canvas` is the same canvas in Solid 2, with React's props (`class`, not
 `className`) and parts: `Canvas`, `CanvasToolbar`, `CanvasInspector`, `canvasBounds` and
 `createCanvasController`. The history is `createCanvasHistory`, Solid's name for

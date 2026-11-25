@@ -2,8 +2,8 @@
 
 UISet is the components, kits, page templates and themes for Vercel's UI SDK. It's
 open source, installs with the shadcn CLI, and works in React and, through Web Components,
-in Vue, Svelte, Solid, Angular and plain HTML. A Solid 2 package written in Solid is being
-built for 0.7.0 ([Solid](./solid.md)).
+in Vue, Svelte, Solid, Angular and plain HTML. A Solid 2 package written in Solid is a
+preview, coming to npm in a later release ([Solid](./solid.md)).
 
 ```bash
 npx shadcn@latest add @uiset/uiset

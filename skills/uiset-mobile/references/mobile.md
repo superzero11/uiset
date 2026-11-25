@@ -94,6 +94,8 @@ function Inbox() {
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid/mobile` has the same parts in Solid 2, with React's props (`class`, not
 `className`): `SwipeList`, `WheelPicker`, `TimeWheel`, `Sheet`, `ActionSheet` with
 `createActionSheet`, `TabBar`, `AppBar` and `PullToRefresh`.

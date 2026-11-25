@@ -3,6 +3,52 @@
 Planned on 2026-11-24. Roadmap: Next 1, "Solid 2.0, natively". The owner's call: Solid comes
 before the 0.7.0 release, and goes out with it, done and checked properly.
 
+**Paused on 2026-11-25** by the owner, to release 0.7.0 first: 0.7.0 ships without
+`@uiset/solid`, and the docs show the Solid work as a preview, not on npm. It resumes after
+0.7.0, at the next kit, and ships complete in a later release. Where it stands is below.
+
+## Where it stands (2026-11-25)
+
+**Written and checked** (unit and agent-bridge tests, a mutation check, server rendering and
+hydration, a quiet console, every control pressed, screenshots in six looks beside React's):
+
+- Phases 0 to 2: the root, every component, forms and content.
+- Phase 3, nine kits: chat, rich text, data grid, board, scheduler, canvas, IDE (with the IDE
+  app template, from phase 4), mobile and terminal. From the board on, each kit's browser
+  tests are one body (`tests/e2e/<kit>-tests.ts`) run on React's page and on Solid's.
+
+**Left**, as `solid/to-port.json` lists it (lint `content/solid-parity`):
+
+- Kits: Studio (fader, knob, level meter, step sequencer, patch bay, over the shared
+  `studio/knob.ts` and `studio/patch-bay.ts`), the Agent Console, payments, address, and the
+  app shell.
+- Templates: admin, auth, calendar app, chat app, checkout, dashboard, inbox, invoice,
+  pricing, project board, settings.
+- Checks: axe in all five skins on the Solid kit pages (only the root, components and chat
+  pages have it); the `@engine` tests in WebKit and Firefox; React's contrast tests for
+  canvas, scheduler and terminal, which the memory guard stopped each time.
+- Phase 5: the package itself (`package.json`, entries, the `solid` condition and a build,
+  exact peers), `scripts/install-test.sh` with a fresh SolidStart app, What's new, the README,
+  and the push check for both packages. The parity rule refuses a dated release with
+  anything still listed once `solid/package.json` exists.
+
+**Each kit, as the last six were done:** `solid/src/<kit>.tsx` over the shared logic;
+`solid/demo/examples/<kit>.tsx` (shown under the docs' Solid tab, so written as an app
+would); `solid/<kit>.html` and `solid/demo/<kit>.tsx`; a server page in
+`solid/demo/ssr/pages.tsx` and its line in `tests/unit/solid-examples.ssr.test.tsx`; the
+home page link; off `to-port.json`. Tests: `tests/unit/solid-<kit>.test.tsx` and
+`.bridge.test.tsx` with React's assertions; React's browser spec moved into a shared body
+with a `Target`; `tests/e2e/solid/<kit>.spec.ts` with the shared tests, hydration, a quiet
+console and a sweep. Then a mutation script, screenshots, and the docs: the kit page's
+`## Solid` section, `docs/solid.md`, the changelog's preview note, the core skill's row and
+HISTORY.
+
+**Solid 2 lessons, each cost a failure:** a part's children go through a getter, not a
+function (UI SDK issue 38, lint `solid/part-children-once`); writes apply at the next flush,
+so tests `flush()`; don't read signals in an effect's apply; a write from `onSettled` needs
+`ownedWrite`; the server runs cleanups too (guard browser APIs); a controlled value passed
+to a part can tear (`EFFECT_RELAY_TEAR`), so keep state in the primitive or memo the parts.
+
 ## What there is today
 
 - Solid apps use `@uiset/web`, the Web Components build ([installation](../docs/installation.md)).

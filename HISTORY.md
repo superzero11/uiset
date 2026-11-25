@@ -2971,3 +2971,12 @@ vercel-labs/ui#905 (2026-11-19).
   again, output written before the terminal is on the page, Ctrl+C over a selection copying,
   Enter while a command runs, and a click on the output reaching the prompt. The last three
   went into React's tests too, which had none, and catch the same mutations there.
+- 2026-11-25 — **Solid paused; 0.7.0 first.** The owner paused the Solid port to release 0.7.0
+  after a complete test run, and chose to show the Solid work as a preview rather than hide
+  it. 0.7.0 ships without `@uiset/solid`: the docs' Solid page, the kit pages' Solid sections,
+  the component pages' Solid tab, the README and the core skill say it isn't on npm yet and
+  comes in a later release, and the changelog lists it under In progress, not Added. The
+  parity rule (`content/solid-parity`) now refuses a dated release with views still to port
+  only once `solid/package.json` exists, the release that publishes it. Where the port
+  stands, what's left and how each kit was done are in `design/solid-plan.md`; the roadmap's
+  Now item says the same.

@@ -122,7 +122,7 @@ function ExamplePreview({
         <TabsPanel value="solid">
           <CodeBlock code={displaySolidSource(ready.solid)} language="tsx" title={`${meta.slug}-example.tsx`} />
           <p className="example-note">
-            Solid 2, from <code>@uiset/solid</code>: <a href="/docs/solid">set it up</a>.
+            Solid 2, from <code>@uiset/solid</code>: a preview, not on npm yet (<a href="/docs/solid">Solid</a>).
           </p>
         </TabsPanel>
       )}

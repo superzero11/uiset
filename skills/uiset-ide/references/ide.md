@@ -73,6 +73,8 @@ npx shadcn@latest add @uiset/ide-app   # the whole page
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid/ide` has the same parts in Solid 2, with React's props (`class`, not
 `className`): `FileTree`, `EditorTabs`, `CodeEditor`, `CommandPalette`, `ProblemsList`,
 `StatusBar`, `StatusBarItem` and `nextTab`. `@uiset/solid/templates/ide-app` is the whole page,

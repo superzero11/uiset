@@ -22,8 +22,8 @@ schema form's `mask` and `currency`), each in React and Web Components, with age
 **Checkout and invoices, for 0.7.0.** Built: the payments and address kits (252
 countries), and the checkout and invoice templates on them, React and Web Components. M
 
-**Solid 2.0, natively, for 0.7.0.** UISet's components, kits and templates in Solid on
-`@ui-sdk/solid`, shipped as `@uiset/solid` and checked as React's are
+**Solid 2.0, natively: paused for 0.7.0.** `@uiset/solid`: the root, every component and nine
+kits written, a preview in the docs; five kits, eleven templates and the package left
 ([plan](https://github.com/superzero11/uiset/blob/main/design/solid-plan.md)). L
 
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent

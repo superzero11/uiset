@@ -66,17 +66,6 @@ On UI SDK `0.1.0-beta.16`.
   value without separators and checks itself when it's left. Agents set them in any format;
   card numbers and codes are secret to them. A schema form's text field takes a `mask`, and
   a number field a `currency`.
-- **Solid 2, natively: `@uiset/solid`.** UISet written in Solid 2 on UI SDK's
-  `@ui-sdk/solid`, sharing its stylesheet and logic with React and Web Components
-  ([Solid](./docs/solid.md)). In so far: the `UISet` root, with its skins, key color, theme,
-  motion, sound and haptics, cues for UI SDK's own Solid components, server rendering and
-  hydration; UI SDK's 55 components with UISet's defaults; and UISet's own parts, from the
-  alert to the textarea count; the charts, sparkline and stat; the motion pieces; the tag,
-  phone and masked inputs and inline edit; the schema form and upload; the table, code block
-  and sortable list and tree; the chat kit; the rich text editor; the data grid; the board;
-  the scheduler; the canvas; the IDE with its app template; the mobile kit; and the
-  terminal. Each component's docs page shows its example in Solid. The rest of the kits and
-  the templates follow before this release.
 - **A schema form's `phone` field.** `kind: "phone"` draws a phone input, loaded only when a
   form has one (a plain field takes the number until then). Its value is E.164; Next, an
   agent's `goTo` and submit check it for its country, not just its shape, an agent fills it
@@ -168,6 +157,19 @@ On UI SDK `0.1.0-beta.16`.
   chip box is the field now, with the field's edge and one focus ring, and each skin draws
   its chips (`--uiset-chip-*`, in Theming). Add `uiset` again to take it. A box UISet draws
   around a field and its parts (`data-field-box`) gets the same edge and ring.
+
+### In progress
+
+- **Solid 2, natively: `@uiset/solid`, a preview.** Not in this release, and not on npm yet:
+  UISet written in Solid 2 on UI SDK's `@ui-sdk/solid`, sharing its stylesheet and logic with
+  React and Web Components ([Solid](./docs/solid.md)). Written so far: the `UISet` root with
+  its skins, theme, motion, sound and haptics, server rendering and hydration; UI SDK's 55
+  components with UISet's defaults and UISet's own parts; the charts, the motion pieces, the
+  inputs, the schema form, upload, the table, the code block and the sortable list and tree;
+  and nine kits (chat, rich text, data grid, board, scheduler, canvas, IDE with its app
+  template, mobile and terminal). The docs show it as a preview. Studio, the Agent Console,
+  payments, address, the app shell and eleven templates come before it's published, in a
+  later release. Until then, use `@uiset/web` in Solid apps.
 
 ## 0.6.1 (2026-11-23)
 

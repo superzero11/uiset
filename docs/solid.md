@@ -5,7 +5,10 @@ in Solid, on UI SDK's Solid components (`@ui-sdk/solid`). It shares its styleshe
 logic with the React registry and the Web Components build, so an item looks and behaves the
 same in all three, agents included.
 
-It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
+**A preview: `@uiset/solid` isn't on npm yet.** It comes in a later release, once every kit
+and template is in; 0.7.0 doesn't include it ([roadmap](./roadmap.md)). Until then, use the
+[Web Components build](./web-components.md#vue-svelte-and-solid) in Solid apps. Written so
+far:
 
 - The `UISet` root, with the five skins, the key color, Base's light and dark, motion, sound
   and haptics.
@@ -62,7 +65,7 @@ the same `uiset.css`.
 
 ## Install
 
-Solid 2 only: `solid-js` and `@solidjs/web` 2.0 or later. From 0.7.0:
+Solid 2 only: `solid-js` and `@solidjs/web` 2.0 or later. Once it's published:
 
 ```bash
 npm install @uiset/solid @ui-sdk/solid@0.1.0-beta.16 @ui-sdk/core@0.1.0-beta.16

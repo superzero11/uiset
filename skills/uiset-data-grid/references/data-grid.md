@@ -161,6 +161,8 @@ applies to both.
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid/data-grid` is the same grid in Solid 2, with React's props (`class`, not
 `className`) and the same parts: `DataGrid`, `DataGridToolbar` and its pieces, and
 `useDataGrid` for parts of your own.

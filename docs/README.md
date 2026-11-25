@@ -18,7 +18,7 @@ npx shadcn@latest add @uiset/uiset
 - [Web Components](./web-components.md): Every kit and template as custom elements, for plain HTML, Vue, Svelte and Solid.
 - [Vue](./vue.md): UISet in a Vue 3 app, through the Web Components build.
 - [Svelte](./svelte.md): UISet in a Svelte 5 app, through the Web Components build.
-- [Solid](./solid.md): UISet written in Solid 2, as @uiset/solid: being built for 0.7.0, with the root and every component in.
+- [Solid](./solid.md): UISet written in Solid 2, as @uiset/solid: a preview, not on npm yet, with the root, every component and nine kits in.
 - [Templates](./templates.md): Whole pages built only from UISet items.
 - [Theming](./theming.md): Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder.
 - [Coming from shadcn/ui](./migrate-from-shadcn.md): What maps to what, and how to move a shadcn/ui app over.

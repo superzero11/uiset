@@ -70,6 +70,8 @@ socket.onmessage = (event) => shell.print(event.data)
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid/terminal` has the same `Terminal`, with React's props (`class`, not
 `className`), `createTerminalController` and `words`. The screen and the session are the
 same code as React's: the same escapes, history, completion and agent actions.

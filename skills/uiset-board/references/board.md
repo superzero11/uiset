@@ -69,6 +69,8 @@ Theming, Motion), and jump under reduced motion.
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid/board` is the same board in Solid 2, with React's props (`class`, not
 `className`) and parts: `Board`, `BoardToolbar`, `BoardCardDialog`, `BoardCardFace` and
 `createBoardController`.

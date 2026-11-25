@@ -25,7 +25,7 @@ npx shadcn@latest add @uiset/uiset
 - [Web Components](./web-components.md): Every kit and template as custom elements, for plain HTML, Vue, Svelte and Solid.
 - [Vue](./vue.md): UISet in a Vue 3 app, through the Web Components build.
 - [Svelte](./svelte.md): UISet in a Svelte 5 app, through the Web Components build.
-- [Solid](./solid.md): UISet written in Solid 2, as @uiset/solid: being built for 0.7.0, with the root and every component in.
+- [Solid](./solid.md): UISet written in Solid 2, as @uiset/solid: a preview, not on npm yet, with the root, every component and nine kits in.
 - [Templates](./templates.md): Whole pages built only from UISet items.
 - [Theming](./theming.md): Skins, the key color, dark mode, nesting, sound and haptics, and the theme builder.
 - [Coming from shadcn/ui](./migrate-from-shadcn.md): What maps to what, and how to move a shadcn/ui app over.
@@ -191,8 +191,8 @@ See [Templates](./templates.md) for each one's props and sample data.
 
 UISet is the components, kits, page templates and themes for Vercel's UI SDK. It's
 open source, installs with the shadcn CLI, and works in React and, through Web Components,
-in Vue, Svelte, Solid, Angular and plain HTML. A Solid 2 package written in Solid is being
-built for 0.7.0 ([Solid](./solid.md)).
+in Vue, Svelte, Solid, Angular and plain HTML. A Solid 2 package written in Solid is a
+preview, coming to npm in a later release ([Solid](./solid.md)).
 
 ```bash
 npx shadcn@latest add @uiset/uiset
@@ -363,8 +363,8 @@ your own files:
 ## Web Components
 
 For Vue, Svelte, Solid, Angular or plain HTML, use the Web Components build: one module and
-one stylesheet, with UI SDK as a peer. Solid 2 is getting its own package, written in Solid
-and being built for 0.7.0: see [Solid](./solid.md).
+one stylesheet, with UI SDK as a peer. Solid 2 is getting its own package, written in Solid:
+a preview, not on npm yet, coming in a later release ([Solid](./solid.md)).
 
 ```bash
 npm install @uiset/web @ui-sdk/web
@@ -1758,7 +1758,7 @@ Svelte components under UISet's stylesheet. Every code block in them ran in a re
 
 Solid renders custom elements as they are; listen with `on:valuechange`. UI SDK's Solid
 adapter works with `uiset.css` too, since the same `data-slot` attributes mean the same
-styles. UISet written in Solid 2, `@uiset/solid`, is being built for 0.7.0: see
+styles. UISet written in Solid 2, `@uiset/solid`, is a preview, not on npm yet: see
 [Solid](./solid.md).
 
 ## React and the web
@@ -3122,7 +3122,10 @@ in Solid, on UI SDK's Solid components (`@ui-sdk/solid`). It shares its styleshe
 logic with the React registry and the Web Components build, so an item looks and behaves the
 same in all three, agents included.
 
-It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
+**A preview: `@uiset/solid` isn't on npm yet.** It comes in a later release, once every kit
+and template is in; 0.7.0 doesn't include it ([roadmap](./roadmap.md)). Until then, use the
+[Web Components build](./web-components.md#vue-svelte-and-solid) in Solid apps. Written so
+far:
 
 - The `UISet` root, with the five skins, the key color, Base's light and dark, motion, sound
   and haptics.
@@ -3179,7 +3182,7 @@ the same `uiset.css`.
 
 ## Install
 
-Solid 2 only: `solid-js` and `@solidjs/web` 2.0 or later. From 0.7.0:
+Solid 2 only: `solid-js` and `@solidjs/web` 2.0 or later. Once it's published:
 
 ```bash
 npm install @uiset/solid @ui-sdk/solid@0.1.0-beta.16 @ui-sdk/core@0.1.0-beta.16
@@ -4062,8 +4065,8 @@ schema form's `mask` and `currency`), each in React and Web Components, with age
 **Checkout and invoices, for 0.7.0.** Built: the payments and address kits (252
 countries), and the checkout and invoice templates on them, React and Web Components. M
 
-**Solid 2.0, natively, for 0.7.0.** UISet's components, kits and templates in Solid on
-`@ui-sdk/solid`, shipped as `@uiset/solid` and checked as React's are
+**Solid 2.0, natively: paused for 0.7.0.** `@uiset/solid`: the root, every component and nine
+kits written, a preview in the docs; five kits, eleven templates and the package left
 ([plan](https://github.com/superzero11/uiset/blob/main/design/solid-plan.md)). L
 
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
@@ -5913,6 +5916,8 @@ person's selection); agents format through Markdown instead.
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid/rich-text` is the same editor in Solid 2, with React's props (`class`, not
 `className`) and the same exports: `RichTextEditor`, `RichTextContent` and the Markdown and
 HTML converters.
@@ -6264,6 +6269,8 @@ See [Web Components](./web-components.md#chat).
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid` has the kit in Solid 2, part for part and named as React's:
 `@uiset/solid/chat`, `chat-parts`, `chat-response`, `chat-message-parts`, `chat-composer` and
 `chat-sidebar`. Props are React's, with Solid's `class` and lowercase HTML attributes.
@@ -6454,6 +6461,8 @@ applies to both.
   so both hold in right-to-left and in forced colors.
 
 ## Solid
+
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
 
 `@uiset/solid/data-grid` is the same grid in Solid 2, with React's props (`class`, not
 `className`) and the same parts: `DataGrid`, `DataGridToolbar` and its pieces, and
@@ -6737,6 +6746,8 @@ Theming, Motion), and jump under reduced motion.
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid/board` is the same board in Solid 2, with React's props (`class`, not
 `className`) and parts: `Board`, `BoardToolbar`, `BoardCardDialog`, `BoardCardFace` and
 `createBoardController`.
@@ -6861,6 +6872,8 @@ const [schedule] = useState(createScheduleController)
   server can't know the width.
 
 ## Solid
+
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
 
 `@uiset/solid/scheduler` is the same scheduler in Solid 2, with React's props (`class`, not
 `className`) and parts: `Schedule`, `MonthView`, `SchedulerToolbar`, `EventDialog` and
@@ -6989,6 +7002,8 @@ const [selected, setSelected] = useState<string[]>([])
   never wait on measuring. Keep custom styles to those sizes.
 
 ## Solid
+
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
 
 `@uiset/solid/canvas` is the same canvas in Solid 2, with React's props (`class`, not
 `className`) and parts: `Canvas`, `CanvasToolbar`, `CanvasInspector`, `canvasBounds` and
@@ -7136,6 +7151,8 @@ npx shadcn@latest add @uiset/ide-app   # the whole page
   default), autofill and agents all treat it as text.
 
 ## Solid
+
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
 
 `@uiset/solid/ide` has the same parts in Solid 2, with React's props (`class`, not
 `className`): `FileTree`, `EditorTabs`, `CodeEditor`, `CommandPalette`, `ProblemsList`,
@@ -7296,6 +7313,8 @@ function Inbox() {
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid/mobile` has the same parts in Solid 2, with React's props (`class`, not
 `className`): `SwipeList`, `WheelPicker`, `TimeWheel`, `Sheet`, `ActionSheet` with
 `createActionSheet`, `TabBar`, `AppBar` and `PullToRefresh`.
@@ -7432,6 +7451,8 @@ socket.onmessage = (event) => shell.print(event.data)
   scheme. "Black" and "white" follow the scheme instead of vanishing into it.
 
 ## Solid
+
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
 
 `@uiset/solid/terminal` has the same `Terminal`, with React's props (`class`, not
 `className`), `createTerminalController` and `words`. The screen and the session are the

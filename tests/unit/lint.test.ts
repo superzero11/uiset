@@ -295,7 +295,7 @@ describe("the runner", () => {
     expect(docsAheadOfNpm.why.length).toBeGreaterThan(20)
   })
 
-  test("content/solid-parity: every React view has a Solid one or waits on the list, and a dated release waits for none", () => {
+  test("content/solid-parity: every React view has a Solid one or waits on the list, and a release that publishes it waits for none", () => {
     const views = { "registry/uiset/ui/uiset.tsx": "", "registry/uiset/ui/button.tsx": "", "registry/uiset/ui/templates/auth.tsx": "", "solid/src/uiset.tsx": "" }
     const list = (...items: string[]) => JSON.stringify({ items })
     const messages = (files: Record<string, string>) => solidParity.checkRepo(repo(files)).map((p) => p.message)
@@ -310,8 +310,10 @@ describe("the runner", () => {
     // A dated release with anything waiting.
     const changelog = (head: string) => ({ "CHANGELOG.md": `# Changelog\n\n## ${head}\n` })
     expect(messages({ ...views, ...changelog("0.7.0 (unreleased)"), "solid/to-port.json": list("button", "templates/auth") })).toEqual([])
-    expect(messages({ ...views, ...changelog("0.7.0 (2026-11-30)"), "solid/to-port.json": list("button", "templates/auth") })).toEqual([
-      "0.7.0 is dated, and 2 React views aren't in Solid yet (button, templates/auth). Solid ships complete: port them, or ask the owner.",
+    // A dated release that doesn't publish @uiset/solid (a preview, 0.7.0) lets it wait.
+    expect(messages({ ...views, ...changelog("0.7.0 (2026-11-30)"), "solid/to-port.json": list("button", "templates/auth") })).toEqual([])
+    expect(messages({ ...views, ...changelog("0.8.0 (2026-12-30)"), "solid/package.json": "{}", "solid/to-port.json": list("button", "templates/auth") })).toEqual([
+      "0.8.0 is dated, and 2 React views aren't in Solid yet (button, templates/auth). Solid ships complete: port them, or ask the owner.",
     ])
     // The list itself: missing once Solid has files, or not a list.
     expect(messages(views)).toEqual(["Missing: it names the React views not yet in Solid."])

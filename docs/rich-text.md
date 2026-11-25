@@ -136,6 +136,8 @@ person's selection); agents format through Markdown instead.
 
 ## Solid
 
+A preview: `@uiset/solid` isn't on npm yet; it comes in a later release ([Solid](./solid.md)).
+
 `@uiset/solid/rich-text` is the same editor in Solid 2, with React's props (`class`, not
 `className`) and the same exports: `RichTextEditor`, `RichTextContent` and the Markdown and
 HTML converters.
