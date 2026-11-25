@@ -1,7 +1,7 @@
 import { render } from "@solidjs/testing-library"
 import type { JSX } from "@solidjs/web"
 import { createAgent } from "@ui-sdk/solid/agent"
-import { expect, test } from "vitest"
+import { beforeAll, expect, test } from "vitest"
 import { exampleMetas } from "@/src/site/examples/meta"
 import { Toaster } from "@/solid/src/toast"
 import { UISet } from "@/solid/src/uiset"
@@ -10,6 +10,11 @@ import { settle } from "./solid-bridge"
 // Every Solid example on the Components page (solid/demo/examples, the React docs pages'
 // examples in Solid), one at a time: each component in it is named for an agent, as the React
 // examples are. A component an agent can't name is one it can't find or tell apart.
+
+// jsdom has no matchMedia: the IDE app asks it whether the screen is narrow. A wide one, here.
+beforeAll(() => {
+  window.matchMedia ??= ((media: string) => ({ matches: false, media, onchange: null, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}, dispatchEvent: () => false })) as typeof window.matchMedia
+})
 
 const modules = import.meta.glob<{ default: () => JSX.Element }>("../../solid/demo/examples/*.tsx", { eager: true })
 const agent = createAgent()

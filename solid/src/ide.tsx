@@ -1090,10 +1090,13 @@ function CommandPalette(props: {
         <Command
           items={items() as CommandData}
           query={query()}
-          onQueryChange={(next: string, details?: { reason?: string }) => {
-            // Escape closes the palette, rather than first clearing a ">" or ":".
-            if (details?.reason === "escape-key") setOpen(false)
-            else setQuery(next)
+          onQueryChange={(next: string, details?: { reason?: string; cancel?: () => void }) => {
+            // Escape closes the palette, rather than first clearing a ">" or ":": the clear is
+            // refused, so UI SDK doesn't wait for a query that won't come.
+            if (details?.reason === "escape-key") {
+              details.cancel?.()
+              setOpen(false)
+            } else setQuery(next)
           }}
           filter={(item: { label: string; keywords?: string[] }) => (mode() === "line" || !text() ? 1 : fuzzyScore([item.label, ...(item.keywords ?? [])].join(" "), text()))}
           onAction={(value: string) => run(value)}

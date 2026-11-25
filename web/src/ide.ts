@@ -1124,8 +1124,12 @@ class UISetCommandPalette extends Evented<UISetCommandPaletteEvents>() {
     const command = h("ui-command", null, h("div", { class: "ide-palette-search" }, iconElement("search"), h("ui-command-input", null, input)), empty, list, template) as CommandElement
     command.addEventListener("querychange", (event) => {
       const { value, reason } = (event as CustomEvent<{ value: string; reason?: string }>).detail
-      // Escape closes the palette, rather than first clearing a ">" or ":".
-      if (reason === "escape-key") return this.close()
+      // Escape closes the palette, rather than first clearing a ">" or ":": the clear is
+      // refused, as in React and Solid.
+      if (reason === "escape-key") {
+        event.preventDefault()
+        return this.close()
+      }
       this.#query = value
       this.update()
     })
