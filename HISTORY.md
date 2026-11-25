@@ -2872,3 +2872,25 @@ vercel-labs/ui#905 (2026-11-19).
   label); the one left follows positions untracked, which reruns with the nodes anyway. React's
   selected-node contrast test, six gallery loads, was stopped by the memory guard each try; its
   body is unchanged but for how it opens the page, and it passes on Solid's.
+- 2026-11-25 — **Solid, phase 3: the IDE, with its app template.** The file tree, editor
+  tabs, code editor, command palette, problems and status bar in Solid, on UI SDK's Tree,
+  Tabs, Command and Dialog, with the editing and file-drag logic shared. The kit's page and
+  every one of its browser tests are the IDE app template, so it came to Solid now rather
+  than with the other templates: `solid/src/templates/ide-app.tsx`, on the same sample project
+  and linter. React's 22 browser tests moved into one body (`tests/e2e/ide-tests.ts`) that runs
+  on React's template and Solid's IDE page; both pass. Solid's own unit tests: 9, and 1
+  through the agent bridge. The page renders on the server and hydrates, typing, the palette,
+  problems and closing tabs say nothing on the console, and 23 controls are pressed.
+  - **A tab redrew twice when a file opened** (`EFFECT_RELAY_TEAR`): each tab took a fresh
+    `{ path, dirty }` and redrew, then redrew again when Tabs applied its new value. Each tab
+    reads memos now, so an unchanged tab doesn't redraw.
+  - The file tree's reveal first wrote its own input from its effect, which re-ran it and
+    cancelled the frame that focuses a new or renamed item (the shared test failed on it). It
+    keeps the path in a plain variable now.
+  - The server runs cleanups too: a `cancelAnimationFrame` in one broke `/ssr/ide`, found by
+    its hydration test.
+  - jsdom names a palette option "Go to line12": it drops the space that ends the first
+    highlighted part, which a browser keeps; the unit test matches either.
+
+  28 unit mutations, 27 caught; the last, a dialog handing focus straight to the new item,
+  turned out not to be needed once the reveal was fixed, and was taken out.

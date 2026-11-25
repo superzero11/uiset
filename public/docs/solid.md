@@ -45,6 +45,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
   a timeline ([Scheduler](./scheduler.md#solid)).
 - The canvas: nodes and wires to pan, zoom, move, select and wire by pointer, keyboard and
   agent, the minimap, the toolbar with undo, and the inspector ([Canvas](./canvas.md#solid)).
+- The IDE, and its app template: the file tree with version control marks and file drags,
+  tabs, the code editor with syntax colors and its own undo, the command palette, problems
+  and the status bar ([IDE](./ide.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the

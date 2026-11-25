@@ -166,3 +166,13 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* IDE demo */
+
+.web-demo:has(.ide-stage) {
+  max-inline-size: 80rem;
+}
+
+.ide-stage {
+  min-width: 0;
+}

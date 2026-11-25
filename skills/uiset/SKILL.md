@@ -94,7 +94,7 @@ import { UISet } from "@/components/ui/uiset"
 | Charts                                 | `line-chart`, `bar-chart`, `scatter-chart`, `heatmap`, `segmented-bar`, `sparkline` |
 | Let an agent act in the app            | UI SDK's `createAgent`, plus `agent-console` for approvals and undo |
 | Vue, Svelte, Solid or plain HTML       | `@uiset/web`: `<uiset-root>` and the `<uiset-*>` elements (docs/web-components.md) |
-| Solid 2, written in Solid              | `@uiset/solid`, being built for 0.7.0: the `UISet` root, every component, the charts, the motion pieces, the tag, phone and masked inputs, inline edit, the schema form, upload, the table, the code block, the sortable list and tree, the chat kit, rich text, the data grid, the board, the scheduler and the canvas (`@uiset/solid/<item>`) so far; use `@uiset/web` for the other kits and templates (docs/solid.md) |
+| Solid 2, written in Solid              | `@uiset/solid`, being built for 0.7.0: the `UISet` root, every component, the charts, the motion pieces, the tag, phone and masked inputs, inline edit, the schema form, upload, the table, the code block, the sortable list and tree, the chat kit, rich text, the data grid, the board, the scheduler, the canvas, and the IDE with its app template (`@uiset/solid/<item>`) so far; use `@uiset/web` for the other kits and templates (docs/solid.md) |
 
 ## Check your work
 

@@ -71,6 +71,35 @@ npx shadcn@latest add @uiset/ide-app   # the whole page
 - The editor is a plain textarea underneath, so screen readers, spell check (off by
   default), autofill and agents all treat it as text.
 
+## Solid
+
+`@uiset/solid/ide` has the same parts in Solid 2, with React's props (`class`, not
+`className`): `FileTree`, `EditorTabs`, `CodeEditor`, `CommandPalette`, `ProblemsList`,
+`StatusBar`, `StatusBarItem` and `nextTab`. `@uiset/solid/templates/ide-app` is the whole page,
+`IdeTemplate`, with the same sample project and linter.
+
+```tsx
+import { createSignal } from "solid-js"
+import { CodeEditor, EditorTabs, type CodeEditorHandle } from "@uiset/solid/ide"
+
+const editors = new Map<string, CodeEditorHandle>()
+
+<EditorTabs files={open().map((path) => ({ path, dirty: dirty(path) }))} value={active()}
+  onValueChange={setActive} onClose={askClose}>
+  {(path) => (
+    <CodeEditor label={path} path={path} value={files()[path]}
+      onValueChange={(text) => setFiles((all) => ({ ...all, [path]: text }))}
+      ref={(handle) => (handle ? editors.set(path, handle) : editors.delete(path))} />
+  )}
+</EditorTabs>
+```
+
+`EditorTabs` draws each file's content once and keeps it while its tab is hidden, so an editor
+keeps its caret, scroll and undo. `CodeEditor`'s `ref` gets its handle (`focus`, `goTo`), and
+null when it leaves. The editing, highlighting and file drags are the same code as React's,
+and so are the browser tests: one set runs on React's template and on Solid's IDE page. See
+[Solid](./solid.md).
+
 ## Keys
 
 | Where       | Keys                         | Does                                                     |

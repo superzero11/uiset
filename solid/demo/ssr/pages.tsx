@@ -5,6 +5,7 @@ import { Field, FieldLabel } from "@ui-sdk/solid/field"
 import { Input } from "@ui-sdk/solid/input"
 import { SegmentedControl, SegmentedControlIndicator, SegmentedControlItem } from "@ui-sdk/solid/segmented-control"
 import { Switch, SwitchThumb } from "@ui-sdk/solid/switch"
+import { IdeTemplate } from "../../src/templates/ide-app"
 import { Toaster } from "../../src/toast"
 import { UISet, type Skin } from "../../src/uiset"
 import { Components } from "../components-page"
@@ -118,6 +119,16 @@ function CanvasPage() {
   )
 }
 
+function IdePage() {
+  return (
+    <DemoPage title="IDE in Solid" description="The IDE kit, rendered on the server.">
+      <div class="ide-stage">
+        <IdeTemplate headingLevel={2} />
+      </div>
+    </DemoPage>
+  )
+}
+
 const pages: Record<string, () => JSX.Element> = {
   root: Root,
   components: Components,
@@ -127,6 +138,7 @@ const pages: Record<string, () => JSX.Element> = {
   board: Board,
   scheduler: Scheduler,
   canvas: CanvasPage,
+  ide: IdePage,
 }
 
 export { pages }

@@ -3162,6 +3162,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
   a timeline ([Scheduler](./scheduler.md#solid)).
 - The canvas: nodes and wires to pan, zoom, move, select and wire by pointer, keyboard and
   agent, the minimap, the toolbar with undo, and the inspector ([Canvas](./canvas.md#solid)).
+- The IDE, and its app template: the file tree with version control marks and file drags,
+  tabs, the code editor with syntax colors and its own undo, the command palette, problems
+  and the status bar ([IDE](./ide.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the
@@ -7125,6 +7128,35 @@ npx shadcn@latest add @uiset/ide-app   # the whole page
   checked at 4.5:1 in every skin, and still 4.5:1 under the selection (`--code-selection`).
 - The editor is a plain textarea underneath, so screen readers, spell check (off by
   default), autofill and agents all treat it as text.
+
+## Solid
+
+`@uiset/solid/ide` has the same parts in Solid 2, with React's props (`class`, not
+`className`): `FileTree`, `EditorTabs`, `CodeEditor`, `CommandPalette`, `ProblemsList`,
+`StatusBar`, `StatusBarItem` and `nextTab`. `@uiset/solid/templates/ide-app` is the whole page,
+`IdeTemplate`, with the same sample project and linter.
+
+```tsx
+import { createSignal } from "solid-js"
+import { CodeEditor, EditorTabs, type CodeEditorHandle } from "@uiset/solid/ide"
+
+const editors = new Map<string, CodeEditorHandle>()
+
+<EditorTabs files={open().map((path) => ({ path, dirty: dirty(path) }))} value={active()}
+  onValueChange={setActive} onClose={askClose}>
+  {(path) => (
+    <CodeEditor label={path} path={path} value={files()[path]}
+      onValueChange={(text) => setFiles((all) => ({ ...all, [path]: text }))}
+      ref={(handle) => (handle ? editors.set(path, handle) : editors.delete(path))} />
+  )}
+</EditorTabs>
+```
+
+`EditorTabs` draws each file's content once and keeps it while its tab is hidden, so an editor
+keeps its caret, scroll and undo. `CodeEditor`'s `ref` gets its handle (`focus`, `goTo`), and
+null when it leaves. The editing, highlighting and file drags are the same code as React's,
+and so are the browser tests: one set runs on React's template and on Solid's IDE page. See
+[Solid](./solid.md).
 
 ## Keys
 

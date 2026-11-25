@@ -34,6 +34,9 @@ function Home() {
               <a href="./canvas.html">Canvas</a>
             </li>
             <li>
+              <a href="./ide.html">IDE</a>
+            </li>
+            <li>
               <a href="./ssr/root">The root, server-rendered</a>
             </li>
           </ul>
