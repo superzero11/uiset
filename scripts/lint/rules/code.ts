@@ -265,6 +265,18 @@ export const noDialogInForm: FileRule = {
   },
 }
 
+export const solidChildrenOnce: FileRule = {
+  id: "solid/part-children-once",
+  why: "2026-11-25: Solid's terminal rebuilt its whole output, scrolled to the end, whenever New output below appeared. UI SDK builds a part's children given as a function again, whole, when anything at their top changes (a Show or a For): the log was new, so the view jumped back and the button never stayed. The mobile kit's rows were rebuilt on every change to the list the same way. Pass them through a getter, which UI SDK reads once inside the part, so its sub-parts still find it; a function only when it reads the part's state.",
+  appliesTo: (path) => /^solid\/src\/.+\.tsx$/.test(path),
+  check(text) {
+    const out: Finding[] = []
+    for (const m of text.matchAll(/\bchildren:\s*\(\s*\)\s*=>/g))
+      out.push({ line: lineOf(text, m.index!), message: "A part's children as a function are built again, whole, when a Show or For at their top changes. Pass them through a getter: `get children() { return <>…</> }`." })
+    return out
+  },
+}
+
 export const seriesMixHue: FileRule = {
   id: "css/series-mix-keeps-hue",
   why: "2026-11-25: the canvas minimap mixed each node's series color with the foreground in oklch, which turns the hue toward the foreground's own near-meaningless hue: Draft answer's teal (162) came out olive (121) on the site and cyan (188) on Solid's page, so the map's boxes didn't match their nodes. Mix a series color with anything but transparent in oklab.",

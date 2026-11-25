@@ -996,18 +996,22 @@ function DataGrid<Row>(props: DataGridProps<Row>) {
           "inline-size": `${layout().totalWidth}px`,
         }
       },
-      children: () => (
-        <>
-          <div role="rowgroup" class="data-grid-head">
-            {header()}
-          </div>
-          <div role="rowgroup" class="data-grid-body" style={{ "block-size": `${shownRows().size}px` }}>
-            <For each={shownRows().items} keyed={(item) => item.index}>
-              {(item) => renderRow(item)}
-            </For>
-          </div>
-        </>
-      ),
+      // A getter, so the children are built once, inside the part: given as a function,
+      // they're built again, whole, whenever something at their top changes.
+      get children() {
+        return (
+          <>
+            <div role="rowgroup" class="data-grid-head">
+              {header()}
+            </div>
+            <div role="rowgroup" class="data-grid-body" style={{ "block-size": `${shownRows().size}px` }}>
+              <For each={shownRows().items} keyed={(item) => item.index}>
+                {(item) => renderRow(item)}
+              </For>
+            </div>
+          </>
+        )
+      },
     },
     "div",
   )

@@ -2,6 +2,7 @@
 // list's gestures, keys and agent actions are the shared primitive (mobile/swipe-list.ts); these
 // check the Solid parts over UI SDK's Listbox, Drawer, Menu and Button.
 import { fireEvent, render, screen, waitFor } from "@solidjs/testing-library"
+import { createSignal, flush } from "solid-js"
 import { expect, test, vi } from "vitest"
 import { AppBar, PullToRefresh, SwipeList, TabBar, TimeWheel } from "@/solid/src/mobile"
 import { settle } from "./solid-bridge"
@@ -94,4 +95,21 @@ test("the app bar's title takes the heading level it's given", async () => {
   render(() => <AppBar title="Inbox" headingLevel={2} />)
   await settle()
   expect(screen.getByRole("heading", { level: 2, name: "Inbox" })).toBeTruthy()
+})
+
+// A part's children given as a function are built again, whole, when something at their top
+// changes (lint solid/part-children-once): archiving one row rebuilt every row.
+test("a row that goes leaves the others as they are", async () => {
+  const [items, setItems] = createSignal([
+    { id: "a", label: "Grace Hopper", content: "Grace Hopper", end: [{ id: "archive", label: "Archive" }] },
+    { id: "b", label: "Ada Lovelace", content: "Ada Lovelace", end: [{ id: "archive", label: "Archive" }] },
+  ])
+  render(() => <SwipeList label="Messages" onAction={(id) => setItems((all) => all.filter((item) => item.id !== id))} items={items()} />)
+  await settle()
+  const ada = screen.getByRole("listitem", { name: "Ada Lovelace" })
+  setItems((all) => all.filter((item) => item.id !== "a"))
+  flush()
+  await settle()
+  expect(screen.queryByRole("listitem", { name: "Grace Hopper" })).toBeNull()
+  expect(screen.getByRole("listitem", { name: "Ada Lovelace" })).toBe(ada)
 })

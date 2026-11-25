@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { lint, type FileRule, type RepoContext, type RepoRule } from "../../scripts/lint/core.ts"
-import { axeWaits, exampleFrames, hooksAtTopLevel, internalPrimitives, noDeferredFocus, noDialogInForm, seriesMixHue, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports, shellStyles, toastsVisible } from "../../scripts/lint/rules/code.ts"
+import { axeWaits, exampleFrames, hooksAtTopLevel, internalPrimitives, noDeferredFocus, noDialogInForm, seriesMixHue, skinScope, solidChildrenOnce, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports, shellStyles, toastsVisible } from "../../scripts/lint/rules/code.ts"
 import { rules } from "../../scripts/lint/rules/index.ts"
 import { rulesOfHooks } from "../../scripts/lint/hooks.ts"
 import { facts } from "../../src/site/facts.ts"
@@ -71,6 +71,12 @@ describe("code rules", () => {
     "registry/uiset/ui/canvas/canvas.css",
     `.canvas-minimap-node {\n  fill: color-mix(in oklch, var(--series) 75%, var(--ui-foreground));\n}`,
     `.canvas-minimap-node {\n  fill: color-mix(in oklab, var(--series) 75%, var(--ui-foreground));\n}\n.event {\n  background: color-mix(in oklch, var(--series) 14%, transparent);\n}`,
+  )
+  fileRule(
+    solidChildrenOnce,
+    "solid/src/terminal.tsx",
+    `return usePart(handle, "root", undefined, {\n  children: () => (\n    <>\n      <Show when={unseen()}>…</Show>\n    </>\n  ),\n})`,
+    `return usePart(handle, "root", undefined, {\n  get children() {\n    return <Show when={unseen()}>…</Show>\n  },\n})\nusePart(handle, "root", undefined, { children: (state: { lanes: Lanes }) => <Lanes lanes={state.lanes} /> })`,
   )
   fileRule(
     noDialogInForm,

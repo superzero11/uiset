@@ -236,104 +236,108 @@ function Canvas(props: CanvasProps) {
       ref: (el: HTMLElement) => {
         root = el
       },
-      children: () => (
-        <>
-          <p id={helpId} hidden>
-            Arrow keys go to the nearest node that way. Alt with arrows moves it, Space selects it, C starts a wire (arrows choose an input, Enter connects, Escape
-            stops), Delete removes, Enter opens. Plus and minus zoom; 0 resets.
-          </p>
-          <GridPart class="canvas-grid" />
-          <WorldPart class="canvas-world">
-            <svg class="canvas-wires" aria-hidden="true" width="1" height="1">
-              <For each={allEdges()} keyed={(edge) => edge.id}>
-                {(edge) => <WirePart value={edge().id} class="canvas-wire" />}
-              </For>
-              <DraftPart class="canvas-wire" data-draft="" />
-              <For each={allEdges()} keyed={(edge) => edge.id}>
-                {(edge) => (
-                  // Drawn whole as SVG, so its title is SVG's tooltip, not an HTML title.
-                  <UnwirePart
-                    value={edge().id}
-                    class="canvas-unwire"
-                    render={(part: JSX.SvgSVGAttributes<SVGGElement>) => (
-                      <g {...part}>
-                        <title>Disconnect</title>
-                        <circle r="9" />
-                        <path d="M -3.5 -3.5 L 3.5 3.5 M 3.5 -3.5 L -3.5 3.5" />
-                      </g>
-                    )}
-                  />
-                )}
-              </For>
-            </svg>
-            <NodesPart class="canvas-nodes" aria-label={`${props.label} nodes`}>
-              <For each={allNodes()} keyed={(node) => node.id}>
-                {(node) => {
-                  // Ids from data may hold spaces; these don't.
-                  const partId = createUniqueId()
-                  const rows = createMemo(() => Array.from({ length: Math.max(node().inputs?.length ?? 0, node().outputs?.length ?? 0) }, (_, i) => i))
-                  const wires = createMemo(() => describeWires(node(), allNodes(), allEdges()))
-                  const kind = () => props.kinds?.find((k) => k.id === node().kind)?.label
-                  const body = createMemo(() => props.renderNode?.(node()))
-                  return (
-                    <NodePart
-                      value={node().id}
-                      class="canvas-node"
-                      // Named by what it shows, in the order it shows it: title, then kind.
-                      aria-labelledby={kind() ? `${partId}-title ${partId}-kind` : `${partId}-title`}
-                      aria-describedby={[body() ? `${partId}-body` : "", wires() ? `${partId}-wires` : ""].filter(Boolean).join(" ") || undefined}
-                      data-locked={props.locked?.(node()) ? "" : undefined}
-                    >
-                      <span class="canvas-node-card" style={{ "inline-size": `${node().width ?? 208}px`, "--series": series(node().color) }}>
-                        <span class="canvas-node-header">
-                          <span id={`${partId}-title`} class="canvas-node-title">
-                            {node().title}
+      // A getter, so the children are built once, inside the part: given as a function,
+      // they're built again, whole, whenever something at their top changes.
+      get children() {
+        return (
+          <>
+            <p id={helpId} hidden>
+              Arrow keys go to the nearest node that way. Alt with arrows moves it, Space selects it, C starts a wire (arrows choose an input, Enter connects, Escape
+              stops), Delete removes, Enter opens. Plus and minus zoom; 0 resets.
+            </p>
+            <GridPart class="canvas-grid" />
+            <WorldPart class="canvas-world">
+              <svg class="canvas-wires" aria-hidden="true" width="1" height="1">
+                <For each={allEdges()} keyed={(edge) => edge.id}>
+                  {(edge) => <WirePart value={edge().id} class="canvas-wire" />}
+                </For>
+                <DraftPart class="canvas-wire" data-draft="" />
+                <For each={allEdges()} keyed={(edge) => edge.id}>
+                  {(edge) => (
+                    // Drawn whole as SVG, so its title is SVG's tooltip, not an HTML title.
+                    <UnwirePart
+                      value={edge().id}
+                      class="canvas-unwire"
+                      render={(part: JSX.SvgSVGAttributes<SVGGElement>) => (
+                        <g {...part}>
+                          <title>Disconnect</title>
+                          <circle r="9" />
+                          <path d="M -3.5 -3.5 L 3.5 3.5 M 3.5 -3.5 L -3.5 3.5" />
+                        </g>
+                      )}
+                    />
+                  )}
+                </For>
+              </svg>
+              <NodesPart class="canvas-nodes" aria-label={`${props.label} nodes`}>
+                <For each={allNodes()} keyed={(node) => node.id}>
+                  {(node) => {
+                    // Ids from data may hold spaces; these don't.
+                    const partId = createUniqueId()
+                    const rows = createMemo(() => Array.from({ length: Math.max(node().inputs?.length ?? 0, node().outputs?.length ?? 0) }, (_, i) => i))
+                    const wires = createMemo(() => describeWires(node(), allNodes(), allEdges()))
+                    const kind = () => props.kinds?.find((k) => k.id === node().kind)?.label
+                    const body = createMemo(() => props.renderNode?.(node()))
+                    return (
+                      <NodePart
+                        value={node().id}
+                        class="canvas-node"
+                        // Named by what it shows, in the order it shows it: title, then kind.
+                        aria-labelledby={kind() ? `${partId}-title ${partId}-kind` : `${partId}-title`}
+                        aria-describedby={[body() ? `${partId}-body` : "", wires() ? `${partId}-wires` : ""].filter(Boolean).join(" ") || undefined}
+                        data-locked={props.locked?.(node()) ? "" : undefined}
+                      >
+                        <span class="canvas-node-card" style={{ "inline-size": `${node().width ?? 208}px`, "--series": series(node().color) }}>
+                          <span class="canvas-node-header">
+                            <span id={`${partId}-title`} class="canvas-node-title">
+                              {node().title}
+                            </span>
+                            <Show when={kind()}>
+                              <span id={`${partId}-kind`} class="canvas-node-kind">
+                                {kind()}
+                              </span>
+                            </Show>
                           </span>
-                          <Show when={kind()}>
-                            <span id={`${partId}-kind`} class="canvas-node-kind">
-                              {kind()}
+                          <For each={rows()}>{(index) => <PortRow node={node()} index={index} />}</For>
+                          <span class="canvas-node-foot" />
+                          <Show when={body()}>
+                            <span id={`${partId}-body`} class="canvas-node-body">
+                              {body()}
                             </span>
                           </Show>
                         </span>
-                        <For each={rows()}>{(index) => <PortRow node={node()} index={index} />}</For>
-                        <span class="canvas-node-foot" />
-                        <Show when={body()}>
-                          <span id={`${partId}-body`} class="canvas-node-body">
-                            {body()}
+                        <Show when={wires()}>
+                          <span id={`${partId}-wires`} hidden>
+                            {wires()}
                           </span>
                         </Show>
-                      </span>
-                      <Show when={wires()}>
-                        <span id={`${partId}-wires`} hidden>
-                          {wires()}
-                        </span>
-                      </Show>
-                    </NodePart>
-                  )
-                }}
-              </For>
-            </NodesPart>
-          </WorldPart>
-          <LassoPart class="canvas-lasso" />
-          <Show when={props.controls ?? true}>
-            <div class="canvas-controls" role="group" aria-label="Zoom" data-canvas-control="">
-              <Button variant="ghost" aria-label="Zoom out" onClick={() => handle.api.zoomOut()}>
-                <Icon name="minus" />
-              </Button>
-              <ZoomPart class="canvas-zoom" type="button" onClick={() => handle.api.resetZoom()} />
-              <Button variant="ghost" aria-label="Zoom in" onClick={() => handle.api.zoomIn()}>
-                <Icon name="plus" />
-              </Button>
-              <Button variant="ghost" aria-label="Zoom to fit" onClick={() => handle.api.fitView()}>
-                <Icon name="fit" />
-              </Button>
-            </div>
-          </Show>
-          <Show when={props.minimap ?? true}>
-            <Minimap nodes={allNodes()} onCenter={(point) => handle.api.centerOn(point)} />
-          </Show>
-        </>
-      ),
+                      </NodePart>
+                    )
+                  }}
+                </For>
+              </NodesPart>
+            </WorldPart>
+            <LassoPart class="canvas-lasso" />
+            <Show when={props.controls ?? true}>
+              <div class="canvas-controls" role="group" aria-label="Zoom" data-canvas-control="">
+                <Button variant="ghost" aria-label="Zoom out" onClick={() => handle.api.zoomOut()}>
+                  <Icon name="minus" />
+                </Button>
+                <ZoomPart class="canvas-zoom" type="button" onClick={() => handle.api.resetZoom()} />
+                <Button variant="ghost" aria-label="Zoom in" onClick={() => handle.api.zoomIn()}>
+                  <Icon name="plus" />
+                </Button>
+                <Button variant="ghost" aria-label="Zoom to fit" onClick={() => handle.api.fitView()}>
+                  <Icon name="fit" />
+                </Button>
+              </div>
+            </Show>
+            <Show when={props.minimap ?? true}>
+              <Minimap nodes={allNodes()} onCenter={(point) => handle.api.centerOn(point)} />
+            </Show>
+          </>
+        )
+      },
     } as never,
     "div",
   )

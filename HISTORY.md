@@ -193,6 +193,15 @@ vercel-labs/ui#905 (2026-11-19).
     value array doesn't help; an uncontrolled group doesn't tear. Chrome only (jsdom runs no
     frames). UISet's Solid chat feedback keeps the group's own value and applies the page's
     through `createToggleGroupController`. Not filed yet (2026-11-24).
+38. **A part's children given as a function are built again, whole, when anything at their
+    top changes.** In Solid (beta.16, Solid 2.0.3), `usePart(handle, "root", …, { children:
+    () => <>…<Show when={x()}>…</Show></> })` runs the function again when `x` changes, and
+    every element in it is new: the function runs and its result is resolved in one
+    computation, where Solid's own `children()` builds once and resolves apart. A `Show` or
+    `For` inside an element doesn't do it, nor do children passed as a value. Built before
+    the part, though, the children's own parts don't find it. UISet passes them through a
+    getter, which UI SDK reads once inside the part (lint `solid/part-children-once`). Not
+    filed yet (2026-11-25).
 
 ## What shipped
 
@@ -2915,13 +2924,26 @@ vercel-labs/ui#905 (2026-11-19).
     spinner set `border-box`; all three pages measure the same (77, 18, 16). A page's reset
     outside any layer beats the kit's layered rules, so the fix works under `border-box`
     rather than declaring `content-box`.
-  - The new tests found two things a script does and a person doesn't, the same on React's
-    page: a press on the tab bar within the ~150 ms a sheet takes to close is lost when the
-    page has to scroll to it (the scroll lock puts the scroll back), and with reduced motion
-    a press on a wheel in a sheet's first ~50 ms closes the sheet (UI SDK issue 20, closed as
-    expected). The tests wait for the sheet, as a person does.
+  - The new tests met two of UI SDK's, the same on React's page: a press on the page while a
+    sheet closes is lost (issue 34: a closing modal swallows clicks; about 150 ms with
+    reduced motion, 450 ms without, so a quick person can meet it too; corrected the same
+    day, first put down to the scroll lock), and with reduced motion a press on a wheel in a
+    sheet's first ~50 ms closes the sheet (issue 20, closed as expected: only a script is
+    that quick). The tests wait for the sheet.
 
   28 mutations, 26 caught once two tests were added, in React and Solid (a row's keys help;
   the action sheet's Delete all asking the person). Of the two left, one changes nothing (a
   swipe already refuses a side with no actions, so `disabled` adds nothing) and one is
   `keepWheelOnValue`, a WebKit fix whose shared test runs only in WebKit.
+- 2026-11-25 — **Solid: a part's children are built once.** Porting the terminal found that
+  its output was built again, whole, the moment New output below appeared, so the view
+  jumped back to the end and the button never stayed (UI SDK issue 38: a part's children
+  given as a function are rebuilt when a `Show` or `For` at their top changes). The mobile
+  kit's rows were rebuilt on every change to the list (archiving one rebuilt them all), and
+  the canvas whole when its controls or minimap came or went. Those three and the data grid
+  now pass their children through a getter, which UI SDK reads once inside the part;
+  building them before the part lost its context, and the rows' and nodes' own parts failed.
+  Lint rule `solid/part-children-once` flags a children function that doesn't read the
+  part's state. Two unit tests, a row kept when another goes and a node kept when the
+  minimap comes, fail on the old code. Solid's mobile (15), canvas (27) and data grid (25)
+  browser tests pass.

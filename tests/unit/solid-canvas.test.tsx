@@ -364,3 +364,17 @@ test("the toolbar counts the selection in its Remove button", async () => {
   expect(screen.queryByRole("button", { name: "Add node" })).toBeNull()
   expect(screen.queryByRole("button", { name: "Undo" })).toBeNull()
 })
+
+// A part's children given as a function are built again, whole, when something at their top
+// changes (lint solid/part-children-once): the minimap coming or going rebuilt every node.
+test("turning the minimap on or off keeps the nodes as they are", async () => {
+  const [minimap, setMinimap] = createSignal(false)
+  render(() => <Canvas label="Flow" defaultNodes={nodes} minimap={minimap()} />)
+  await settle()
+  const first = screen.getByRole("option", { name: /^Source/ })
+  setMinimap(true)
+  flush()
+  await settle()
+  expect(document.querySelector(".canvas-minimap")).toBeTruthy()
+  expect(screen.getByRole("option", { name: /^Source/ })).toBe(first)
+})

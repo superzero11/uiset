@@ -142,45 +142,49 @@ function SwipeList(props: {
       get class() {
         return ["swipe-list", props.class].filter(Boolean).join(" ")
       },
-      children: () => (
-        <>
-          <For each={props.items} keyed={(row) => row.id}>
-            {(row) => {
-              const all = () => [...(row().start ?? []), ...(row().end ?? [])]
-              return (
-                <SwipeRowPart
-                  value={row().id}
-                  class="swipe-row"
-                  // Named by its label, or by its content when it has none.
-                  aria-label={row().label}
-                  aria-labelledby={row().label ? undefined : `${baseId}-${row().id}`}
-                  aria-describedby={all().length ? `${baseId}-help` : undefined}
-                >
-                  <Actions row={row()} side="start" />
-                  <Actions row={row()} side="end" />
-                  <SwipeContentPart value={row().id} class="swipe-content">
-                    <span id={`${baseId}-${row().id}`} class="swipe-content-body">
-                      {row().content}
-                    </span>
-                    <Show when={all().length > 0}>
-                      <RowMenu
-                        actions={all()}
-                        label={row().label ? words().actionsFor(row().label!) : undefined}
-                        named={{ id: `${baseId}-${row().id}`, format: words().actionsFor, content: row().content }}
-                        confirmOf={(action) => confirmOf(row(), action)}
-                        onAction={(id) => props.onAction(row().id, id)}
-                      />
-                    </Show>
-                  </SwipeContentPart>
-                </SwipeRowPart>
-              )
-            }}
-          </For>
-          <li hidden id={`${baseId}-help`}>
-            {words().help}
-          </li>
-        </>
-      ),
+      // A getter, so the children are built once, inside the part: given as a function,
+      // they're built again, whole, whenever something at their top changes.
+      get children() {
+        return (
+          <>
+            <For each={props.items} keyed={(row) => row.id}>
+              {(row) => {
+                const all = () => [...(row().start ?? []), ...(row().end ?? [])]
+                return (
+                  <SwipeRowPart
+                    value={row().id}
+                    class="swipe-row"
+                    // Named by its label, or by its content when it has none.
+                    aria-label={row().label}
+                    aria-labelledby={row().label ? undefined : `${baseId}-${row().id}`}
+                    aria-describedby={all().length ? `${baseId}-help` : undefined}
+                  >
+                    <Actions row={row()} side="start" />
+                    <Actions row={row()} side="end" />
+                    <SwipeContentPart value={row().id} class="swipe-content">
+                      <span id={`${baseId}-${row().id}`} class="swipe-content-body">
+                        {row().content}
+                      </span>
+                      <Show when={all().length > 0}>
+                        <RowMenu
+                          actions={all()}
+                          label={row().label ? words().actionsFor(row().label!) : undefined}
+                          named={{ id: `${baseId}-${row().id}`, format: words().actionsFor, content: row().content }}
+                          confirmOf={(action) => confirmOf(row(), action)}
+                          onAction={(id) => props.onAction(row().id, id)}
+                        />
+                      </Show>
+                    </SwipeContentPart>
+                  </SwipeRowPart>
+                )
+              }}
+            </For>
+            <li hidden id={`${baseId}-help`}>
+              {words().help}
+            </li>
+          </>
+        )
+      },
     } as never,
     "ul",
   )
