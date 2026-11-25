@@ -2947,3 +2947,27 @@ vercel-labs/ui#905 (2026-11-19).
   part's state. Two unit tests, a row kept when another goes and a node kept when the
   minimap comes, fail on the old code. Solid's mobile (15), canvas (27) and data grid (25)
   browser tests pass.
+- 2026-11-25 — **Solid, phase 3: the terminal.** The terminal in Solid over the shared screen
+  and session (`terminal/ansi.ts`, `terminal/session.ts`): output with ANSI colors, cursor
+  codes and links, history, Tab completion, Ctrl+C and Ctrl+L, streaming commands, the
+  controller and agent actions. React's 10 browser tests moved into one body
+  (`tests/e2e/terminal-tests.ts`) that runs on React's gallery and on Solid's terminal page.
+  Solid passes all 10. React passes 8; its two contrast tests, six gallery loads each, were
+  stopped by the memory guard twice (the same as canvas's), and pass on Solid's page. React's
+  bridge tests ported (5), with 8 of Solid's own. The page renders on the server and
+  hydrates, streaming and the keys say nothing on the console, and the sweep runs every
+  command, key and control: 28.
+  - Lines are drawn as rows kept while their version holds, keyed by line, with each run in
+    place: a progress bar redrawn changes its text, not its nodes, so the log (which reads
+    additions) doesn't read it out again. A unit test checks it, and React passes it too.
+  - **New output below never showed**: UI SDK issue 38. The terminal's children are a getter
+    now, and so are three kits' (the entry before this one).
+  - The colors test read the output before the frame that draws it: React's slower page hid
+    the race. It waits for the colors now. The New output test scrolled up in the same moment
+    as Enter, before the command's line was drawn, and the view followed that line down; it
+    waits for the first reply, as a person would.
+
+  23 mutations, all caught once five tests were added: an unchanged line not turned into runs
+  again, output written before the terminal is on the page, Ctrl+C over a selection copying,
+  Enter while a command runs, and a click on the output reaching the prompt. The last three
+  went into React's tests too, which had none, and catch the same mutations there.

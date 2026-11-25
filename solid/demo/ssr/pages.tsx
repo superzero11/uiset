@@ -13,6 +13,7 @@ import { DemoPage } from "../demo-page"
 import BoardExample from "../examples/board"
 import CanvasExample from "../examples/canvas"
 import MobileExample from "../examples/mobile"
+import TerminalExample from "../examples/terminal"
 import SchedulerTimelineExample from "../examples/scheduler-timeline"
 import { ChatDemo } from "../kits/chat-demo"
 import { EditorDemo } from "../kits/editor-demo"
@@ -141,6 +142,16 @@ function MobilePage() {
   )
 }
 
+function TerminalPage() {
+  return (
+    <DemoPage title="Terminal in Solid" description="The terminal kit, rendered on the server.">
+      <div class="terminal-stage">
+        <TerminalExample />
+      </div>
+    </DemoPage>
+  )
+}
+
 const pages: Record<string, () => JSX.Element> = {
   root: Root,
   components: Components,
@@ -152,6 +163,7 @@ const pages: Record<string, () => JSX.Element> = {
   canvas: CanvasPage,
   ide: IdePage,
   mobile: MobilePage,
+  terminal: TerminalPage,
 }
 
 export { pages }

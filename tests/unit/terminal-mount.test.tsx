@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react"
+import { act, fireEvent, render, screen } from "@testing-library/react"
 import { startTransition, Suspense, use } from "react"
 import { afterEach, expect, test, vi } from "vitest"
 import { createTerminalController, Terminal } from "@/registry/uiset/ui/terminal"
@@ -69,4 +69,37 @@ test("past scrollback, old lines go", async () => {
   expect(screen.queryByText("line 1")).toBeNull()
   expect(screen.getByText("line 15")).toBeTruthy()
   expect(screen.getByText("more 15")).toBeTruthy()
+})
+
+// The prompt's keys and clicks, as tests/unit/solid-terminal.test.tsx checks them in Solid.
+test("Ctrl+C with text selected copies: the line stays, and nothing is stopped or echoed", () => {
+  render(<Terminal label="Shell" />)
+  const input = screen.getByRole("textbox", { name: "Command line" }) as HTMLInputElement
+  input.value = "git status"
+  input.setSelectionRange(0, 3)
+  const kept = fireEvent.keyDown(input, { key: "c", code: "KeyC", ctrlKey: true })
+  expect(kept).toBe(true)
+  expect(input.value).toBe("git status")
+  expect(screen.getByRole("log", { name: "Output" }).textContent).not.toContain("^C")
+})
+
+test("Enter while a command runs says so and runs nothing more", async () => {
+  const ran: string[] = []
+  render(<Terminal label="Shell" commands={{ wait: { run: () => new Promise<void>(() => {}) }, echo: { run: (args) => void ran.push(args.join(" ")) } }} />)
+  const input = screen.getByRole("textbox", { name: "Command line" }) as HTMLInputElement
+  input.value = "wait"
+  await act(async () => fireEvent.submit(input.form!))
+  input.value = "echo hi"
+  await act(async () => fireEvent.submit(input.form!))
+  expect(ran).toEqual([])
+  expect(input.value).toBe("echo hi")
+})
+
+test("a click on the output puts the caret in the prompt; a tap doesn't open the keyboard", () => {
+  render(<Terminal label="Shell" welcome="Hello there" />)
+  const input = screen.getByRole("textbox", { name: "Command line" })
+  fireEvent.pointerUp(screen.getByText("Hello there"), { pointerType: "touch" })
+  expect(document.activeElement).not.toBe(input)
+  fireEvent.pointerUp(screen.getByText("Hello there"), { pointerType: "mouse" })
+  expect(document.activeElement).toBe(input)
 })

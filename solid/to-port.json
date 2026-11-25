@@ -20,7 +20,6 @@
     "templates/invoice",
     "templates/pricing",
     "templates/project-board",
-    "templates/settings",
-    "terminal"
+    "templates/settings"
   ]
 }

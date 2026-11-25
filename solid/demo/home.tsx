@@ -40,6 +40,9 @@ function Home() {
               <a href="./mobile.html">Mobile</a>
             </li>
             <li>
+              <a href="./terminal.html">Terminal</a>
+            </li>
+            <li>
               <a href="./ssr/root">The root, server-rendered</a>
             </li>
           </ul>

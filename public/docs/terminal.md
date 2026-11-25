@@ -68,6 +68,26 @@ socket.onmessage = (event) => shell.print(event.data)
 - The colors are `--term-red` and friends, checked at 4.5:1 on the terminal in every skin and
   scheme. "Black" and "white" follow the scheme instead of vanishing into it.
 
+## Solid
+
+`@uiset/solid/terminal` has the same `Terminal`, with React's props (`class`, not
+`className`), `createTerminalController` and `words`. The screen and the session are the
+same code as React's: the same escapes, history, completion and agent actions.
+
+```tsx
+import { createTerminalController, Terminal } from "@uiset/solid/terminal"
+
+const shell = createTerminalController()
+socket.onmessage = (event) => shell.print(event.data)
+
+<Terminal label="Shell" prompt="~/app $" commands={commands} controller={shell} />
+```
+
+`createTerminalController()` is called once in the component body, where React keeps it in
+state. A line redrawn in place keeps its element and changes only its text, so the log
+doesn't read a progress bar out as new lines. The browser tests are React's: one set runs on
+React's gallery and on Solid's terminal page. See [Solid](./solid.md).
+
 ## Keys
 
 | Keys              | Does                                                                 |

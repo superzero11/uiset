@@ -50,6 +50,7 @@ test.each([
   ["canvas", 'aria-roledescription="canvas"'],
   ["ide", 'role="tree"'],
   ["mobile", 'aria-label="Messages"'],
+  ["terminal", 'aria-roledescription="terminal"'],
 ])("the %s kit's demo renders on the server", (name, mark) => {
   const Page = pages[name]!
   const html = renderToString(() => <Page />)
