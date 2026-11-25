@@ -43,6 +43,8 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
 - The scheduler: a week, a day and a month, events drawn, moved and resized by pointer,
   keyboard and agent, the event dialog that keeps the schedule's rules, and room bookings on
   a timeline ([Scheduler](./scheduler.md#solid)).
+- The canvas: nodes and wires to pan, zoom, move, select and wire by pointer, keyboard and
+  agent, the minimap, the toolbar with undo, and the inspector ([Canvas](./canvas.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the

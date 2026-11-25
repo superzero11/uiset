@@ -138,3 +138,31 @@
   gap: 1rem;
   min-width: 0;
 }
+
+/* Canvas demo */
+
+/* A wider page than the rest, so the canvas gets the width React's kit page gives it. */
+.web-demo:has(.canvas-stage) {
+  max-inline-size: 72rem;
+}
+
+.canvas-stage {
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  border: 1px solid var(--ui-border);
+  border-radius: calc(var(--ui-radius) * 2);
+}
+
+.canvas-demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 17rem;
+  gap: 1rem;
+  min-width: 0;
+
+  > .canvas-toolbar {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 56rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

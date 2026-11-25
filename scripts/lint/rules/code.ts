@@ -264,3 +264,17 @@ export const noDialogInForm: FileRule = {
     return out
   },
 }
+
+export const seriesMixHue: FileRule = {
+  id: "css/series-mix-keeps-hue",
+  why: "2026-11-25: the canvas minimap mixed each node's series color with the foreground in oklch, which turns the hue toward the foreground's own near-meaningless hue: Draft answer's teal (162) came out olive (121) on the site and cyan (188) on Solid's page, so the map's boxes didn't match their nodes. Mix a series color with anything but transparent in oklab.",
+  appliesTo: (path) => /^(registry|src|web\/src|solid)\//.test(path) && path.endsWith(".css"),
+  check(text) {
+    const out: Finding[] = []
+    for (const m of text.matchAll(/color-mix\(\s*in\s+oklch\s*,\s*var\(--series\)[^,]*,\s*([^)]+)\)/g)) {
+      if (/^transparent\b/.test(m[1]!.trim())) continue
+      out.push({ line: lineOf(text, m.index!), message: "A series color mixed in oklch turns toward the other color's hue: mix it in oklab, so it keeps its own." })
+    }
+    return out
+  },
+}

@@ -2849,3 +2849,26 @@ vercel-labs/ui#905 (2026-11-19).
   placement, and their time order, which is their Tab order. React's contrast test, six
   gallery loads, was stopped by the memory guard each try; its body is unchanged but for how
   it opens the page, and it passes on Solid's.
+- 2026-11-25 — **Solid, phase 3: the canvas.** The nodes, wires, minimap, toolbar, inspector
+  and history in Solid, over the shared primitive and geometry. React's 25 browser tests
+  moved into one body (`tests/e2e/canvas-tests.ts`) that runs on React's gallery and kit page
+  and on Solid's canvas page. React's canvas unit tests ported, with Solid's own besides (the
+  view's parts, an uncontrolled canvas, opening, the minimap, the toolbar, the inspector):
+  19, and 3 through the agent bridge. The page renders on the server and hydrates, moving,
+  wiring, zooming and the inspector say nothing on the console, and 16 controls are pressed.
+  - The history is `createCanvasHistory`, with getters for what changes. Solid applies a
+    write at the next flush, so its tests flush between steps; the app reads it in JSX.
+  - An added node is drawn before `addNode` returns, by a flush, as React's `flushSync` does.
+  - The disconnect marks render whole as SVG through `render`, so their `<title>` is SVG's.
+  - Solid's demo pages stop at 64rem, which left the canvas 694px: too narrow to show the
+    workflow whole at 60%, so it opened at 80% and the shared desktop test failed. The canvas
+    page is 72rem wide, and its canvas, 822px, opens at 69% like React's kit page.
+  - **The minimap's colors didn't match their nodes**, on every page: a mix with the text
+    color in oklch turned each hue toward the text's (Draft answer's teal, 162, came out 121
+    on the site and 188 on Solid's page). They mix in oklab now; lint rule
+    `css/series-mix-keeps-hue` catches the next one.
+
+  25 unit mutations, 24 caught once two tests were added (opening a node, the plural Remove
+  label); the one left follows positions untracked, which reruns with the nodes anyway. React's
+  selected-node contrast test, six gallery loads, was stopped by the memory guard each try; its
+  body is unchanged but for how it opens the page, and it passes on Solid's.

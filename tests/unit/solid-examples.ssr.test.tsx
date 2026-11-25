@@ -47,6 +47,7 @@ test.each([
   ["data-grid", 'role="grid"'],
   ["board", 'aria-roledescription="board"'],
   ["scheduler", 'aria-roledescription="schedule"'],
+  ["canvas", 'aria-roledescription="canvas"'],
 ])("the %s kit's demo renders on the server", (name, mark) => {
   const Page = pages[name]!
   const html = renderToString(() => <Page />)

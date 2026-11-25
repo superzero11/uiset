@@ -69,6 +69,34 @@ const [selected, setSelected] = useState<string[]>([])
 - Ports are drawn from fixed sizes (a 36px header and 28px rows, in canvas units), so wires
   never wait on measuring. Keep custom styles to those sizes.
 
+## Solid
+
+`@uiset/solid/canvas` is the same canvas in Solid 2, with React's props (`class`, not
+`className`) and parts: `Canvas`, `CanvasToolbar`, `CanvasInspector`, `canvasBounds` and
+`createCanvasController`. The history is `createCanvasHistory`, Solid's name for
+`useCanvasHistory`; its `nodes`, `edges`, `canUndo` and `canRedo` are getters, so read them in
+JSX.
+
+```tsx
+import { createSignal } from "solid-js"
+import { Canvas, CanvasToolbar, createCanvasController, createCanvasHistory } from "@uiset/solid/canvas"
+
+const canvas = createCanvasController()
+const history = createCanvasHistory({ nodes, edges })
+const [selected, setSelected] = createSignal<string[]>([])
+
+<CanvasToolbar canvas={canvas} kinds={kinds} selectedCount={selected().length}
+  onUndo={history.undo} onRedo={history.redo} canUndo={history.canUndo} canRedo={history.canRedo} />
+<Canvas label="Workflow" controller={canvas} nodes={history.nodes} edges={history.edges}
+  onNodesChange={history.onNodesChange} onEdgesChange={history.onEdgesChange}
+  selected={selected()} onSelectedChange={setSelected} kinds={kinds} fitView />
+```
+
+The inspector draws your fields once for each node it shows, with that node; read anything
+that changes later from your own state. Panning, moving, wiring, keys and agents are the same
+code as React's, and so are the browser tests: one set runs on React's gallery and kit page
+and on Solid's canvas page. See [Solid](./solid.md).
+
 ## Keys
 
 | Keys                        | Does                                                                   |

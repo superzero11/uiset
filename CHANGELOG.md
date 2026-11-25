@@ -74,8 +74,8 @@ On UI SDK `0.1.0-beta.16`.
   alert to the textarea count; the charts, sparkline and stat; the motion pieces; the tag,
   phone and masked inputs and inline edit; the schema form and upload; the table, code block
   and sortable list and tree; the chat kit; the rich text editor; the data grid; the board;
-  and the scheduler. Each component's docs page shows its example in Solid. The rest of the
-  kits and the templates follow before this release.
+  the scheduler; and the canvas. Each component's docs page shows its example in Solid. The
+  rest of the kits and the templates follow before this release.
 - **A schema form's `phone` field.** `kind: "phone"` draws a phone input, loaded only when a
   form has one (a plain field takes the number until then). Its value is E.164; Next, an
   agent's `goTo` and submit check it for its country, not just its shape, an agent fills it
@@ -105,6 +105,9 @@ On UI SDK `0.1.0-beta.16`.
 
 ### Fixed
 
+- **The canvas minimap's boxes match their nodes' colors.** Each mixed its node's color with
+  the text color in oklch, which turned its hue toward the text's: a teal node's box came out
+  olive. They mix in oklab now. Add `canvas` again (or update `@uiset/web`) to take it.
 - **A chat answer's footnotes stay in their answer.** In React, every answer's footnotes had
   the same ids, so a footnote link could jump to another answer's note; the "↩" back to the
   reference went nowhere and had no name (the answer's link dropped its id and label); and

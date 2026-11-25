@@ -343,8 +343,10 @@
     }
   }
 
+  /* Mixed in oklab: oklch would turn the hue toward the foreground's, so a teal node's box
+     came out olive on one page and cyan on another. */
   .canvas-minimap-node {
-    fill: color-mix(in oklch, var(--series) 75%, var(--ui-foreground));
+    fill: color-mix(in oklab, var(--series) 75%, var(--ui-foreground));
   }
 
   .canvas-minimap-view {

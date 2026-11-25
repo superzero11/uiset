@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { lint, type FileRule, type RepoContext, type RepoRule } from "../../scripts/lint/core.ts"
-import { axeWaits, exampleFrames, hooksAtTopLevel, internalPrimitives, noDeferredFocus, noDialogInForm, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports, shellStyles, toastsVisible } from "../../scripts/lint/rules/code.ts"
+import { axeWaits, exampleFrames, hooksAtTopLevel, internalPrimitives, noDeferredFocus, noDialogInForm, seriesMixHue, skinScope, noHandRolledRoles, noImportant, noOnly, pinUiSdk, relativeImports, shellStyles, toastsVisible } from "../../scripts/lint/rules/code.ts"
 import { rules } from "../../scripts/lint/rules/index.ts"
 import { rulesOfHooks } from "../../scripts/lint/hooks.ts"
 import { facts } from "../../src/site/facts.ts"
@@ -66,6 +66,12 @@ describe("code rules", () => {
   fileRule(relativeImports, "registry/uiset/ui/board.tsx", `import { Button } from "@/registry/uiset/ui/button"`, `import { Button } from "./button"`)
   fileRule(shellStyles, "registry/uiset/ui/rich-text.tsx", `import { Icon } from "./shell/icons"\nimport "./rich-text/rich-text.css"`, `import { Icon } from "./shell/icons"\nimport "./shell/shell.css"`)
   fileRule(shellStyles, "solid/src/rich-text.tsx", `<SelectLabel class="uiset-visually-hidden">Block type</SelectLabel>`, `import "../../registry/uiset/ui/shell/shell.css"\n<SelectLabel class="uiset-visually-hidden">Block type</SelectLabel>`)
+  fileRule(
+    seriesMixHue,
+    "registry/uiset/ui/canvas/canvas.css",
+    `.canvas-minimap-node {\n  fill: color-mix(in oklch, var(--series) 75%, var(--ui-foreground));\n}`,
+    `.canvas-minimap-node {\n  fill: color-mix(in oklab, var(--series) 75%, var(--ui-foreground));\n}\n.event {\n  background: color-mix(in oklch, var(--series) 14%, transparent);\n}`,
+  )
   fileRule(
     noDialogInForm,
     "registry/uiset/ui/board.tsx",

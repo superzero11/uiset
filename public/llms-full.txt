@@ -3160,6 +3160,8 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
 - The scheduler: a week, a day and a month, events drawn, moved and resized by pointer,
   keyboard and agent, the event dialog that keeps the schedule's rules, and room bookings on
   a timeline ([Scheduler](./scheduler.md#solid)).
+- The canvas: nodes and wires to pan, zoom, move, select and wire by pointer, keyboard and
+  agent, the minimap, the toolbar with undo, and the inspector ([Canvas](./canvas.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the
@@ -4029,7 +4031,7 @@ Then hand it back to the person to review the branch.
 
 # Roadmap
 
-Updated 2026-11-24. What we're building, what comes next, and what we won't do. What
+Updated 2026-11-25. What we're building, what comes next, and what we won't do. What
 shipped is in the [changelog](https://github.com/superzero11/uiset/blob/main/CHANGELOG.md), and
 the decisions behind it in [HISTORY.md](https://github.com/superzero11/uiset/blob/main/HISTORY.md).
 Sizes: S small, M medium, L large.
@@ -6976,6 +6978,34 @@ const [selected, setSelected] = useState<string[]>([])
   stay readable, and Zoom to fit shows all of it. `controls` and `minimap` turn the corner parts off.
 - Ports are drawn from fixed sizes (a 36px header and 28px rows, in canvas units), so wires
   never wait on measuring. Keep custom styles to those sizes.
+
+## Solid
+
+`@uiset/solid/canvas` is the same canvas in Solid 2, with React's props (`class`, not
+`className`) and parts: `Canvas`, `CanvasToolbar`, `CanvasInspector`, `canvasBounds` and
+`createCanvasController`. The history is `createCanvasHistory`, Solid's name for
+`useCanvasHistory`; its `nodes`, `edges`, `canUndo` and `canRedo` are getters, so read them in
+JSX.
+
+```tsx
+import { createSignal } from "solid-js"
+import { Canvas, CanvasToolbar, createCanvasController, createCanvasHistory } from "@uiset/solid/canvas"
+
+const canvas = createCanvasController()
+const history = createCanvasHistory({ nodes, edges })
+const [selected, setSelected] = createSignal<string[]>([])
+
+<CanvasToolbar canvas={canvas} kinds={kinds} selectedCount={selected().length}
+  onUndo={history.undo} onRedo={history.redo} canUndo={history.canUndo} canRedo={history.canRedo} />
+<Canvas label="Workflow" controller={canvas} nodes={history.nodes} edges={history.edges}
+  onNodesChange={history.onNodesChange} onEdgesChange={history.onEdgesChange}
+  selected={selected()} onSelectedChange={setSelected} kinds={kinds} fitView />
+```
+
+The inspector draws your fields once for each node it shows, with that node; read anything
+that changes later from your own state. Panning, moving, wiring, keys and agents are the same
+code as React's, and so are the browser tests: one set runs on React's gallery and kit page
+and on Solid's canvas page. See [Solid](./solid.md).
 
 ## Keys
 

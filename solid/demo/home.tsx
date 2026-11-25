@@ -31,6 +31,9 @@ function Home() {
               <a href="./scheduler.html">Scheduler</a>
             </li>
             <li>
+              <a href="./canvas.html">Canvas</a>
+            </li>
+            <li>
               <a href="./ssr/root">The root, server-rendered</a>
             </li>
           </ul>

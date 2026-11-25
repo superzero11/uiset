@@ -10,6 +10,7 @@ import { UISet, type Skin } from "../../src/uiset"
 import { Components } from "../components-page"
 import { DemoPage } from "../demo-page"
 import BoardExample from "../examples/board"
+import CanvasExample from "../examples/canvas"
 import SchedulerTimelineExample from "../examples/scheduler-timeline"
 import { ChatDemo } from "../kits/chat-demo"
 import { EditorDemo } from "../kits/editor-demo"
@@ -107,6 +108,16 @@ function Scheduler() {
   )
 }
 
+function CanvasPage() {
+  return (
+    <DemoPage title="Canvas in Solid" description="The canvas kit, rendered on the server.">
+      <div class="canvas-stage">
+        <CanvasExample />
+      </div>
+    </DemoPage>
+  )
+}
+
 const pages: Record<string, () => JSX.Element> = {
   root: Root,
   components: Components,
@@ -115,6 +126,7 @@ const pages: Record<string, () => JSX.Element> = {
   "data-grid": Grid,
   board: Board,
   scheduler: Scheduler,
+  canvas: CanvasPage,
 }
 
 export { pages }
