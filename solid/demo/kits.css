@@ -176,3 +176,91 @@
 .ide-stage {
   min-width: 0;
 }
+
+/* Mobile demo */
+
+/* The phone itself (radius, status bar, home indicator, insets) is the kit's .mobile-frame. */
+.mobile-demo {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  inline-size: min(100%, 24rem);
+  block-size: 40rem;
+  margin-inline: auto;
+}
+
+.mobile-demo-body {
+  min-block-size: 0;
+  overflow: auto;
+}
+
+.mobile-demo-empty {
+  margin: 0;
+  padding: 2rem 1rem;
+  color: var(--ui-muted-foreground);
+  text-align: center;
+}
+
+.mobile-demo-help {
+  display: flex;
+  margin-inline: auto;
+}
+
+/* Every row keeps a gutter for the unread dot, as mail apps do, so names line up whether
+   a message is read or not and the dot never meets the edge. */
+.mobile-message {
+  display: grid;
+  grid-template-columns: 0.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.125rem 0.625rem;
+
+  &::before {
+    content: "";
+    grid-row: 1;
+    grid-column: 1;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 50%;
+  }
+
+  &[data-unread]::before {
+    background: var(--mobile-accent);
+  }
+
+  &[data-unread] .mobile-message-from {
+    font-weight: 700;
+  }
+}
+
+.mobile-message-time,
+.mobile-message-subject {
+  color: var(--ui-muted-foreground);
+  font-size: 0.875rem;
+}
+
+.mobile-message-subject {
+  grid-column: 2 / -1;
+}
+
+.mobile-alarms {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    gap: 0.125rem;
+    padding: 0.75rem 1rem;
+    border-block-end: 1px solid var(--ui-border);
+  }
+}
+
+.mobile-alarm-time {
+  font-size: 2rem;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+}
+
+.mobile-alarm-label {
+  color: var(--ui-muted-foreground);
+  font-size: 0.875rem;
+}

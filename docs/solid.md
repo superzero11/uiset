@@ -48,6 +48,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
 - The IDE, and its app template: the file tree with version control marks and file drags,
   tabs, the code editor with syntax colors and its own undo, the command palette, problems
   and the status bar ([IDE](./ide.md#solid)).
+- The mobile kit: rows that swipe aside to their actions, with a menu for screen readers, pull
+  to refresh, wheel pickers and the time wheel, bottom sheets with snap points, the action
+  sheet, the app bar and the tab bar ([Mobile](./mobile.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the

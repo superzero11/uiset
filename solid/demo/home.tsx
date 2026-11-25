@@ -37,6 +37,9 @@ function Home() {
               <a href="./ide.html">IDE</a>
             </li>
             <li>
+              <a href="./mobile.html">Mobile</a>
+            </li>
+            <li>
               <a href="./ssr/root">The root, server-rendered</a>
             </li>
           </ul>

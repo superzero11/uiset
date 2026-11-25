@@ -1,6 +1,8 @@
 @layer ui-sdk, uiset.tokens, uiset.base, uiset.skin;
 
-/* Phone app parts: swipe rows, wheels, sheets, bars and pull to refresh. Touch targets 44px+. */
+/* Phone app parts: swipe rows, wheels, sheets, bars and pull to refresh. Touch targets 44px+.
+   A part with a size and padding or a border sets its own box-sizing: a page's reset, or none,
+   doesn't change how it looks. */
 @layer uiset.base {
   /* Accent text: the primary pulled toward the text color, 4.5:1 in every skin and scheme. */
   :where([data-uiset]) {
@@ -15,6 +17,7 @@
   /* A phone for previews and docs: rounded like a device, with a status bar and a home
      indicator, and the insets that keep the bars clear of both. */
   .mobile-frame {
+    box-sizing: border-box;
     --mobile-inset-top: 1.75rem;
     --mobile-inset-bottom: 1.25rem;
     --mobile-inset-inline: 0.75rem;
@@ -446,6 +449,7 @@
   }
 
   .mobile-tab-badge {
+    box-sizing: border-box;
     position: absolute;
     inset-block-start: -0.25rem;
     inset-inline-start: 1rem;
@@ -460,14 +464,17 @@
     text-align: center;
   }
 
+  /* Its 3rem is the bar's own, below the status bar's inset and above its border: the same
+     height on every screen, with or without a button in it. */
   .mobile-app-bar {
+    box-sizing: border-box;
     position: sticky;
     inset-block-start: 0;
     z-index: 2;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    min-block-size: 3rem;
+    min-block-size: calc(3rem + max(env(safe-area-inset-top), var(--mobile-inset-top, 0px)) + 1px);
     padding: max(env(safe-area-inset-top), var(--mobile-inset-top, 0px)) max(0.25rem, var(--mobile-inset-inline, 0px)) 0;
     border-block-end: 1px solid var(--ui-border);
     background: var(--ui-background);
@@ -525,6 +532,7 @@
   }
 
   .mobile-refresh-spinner {
+    box-sizing: border-box;
     inline-size: 1rem;
     block-size: 1rem;
     border: 2px solid currentColor;

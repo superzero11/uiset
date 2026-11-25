@@ -2894,3 +2894,34 @@ vercel-labs/ui#905 (2026-11-19).
 
   28 unit mutations, 27 caught; the last, a dialog handing focus straight to the new item,
   turned out not to be needed once the reveal was fixed, and was taken out.
+- 2026-11-25 — **Solid, phase 3: the mobile kit.** The swipe list, wheel picker, time wheel,
+  sheet, action sheet, tab bar, app bar and pull to refresh in Solid, over the shared swipe
+  primitive (`mobile/swipe-list.ts`) and wheel helper, on UI SDK's Listbox, Drawer, Menu and
+  Button. React's 12 browser tests moved into one body (`tests/e2e/mobile-tests.ts`) that runs
+  on React's gallery and kit page and on Solid's mobile page; both pass. React's unit tests
+  ported, with one more each in React and Solid: 6, and 4 through the agent bridge. The page
+  renders on the server and hydrates; swipes, the action sheet, an alarm and the help sheet
+  say nothing on the console; and 68 controls are pressed.
+  - **The page stopped on load** (`PRIMITIVE_IN_FORBIDDEN_SCOPE`, then `REACTIVITY_HALTED`): a
+    row's Actions menu read its name in `onSettled`, and reading a prop there can create a
+    memo, which Solid 2 forbids. The name comes from an effect now, which also renames the
+    menu when the row's content changes, as React's does on every render.
+  - **The app bar changed height between screens, in React too.** Solid's page has no
+    box-sizing reset, and its phone looked off beside React's: the badge 26px wide, not 18.
+    Measuring every part with and without a reset found four kit rules that leaned on one,
+    and that the reset itself broke the app bar: its `min-block-size: 3rem` took in the
+    status bar's 28px inset, so on React's kit page the bar was 73px on Inbox and 53px on
+    Settings. The bar's minimum now adds the inset and border, and the frame, badge and
+    spinner set `border-box`; all three pages measure the same (77, 18, 16). A page's reset
+    outside any layer beats the kit's layered rules, so the fix works under `border-box`
+    rather than declaring `content-box`.
+  - The new tests found two things a script does and a person doesn't, the same on React's
+    page: a press on the tab bar within the ~150 ms a sheet takes to close is lost when the
+    page has to scroll to it (the scroll lock puts the scroll back), and with reduced motion
+    a press on a wheel in a sheet's first ~50 ms closes the sheet (UI SDK issue 20, closed as
+    expected). The tests wait for the sheet, as a person does.
+
+  28 mutations, 26 caught once two tests were added, in React and Solid (a row's keys help;
+  the action sheet's Delete all asking the person). Of the two left, one changes nothing (a
+  swipe already refuses a side with no actions, so `disabled` adds nothing) and one is
+  `keepWheelOnValue`, a WebKit fix whose shared test runs only in WebKit.

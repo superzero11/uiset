@@ -12,6 +12,7 @@ import { Components } from "../components-page"
 import { DemoPage } from "../demo-page"
 import BoardExample from "../examples/board"
 import CanvasExample from "../examples/canvas"
+import MobileExample from "../examples/mobile"
 import SchedulerTimelineExample from "../examples/scheduler-timeline"
 import { ChatDemo } from "../kits/chat-demo"
 import { EditorDemo } from "../kits/editor-demo"
@@ -129,6 +130,17 @@ function IdePage() {
   )
 }
 
+function MobilePage() {
+  return (
+    <DemoPage title="Mobile in Solid" description="The mobile kit, rendered on the server.">
+      <div class="mobile-stage">
+        <MobileExample />
+      </div>
+      <Toaster />
+    </DemoPage>
+  )
+}
+
 const pages: Record<string, () => JSX.Element> = {
   root: Root,
   components: Components,
@@ -139,6 +151,7 @@ const pages: Record<string, () => JSX.Element> = {
   scheduler: Scheduler,
   canvas: CanvasPage,
   ide: IdePage,
+  mobile: MobilePage,
 }
 
 export { pages }

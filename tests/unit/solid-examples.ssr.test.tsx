@@ -49,6 +49,7 @@ test.each([
   ["scheduler", 'aria-roledescription="schedule"'],
   ["canvas", 'aria-roledescription="canvas"'],
   ["ide", 'role="tree"'],
+  ["mobile", 'aria-label="Messages"'],
 ])("the %s kit's demo renders on the server", (name, mark) => {
   const Page = pages[name]!
   const html = renderToString(() => <Page />)

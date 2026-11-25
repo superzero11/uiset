@@ -15,6 +15,25 @@ test("a row without a label is named by its content", () => {
   expect(screen.getByRole("button", { name: "Actions for Grace Hopper: Compiler notes" })).toBeTruthy()
 })
 
+test("a row with actions is described by how its keys work; a row without isn't", async () => {
+  render(
+    <SwipeList
+      label="Messages"
+      onAction={() => {}}
+      items={[
+        { id: "a", label: "Grace Hopper", content: "Grace Hopper", end: [{ id: "archive", label: "Archive" }] },
+        { id: "b", label: "Ada Lovelace", content: "Ada Lovelace" },
+      ]}
+    />
+  )
+  const help = (name: string) => {
+    const id = screen.getByRole("listitem", { name }).getAttribute("aria-describedby")
+    return id ? document.getElementById(id)?.textContent : undefined
+  }
+  expect(help("Grace Hopper")).toBe("Left and Right show this row's actions; Escape hides them.")
+  expect(help("Ada Lovelace")).toBeUndefined()
+})
+
 test("a time between the minute steps still shows on the wheel", () => {
   render(<TimeWheel label="Alarm time" value="00:07" onValueChange={() => {}} hour12={false} />)
   const minute = screen.getByRole("listbox", { name: "Alarm time, minute" })

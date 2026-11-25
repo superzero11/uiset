@@ -3165,6 +3165,9 @@ It's being built for 0.7.0, item by item ([roadmap](./roadmap.md)). In it now:
 - The IDE, and its app template: the file tree with version control marks and file drags,
   tabs, the code editor with syntax colors and its own undo, the command palette, problems
   and the status bar ([IDE](./ide.md#solid)).
+- The mobile kit: rows that swipe aside to their actions, with a menu for screen readers, pull
+  to refresh, wheel pickers and the time wheel, bottom sheets with snap points, the action
+  sheet, the app bar and the tab bar ([Mobile](./mobile.md#solid)).
 
 Each component's docs page has its example in Solid under the Solid tab. Until a kit or
 template is in, use its element from the
@@ -7282,9 +7285,35 @@ function Inbox() {
 - A `TabBar` item with `href` is a link, and a click with a modifier key is left to the
   browser (a new tab); without `href` it's a UI SDK Button. Badges are a number on screen and
   words in the name ("Inbox, 2 new").
-- `AppBar` takes `headingLevel` (1 by default) to fit the page's outline.
+- `AppBar` takes `headingLevel` (1 by default) to fit the page's outline. It's 3rem tall
+  below the status bar's inset on every screen, with buttons in it or not.
+- The parts set their own box-sizing, so they look the same with or without a page's reset.
 - Accent text uses `--mobile-accent`, the primary pulled toward the text color so it clears
   4.5:1 in every skin. Focus on a filled swipe action is drawn in its own text color.
+
+## Solid
+
+`@uiset/solid/mobile` has the same parts in Solid 2, with React's props (`class`, not
+`className`): `SwipeList`, `WheelPicker`, `TimeWheel`, `Sheet`, `ActionSheet` with
+`createActionSheet`, `TabBar`, `AppBar` and `PullToRefresh`.
+
+```tsx
+import { createSignal } from "solid-js"
+import { ActionSheet, Sheet, TimeWheel, createActionSheet } from "@uiset/solid/mobile"
+
+const sheet = createActionSheet()
+const [open, setOpen] = createSignal(false)
+const [time, setTime] = createSignal("07:30")
+
+<Sheet title="New alarm" open={open()} onOpenChange={setOpen}>
+  <TimeWheel label="Alarm time" value={time()} onValueChange={setTime} />
+</Sheet>
+<ActionSheet controller={sheet} title="Inbox" actions={[{ value: "read-all", label: "Mark all as read" }]} />
+```
+
+`createActionSheet()` is called once in the component body, where React keeps it in state.
+The swipes, keys and agent actions are the same primitive as React's, and so are the browser
+tests: one set runs on React's gallery and on Solid's mobile page. See [Solid](./solid.md).
 
 ## Keys
 

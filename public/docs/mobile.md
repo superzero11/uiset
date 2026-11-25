@@ -86,9 +86,35 @@ function Inbox() {
 - A `TabBar` item with `href` is a link, and a click with a modifier key is left to the
   browser (a new tab); without `href` it's a UI SDK Button. Badges are a number on screen and
   words in the name ("Inbox, 2 new").
-- `AppBar` takes `headingLevel` (1 by default) to fit the page's outline.
+- `AppBar` takes `headingLevel` (1 by default) to fit the page's outline. It's 3rem tall
+  below the status bar's inset on every screen, with buttons in it or not.
+- The parts set their own box-sizing, so they look the same with or without a page's reset.
 - Accent text uses `--mobile-accent`, the primary pulled toward the text color so it clears
   4.5:1 in every skin. Focus on a filled swipe action is drawn in its own text color.
+
+## Solid
+
+`@uiset/solid/mobile` has the same parts in Solid 2, with React's props (`class`, not
+`className`): `SwipeList`, `WheelPicker`, `TimeWheel`, `Sheet`, `ActionSheet` with
+`createActionSheet`, `TabBar`, `AppBar` and `PullToRefresh`.
+
+```tsx
+import { createSignal } from "solid-js"
+import { ActionSheet, Sheet, TimeWheel, createActionSheet } from "@uiset/solid/mobile"
+
+const sheet = createActionSheet()
+const [open, setOpen] = createSignal(false)
+const [time, setTime] = createSignal("07:30")
+
+<Sheet title="New alarm" open={open()} onOpenChange={setOpen}>
+  <TimeWheel label="Alarm time" value={time()} onValueChange={setTime} />
+</Sheet>
+<ActionSheet controller={sheet} title="Inbox" actions={[{ value: "read-all", label: "Mark all as read" }]} />
+```
+
+`createActionSheet()` is called once in the component body, where React keeps it in state.
+The swipes, keys and agent actions are the same primitive as React's, and so are the browser
+tests: one set runs on React's gallery and on Solid's mobile page. See [Solid](./solid.md).
 
 ## Keys
 

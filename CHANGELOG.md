@@ -74,9 +74,9 @@ On UI SDK `0.1.0-beta.16`.
   alert to the textarea count; the charts, sparkline and stat; the motion pieces; the tag,
   phone and masked inputs and inline edit; the schema form and upload; the table, code block
   and sortable list and tree; the chat kit; the rich text editor; the data grid; the board;
-  the scheduler; the canvas; and the IDE with its app template. Each component's docs page
-  shows its example in Solid. The rest of the kits and the templates follow before this
-  release.
+  the scheduler; the canvas; the IDE with its app template; and the mobile kit. Each
+  component's docs page shows its example in Solid. The rest of the kits and the templates
+  follow before this release.
 - **A schema form's `phone` field.** `kind: "phone"` draws a phone input, loaded only when a
   form has one (a plain field takes the number until then). Its value is E.164; Next, an
   agent's `goTo` and submit check it for its country, not just its shape, an agent fills it
@@ -106,6 +106,13 @@ On UI SDK `0.1.0-beta.16`.
 
 ### Fixed
 
+- **A phone's app bar keeps its height on every screen.** Its 3rem below the status bar
+  counted the status bar's inset whenever the page had a box-sizing reset, as most apps do,
+  so a screen without buttons in its bar (Settings in the kit's example) drew it 20px
+  shorter than one with them. Without a reset, the tab bar's badge was 8px wider and the
+  refresh spinner and the phone frame a little bigger. The mobile kit's parts now set their
+  own box-sizing and look the same either way. Add `mobile` again (or update `@uiset/web`)
+  to take it.
 - **The canvas minimap's boxes match their nodes' colors.** Each mixed its node's color with
   the text color in oklch, which turned its hue toward the text's: a teal node's box came out
   olive. They mix in oklab now. Add `canvas` again (or update `@uiset/web`) to take it.

@@ -68,6 +68,9 @@ test("Delete all can be undone", async () => {
   await bridge.press("Inbox options")
   await bridge.press("Inbox", "Delete all")
   await waitFor(() => expect(within(list()).queryAllByRole("listitem")).toHaveLength(0))
+  // Deleting everything is one an agent's person confirms; marking all read isn't.
+  expect(bridge.asked).toContain("Delete all (Inbox)")
+  expect(bridge.asked.some((said) => said.startsWith("Mark all as read"))).toBe(false)
   await waitFor(() => expect(toastNamed(/^Deleted 4 messages/)).toBeDefined())
   const undone = await bridge.press(/^Deleted 4 messages/, "Undo")
   expect(undone.ok, undone.error?.message).toBe(true)
