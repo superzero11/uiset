@@ -3004,3 +3004,6 @@ vercel-labs/ui#905 (2026-11-19).
   pages' other tests. The tag and phone input sections crashed at two workers and passed at
   one; they stay in, watched. Open: find the cause after the release (as for the canvas,
   2026-11-15). With the marks, the three specs run 11 passed and 21 skipped in Firefox.
+- 2026-11-28 — `@uiset/web` 0.7.0 on npm (the owner published; `latest`, 109 files, 386.0 kB,
+  shasum 0aed7da, beta.16 peers). npm took about three minutes to list it ("being
+  processed"). The registry and the site ship with the push after the owner's check.
