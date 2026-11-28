@@ -11,7 +11,8 @@ const found = (results: Awaited<ReturnType<typeof axe>>) => results.violations.m
 
 for (const skin of ["base", "blueprint", "studio", "phosphor", "ink"]) {
   for (const theme of ["light", "dark"] as const) {
-    test(`the Address kit passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page }) => {
+    test(`the Address kit passes axe in ${skin}, ${theme}`, { tag: "@engine" }, async ({ page, browserName }) => {
+      test.fixme(browserName === "firefox", "Playwright's Firefox crashes (\"Page crashed\") while axe scans this page, in Docker, on every try; Chrome and WebKit pass this scan, and Firefox passes the parts' gallery scans and this page's other tests (HISTORY.md decision log, 2026-11-28)")
       await page.emulateMedia({ reducedMotion: "reduce", colorScheme: theme })
       await page.goto(`/docs/kits/address?skin=${skin}&theme=${theme}`)
       const address = page.getByRole("group", { name: "Delivery address" })

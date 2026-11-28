@@ -13,7 +13,9 @@ for (const [kit, heading, control] of [
   ["forms", "upload", /Choose files/],
   ["app-shell", "table", /Invoices/],
 ] as const) {
-  test(`the ${kit} kit draws ${heading} live under its heading, and passes axe`, { tag: "@engine" }, async ({ page }) => {
+  test(`the ${kit} kit draws ${heading} live under its heading, and passes axe`, { tag: "@engine" }, async ({ page, browserName }) => {
+    // The tag and phone inputs' scans passed in Firefox at one worker and crashed at two: watch them.
+    test.fixme(browserName === "firefox" && heading === "input-mask", "Playwright's Firefox crashes (\"Page crashed\") while axe scans this page, in Docker, on every try; Chrome and WebKit pass this scan, and Firefox passes the parts' gallery scans and this page's other tests (HISTORY.md decision log, 2026-11-28)")
     await page.emulateMedia({ reducedMotion: "reduce" })
     await page.goto(`/docs/kits/${kit}`)
     const example = page.locator(`[id="${heading}"] + .docs-example`)

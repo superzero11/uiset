@@ -2980,3 +2980,27 @@ vercel-labs/ui#905 (2026-11-19).
   only once `solid/package.json` exists, the release that publishes it. Where the port
   stands, what's left and how each kit was done are in `design/solid-plan.md`; the roadmap's
   Now item says the same.
+- 2026-11-28 — **Release 0.7.0, prepared.** The tag, phone and masked inputs (and the schema
+  form's `tags`, `phone`, `mask` and `currency`), the payments and address kits, the checkout
+  and invoice templates, UI SDK beta.16 and fixes, in React and Web Components; Solid as a
+  preview, not published. Dated 2026-11-28, with What's new's three entries. The full run
+  (2026-11-25, on code unchanged since): Vitest 1,499 in 3.2 minutes at 2 workers; Chrome
+  1,149 (React 579 in 22.9 minutes, web 372, Solid 198, at 2 workers, each project with only
+  its own dev server); WebKit 787 passed and 4 skipped (591 at 2 workers in 13.9 minutes, the
+  200 big pages at 1); Firefox in Docker 748 passed, 20 skipped, 23 crashed, at 2 workers in
+  35 minutes. The run found and fixed the IDE palette's Escape warning, web/content.html's
+  ambiguous "Email" for agents, a Solid test without `matchMedia`, and the What's new test's
+  old names. The tarball packs 109 files, 386.0 kB, with beta.16 peers; the fresh-app
+  install test passed (129 items). The owner's Chrome and the Claude app kept memory at warn,
+  so the owner let the guard ride through warn (it still stops at critical pressure, swap
+  +1.5 GB, free under 20% or a browser over 3 GB); it stopped WebKit's big pages and a
+  Firefox check once each for swap, and both were rerun. The owner publishes.
+- 2026-11-28 — **21 Firefox axe scans marked `fixme`, the owner's call.** Playwright's Firefox
+  (1.65.1, in Docker) crashes ("Page crashed") while axe scans the address and payments kit
+  pages, in all ten looks, and the forms kit's input-mask section, every try, alone at one
+  worker too. The VM logged no out-of-memory kill. No single axe rule does it: groups of
+  eight pass and some larger sets crash, and the same scan passed once and crashed once.
+  Chrome and WebKit pass these scans, and Firefox passes the parts' gallery scans and the
+  pages' other tests. The tag and phone input sections crashed at two workers and passed at
+  one; they stay in, watched. Open: find the cause after the release (as for the canvas,
+  2026-11-15). With the marks, the three specs run 11 passed and 21 skipped in Firefox.

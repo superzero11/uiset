@@ -8,7 +8,7 @@ Registry items are source code copied into your app. To take a release, add the 
 again (`npx shadcn@latest add @uiset/<item>`) and review the diff.
 `@uiset/web` is a package: update it like any other.
 
-## 0.7.0 (unreleased)
+## 0.7.0 (2026-11-28)
 
 On UI SDK `0.1.0-beta.16`.
 
@@ -95,6 +95,10 @@ On UI SDK `0.1.0-beta.16`.
 
 ### Fixed
 
+- **The IDE's command palette closes on Escape without a warning.** Escape closed it but left
+  UI SDK waiting for the cleared query, which warned in development ("asked for `query`…
+  and `query` stayed"). The palette now refuses the clear as it closes. React and Web
+  Components; add `ide` again (or update `@uiset/web`) to take it.
 - **A phone's app bar keeps its height on every screen.** Its 3rem below the status bar
   counted the status bar's inset whenever the page had a box-sizing reset, as most apps do,
   so a screen without buttons in its bar (Settings in the kit's example) drew it 20px

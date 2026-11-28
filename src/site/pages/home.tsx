@@ -23,22 +23,22 @@ import { Specimen } from "../specimen"
 // it scrolls. A release that adds something adds its entry here (lint: content/whats-new).
 const whatsNew = [
   {
-    date: "2026-11-21",
-    title: "Motion, per skin",
-    href: "/docs/theming#motion",
-    what: "Each skin opens and closes, turns on and off, and moves things its own way: Base glides, Blueprint draws, Studio snaps, Phosphor scans, Ink redraws. Reduced motion only fades.",
+    date: "2026-11-28",
+    title: "Tag, phone and masked inputs",
+    href: "/docs/kits/forms#tag-input",
+    what: "Tags people type, paste or pick; a phone number with its country, formatted as it's typed and kept as E.164; and fields that format cards, expiry dates, IBANs and amounts. Each checks itself, and agents fill them in any format.",
   },
   {
-    date: "2026-11-21",
-    title: "Motion pieces",
-    href: "/docs/kits/motion",
-    what: "A number ticker, text that reveals as it streams, a Thinking state and a crossfade, each skin its own way. People and agents read the real value.",
+    date: "2026-11-28",
+    title: "Payments and addresses",
+    href: "/docs/kits/payments",
+    what: "Ways to pay as radio cards, a card that names its brand, a bank account with its mandate, an order summary with discount codes, and addresses whose fields follow their country, for 252 countries. Card numbers stay secret to agents.",
   },
   {
-    date: "2026-11-21",
-    title: "Agent parts",
-    href: "/docs/kits/chat#agent-parts",
-    what: "Tools that wait for your approval, subagent runs with their own steps, checkpoints to restore, a queue the composer fills while the agent works, and Vercel AI SDK messages drawn as they are. Live in the chat kit's demo and the chat-app template.",
+    date: "2026-11-28",
+    title: "Checkout and invoice",
+    href: "/templates/checkout",
+    what: "A checkout an agent fills and a person pays, and an invoice that writes each address as its country does, says when it's due and prints without its buttons. React and Web Components.",
   },
 ]
 

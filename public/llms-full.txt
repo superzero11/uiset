@@ -4043,7 +4043,7 @@ Then hand it back to the person to review the branch.
 
 # Roadmap
 
-Updated 2026-11-25. What we're building, what comes next, and what we won't do. What
+Updated 2026-11-28. What we're building, what comes next, and what we won't do. What
 shipped is in the [changelog](https://github.com/superzero11/uiset/blob/main/CHANGELOG.md), and
 the decisions behind it in [HISTORY.md](https://github.com/superzero11/uiset/blob/main/HISTORY.md).
 Sizes: S small, M medium, L large.
@@ -4057,12 +4057,12 @@ version: a kit around it, agents, five skins, sound and motion, and tests in all
 
 ## Now
 
-**The inputs asked for most, for 0.7.0.** The tag input (and a schema form's
+**The inputs asked for most: 0.7.0, tested and ready to publish.** The tag input (and a schema form's
 `tags` field), the phone input (a country picker, E.164, right to left; a schema form's
 `phone` field) and input masks (cards, expiry dates and codes, IBANs, amounts, patterns; a
 schema form's `mask` and `currency`), each in React and Web Components, with agents. M
 
-**Checkout and invoices, for 0.7.0.** Built: the payments and address kits (252
+**Checkout and invoices: 0.7.0, tested and ready to publish.** the payments and address kits (252
 countries), and the checkout and invoice templates on them, React and Web Components. M
 
 **Solid 2.0, natively: paused for 0.7.0.** `@uiset/solid`: the root, every component and nine
@@ -4070,8 +4070,8 @@ kits written, a preview in the docs; five kits, eleven templates and the package
 ([plan](https://github.com/superzero11/uiset/blob/main/design/solid-plan.md)). L
 
 **Tests through the agent bridge, in place.** Behavior runs in Vitest through UI SDK's agent
-bridge (764 tests in about two minutes); Chrome runs 862 browser tests, WebKit and Firefox 715
-each. 0.6.1's full run took 1 h 50 min, from 3 hours. Left: WebKit's big pages at one worker. M
+bridge (1,499 tests in about three minutes); Chrome runs 1,149 browser tests (Solid's 198 too),
+WebKit and Firefox 791 each. Left: WebKit's big pages at one worker, and 21 Firefox axe scans. M
 
 ## Next, in order
 
