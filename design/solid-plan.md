@@ -29,8 +29,9 @@ hydration, a quiet console, every control pressed, screenshots in six looks besi
   canvas, scheduler and terminal, which the memory guard stopped each time.
 - Phase 5: the package itself (`package.json`, entries, the `solid` condition and a build,
   exact peers), `scripts/install-test.sh` with a fresh SolidStart app, What's new, the README,
-  and the push check for both packages. The parity rule refuses a dated release with
-  anything still listed once `solid/package.json` exists.
+  and the push check for both packages. `docs/solid.md` gets its `npm install` command back
+  then: the push check refuses docs that install a package npm doesn't have. The parity rule
+  refuses a dated release with anything still listed once `solid/package.json` exists.
 
 **Each kit, as the last six were done:** `solid/src/<kit>.tsx` over the shared logic;
 `solid/demo/examples/<kit>.tsx` (shown under the docs' Solid tab, so written as an app

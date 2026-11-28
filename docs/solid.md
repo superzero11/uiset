@@ -65,11 +65,9 @@ the same `uiset.css`.
 
 ## Install
 
-Solid 2 only: `solid-js` and `@solidjs/web` 2.0 or later. Once it's published:
-
-```bash
-npm install @uiset/solid @ui-sdk/solid@0.1.0-beta.16 @ui-sdk/core@0.1.0-beta.16
-```
+Solid 2 only: `solid-js` and `@solidjs/web` 2.0 or later. It isn't on npm yet; once it's
+published, it installs beside `@ui-sdk/solid` and `@ui-sdk/core` at the UI SDK version UISet
+pins (0.1.0-beta.16 today), and the install command will be here.
 
 UISet pins UI SDK exactly. With Vite, leave `@ui-sdk/core` out of pre-bundling, as UI SDK's
 Solid docs say: a second copy of it makes UI SDK's components throw in development.
